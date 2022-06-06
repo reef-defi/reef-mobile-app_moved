@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:reef_mobile_app/components/WebViewStack.dart';
-import 'package:reef_mobile_app/service/JsApi.dart';
+import 'package:reef_mobile_app/service/JsApiService.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 void main() {

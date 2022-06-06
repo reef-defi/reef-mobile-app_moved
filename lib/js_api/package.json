@@ -4,7 +4,8 @@
   "main": "index.ts",
   "license": "MIT",
   "dependencies": {
-    "esbuild": "^0.14.42"
+    "esbuild": "^0.14.42",
+    "rxjs": "^7.5.5"
   },
   "scripts": {
     "build": "esbuild index.ts --bundle --outfile=dist.js"
