@@ -1,5 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:reef_mobile_app/components/WebViewStack.dart';
 import 'package:reef_mobile_app/service/JsApi.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 void main() {
   runApp(const MyApp());
@@ -50,10 +54,11 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
-  JsApi _api = JsApi();
+  final controller = Completer<WebViewController>();
+  // JsApi _api = JsApi();
 
   void _incrementCounter() {
-    _api.getReefVals().then((value) => print('JS VALS=${value}'));
+    // _api.getReefVals().then((value) => print('JS VALS=${value}'));
     setState(() {
       // This call to setState tells the Flutter framework that something has
       // changed in this State, which causes it to rerun the build method below
@@ -98,7 +103,10 @@ class _MyHomePageState extends State<MyHomePage> {
           // horizontal).
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            _api.getWebView(),
+            Offstage(
+              offstage: true,
+              child: WebViewStack(controller:controller),
+            ),
             const Text(
               'You have pushed the button this many times:',
             ),
