@@ -1,0 +1,12 @@
+{
+  "name": "js_api",
+  "version": "0.0.1",
+  "main": "index.ts",
+  "license": "MIT",
+  "dependencies": {
+    "esbuild": "^0.14.42"
+  },
+  "scripts": {
+    "build": "esbuild index.ts --bundle --outfile=dist.js"
+  }
+}
