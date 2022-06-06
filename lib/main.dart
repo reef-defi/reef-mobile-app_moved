@@ -50,12 +50,16 @@ class MyHomePage extends StatefulWidget {
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
+
 }
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
-  final controller = Completer<WebViewController>();
-  // JsApi _api = JsApi();
+  final jsApiService = JsApi();
+
+  _MyHomePageState(){
+
+  }
 
   void _incrementCounter() {
     // _api.getReefVals().then((value) => print('JS VALS=${value}'));
@@ -103,10 +107,8 @@ class _MyHomePageState extends State<MyHomePage> {
           // horizontal).
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Offstage(
-              offstage: true,
-              child: WebViewStack(controller:controller),
-            ),
+             //WebViewOffstage(controller:controller, loaded: wvLoaded),
+            jsApiService.getWebView(),
             const Text(
               'You have pushed the button this many times:',
             ),

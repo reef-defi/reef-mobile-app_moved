@@ -4,52 +4,35 @@ import 'dart:ffi';
 import 'package:flutter/widgets.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-class WebViewStack extends StatefulWidget {
-  WebViewStack({required this.controller, Key? key}) : super(key: key); // Modify
+class WebViewOffstage extends StatefulWidget {
+  WebViewOffstage({required this.controller, required this.loaded, Key? key, }) : super(key: key); // Modify
 
-  final Completer<WebViewController> controller;   // Add this attribute
-  final Completer<void> loaded = Completer();
+  final Completer<WebViewController> controller;
+  final Completer<void> loaded;
 
   @override
-  State<WebViewStack> createState() => _WebViewStackState();
+  State<WebViewOffstage> createState() => _WebViewOffstageState();
 }
 
-class _WebViewStackState extends State<WebViewStack> {
-  var loadingPercentage = 0;
+class _WebViewOffstageState extends State<WebViewOffstage> {
+  WebViewController? _controller;
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
+    return Offstage(
+      offstage: true,
+      child:
         WebView(
-          initialUrl: 'https://flutter.dev',
-          // Add from here ...
+          javascriptMode: JavascriptMode.unrestricted,
           onWebViewCreated: (webViewController) {
-            widget.controller.complete(webViewController);
-          },
-          // ... to here.
-          onPageStarted: (url) {
-            setState(() {
-              loadingPercentage = 0;
-            });
-          },
-          onProgress: (progress) {
-            setState(() {
-              loadingPercentage = progress;
-            });
+            _controller = webViewController;
+            widget.controller.complete(_controller);
           },
           onPageFinished: (url) {
-            widget.loaded.complete();
-            setState(() {
-              loadingPercentage = 100;
-            });
+            print('FINISHED PAGE=${url}');
+            widget.loaded.complete(_controller);
           },
         ),
-        // if (loadingPercentage < 100)
-        //   LinearProgressIndicator(
-        //     value: loadingPercentage / 100.0,
-        //   ),
-      ],
     );
   }
 }
