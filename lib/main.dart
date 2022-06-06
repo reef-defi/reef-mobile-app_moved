@@ -55,7 +55,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
-  final jsApiService = JsApi();
+  final jsApiService = JsApiService();
 
   _MyHomePageState(){
 
@@ -108,7 +108,7 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
              //WebViewOffstage(controller:controller, loaded: wvLoaded),
-            jsApiService.getWebView(),
+            jsApiService.widget,
             const Text(
               'You have pushed the button this many times:',
             ),
