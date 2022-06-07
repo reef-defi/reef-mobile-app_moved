@@ -4,6 +4,7 @@
   "main": "index.ts",
   "license": "MIT",
   "dependencies": {
+    "@reef-defi/react-lib": "^1.0.52",
     "esbuild": "^0.14.42",
     "rxjs": "^7.5.5"
   },

@@ -8,7 +8,6 @@ import 'package:rxdart/rxdart.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class JsApiService {
-  final LOG_CHANNEL_NAME = 'flutterLogChannel';
   final LOG_MSG_IDENT = 'console.log';
   final REEF_MOBILE_CHANNEL_NAME = 'reefMobileChannel';
   final FLUTTER_SUBSCRIBE_METHOD_NAME = 'flutterSubscribe';
