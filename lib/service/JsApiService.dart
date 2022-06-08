@@ -28,7 +28,13 @@ class JsApiService {
 
   JsApiService() {
     controllerInit.future.then((ctrl) => _loadJs(ctrl, 'lib/js_api/dist/index.js'));
-    jsCall('testApi("hellooo")').then((value) => print('JS RES=${value}'));
+    //jsCall('testApi("hellooo")').then((value) => print('JS RES=${value}'));
+    Future.delayed(Duration(seconds: 10), () {
+      jsCall('Object.keys(window).length').then((value) => print('JS RES=${value}'));
+      print('FFFF');
+    });
+    jsCall('Object.keys(window).length').then((value) => print('JS RES=${value}'));
+    // jsCall('Object.keys(window.testApi)').then((value) => print('JS RES=${value}'));
     // jsObservableStream('testObs').listen((event) =>print('STR= ${event}'));
   }
 

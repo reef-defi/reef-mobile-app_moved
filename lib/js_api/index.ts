@@ -11,9 +11,14 @@ window['testObs'] = interval().pipe(
     })
 );
 
-window['testApi'] = function (param){
-    console.log('js test log', {value:'test123'});
-    return {id:'123', value:{works:'ok', param}};
-}
 
-appState.initReefState({});
+// appState.initReefState({});
+setTimeout(()=>{
+    global['testApi'] = function (param){
+        // console.log('js test log', {value:'test123'});
+        // return {id:'123', value:{works:'ok', param}};
+        return param + '_ok';
+    }
+}, 3000)
+
+// console.log('SSS =' ,!!appState.selectedSigner$)
