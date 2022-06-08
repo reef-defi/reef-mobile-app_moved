@@ -27,7 +27,7 @@ class JsApiService {
   Future<WebViewController> get _controller => jsApiLoaded.future;
 
   JsApiService() {
-    controllerInit.future.then((ctrl) => _loadJs(ctrl, 'lib/js_api/dist.js'));
+    controllerInit.future.then((ctrl) => _loadJs(ctrl, 'lib/js_api/dist/index.js'));
     jsCall('testApi("hellooo")').then((value) => print('JS RES=${value}'));
     // jsObservableStream('testObs').listen((event) =>print('STR= ${event}'));
   }

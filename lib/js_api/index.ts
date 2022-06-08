@@ -1,6 +1,7 @@
 import {interval, map} from 'rxjs';
 import {FlutterJS} from "./service/flutterConnectService";
 import {useInitReefState} from "@reef-defi/react-lib/dist/hooks";
+import {appState} from "@reef-defi/react-lib";
 
 window['flutterJS'] = new FlutterJS();
 
@@ -15,4 +16,4 @@ window['testApi'] = function (param){
     return {id:'123', value:{works:'ok', param}};
 }
 
-initReefState()
+appState.initReefState({});
