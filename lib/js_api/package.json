@@ -1,7 +1,7 @@
 {
   "name": "js_api",
   "version": "0.0.1",
-  "main": "index.ts",
+  "main": "src/index.ts",
   "license": "MIT",
   "dependencies": {
     "@reef-defi/react-lib": "^1.0.52",
@@ -12,8 +12,8 @@
     "stream": "^0.0.2"
   },
   "scripts": {
-    "build": "esbuild index.ts --bundle --outfile=dist/index.js --platform=browser --tsconfig=tsconfig.json",
-    "start": "esbuild index.ts --bundle --outfile=dist/index.js --platform=browser --watch --tsconfig=tsconfig.json"
+    "build": "esbuild src/index.ts --bundle --outfile=dist/index.js --platform=browser --tsconfig=tsconfig.json",
+    "start": "esbuild src/index.ts --bundle --outfile=dist/index.js --platform=browser --watch --tsconfig=tsconfig.json"
   },
   "browser": {
     "crypto": false

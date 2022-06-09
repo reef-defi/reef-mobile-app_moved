@@ -14,7 +14,8 @@ class JsApiService {
 
   final controllerInit = Completer<WebViewController>();
   final jsApiLoaded = Completer<WebViewController>();
-  final jsReefMobileSubj = BehaviorSubject<ReefApiMessage>();
+  final jsMessageSubj = BehaviorSubject<JsApiMessage>();
+  final jsMessageUnknownSubj = BehaviorSubject<JsApiMessage>();
 
   get widget {
     return WebViewOffstage(
@@ -28,7 +29,7 @@ class JsApiService {
 
   JsApiService() {
     controllerInit.future.then((ctrl) => _loadJs(ctrl, 'lib/js_api/dist/index.js'));
-    jsCall('window.testApi("hey")').then((value) => print('JS RES=${value}'));
+    // jsCall('window.testApi("hey")').then((value) => print('JS RES=${value}'));
     // jsObservableStream('testObs').listen((event) =>print('STR= ${event}'));
   }
 
@@ -44,7 +45,7 @@ class JsApiService {
 
     jsCall(
         "window['$FLUTTER_SUBSCRIBE_METHOD_NAME']('$jsObsRefName', '$ident')");
-    return jsReefMobileSubj.stream
+    return jsMessageSubj.stream
         .where((event) => event.id == ident)
         .map((event) => event.value);
   }
@@ -69,12 +70,14 @@ class JsApiService {
       JavascriptChannel(
         name: REEF_MOBILE_CHANNEL_NAME,
         onMessageReceived: (message) {
-          ReefApiMessage apiMsg =
-              ReefApiMessage.fromJson(jsonDecode(message.message));
+          JsApiMessage apiMsg =
+              JsApiMessage.fromJson(jsonDecode(message.message));
           if (apiMsg.id == LOG_MSG_IDENT) {
             print('$LOG_MSG_IDENT= ${apiMsg.value}');
+          } else if (int.tryParse(apiMsg.id)==null){
+            jsMessageUnknownSubj.add(apiMsg);
           } else {
-            jsReefMobileSubj.add(apiMsg);
+            jsMessageSubj.add(apiMsg);
           }
         },
       ),
@@ -82,13 +85,13 @@ class JsApiService {
   }
 }
 
-class ReefApiMessage {
+class JsApiMessage {
   late String id;
   late dynamic value;
 
-  ReefApiMessage(this.id, this.value);
+  JsApiMessage(this.id, this.value);
 
-  ReefApiMessage.fromJson(Map<String, dynamic> json)
+  JsApiMessage.fromJson(Map<String, dynamic> json)
       : id = json['id'],
         value = json['value'];
 }
