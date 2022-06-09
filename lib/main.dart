@@ -55,6 +55,22 @@ class _MyHomePageState extends State<MyHomePage> {
   final jsApiService = JsApiService();
 
   _MyHomePageState(){
+    String cachedAddress = 'lastSavedAddr';
+    jsApiService.jsCall('appState.selectAddressSubj.next("$cachedAddress")');
+    jsApiService.jsMessageUnknownSubj.listen((value) {
+      if(value.id == 'appState.currentAddress'){
+        print(" TODO save address to cache");
+        return;
+      }
+      print('jsMSG=${value.id}');
+    });
+
+    jsApiService.jsObservableStream('account.selectedSigner\$').listen((signer) {
+      print('SEL Signer=$signer');
+    });
+    jsApiService.jsObservableStream('appState.selectedSignerTokenBalances\$').listen((signer) {
+      print('TKNS=$signer');
+    });
 
   }
 
