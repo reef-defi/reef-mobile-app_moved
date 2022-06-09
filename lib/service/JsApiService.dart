@@ -28,13 +28,7 @@ class JsApiService {
 
   JsApiService() {
     controllerInit.future.then((ctrl) => _loadJs(ctrl, 'lib/js_api/dist/index.js'));
-    //jsCall('testApi("hellooo")').then((value) => print('JS RES=${value}'));
-    Future.delayed(Duration(seconds: 10), () {
-      jsCall('Object.keys(window).length').then((value) => print('JS RES=${value}'));
-      print('FFFF');
-    });
-    jsCall('Object.keys(window).length').then((value) => print('JS RES=${value}'));
-    // jsCall('Object.keys(window.testApi)').then((value) => print('JS RES=${value}'));
+    jsCall('window.testApi("hey")').then((value) => print('JS RES=${value}'));
     // jsObservableStream('testObs').listen((event) =>print('STR= ${event}'));
   }
 
@@ -58,10 +52,16 @@ class JsApiService {
   void _loadJs(WebViewController ctrl, String assetsFilePath) async {
     var jsScript = await rootBundle.loadString(assetsFilePath, cache: true);
     var htmlString = """<html><head>
+    <script>
+    // polyfills
+    window.global = window;
+    </script>
     <script>${jsScript}</script>
     <script>window.flutterJS.init( '$REEF_MOBILE_CHANNEL_NAME', '$LOG_MSG_IDENT', '$FLUTTER_SUBSCRIBE_METHOD_NAME')</script>
-    </head></html>""";
-    ctrl.loadHtmlString(htmlString).then((value) => ctrl);
+    </head><body></body></html>""";
+    ctrl.loadHtmlString(htmlString).then((value) => ctrl).catchError((err){
+      print('Error loading HTML=$err');
+    });
   }
 
   Set<JavascriptChannel> _createJavascriptChannels() {

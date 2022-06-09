@@ -1,24 +1,24 @@
+import poly from './polyfill';
 import {interval, map} from 'rxjs';
 import {FlutterJS} from "./service/flutterConnectService";
-import {useInitReefState} from "@reef-defi/react-lib/dist/hooks";
-import {appState} from "@reef-defi/react-lib";
+import {appState, availableNetworks} from "@reef-defi/react-lib";
 
+poly;
 window['flutterJS'] = new FlutterJS();
+console.log('INITTTT ');
 
 window['testObs'] = interval().pipe(
     map((value) => {
-        return {value, msg:'hey'}
+        return {value, msg: 'hey'}
     })
 );
+appState.initReefState({network:availableNetworks.testnet});
+window['testApi'] = function (param) {
+    console.log('js test log', {value:'test123'}, true);
+    // return {id:'123', value:{works:'ok', param}};
+    return param + '_ok';
+}
 
+appState.currentNetwork$.subscribe((sss) => console.log('NNN =', sss.name));
+appState.selectedSigner$.subscribe((sss) => console.log('SS =', sss.name));
 
-// appState.initReefState({});
-setTimeout(()=>{
-    global['testApi'] = function (param){
-        // console.log('js test log', {value:'test123'});
-        // return {id:'123', value:{works:'ok', param}};
-        return param + '_ok';
-    }
-}, 3000)
-
-// console.log('SSS =' ,!!appState.selectedSigner$)

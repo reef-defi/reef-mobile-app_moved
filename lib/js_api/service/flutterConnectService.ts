@@ -15,8 +15,13 @@ export class FlutterJS {
     }
 
     private overrideJSLogs(logIdentName: string) {
-        window['console'].log = (arg) => {
-            this.postToFlutterStream(logIdentName, arg.toString())
+        window['console'].log = (...arg) => {
+            this.postToFlutterStream(logIdentName, arg.map(a => {
+                if (a instanceof Object) {
+                    return JSON.stringify(a);
+                }
+                return a.toString();
+            }).join(', '));
         }
     }
 

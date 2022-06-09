@@ -1,7 +1,4 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:reef_mobile_app/components/WebViewStack.dart';
 import 'package:reef_mobile_app/service/JsApiService.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -107,7 +104,6 @@ class _MyHomePageState extends State<MyHomePage> {
           // horizontal).
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-             //WebViewOffstage(controller:controller, loaded: wvLoaded),
             jsApiService.widget,
             const Text(
               'You have pushed the button this many times:',
