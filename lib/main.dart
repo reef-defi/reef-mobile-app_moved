@@ -1,4 +1,6 @@
 import 'dart:collection';
+import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:reef_mobile_app/service/JsApiService.dart';
@@ -58,20 +60,34 @@ class _MyHomePageState extends State<MyHomePage> {
   final jsApiService = JsApiService();
 
   _MyHomePageState(){
-    /*var signersList = [{
-      name: 'test',
-      signer: {} as Signer,
-      balance: BigNumber.from('0'),
-      address: '5EUWG6tCA9S8Vw6YpctbPHdSrj95d18uNhRqgDniW3g9ZoYc',
-      evmAddress: '',
-      isEvmClaimed: false,
-      source: 'mobileApp',
-      genesisHash: undefined
-    }]
-    jsApiService.jsCall('account.injectSigners($signersList)');*/
+    _initReefState();
+  }
+
+  void _initReefState()async{
+    var injectSigners = [{
+      "name": 'test',
+      "signer": {},
+      "balance": '123000000000000000000',
+      "address": '5EUWG6tCA9S8Vw6YpctbPHdSrj95d18uNhRqgDniW3g9ZoYc',
+      "evmAddress": '',
+      "isEvmClaimed": false,
+      "source": 'mobileApp',
+      "genesisHash": 'undefined'
+    }];
+    var availableNetworks = jsonDecode(await jsApiService.jsCall('jsApi.availableNetworks'));
+    jsApiService.jsCall('jsApi.initReefState($availableNetworks["mainnet"], $injectSigners)')
+        .onError((error, stackTrace) {
+    log('EEEEEEEEEEE=${error.toString()}',level: 0);
+    return '';
+    });
     /* TODO set from last saved address*/
     // String cachedAddress = '5EUWG6tCA9S8Vw6YpctbPHdSrj95d18uNhRqgDniW3g9ZoYc';
     // jsApiService.jsCall('appState.setCurrentAddress("$cachedAddress")');
+
+    // _initReefObservables();
+  }
+
+  _initReefObservables(){
     jsApiService.jsMessageUnknownSubj.listen((JsApiMessage value) {
       if(value.id == 'appState.currentAddress'){
         print(" TODO save address to cache ${value.value}");

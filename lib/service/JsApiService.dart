@@ -8,12 +8,15 @@ import 'package:rxdart/rxdart.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class JsApiService {
-  final LOG_MSG_IDENT = 'console.log';
+  final LOG_MSG_IDENT = '_console.log';
+  final API_READY_MSG_IDENT = '_windowApisReady';
   final REEF_MOBILE_CHANNEL_NAME = 'reefMobileChannel';
   final FLUTTER_SUBSCRIBE_METHOD_NAME = 'flutterSubscribe';
 
   final controllerInit = Completer<WebViewController>();
   final jsApiLoaded = Completer<WebViewController>();
+  final jsApiReady = Completer<WebViewController>();
+
   final jsMessageSubj = BehaviorSubject<JsApiMessage>();
   final jsMessageUnknownSubj = BehaviorSubject<JsApiMessage>();
 
@@ -25,7 +28,7 @@ class JsApiService {
     );
   }
 
-  Future<WebViewController> get _controller => jsApiLoaded.future;
+  Future<WebViewController> get _controller => jsApiReady.future;
 
   JsApiService() {
     controllerInit.future.then((ctrl) => _loadJs(ctrl, 'lib/js_api/dist/index.js'));
@@ -58,7 +61,7 @@ class JsApiService {
     window.global = window;
     </script>
     <script>${jsScript}</script>
-    <script>window.flutterJS.init( '$REEF_MOBILE_CHANNEL_NAME', '$LOG_MSG_IDENT', '$FLUTTER_SUBSCRIBE_METHOD_NAME')</script>
+    <script>window.flutterJS.init( '$REEF_MOBILE_CHANNEL_NAME', '$LOG_MSG_IDENT', '$FLUTTER_SUBSCRIBE_METHOD_NAME', '$API_READY_MSG_IDENT')</script>
     </head><body></body></html>""";
     ctrl.loadHtmlString(htmlString).then((value) => ctrl).catchError((err){
       print('Error loading HTML=$err');
@@ -74,6 +77,8 @@ class JsApiService {
               JsApiMessage.fromJson(jsonDecode(message.message));
           if (apiMsg.id == LOG_MSG_IDENT) {
             print('$LOG_MSG_IDENT= ${apiMsg.value}');
+          }else if (apiMsg.id == API_READY_MSG_IDENT) {
+            jsApiLoaded.future.then((ctrl) => jsApiReady.complete(ctrl));
           } else if (int.tryParse(apiMsg.id)==null){
             jsMessageUnknownSubj.add(apiMsg);
           } else {

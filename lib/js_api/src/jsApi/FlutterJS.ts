@@ -11,12 +11,13 @@ export class FlutterJS {
         }
     }
 
-    init(reefMobileChannelName: string, logIdentName: string, flutterSubscribeMethodName: string) {
+    init(reefMobileChannelName: string, logIdentName: string, flutterSubscribeMethodName: string, apiReadyIdentName: string) {
         this.REEF_MOBILE_CHANNEL_NAME = reefMobileChannelName;
         this.overrideJSLogs(logIdentName);
         this.registerMobileSubscriptionMethod(flutterSubscribeMethodName);
         if (this.onInit) {
             this.onInit(this);
+            this.postToFlutterStream(apiReadyIdentName, true);
         }
     }
 

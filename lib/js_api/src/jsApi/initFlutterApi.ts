@@ -5,17 +5,19 @@ import {FlutterJS} from "./FlutterJS";
 
 export const initFlutterApi = (flutterJS: FlutterJS) => {
     try {
-        /*(window as any).jsApi = {
+        (window as any).jsApi = {
+            availableNetworks:JSON.stringify(availableNetworks),
             initReefState: (network: Network, signers: ReefSigner[]) => {
-                appState.initReefState({
+                console.log("IIIIII=",network.name);
+                /*appState.initReefState({
                     network,
                     signers
-                });
+                });*/
             }
-        };*/
+        };
         // testReefObservables();
         accountApi.innitApi(flutterJS);
-        appState.initReefState({
+        /*appState.initReefState({
             network: availableNetworks.testnet,
             signers: [{
                 name: 'test',
@@ -27,7 +29,7 @@ export const initFlutterApi = (flutterJS: FlutterJS) => {
                 source: 'mobileApp',
                 genesisHash: undefined
             } as ReefSigner]
-        });
+        });*/
     } catch (e) {
         console.log("INIT ERROR=", e.message);
     }
