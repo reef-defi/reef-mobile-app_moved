@@ -1,4 +1,4 @@
-import {Observable} from "rxjs";
+import {Observable} from "rxjs/dist/types";
 
 export class FlutterJS {
 
@@ -45,19 +45,19 @@ export class FlutterJS {
     private registerMobileSubscriptionMethod(flutterSubscribeMethodName: string) {
         window[flutterSubscribeMethodName] = (observableRefName, subscriptionId) => {
             const splitRefName = observableRefName.split('.');
-            let obs = splitRefName.reduce((state, curr) => {
+            const observableRef = splitRefName.reduce((state, curr) => {
                 if (!state) {
                     return undefined;
                 }
                 return state[curr] || undefined;
             }, window) as Observable<any>;
 
-            if (!obs) {
+            if (!observableRef) {
                 console.log("observable JS object ref not found= window." + observableRefName );
                 return false;
             }
             //TODO unsubscribe
-            obs?.subscribe((value) => this.postToFlutterStream(subscriptionId, value));
+            observableRef.subscribe((value) => this.postToFlutterStream(subscriptionId, value));
             return true;
         };
     }

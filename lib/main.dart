@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:reef_mobile_app/service/JsApiService.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -13,7 +15,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Reef Chain Wallet',
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -26,7 +28,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'Reef demo'),
     );
   }
 }
@@ -52,24 +54,41 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+  String _tokens = '';
   final jsApiService = JsApiService();
 
   _MyHomePageState(){
-    String cachedAddress = 'lastSavedAddr';
-    jsApiService.jsCall('appState.selectAddressSubj.next("$cachedAddress")');
-    jsApiService.jsMessageUnknownSubj.listen((value) {
+    /*var signersList = [{
+      name: 'test',
+      signer: {} as Signer,
+      balance: BigNumber.from('0'),
+      address: '5EUWG6tCA9S8Vw6YpctbPHdSrj95d18uNhRqgDniW3g9ZoYc',
+      evmAddress: '',
+      isEvmClaimed: false,
+      source: 'mobileApp',
+      genesisHash: undefined
+    }]
+    jsApiService.jsCall('account.injectSigners($signersList)');*/
+    /* TODO set from last saved address*/
+    // String cachedAddress = '5EUWG6tCA9S8Vw6YpctbPHdSrj95d18uNhRqgDniW3g9ZoYc';
+    // jsApiService.jsCall('appState.setCurrentAddress("$cachedAddress")');
+    jsApiService.jsMessageUnknownSubj.listen((JsApiMessage value) {
       if(value.id == 'appState.currentAddress'){
-        print(" TODO save address to cache");
+        print(" TODO save address to cache ${value.value}");
         return;
       }
-      print('jsMSG=${value.id}');
+      print('jsMSG not handled id=${value.id}');
     });
 
     jsApiService.jsObservableStream('account.selectedSigner\$').listen((signer) {
       print('SEL Signer=$signer');
     });
-    jsApiService.jsObservableStream('appState.selectedSignerTokenBalances\$').listen((signer) {
-      print('TKNS=$signer');
+    jsApiService.jsObservableStream('appState.selectedSignerTokenBalances\$').listen((tokens) {
+      var tkns = tokens.map(( t)=>t['symbol']);
+      print('TKNS=${tkns}');
+      setState(() {
+        _tokens = tkns.toString();
+      });
     });
 
   }
@@ -121,6 +140,9 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             jsApiService.widget,
+            Text(
+              'tokens:$_tokens',
+            ),
             const Text(
               'You have pushed the button this many times:',
             ),
