@@ -1,18 +1,16 @@
 import * as accountApi from "./accountApi";
-import {appState, availableNetworks, Network, ReefSigner} from "@reef-defi/react-lib";
+import {appState, AvailableNetworks, availableNetworks, Network, ReefSigner} from "@reef-defi/react-lib";
 import {BigNumber} from "ethers";
 import {FlutterJS} from "./FlutterJS";
 
 export const initFlutterApi = (flutterJS: FlutterJS) => {
     try {
         (window as any).jsApi = {
-            availableNetworks:JSON.stringify(availableNetworks),
-            initReefState: (network: Network, signers: ReefSigner[]) => {
-                console.log("IIIIII=",network.name);
-                /*appState.initReefState({
-                    network,
+            initReefState: (network: AvailableNetworks, signers: ReefSigner[]) => {
+                appState.initReefState({
+                    network: availableNetworks[network],
                     signers
-                });*/
+                });
             }
         };
         // testReefObservables();

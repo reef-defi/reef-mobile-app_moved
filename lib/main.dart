@@ -59,6 +59,7 @@ class _MyHomePageState extends State<MyHomePage> {
   String _tokens = '';
   final jsApiService = JsApiService();
 
+
   _MyHomePageState(){
     _initReefState();
   }
@@ -66,7 +67,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void _initReefState()async{
     var injectSigners = [{
       "name": 'test',
-      "signer": {},
+      "signer": '',
       "balance": '123000000000000000000',
       "address": '5EUWG6tCA9S8Vw6YpctbPHdSrj95d18uNhRqgDniW3g9ZoYc',
       "evmAddress": '',
@@ -74,17 +75,13 @@ class _MyHomePageState extends State<MyHomePage> {
       "source": 'mobileApp',
       "genesisHash": 'undefined'
     }];
-    var availableNetworks = jsonDecode(await jsApiService.jsCall('jsApi.availableNetworks'));
-    jsApiService.jsCall('jsApi.initReefState($availableNetworks["mainnet"], $injectSigners)')
-        .onError((error, stackTrace) {
-    log('EEEEEEEEEEE=${error.toString()}',level: 0);
-    return '';
-    });
+    // var availableNetworks = jsonDecode(await jsApiService.jsCall('jsApi.availableNetworks'));
+    await jsApiService.jsCall('jsApi.initReefState("testnet", ${jsonEncode(injectSigners)})');
     /* TODO set from last saved address*/
     // String cachedAddress = '5EUWG6tCA9S8Vw6YpctbPHdSrj95d18uNhRqgDniW3g9ZoYc';
     // jsApiService.jsCall('appState.setCurrentAddress("$cachedAddress")');
 
-    // _initReefObservables();
+    _initReefObservables();
   }
 
   _initReefObservables(){

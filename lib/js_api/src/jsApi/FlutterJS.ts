@@ -31,14 +31,12 @@ export class FlutterJS {
     private overrideJSLogs(logIdentName: string) {
         window['console'].log = (...arg) => {
             this.postToFlutterStream(logIdentName, arg.map(a => {
-                if (a instanceof Object) {
+                if (a && a instanceof Object) {
                     try {
                         return JSON.stringify(a);
-                    } catch (err) {
-                        return a.toString();
-                    }
+                    } catch (err) {}
                 }
-                return a.toString();
+                return a?.toString();
             }).join(', '));
         }
     }
