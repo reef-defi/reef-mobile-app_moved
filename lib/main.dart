@@ -5,8 +5,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:reef_mobile_app/service/JsApiService.dart';
-import 'package:reef_mobile_app/service/ReefStateCtrl.dart';
-import 'package:reef_mobile_app/service/tokens/TokensCtrl.dart';
+import 'package:reef_mobile_app/model/ReefState.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 void main() {
@@ -61,12 +60,12 @@ class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
   String _tokens = '';
   final jsApiService = JsApiService();
-  late ReefStateCtrl reefState;
+  late ReefState reefState;
 
 
   _MyHomePageState(){
     // TokensCtrl(jsApiService);
-    reefState = ReefStateCtrl(jsApiService);
+    reefState = ReefState(jsApiService);
   }
 
   /*void _initReefState()async{
@@ -159,7 +158,7 @@ class _MyHomePageState extends State<MyHomePage> {
           children: <Widget>[
             jsApiService.widget,
             Observer(builder: (_){
-              return Column(children: List.from(reefState.tokensCtrl.tokenList.tokens.map((t)=>Text('TKN=${t.symbol}'))),);
+              return Column(children: List.from(reefState.tokensCtrl.tokenList.tokens.map((t)=>Text('TKN=${t.symbol}'))));
             }),
             // Text(
             //   'tokens:${reefState.tokenList.tokens.length}',
