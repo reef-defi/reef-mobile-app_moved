@@ -1,4 +1,12 @@
+import 'dart:collection';
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:reef_mobile_app/service/JsApiService.dart';
+import 'package:reef_mobile_app/model/ReefState.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,7 +19,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Reef Chain Wallet',
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -24,7 +32,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'Reef demo'),
     );
   }
 }
@@ -45,12 +53,65 @@ class MyHomePage extends StatefulWidget {
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
+
 }
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+  String _tokens = '';
+  final jsApiService = JsApiService();
+  late ReefState reefState;
+
+
+  _MyHomePageState(){
+    // TokensCtrl(jsApiService);
+    reefState = ReefState(jsApiService);
+  }
+
+  /*void _initReefState()async{
+    var injectSigners = [{
+      "name": 'test',
+      "signer": '',
+      "balance": '123000000000000000000',
+      "address": '5EUWG6tCA9S8Vw6YpctbPHdSrj95d18uNhRqgDniW3g9ZoYc',
+      "evmAddress": '',
+      "isEvmClaimed": false,
+      "source": 'mobileApp',
+      "genesisHash": 'undefined'
+    }];
+    // var availableNetworks = jsonDecode(await jsApiService.jsCall('jsApi.availableNetworks'));
+    await jsApiService.jsCall('jsApi.initReefState("testnet", ${jsonEncode(injectSigners)})');
+    *//* TODO set from last saved address*//*
+    // String cachedAddress = '5EUWG6tCA9S8Vw6YpctbPHdSrj95d18uNhRqgDniW3g9ZoYc';
+    // jsApiService.jsCall('appState.setCurrentAddress("$cachedAddress")');
+
+    _initReefObservables();
+  }*/
+
+  /*_initReefObservables(){
+    jsApiService.jsMessageUnknownSubj.listen((JsApiMessage value) {
+      if(value.id == 'appState.currentAddress'){
+        print(" TODO save address to cache ${value.value}");
+        return;
+      }
+      print('jsMSG not handled id=${value.id}');
+    });
+
+    jsApiService.jsObservableStream('account.selectedSigner\$').listen((signer) {
+      print('SEL Signer=$signer');
+    });
+    jsApiService.jsObservableStream('appState.selectedSignerTokenBalances\$').listen((tokens) {
+      var tkns = tokens.map(( t)=>t['symbol']);
+      print('TKNS=${tkns}');
+      setState(() {
+        _tokens = tkns.toString();
+      });
+    });
+
+  }*/
 
   void _incrementCounter() {
+    // _api.getReefVals().then((value) => print('JS VALS=${value}'));
     setState(() {
       // This call to setState tells the Flutter framework that something has
       // changed in this State, which causes it to rerun the build method below
@@ -95,6 +156,13 @@ class _MyHomePageState extends State<MyHomePage> {
           // horizontal).
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            jsApiService.widget,
+            Observer(builder: (_){
+              return Column(children: List.from(reefState.tokensCtrl.tokenList.tokens.map((t)=>Text('TKN=${t.symbol}'))));
+            }),
+            // Text(
+            //   'tokens:${reefState.tokenList.tokens.length}',
+            // ),
             const Text(
               'You have pushed the button this many times:',
             ),
