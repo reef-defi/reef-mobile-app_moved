@@ -3,7 +3,10 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:reef_mobile_app/service/JsApiService.dart';
+import 'package:reef_mobile_app/service/ReefStateCtrl.dart';
+import 'package:reef_mobile_app/service/tokens/TokensCtrl.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 void main() {
@@ -58,13 +61,15 @@ class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
   String _tokens = '';
   final jsApiService = JsApiService();
+  late ReefStateCtrl reefState;
 
 
   _MyHomePageState(){
-    _initReefState();
+    // TokensCtrl(jsApiService);
+    reefState = ReefStateCtrl(jsApiService);
   }
 
-  void _initReefState()async{
+  /*void _initReefState()async{
     var injectSigners = [{
       "name": 'test',
       "signer": '',
@@ -77,14 +82,14 @@ class _MyHomePageState extends State<MyHomePage> {
     }];
     // var availableNetworks = jsonDecode(await jsApiService.jsCall('jsApi.availableNetworks'));
     await jsApiService.jsCall('jsApi.initReefState("testnet", ${jsonEncode(injectSigners)})');
-    /* TODO set from last saved address*/
+    *//* TODO set from last saved address*//*
     // String cachedAddress = '5EUWG6tCA9S8Vw6YpctbPHdSrj95d18uNhRqgDniW3g9ZoYc';
     // jsApiService.jsCall('appState.setCurrentAddress("$cachedAddress")');
 
     _initReefObservables();
-  }
+  }*/
 
-  _initReefObservables(){
+  /*_initReefObservables(){
     jsApiService.jsMessageUnknownSubj.listen((JsApiMessage value) {
       if(value.id == 'appState.currentAddress'){
         print(" TODO save address to cache ${value.value}");
@@ -104,7 +109,7 @@ class _MyHomePageState extends State<MyHomePage> {
       });
     });
 
-  }
+  }*/
 
   void _incrementCounter() {
     // _api.getReefVals().then((value) => print('JS VALS=${value}'));
@@ -153,9 +158,12 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             jsApiService.widget,
-            Text(
-              'tokens:$_tokens',
-            ),
+            Observer(builder: (_){
+              return Column(children: List.from(reefState.tokensCtrl.tokenList.tokens.map((t)=>Text('TKN=${t.symbol}'))),);
+            }),
+            // Text(
+            //   'tokens:${reefState.tokenList.tokens.length}',
+            // ),
             const Text(
               'You have pushed the button this many times:',
             ),
