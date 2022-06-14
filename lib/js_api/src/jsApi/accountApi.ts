@@ -4,9 +4,9 @@ import {map} from "rxjs/operators";
 
 export const innitApi = (flutterJS: FlutterJS) => {
     // post selected address as appState.currentAddress
-    appState.currentAddress$.subscribe({
-        next: (addr) => flutterJS.postToFlutterStream('appState.currentAddress', addr)
-    });
+    // appState.currentAddress$.subscribe({
+    //     next: (addr) => flutterJS.postToFlutterStream('appState.currentAddress', addr)
+    // });
 
     // account.selectedSigner$ without signer object from ReefSigner
     (window as any).account = {
