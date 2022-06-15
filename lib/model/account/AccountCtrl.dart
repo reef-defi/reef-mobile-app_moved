@@ -17,7 +17,7 @@ class AccountCtrl {
   }
 
   void initJsObservables(JsApiService jsApi, StorageService storage) {
-    jsApi.jsObservableStream('account.selectedSigner\$').listen(( signer) async {
+    jsApi.jsObservable('account.selectedSigner\$').listen(( signer) async {
       print('SEL Signer=$signer');
       LinkedHashMap s=signer;
       await storage.setValue(StorageKey.selected_address.name, s['address']);

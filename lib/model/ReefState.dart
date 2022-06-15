@@ -36,7 +36,6 @@ class ReefState{
     }];
     // var availableNetworks = jsonDecode(await jsApiService.jsCall('jsApi.availableNetworks'));
     await jsApiService.jsCall('jsApi.initReefState("testnet", ${jsonEncode(injectSigners)})');
-
   }
 
   _initReefObservables(JsApiService jsApiService) async {

@@ -113,7 +113,11 @@ class _MyHomePageState extends State<MyHomePage> {
           // horizontal).
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            jsApiService.widget,
+            Container(
+              width: 100.0,
+              height: 100.0,
+              child: jsApiService.widget,
+            ),
             Observer(builder: (_){
               if(reefState.accountCtrl.account.selectedSigner!=null){
                 return Text(reefState.accountCtrl.account.selectedSigner!.address);

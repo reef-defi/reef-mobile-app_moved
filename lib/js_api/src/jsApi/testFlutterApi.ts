@@ -12,6 +12,7 @@ export function testMethods() {
         // return {id:'123', value:{works:'ok', param}};
         return param + '_ok';
     }
+    window['futureFn'] = (val) => Promise.resolve('Promise =' + val);
 }
 
 export function testReefObservables() {
