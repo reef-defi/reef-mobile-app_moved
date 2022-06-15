@@ -15,19 +15,6 @@ export const initFlutterApi = (flutterJS: FlutterJS) => {
         };
         // testReefObservables();
         accountApi.innitApi(flutterJS);
-        /*appState.initReefState({
-            network: availableNetworks.testnet,
-            signers: [{
-                name: 'test',
-                signer: {} as Signer,
-                balance: BigNumber.from('0'),
-                address: '5EUWG6tCA9S8Vw6YpctbPHdSrj95d18uNhRqgDniW3g9ZoYc',
-                evmAddress: '',
-                isEvmClaimed: false,
-                source: 'mobileApp',
-                genesisHash: undefined
-            } as ReefSigner]
-        });*/
     } catch (e) {
         console.log("INIT ERROR=", e.message);
     }
