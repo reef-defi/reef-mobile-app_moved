@@ -10,7 +10,7 @@ class TokenCtrl {
   TokenCtrl(JsApiService jsApi){
 
 
-    jsApi.jsObservableStream('appState.selectedSignerTokenBalances\$').listen((tokens) {
+    jsApi.jsObservable('appState.selectedSignerTokenBalances\$').listen((tokens) {
       var tkns = tokens.map(( t)=>t['symbol']);
       print('TKNS=${tkns}');
       List<Token> tknList = List.from(tkns.map((t)=>Token(t)));

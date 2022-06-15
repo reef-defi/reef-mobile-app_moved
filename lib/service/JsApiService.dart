@@ -32,8 +32,6 @@ class JsApiService {
 
   JsApiService() {
     controllerInit.future.then((ctrl) => _loadJs(ctrl, 'lib/js_api/dist/index.js'));
-    // jsCall('window.testApi("hey")').then((value) => print('JS RES=${value}'));
-    // jsObservableStream('testObs').listen((event) =>print('STR= ${event}'));
   }
 
   Future<String> jsCall(String executeJs) {
@@ -41,7 +39,11 @@ class JsApiService {
         .then((ctrl) => ctrl.runJavascriptReturningResult(executeJs));
   }
 
-  Stream jsObservableStream(String jsObsRefName) {
+  Future jsPromise(String jsObsRefName) {
+    return jsObservable(jsObsRefName).first;
+  }
+
+  Stream jsObservable(String jsObsRefName) {
     String ident = Random(DateTime.now().millisecondsSinceEpoch)
         .nextInt(9999999)
         .toString();

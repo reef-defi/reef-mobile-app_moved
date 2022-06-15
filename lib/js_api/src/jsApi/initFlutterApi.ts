@@ -1,6 +1,5 @@
 import * as accountApi from "./accountApi";
 import {appState, AvailableNetworks, availableNetworks, Network, ReefSigner} from "@reef-defi/react-lib";
-import {BigNumber} from "ethers";
 import {FlutterJS} from "./FlutterJS";
 
 export const initFlutterApi = (flutterJS: FlutterJS) => {
@@ -11,7 +10,7 @@ export const initFlutterApi = (flutterJS: FlutterJS) => {
                     network: availableNetworks[network],
                     signers
                 });
-            }
+            },
         };
         // testReefObservables();
         accountApi.innitApi(flutterJS);
