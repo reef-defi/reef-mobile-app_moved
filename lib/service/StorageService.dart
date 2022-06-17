@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:hive/hive.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:reef_mobile_app/model/account/stored_account.dart';
 
 class StorageService {
   Completer<Box<dynamic>> box = Completer();
@@ -26,7 +27,9 @@ class StorageService {
   _initHive() async {
     var dir = await getApplicationDocumentsDirectory();
     var path = dir.path+"/hive_store";
-    Hive..init(path);
+    Hive
+      ..init(path)
+      ..registerAdapter(StoredAccountAdapter());
     // ..registerAdapter(PersonAdapter());
     box.complete(Hive.openBox('ReefChainBox'));
   }
@@ -35,10 +38,7 @@ class StorageService {
     var status = await Permission.storage.status;
     print('PERMISSION STORAGE=$status');
     if (status.isDenied) {
-      print('PERMISSION STORAGE=DENIED');
       // We didn't ask for permission yet or the permission has been denied before but not permanently.
-      // TODO ask for permission
-      await Permission.storage.request();
       if (await Permission.storage.request().isGranted) {
         print("PERMISSION GRANTED");
       } else {

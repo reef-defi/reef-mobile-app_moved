@@ -58,18 +58,15 @@ function checkMnemonicValid(mnemonic: string): boolean {
 /**
  * get address and avatar from mnemonic.
  */
-function addressFromMnemonic(mnemonic: string) {
+function addressFromMnemonic(mnemonic: string): string {
     let keyPair: KeyringPair;
     try {
         keyPair = keyring.addFromMnemonic(mnemonic, {}, CRYPTO_TYPE);
         const address = encodeAddress(keyPair.publicKey, SS58_FORMAT);
-        const icons = genIcons([address]);
-        return {
-            address,
-            svg: icons[0][1],
-        };
+        // const icons = genIcons([address]);
+        return address; // svg: icons[0][1],
     } catch (err: any) {
-        return { error: err.message };
+        return null;
     }
 }
 

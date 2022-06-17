@@ -55,7 +55,6 @@ class MyHomePage extends StatefulWidget {
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
-
 }
 
 class _MyHomePageState extends State<MyHomePage> {
@@ -64,19 +63,24 @@ class _MyHomePageState extends State<MyHomePage> {
   final storageService = StorageService();
   late ReefState reefState;
 
-
-  _MyHomePageState(){
+  _MyHomePageState() {
     reefState = ReefState(jsApiService, storageService);
   }
 
   void _navigateAccounts() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const AccountPage()),
+      MaterialPageRoute(builder: (context) => AccountPage(jsApiService, storageService)),
     );
   }
 
   void _incrementCounter() async {
+    var res = await jsApiService.jsCall('appState');
+    print(res);
+
+    var res2 = await jsApiService.jsCall('keyring.checkMnemonicValid("test")');
+    print(res2);
+
     setState(() {
       // This call to setState tells the Flutter framework that something has
       // changed in this State, which causes it to rerun the build method below
@@ -126,14 +130,17 @@ class _MyHomePageState extends State<MyHomePage> {
               height: 100.0,
               child: jsApiService.widget,
             ),
-            Observer(builder: (_){
-              if(reefState.accountCtrl.account.selectedSigner!=null){
-                return Text(reefState.accountCtrl.account.selectedSigner!.address);
+            Observer(builder: (_) {
+              if (reefState.accountCtrl.account.selectedSigner != null) {
+                return Text(
+                    reefState.accountCtrl.account.selectedSigner!.address);
               }
               return Text('loading signer');
             }),
-            Observer(builder: (_){
-              return Column(children: List.from(reefState.tokensCtrl.tokenList.tokens.map((t)=>Text('TKN=${t.symbol}'))));
+            Observer(builder: (_) {
+              return Column(
+                  children: List.from(reefState.tokensCtrl.tokenList.tokens
+                      .map((t) => Text('TKN=${t.symbol}'))));
             }),
             const Text(
               'You have pushed the button this many times:',
