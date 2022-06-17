@@ -35,8 +35,15 @@ class StorageService {
     var status = await Permission.storage.status;
     print('PERMISSION STORAGE=$status');
     if (status.isDenied) {
+      print('PERMISSION STORAGE=DENIED');
       // We didn't ask for permission yet or the permission has been denied before but not permanently.
       // TODO ask for permission
+      await Permission.storage.request();
+      if (await Permission.storage.request().isGranted) {
+        print("PERMISSION GRANTED");
+      } else {
+        print("PERMISSION DENIED");
+      }
     }
     return status.isGranted;
   }

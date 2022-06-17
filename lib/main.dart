@@ -4,6 +4,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:reef_mobile_app/pages/accounts.dart';
 import 'package:reef_mobile_app/service/JsApiService.dart';
 import 'package:reef_mobile_app/model/ReefState.dart';
 import 'package:reef_mobile_app/service/StorageService.dart';
@@ -68,7 +69,14 @@ class _MyHomePageState extends State<MyHomePage> {
     reefState = ReefState(jsApiService, storageService);
   }
 
-  void _incrementCounter() {
+  void _navigateAccounts() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const AccountPage()),
+    );
+  }
+
+  void _incrementCounter() async {
     setState(() {
       // This call to setState tells the Flutter framework that something has
       // changed in this State, which causes it to rerun the build method below
@@ -134,6 +142,8 @@ class _MyHomePageState extends State<MyHomePage> {
               '$_counter',
               style: Theme.of(context).textTheme.headline4,
             ),
+            TextButton(
+                onPressed: _navigateAccounts, child: const Text('Accounts')),
           ],
         ),
       ),
