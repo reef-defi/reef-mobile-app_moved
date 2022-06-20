@@ -1,5 +1,3 @@
-// import { initWasm } from "@polkadot/wasm-crypto/initOnlyAsm";
-// import "@polkadot/wasm-crypto/initWasmAsm";
 import { Keyring } from "@polkadot/keyring";
 import {
     mnemonicGenerate,
@@ -13,24 +11,19 @@ import { polkadotIcon } from "@polkadot/ui-shared";
 
 const CRYPTO_TYPE: KeypairType = "sr25519";
 const SS58_FORMAT = 42;
+const keyring = new Keyring({ type: CRYPTO_TYPE, ss58Format: SS58_FORMAT });
 
-let keyring = new Keyring({ type: CRYPTO_TYPE, ss58Format: SS58_FORMAT });
-
-async function callCryptoWaitReady() {
+/**
+ * Initializes WASM interface.
+ */
+async function init() {
     return await cryptoWaitReady();
-    // return await initWasm();
 }
 
 /**
  * Generate a set of new mnemonic.
  */
-async function gen() {
-    // TODO put in another place?
-    // we only need to do this once per app, somewhere in our init code
-    // (when using the API and waiting on `isReady` this is done automatically)
-    await cryptoWaitReady();
-    // await initWasm();
-
+async function gen() {    
     const key = mnemonicGenerate();
 
     if (!mnemonicValidate(key)) return null;
@@ -38,8 +31,6 @@ async function gen() {
     const keyPair = keyring.addFromMnemonic(key, {}, CRYPTO_TYPE);
     const address = encodeAddress(keyPair.publicKey, SS58_FORMAT);
     const icons = genIcons([address]);
-
-    console.log(`address created: ${address}`);
 
     return {
         mnemonic: key,
@@ -49,22 +40,26 @@ async function gen() {
 }
 
 /**
- * mnemonic validate.
+ * Mnemonic validate.
  */
 function checkMnemonicValid(mnemonic: string): boolean {
     return mnemonicValidate(mnemonic);
 }
 
 /**
- * get address and avatar from mnemonic.
+ * Get address and avatar from mnemonic.
  */
-function addressFromMnemonic(mnemonic: string): string {
+async function addressFromMnemonic(mnemonic: string) {
     let keyPair: KeyringPair;
     try {
         keyPair = keyring.addFromMnemonic(mnemonic, {}, CRYPTO_TYPE);
         const address = encodeAddress(keyPair.publicKey, SS58_FORMAT);
-        // const icons = genIcons([address]);
-        return address; // svg: icons[0][1],
+        const icons = genIcons([address]);
+        return {
+            mnemonic: mnemonic,
+            address,
+            svg: icons[0][1],
+        };
     } catch (err: any) {
         return null;
     }
@@ -85,7 +80,7 @@ function addressFromMnemonic(mnemonic: string): string {
 }
 
 export default {
-    callCryptoWaitReady,
+    init,
     gen,
     checkMnemonicValid,
     addressFromMnemonic,

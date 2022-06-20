@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:reef_mobile_app/model/StorageKey.dart';
+import 'package:reef_mobile_app/model/account/account.dart';
 import 'package:reef_mobile_app/model/account/stored_account.dart';
 import 'package:reef_mobile_app/service/JsApiService.dart';
 import 'package:reef_mobile_app/service/StorageService.dart';
@@ -26,15 +27,18 @@ class _AccountPageState extends State<AccountPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            TextButton(onPressed: initWasm, child: const Text('Init WASM')),
-            TextButton(onPressed: test, child: const Text('Test')),
+            TextButton(
+                onPressed: _callAccountFromMnemonic,
+                child: const Text('Account from mnemonic')),
             TextButton(
                 onPressed: generateAccount,
                 child: const Text('Generate Account')),
             TextButton(
-                onPressed: _callSaveAccount, child: const Text('Add Account')),
+                onPressed: generateAndSaveAccount,
+                child: const Text('Generate and Save Account')),
             TextButton(
-                onPressed: getAccount, child: const Text('Get Accounts')),
+                onPressed: _callSaveAccount, child: const Text('Add Account')),
+            TextButton(onPressed: getAccount, child: const Text('Get Account')),
             TextButton(
                 onPressed: deleteAccount, child: const Text('Delete Account')),
           ],
@@ -43,36 +47,36 @@ class _AccountPageState extends State<AccountPage> {
     );
   }
 
-  void initWasm() async {
-    var res = await widget.jsApiService.jsPromise('keyring.callCryptoWaitReady()');
-    print("res: ${res}");
-  }
-
-  void test() async {
+  void _callAccountFromMnemonic() async {
     const mnemonic =
         'debris pink stairs furnace rescue toddler face finger vast trash repair bone';
-    checkMnemonicValid(mnemonic);
-    // addressFromMnemonic(mnemonic);
+    accountFromMnemonic(mnemonic);
   }
 
   void generateAccount() async {
-    var res = await widget.jsApiService.jsPromise('keyring.gen()');
-    print("res: ${res}");
+    var account = await widget.jsApiService.jsPromise('keyring.gen()');
+    print("account created: ${account}");
+  }
+
+  void generateAndSaveAccount() async {
+    var account = await widget.jsApiService.jsPromise('keyring.gen()');
+    print("account created: ${account}");
+
+    // TODO
   }
 
   void checkMnemonicValid(String mnemonic) async {
     var valid = await widget.jsApiService
-        .jsCall('keyring.checkMnemonicValid("${mnemonic}")');
-    print("valid: ${valid}");
+        .jsPromise('keyring.checkMnemonicValid("${mnemonic}")');
+    print("is valid: ${valid}");
   }
 
-  /// Returns the address of the account with the given mnemonic 
-  void addressFromMnemonic(String mnemonic) async {
+  /// Returns the address of the account with the given mnemonic
+  void accountFromMnemonic(String mnemonic) async {
     var address = await widget.jsApiService
-        .jsCall('keyring.addressFromMnemonic("${mnemonic}")');
-    print("address: ${address}");
+        .jsPromise('keyring.addressFromMnemonic("${mnemonic}")');
+    print("account from mnemonic: ${address}");
   }
-
 
   void _callSaveAccount() {
     saveAccount(

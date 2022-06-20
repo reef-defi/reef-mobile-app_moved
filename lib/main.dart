@@ -75,12 +75,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _incrementCounter() async {
-    var res = await jsApiService.jsCall('appState');
-    print(res);
-
-    var res2 = await jsApiService.jsCall('keyring.checkMnemonicValid("test")');
-    print(res2);
-
     setState(() {
       // This call to setState tells the Flutter framework that something has
       // changed in this State, which causes it to rerun the build method below

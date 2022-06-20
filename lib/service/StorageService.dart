@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:hive/hive.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:reef_mobile_app/model/account/account.dart';
 import 'package:reef_mobile_app/model/account/stored_account.dart';
 
 class StorageService {
@@ -30,7 +31,6 @@ class StorageService {
     Hive
       ..init(path)
       ..registerAdapter(StoredAccountAdapter());
-    // ..registerAdapter(PersonAdapter());
     box.complete(Hive.openBox('ReefChainBox'));
   }
 
