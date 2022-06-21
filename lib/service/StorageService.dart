@@ -1,10 +1,11 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:hive/hive.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:reef_mobile_app/model/account/account.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:reef_mobile_app/model/account/stored_account.dart';
 
 class StorageService {
@@ -31,7 +32,17 @@ class StorageService {
     Hive
       ..init(path)
       ..registerAdapter(StoredAccountAdapter());
-    box.complete(Hive.openBox('ReefChainBox'));
+    
+    // Encryption
+    const secureStorage = FlutterSecureStorage();
+    var containsEncryptionKey = await secureStorage.containsKey(key: 'encryptionKey');
+    if (!containsEncryptionKey) {
+      var key = Hive.generateSecureKey();
+      await secureStorage.write(key: 'encryptionKey', value: base64UrlEncode(key));
+    }
+    var key = await secureStorage.read(key: 'encryptionKey');
+    var encryptionKey = base64Url.decode(key!);
+    box.complete(Hive.openBox('ReefChainBoxEncrypted', encryptionCipher: HiveAesCipher(encryptionKey)));
   }
 
   Future<bool> _checkPermission() async {
