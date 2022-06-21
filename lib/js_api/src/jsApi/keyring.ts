@@ -13,17 +13,23 @@ const CRYPTO_TYPE: KeypairType = "sr25519";
 const SS58_FORMAT = 42;
 const keyring = new Keyring({ type: CRYPTO_TYPE, ss58Format: SS58_FORMAT });
 
+interface Account {
+    mnemonic: string;
+    address: string;
+    svg: string;
+}
+
 /**
  * Initializes WASM interface.
  */
-async function init() {
+async function init(): Promise<boolean> {
     return await cryptoWaitReady();
 }
 
 /**
  * Generate a set of new mnemonic.
  */
-async function gen() {    
+async function gen(): Promise<string> {    
     const key = mnemonicGenerate();
 
     if (!mnemonicValidate(key)) return null;
@@ -32,11 +38,12 @@ async function gen() {
     const address = encodeAddress(keyPair.publicKey, SS58_FORMAT);
     const icons = genIcons([address]);
 
-    return {
+    const account: Account = {
         mnemonic: key,
         address,
         svg: icons[0][1],
     };
+    return JSON.stringify(account);
 }
 
 /**
@@ -49,17 +56,19 @@ function checkMnemonicValid(mnemonic: string): boolean {
 /**
  * Get address and avatar from mnemonic.
  */
-async function addressFromMnemonic(mnemonic: string) {
+async function addressFromMnemonic(mnemonic: string): Promise<string> {
     let keyPair: KeyringPair;
     try {
         keyPair = keyring.addFromMnemonic(mnemonic, {}, CRYPTO_TYPE);
         const address = encodeAddress(keyPair.publicKey, SS58_FORMAT);
         const icons = genIcons([address]);
-        return {
-            mnemonic: mnemonic,
+
+        const account: Account = {
+            mnemonic,
             address,
             svg: icons[0][1],
         };
+        return JSON.stringify(account);
     } catch (err: any) {
         return null;
     }

@@ -1,4 +1,5 @@
 import 'package:hive/hive.dart';
+import 'dart:convert';
 
 part 'stored_account.g.dart';
 
@@ -12,5 +13,13 @@ class StoredAccount extends HiveObject {
 
   @HiveField(2)
   late String svg;
-}
 
+  static StoredAccount fromString(String jsonString) {
+    var jsonObject = json.decode(jsonString);
+
+    return StoredAccount()
+      ..mnemonic = jsonObject['mnemonic']
+      ..address = jsonObject['address']
+      ..svg = jsonObject['svg'];
+  }
+}

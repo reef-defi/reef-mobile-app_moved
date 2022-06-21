@@ -37,7 +37,7 @@ class _AccountPageState extends State<AccountPage> {
                 onPressed: generateAndSaveAccount,
                 child: const Text('Generate and Save Account')),
             TextButton(
-                onPressed: _callSaveAccount, child: const Text('Add Account')),
+                onPressed: _callSaveAccount, child: const Text('Save Account')),
             TextButton(onPressed: getAccount, child: const Text('Get Account')),
             TextButton(
                 onPressed: deleteAccount, child: const Text('Delete Account')),
@@ -54,15 +54,19 @@ class _AccountPageState extends State<AccountPage> {
   }
 
   void generateAccount() async {
-    var account = await widget.jsApiService.jsPromise('keyring.gen()');
-    print("account created: ${account}");
+    var response = await widget.jsApiService.jsPromise('keyring.gen()');
+    print("response: ${response}");
+
+    var account = StoredAccount.fromString(response);
+    print("account generated: ${account.address}");
   }
 
   void generateAndSaveAccount() async {
-    var account = await widget.jsApiService.jsPromise('keyring.gen()');
-    print("account created: ${account}");
+    var response = (await widget.jsApiService.jsPromise('keyring.gen()'));
+    print("account created: ${response}");
 
-    // TODO
+    var account = StoredAccount.fromString(response);
+    saveAccount(account);
   }
 
   void checkMnemonicValid(String mnemonic) async {
@@ -73,25 +77,24 @@ class _AccountPageState extends State<AccountPage> {
 
   /// Returns the address of the account with the given mnemonic
   void accountFromMnemonic(String mnemonic) async {
-    var address = await widget.jsApiService
+    var response = await widget.jsApiService
         .jsPromise('keyring.addressFromMnemonic("${mnemonic}")');
-    print("account from mnemonic: ${address}");
+
+    var account = StoredAccount.fromString(response);
+    print("account from mnemonic: ${account.address}");
   }
 
   void _callSaveAccount() {
-    saveAccount(
-        "debris pink stairs furnace rescue toddler face finger vast trash repair bone",
-        "5HgkDz5N1L1PvwSZVDkdZ2fgBAWu6kAHYruH1QvCL3DvwRQj",
-        "<svg></svg>");
+    final account = StoredAccount()
+      ..mnemonic =  "debris pink stairs furnace rescue toddler face finger vast trash repair bone"
+      ..address = "5HgkDz5N1L1PvwSZVDkdZ2fgBAWu6kAHYruH1QvCL3DvwRQj"
+      ..svg = "<svg></svg>";
+
+    saveAccount(account);
   }
 
   /// Save account to storage
-  Future saveAccount(String mnemonic, String address, String svg) async {
-    final account = StoredAccount()
-      ..mnemonic = mnemonic
-      ..address = address
-      ..svg = svg;
-
+  Future saveAccount(StoredAccount account) async {
     await widget.storageService.setValue(StorageKey.account.name, account);
     print("Saved account ${account.address}.");
   }
