@@ -1,3 +1,4 @@
 enum StorageKey{
-  selected_address;
+  selected_address,
+  account;
 }
