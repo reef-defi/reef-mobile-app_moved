@@ -38,9 +38,10 @@ class _AccountPageState extends State<AccountPage> {
                 child: const Text('Generate and Save Account')),
             TextButton(
                 onPressed: _callSaveAccount, child: const Text('Save Account')),
-            TextButton(onPressed: getAccount, child: const Text('Get Account')),
+            TextButton(onPressed: _callGetAccount, child: const Text('Get Account')),
+            TextButton(onPressed: getAllAccounts, child: const Text('Get All Accounts')),
             TextButton(
-                onPressed: deleteAccount, child: const Text('Delete Account')),
+                onPressed: _callDeleteAccount, child: const Text('Delete Account')),
           ],
         ),
       ),
@@ -86,24 +87,48 @@ class _AccountPageState extends State<AccountPage> {
 
   void _callSaveAccount() {
     final account = StoredAccount()
-      ..mnemonic =  "debris pink stairs furnace rescue toddler face finger vast trash repair bone"
+      ..mnemonic =
+          "debris pink stairs furnace rescue toddler face finger vast trash repair bone"
       ..address = "5HgkDz5N1L1PvwSZVDkdZ2fgBAWu6kAHYruH1QvCL3DvwRQj"
       ..svg = "<svg></svg>";
 
     saveAccount(account);
   }
 
-  /// Save account to storage
-  Future saveAccount(StoredAccount account) async {
-    await widget.storageService.setValue(StorageKey.account.name, account);
-    print("Saved account ${account.address}.");
+  void _callGetAccount() {
+    const address = "5HgkDz5N1L1PvwSZVDkdZ2fgBAWu6kAHYruH1QvCL3DvwRQj";
+    getAccount(address);
   }
 
-  /// Get all account from storage
-  Future<StoredAccount?> getAccount() async {
-    var account = await widget.storageService.getValue(StorageKey.account.name);
+  void _callDeleteAccount() {
+    const address = "5HgkDz5N1L1PvwSZVDkdZ2fgBAWu6kAHYruH1QvCL3DvwRQj";
+    deleteAccount(address);
+  }
+
+  /// Save account to storage
+  Future saveAccount(StoredAccount account) async {
+    await widget.storageService.saveAccount(account);
+    print("Saved account ${account.address}.");
+  }
+  /// Get all accounts from storage
+  Future<List<StoredAccount>?> getAllAccounts() async {
+    var accounts = await widget.storageService.getAllAccounts();
+    if (accounts.isEmpty) {
+      print("No accounts found.");
+      return null;
+    }
+    print("Found ${accounts.length} accounts:");
+    accounts.forEach((account) {
+      print("  ${account.address}");
+    });
+    return accounts;
+  }
+
+  /// Get account from storage
+  Future<StoredAccount?> getAccount(String address) async {
+    var account = await widget.storageService.getAccount(address);
     if (account == null) {
-      print("No account found.");
+      print("Account not found.");
       return null;
     }
     print("Fetched account ${account.address}.");
@@ -111,8 +136,8 @@ class _AccountPageState extends State<AccountPage> {
   }
 
   /// Delete account from storage
-  void deleteAccount() async {
-    var account = await getAccount();
+  void deleteAccount(String address) async {
+    var account = await getAccount(address);
     if (account != null) {
       account.delete();
       print("Deleted accont ${account.address}.");
