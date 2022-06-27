@@ -31,7 +31,8 @@ class JsApiService {
   Future<WebViewController> get _controller => jsApiReady.future;
 
   JsApiService() {
-    controllerInit.future.then((ctrl) => _loadJs(ctrl, 'lib/js_api/dist/index.js'));
+    controllerInit.future
+        .then((ctrl) => _loadJs(ctrl, 'lib/js_api/dist/index.js'));
   }
 
   Future<String> jsCall(String executeJs) {
@@ -65,7 +66,7 @@ class JsApiService {
     <script>${jsScript}</script>
     <script>window.flutterJS.init( '$REEF_MOBILE_CHANNEL_NAME', '$LOG_MSG_IDENT', '$FLUTTER_SUBSCRIBE_METHOD_NAME', '$API_READY_MSG_IDENT')</script>
     </head><body></body></html>""";
-    ctrl.loadHtmlString(htmlString).then((value) => ctrl).catchError((err){
+    ctrl.loadHtmlString(htmlString).then((value) => ctrl).catchError((err) {
       print('Error loading HTML=$err');
     });
   }
@@ -79,9 +80,9 @@ class JsApiService {
               JsApiMessage.fromJson(jsonDecode(message.message));
           if (apiMsg.id == LOG_MSG_IDENT) {
             print('$LOG_MSG_IDENT= ${apiMsg.value}');
-          }else if (apiMsg.id == API_READY_MSG_IDENT) {
+          } else if (apiMsg.id == API_READY_MSG_IDENT) {
             jsApiLoaded.future.then((ctrl) => jsApiReady.complete(ctrl));
-          } else if (int.tryParse(apiMsg.id)==null){
+          } else if (int.tryParse(apiMsg.id) == null) {
             jsMessageUnknownSubj.add(apiMsg);
           } else {
             jsMessageSubj.add(apiMsg);

@@ -27,6 +27,7 @@ class _AccountPageState extends State<AccountPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            TextButton(onPressed: sign, child: const Text('Sign')),
             TextButton(
                 onPressed: _callAccountFromMnemonic,
                 child: const Text('Account from mnemonic')),
@@ -38,14 +39,44 @@ class _AccountPageState extends State<AccountPage> {
                 child: const Text('Generate and Save Account')),
             TextButton(
                 onPressed: _callSaveAccount, child: const Text('Save Account')),
-            TextButton(onPressed: _callGetAccount, child: const Text('Get Account')),
-            TextButton(onPressed: getAllAccounts, child: const Text('Get All Accounts')),
             TextButton(
-                onPressed: _callDeleteAccount, child: const Text('Delete Account')),
+                onPressed: _callGetAccount, child: const Text('Get Account')),
+            TextButton(
+                onPressed: getAllAccounts,
+                child: const Text('Get All Accounts')),
+            TextButton(
+                onPressed: _callDeleteAccount,
+                child: const Text('Delete Account')),
           ],
         ),
       ),
     );
+  }
+
+  void sign() async {
+    const mnemonic =
+        'control employ home citizen film salmon divorce cousin illegal episode certain olympic';
+    const address = "0x7Ca7886e0b851e6458770BC1d85Feb6A5307b9a2";
+    
+    var response = await widget.jsApiService.jsPromise(
+        'accountManager.Signer.signAndSend("${mnemonic}", {method: "signExtrinsic", params: ["${address}", { method: "balances.transferKeepAlive(dest, value)", module: "balances", call: "transferKeepAlive", params: ["5FX42URyoa9mfFTwoLiWrprxvgCsaA81AssRLw2dDj4HizST", "1000000000000000000"], tip: "0x00000000000000000000000000000000"}]})');
+    print("response: ${response}");
+
+    // var response = await widget.jsApiService.jsPromise(
+    //     'accountManager.Signer.sign("${mnemonic}", {method: "signExtrinsic", params: ["${address}", { method: "evm.call(target, input, value, gasLimit, storageLimit)", module: "evm", call: "call", params: ["0xd3202ee6077c7cc25eaea3ae11bec2cd731d19fc", "0x3d53e5f4000000000000000000000000000000000000000000000000000000000000003c00000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000de0b6b3a7640000", "0", "3,335,299", "2,000"], tip: "0x00000000000000000000000000000000"}]})');
+    // print("response: ${response}");
+  }
+
+  void getNetwork() async {
+    var response = await widget.jsApiService
+        .jsCall('accountManager.Network.currentNetwork');
+    print("response: ${response}");
+  }
+
+  void selectNetwork() async {
+    var response = await widget.jsApiService
+        .jsCall('accountManager.Network.selectNetwork("testnet")');
+    print("response: ${response}");
   }
 
   void _callAccountFromMnemonic() async {
@@ -55,7 +86,8 @@ class _AccountPageState extends State<AccountPage> {
   }
 
   void generateAccount() async {
-    var response = await widget.jsApiService.jsPromise('keyring.gen()');
+    var response = await widget.jsApiService
+        .jsPromise('accountManager.Keyring.generate()');
     print("response: ${response}");
 
     var account = StoredAccount.fromString(response);
@@ -63,7 +95,8 @@ class _AccountPageState extends State<AccountPage> {
   }
 
   void generateAndSaveAccount() async {
-    var response = (await widget.jsApiService.jsPromise('keyring.gen()'));
+    var response = (await widget.jsApiService
+        .jsPromise('accountManager.Keyring.generate()'));
     print("account created: ${response}");
 
     var account = StoredAccount.fromString(response);
@@ -71,15 +104,15 @@ class _AccountPageState extends State<AccountPage> {
   }
 
   void checkMnemonicValid(String mnemonic) async {
-    var valid = await widget.jsApiService
-        .jsPromise('keyring.checkMnemonicValid("${mnemonic}")');
+    var valid = await widget.jsApiService.jsPromise(
+        'accountManager.Keyring.checkMnemonicValid("${mnemonic}")');
     print("is valid: ${valid}");
   }
 
   /// Returns the address of the account with the given mnemonic
   void accountFromMnemonic(String mnemonic) async {
-    var response = await widget.jsApiService
-        .jsPromise('keyring.addressFromMnemonic("${mnemonic}")');
+    var response = await widget.jsApiService.jsPromise(
+        'accountManager.Keyring.accountFromMnemonic("${mnemonic}")');
 
     var account = StoredAccount.fromString(response);
     print("account from mnemonic: ${account.address}");
@@ -110,6 +143,7 @@ class _AccountPageState extends State<AccountPage> {
     await widget.storageService.saveAccount(account);
     print("Saved account ${account.address}.");
   }
+
   /// Get all accounts from storage
   Future<List<StoredAccount>?> getAllAccounts() async {
     var accounts = await widget.storageService.getAllAccounts();
