@@ -56,7 +56,7 @@ class _AccountPageState extends State<AccountPage> {
   void sign() async {
     const mnemonic =
         'control employ home citizen film salmon divorce cousin illegal episode certain olympic';
-    const address = "0x7Ca7886e0b851e6458770BC1d85Feb6A5307b9a2";
+    const address = "5EnY9eFwEDcEJ62dJWrTXhTucJ4pzGym4WZ2xcDKiT3eJecP";
     
     var response = await widget.jsApiService.jsPromise(
         'accountManager.Signer.signAndSend("${mnemonic}", {method: "signExtrinsic", params: ["${address}", { method: "balances.transferKeepAlive(dest, value)", module: "balances", call: "transferKeepAlive", params: ["5FX42URyoa9mfFTwoLiWrprxvgCsaA81AssRLw2dDj4HizST", "1000000000000000000"], tip: "0x00000000000000000000000000000000"}]})');
@@ -65,18 +65,6 @@ class _AccountPageState extends State<AccountPage> {
     // var response = await widget.jsApiService.jsPromise(
     //     'accountManager.Signer.sign("${mnemonic}", {method: "signExtrinsic", params: ["${address}", { method: "evm.call(target, input, value, gasLimit, storageLimit)", module: "evm", call: "call", params: ["0xd3202ee6077c7cc25eaea3ae11bec2cd731d19fc", "0x3d53e5f4000000000000000000000000000000000000000000000000000000000000003c00000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000de0b6b3a7640000", "0", "3,335,299", "2,000"], tip: "0x00000000000000000000000000000000"}]})');
     // print("response: ${response}");
-  }
-
-  void getNetwork() async {
-    var response = await widget.jsApiService
-        .jsCall('accountManager.Network.currentNetwork');
-    print("response: ${response}");
-  }
-
-  void selectNetwork() async {
-    var response = await widget.jsApiService
-        .jsCall('accountManager.Network.selectNetwork("testnet")');
-    print("response: ${response}");
   }
 
   void _callAccountFromMnemonic() async {
