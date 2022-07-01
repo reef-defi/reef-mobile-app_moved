@@ -57,14 +57,24 @@ class _AccountPageState extends State<AccountPage> {
     const mnemonic =
         'control employ home citizen film salmon divorce cousin illegal episode certain olympic';
     const address = "5EnY9eFwEDcEJ62dJWrTXhTucJ4pzGym4WZ2xcDKiT3eJecP";
-    
-    var response = await widget.jsApiService.jsPromise(
-        'accountManager.Signer.signAndSend("${mnemonic}", {method: "signExtrinsic", params: ["${address}", { method: "balances.transferKeepAlive(dest, value)", module: "balances", call: "transferKeepAlive", params: ["5FX42URyoa9mfFTwoLiWrprxvgCsaA81AssRLw2dDj4HizST", "1000000000000000000"], tip: "0x00000000000000000000000000000000"}]})');
-    print("response: ${response}");
 
-    // var response = await widget.jsApiService.jsPromise(
-    //     'accountManager.Signer.sign("${mnemonic}", {method: "signExtrinsic", params: ["${address}", { method: "evm.call(target, input, value, gasLimit, storageLimit)", module: "evm", call: "call", params: ["0xd3202ee6077c7cc25eaea3ae11bec2cd731d19fc", "0x3d53e5f4000000000000000000000000000000000000000000000000000000000000003c00000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000de0b6b3a7640000", "0", "3,335,299", "2,000"], tip: "0x00000000000000000000000000000000"}]})');
-    // print("response: ${response}");
+    var response = await widget.jsApiService.jsPromise(
+        'accountManager.Signer.sign("$mnemonic", {'
+          'address: "$address", '
+          'blockHash: "0xe1b1dda72998846487e4d858909d4f9a6bbd6e338e4588e5d809de16b1317b80", '
+          'blockNumber: "0x00000393", '
+          'era: "0x3601", '
+          'genesisHash: "0x242a54b35e1aad38f37b884eddeb71f6f9931b02fac27bf52dfb62ef754e5e62", '
+          'method: "0x040105fa8eaf04151687736326c9fea17e25fc5287613693c912909cb226aa4794f26a4882380100", '
+          'nonce: "0x0000000000000000" , '
+          'signedExtensions: ["CheckSpecVersion", "CheckTxVersion", "CheckGenesis", "CheckMortality", "CheckNonce", "CheckWeight", "ChargeTransactionPayment"], '
+          'specVersion: "0x00000026", '
+          'tip: null, '
+          'transactionVersion: "0x00000005", '
+          'version: 4, '
+        '})');
+   
+    print("response: $response");
   }
 
   void _callAccountFromMnemonic() async {
@@ -76,7 +86,7 @@ class _AccountPageState extends State<AccountPage> {
   void generateAccount() async {
     var response = await widget.jsApiService
         .jsPromise('accountManager.Keyring.generate()');
-    print("response: ${response}");
+    print("response: $response");
 
     var account = StoredAccount.fromString(response);
     print("account generated: ${account.address}");
@@ -85,22 +95,22 @@ class _AccountPageState extends State<AccountPage> {
   void generateAndSaveAccount() async {
     var response = (await widget.jsApiService
         .jsPromise('accountManager.Keyring.generate()'));
-    print("account created: ${response}");
+    print("account created: $response");
 
     var account = StoredAccount.fromString(response);
     saveAccount(account);
   }
 
   void checkMnemonicValid(String mnemonic) async {
-    var valid = await widget.jsApiService.jsPromise(
-        'accountManager.Keyring.checkMnemonicValid("${mnemonic}")');
-    print("is valid: ${valid}");
+    var valid = await widget.jsApiService
+        .jsPromise('accountManager.Keyring.checkMnemonicValid("$mnemonic")');
+    print("is valid: $valid");
   }
 
   /// Returns the address of the account with the given mnemonic
   void accountFromMnemonic(String mnemonic) async {
-    var response = await widget.jsApiService.jsPromise(
-        'accountManager.Keyring.accountFromMnemonic("${mnemonic}")');
+    var response = await widget.jsApiService
+        .jsPromise('accountManager.Keyring.accountFromMnemonic("$mnemonic")');
 
     var account = StoredAccount.fromString(response);
     print("account from mnemonic: ${account.address}");

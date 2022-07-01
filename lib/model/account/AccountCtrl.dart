@@ -14,8 +14,6 @@ class AccountCtrl {
     initSavedDeviceAccountAddress(jsApi, storage);
     initJsObservables(jsApi, storage);
     initWasm(jsApi);
-    // TODO get current network
-    signerConnect(jsApi, "testnet");
   }
 
   void initJsObservables(JsApiService jsApi, StorageService storage) {
@@ -39,9 +37,5 @@ class AccountCtrl {
 
   void initWasm(JsApiService jsApi) async {
     await jsApi.jsPromise('accountManager.Keyring.initWasm()');
-  }
-
-  void signerConnect(JsApiService jsApi, String network) async {
-    await jsApi.jsPromise('accountManager.Signer.connect("$network")');
   }
 }
