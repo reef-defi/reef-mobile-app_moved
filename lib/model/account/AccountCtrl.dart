@@ -36,6 +36,6 @@ class AccountCtrl {
   }
 
   void initWasm(JsApiService jsApi) async {
-    await jsApi.jsPromise('keyring.init()');
+    await jsApi.jsPromise('accountManager.Keyring.initWasm()');
   }
 }
