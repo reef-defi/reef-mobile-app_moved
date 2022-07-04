@@ -25,12 +25,13 @@ export const innitApi = (flutterJS: FlutterJS) => {
             }))
         ),
         testReefSignerPromise: (address: string)=>{
-            return appState.currentProvider$.toPromise()
+            console.log("TTTT=",address);
+            /*return appState.currentProvider$.toPromise();
                 .then((provider)=>rpc.metaAccountToSigner({}, provider, fSigner))
                 .then((signer: FlutterSigner|undefined)=>{
                     console.log("SIGNER=",signer?.signer);
                     return 'ok signer'
-                })
+                })*/
         }
     };
 }
