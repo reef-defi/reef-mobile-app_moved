@@ -15,7 +15,7 @@ let idCounter = 0;
 
 export function sendMessage<TMessageType extends MessageTypes> (message: TMessageType, request?: RequestTypes[TMessageType], subscriber?: (data: unknown) => void): Promise<ResponseTypes[TMessageType]> {
     console.log("sendMsg=",message);
-    return Promise.resolve({id:0, signature: 'test signature string'}).then((res)=>{
+    return Promise.resolve({id:0, signature: '0xRtestsignaturestring'}).then((res)=>{
         console.log("RESSSSSS sendMsg=",res);
         return res;
     });
