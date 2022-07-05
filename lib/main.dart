@@ -82,7 +82,11 @@ class _MyHomePageState extends State<MyHomePage> {
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
 
-      // reefState.jsApi.jsPromise('account.testReefSignerPromise("5G9f52Dx7bPPYqekh1beQsuvJkhePctWcZvPDDuhWSpDrojN")');
+      ()async{
+        var signTestRes = await reefState.jsApi.jsPromise('account.testReefSignerPromise("5G9f52Dx7bPPYqekh1beQsuvJkhePctWcZvPDDuhWSpDrojN")');
+        print("SGN TEST=${signTestRes}");
+
+      }();
       _counter++;
     });
   }

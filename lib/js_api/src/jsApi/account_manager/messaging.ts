@@ -19,7 +19,8 @@ export function sendMessage<TMessageType extends MessageTypes> (message: TMessag
 
         handlers[id] = { reject, resolve, subscriber };
 
-        console.log("TODO post message to flutter",);
+        console.log("TODO post message to flutter for confirmation and sign in js and return {signature: string}",);
+        return {signature: 'test signature string'};
         // port.postMessage({ id, message, request: request || {} });
     });
 }

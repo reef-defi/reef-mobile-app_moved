@@ -45,7 +45,7 @@ class JsApiService {
   }
 
   Stream jsObservable(String jsObsRefName) {
-    String ident = Random(DateTime.now().millisecondsSinceEpoch)
+    String ident = Random()
         .nextInt(9999999)
         .toString();
 
