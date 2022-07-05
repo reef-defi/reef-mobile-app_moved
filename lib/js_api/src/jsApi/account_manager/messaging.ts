@@ -14,13 +14,18 @@ const handlers: Handlers = {};
 let idCounter = 0;
 
 export function sendMessage<TMessageType extends MessageTypes> (message: TMessageType, request?: RequestTypes[TMessageType], subscriber?: (data: unknown) => void): Promise<ResponseTypes[TMessageType]> {
-    return new Promise((resolve, reject): void => {
+    console.log("sendMsg=",message);
+    return Promise.resolve({id:0, signature: 'test signature string'}).then((res)=>{
+        console.log("RESSSSSS sendMsg=",res);
+        return res;
+    });
+    /*return new Promise((resolve, reject): void => {
         const id = `${Date.now()}.${++idCounter}`;
 
         handlers[id] = { reject, resolve, subscriber };
 
         console.log("TODO post message to flutter for confirmation and sign in js and return {signature: string}",);
-        return {signature: 'test signature string'};
+        resolve({signature: 'test signature string'});
         // port.postMessage({ id, message, request: request || {} });
-    });
+    });*/
 }

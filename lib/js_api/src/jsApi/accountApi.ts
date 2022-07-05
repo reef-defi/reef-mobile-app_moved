@@ -1,6 +1,6 @@
 import {FlutterJS} from "./FlutterJS";
 import {appState, rpc} from '@reef-defi/react-lib';
-import {map} from "rxjs/operators";
+import {map, switchMap} from "rxjs/operators";
 import FlutterSigner from "./account_manager/FlutterSigner";
 import {sendMessage} from "./account_manager/messaging";
 import {Signer, Provider} from '@reef-defi/evm-provider';
@@ -25,9 +25,12 @@ export const innitApi = (flutterJS: FlutterJS) => {
                     console.log("PROVIDER genHash=", provider.api.genesisHash);
                     return new Signer(provider, address, fSigner);
                 }),
-                map((signer: Signer | undefined) => {
+                switchMap((signer: Signer | undefined) => {
                     console.log("TEST SIGNER EVM=", signer?.computeDefaultEvmAddress());
-                    return signer.signMessage("hello world");
+                    return signer.signMessage("hello world").then((res)=>{
+                        console.log("SIGNRES=",res);
+                        return res;
+                    });
                 })
             ).toPromise();
         }
