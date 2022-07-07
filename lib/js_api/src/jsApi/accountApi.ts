@@ -2,12 +2,13 @@ import {FlutterJS} from "./FlutterJS";
 import {appState, rpc} from '@reef-defi/react-lib';
 import {map, switchMap} from "rxjs/operators";
 import FlutterSigner from "./account_manager/FlutterSigner";
-import {sendMessage} from "./account_manager/messaging";
+import {FlutterSigningConnector, sendMessage} from "./account_manager/messaging";
 import {Signer, Provider} from '@reef-defi/evm-provider';
 
 export const innitApi = (flutterJS: FlutterJS) => {
 
-    const fSigner = new FlutterSigner(sendMessage);
+    const fSignConnector = new FlutterSigningConnector(flutterJS);
+    const fSigner = new FlutterSigner(fSignConnector.sendMessage.bind(fSignConnector));
 
     // return account.selectedSigner$ without big signer object from ReefSigner
     (window as any).account = {

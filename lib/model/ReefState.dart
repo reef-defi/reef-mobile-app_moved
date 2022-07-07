@@ -34,7 +34,6 @@ class ReefState{
       "source": 'mobileApp',
       "genesisHash": 'undefined'
     }];
-    // var availableNetworks = jsonDecode(await jsApiService.jsCall('jsApi.availableNetworks'));
     await jsApiService.jsCall('jsApi.initReefState("testnet", ${jsonEncode(injectSigners)})');
   }
 
@@ -42,6 +41,9 @@ class ReefState{
     jsApiService.jsMessageUnknownSubj.listen((JsApiMessage value) {
       print('jsMSG not handled id=${value.id}');
     });
-
+    jsApiService.jsTxSignatureConfirmationMessageSubj.listen((value) {
+      var sigConfirmationIdent = value.value['signatureIdent'];
+      jsApiService.confirmTxSignature(sigConfirmationIdent);
+    });
   }
 }

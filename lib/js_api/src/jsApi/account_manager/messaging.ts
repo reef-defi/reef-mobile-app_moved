@@ -1,5 +1,10 @@
-
-import type { AccountJson, AllowedPath, AuthorizeRequest, MessageTypes, MessageTypesWithNoSubscriptions, MessageTypesWithNullRequest, MessageTypesWithSubscriptions, MetadataRequest, RequestTypes, ResponseAuthorizeList, ResponseDeriveValidate, ResponseJsonGetAccountInfo, ResponseSigningIsLocked, ResponseTypes, SeedLengths, SigningRequest, SubscriptionMessageTypes } from '@reef-defi/extension-base/background/types';
+import type {
+    MessageTypes,
+    RequestTypes,
+    ResponseTypes,
+} from '@reef-defi/extension-base/background/types';
+import {FlutterJS} from "../FlutterJS";
+import signer from "./signer";
 
 interface Handler {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -7,25 +12,50 @@ interface Handler {
     reject: (error: Error) => void;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     subscriber?: (data: any) => void;
+    messageToSign: string;
 }
+
 type Handlers = Record<string, Handler>;
 
-const handlers: Handlers = {};
-let idCounter = 0;
+export class FlutterSigningConnector {
 
-export function sendMessage<TMessageType extends MessageTypes> (message: TMessageType, request?: RequestTypes[TMessageType], subscriber?: (data: unknown) => void): Promise<ResponseTypes[TMessageType]> {
-    console.log("sendMsg=",message);
-    return Promise.resolve({id:0, signature: '0xRtestsignaturestring'}).then((res)=>{
-        console.log("RESSSSSS sendMsg=",res);
-        return res;
-    });
-    /*return new Promise((resolve, reject): void => {
-        const id = `${Date.now()}.${++idCounter}`;
+    flutterJS: FlutterJS;
+    handlers: Handlers = {};
+    idCounter = 0;
 
-        handlers[id] = { reject, resolve, subscriber };
+    constructor(flutterJS: FlutterJS) {
+        this.flutterJS = flutterJS;
+        this.initSignatureConfirmationFn(flutterJS);
+    }
 
-        console.log("TODO post message to flutter for confirmation and sign in js and return {signature: string}",);
-        resolve({signature: 'test signature string'});
-        // port.postMessage({ id, message, request: request || {} });
-    });*/
+    sendMessage<TMessageType extends MessageTypes>(message: TMessageType, request: RequestTypes[TMessageType], subscriber?: (data: unknown) => void): Promise<ResponseTypes[TMessageType]> {
+        return new Promise((resolve, reject): void => {
+            const signRequestIdent = `${Date.now()}.${++this.idCounter}`;
+
+            this.handlers[signRequestIdent] = {reject, resolve, subscriber, messageToSign: message};
+            console.log("TODO need to add account and check it in receiveMessage?");
+            this.flutterJS.flutterSignatureRequest(signRequestIdent, message);
+        });
+    }
+
+    receiveMessage(signRequestIdent: string, mnemonic?: string) {
+        const handlerObj = this.handlers[signRequestIdent];
+        if (handlerObj) {
+            if (!mnemonic) {
+                console.log("SIGNATURE REQUEST REJECTED=", signRequestIdent);
+                handlerObj.reject(new Error('Signature canceled'));
+            }
+
+            // const signature = signer.sign(mnemonic, handlerObj.messageToSign)
+            const signature = 'test signature result';
+            handlerObj.resolve(signature);
+        }
+    }
+
+    private initSignatureConfirmationFn(flutterJS: FlutterJS) {
+        window[flutterJS.TX_SIGNATURE_CONFIRMATION_JS_FN_NAME] = (signatureIdent: string, mnemonic: string) => {
+            console.log("RECEIVED SIGN CONF=",signatureIdent);
+            this.receiveMessage(signatureIdent, mnemonic);
+        }
+    }
 }
