@@ -43,7 +43,9 @@ class ReefState{
     });
     jsApiService.jsTxSignatureConfirmationMessageSubj.listen((value) {
       var sigConfirmationIdent = value.value['signatureIdent'];
-      jsApiService.confirmTxSignature(sigConfirmationIdent);
+      print('TODO display signature confirmation');
+      var mnemonic = 'test menmonic';
+      jsApiService.confirmTxSignature(sigConfirmationIdent, mnemonic);
     });
   }
 }

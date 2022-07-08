@@ -59,9 +59,9 @@ class JsApiService {
         .map((event) => event.value);
   }
 
-  void confirmTxSignature(String signatureIdent) {
+  void confirmTxSignature(String signatureIdent, String mnemonic) {
     print('TODO GET MNEMONIC FOR ACC');
-    jsCall('${TX_SIGN_CONFIRMATION_JS_FN_NAME}($signatureIdent, "test mnemonic string")');
+    jsCall('${TX_SIGN_CONFIRMATION_JS_FN_NAME}($signatureIdent, $mnemonic)');
   }
 
   void _loadJs(WebViewController ctrl, String assetsFilePath) async {
