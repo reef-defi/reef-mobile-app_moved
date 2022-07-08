@@ -74,7 +74,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  void _incrementCounter() async {
+  void _incrementCounter(address) async {
     setState(() {
       // This call to setState tells the Flutter framework that something has
       // changed in this State, which causes it to rerun the build method below
@@ -83,7 +83,7 @@ class _MyHomePageState extends State<MyHomePage> {
       // called again, and so nothing would appear to happen.
 
       ()async{
-        var signTestRes = await reefState.jsApi.jsPromise('account.testReefSignerPromise("5G9f52Dx7bPPYqekh1beQsuvJkhePctWcZvPDDuhWSpDrojN")');
+        var signTestRes = await reefState.jsApi.jsPromise('jsApi.testReefSignerPromise("$address")');
         print("SGN TEST=${signTestRes}");
 
       }();
@@ -155,8 +155,8 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
+        onPressed: (){_incrementCounter(reefState.accountCtrl.account.selectedSigner?.address);},
+        tooltip: 'Sign',
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );

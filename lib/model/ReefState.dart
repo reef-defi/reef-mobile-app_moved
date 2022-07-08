@@ -24,17 +24,14 @@ class ReefState{
   }
 
   _initReefState(JsApiService jsApiService) async{
-    var injectSigners = [{
-      "name": 'test',
-      "signer": '',
-      "balance": '123000000000000000000',
+    var accounts = [{
       "address": '5EUWG6tCA9S8Vw6YpctbPHdSrj95d18uNhRqgDniW3g9ZoYc',
-      "evmAddress": '',
-      "isEvmClaimed": false,
-      "source": 'mobileApp',
-      "genesisHash": 'undefined'
+      "meta": {
+        "name": 'testAcc',
+        "source": 'ReefMobileWallet',
+      },
     }];
-    await jsApiService.jsCall('jsApi.initReefState("testnet", ${jsonEncode(injectSigners)})');
+    await jsApiService.jsCall('jsApi.initReefState("testnet", ${jsonEncode(accounts)})');
   }
 
   _initReefObservables(JsApiService jsApiService) async {
