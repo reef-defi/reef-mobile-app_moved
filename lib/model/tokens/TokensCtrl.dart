@@ -11,7 +11,7 @@ class TokenCtrl {
 
 
     jsApi.jsObservable('appState.selectedSignerTokenBalances\$').listen((tokens) {
-      var tkns = tokens.map(( t)=>t['symbol']);
+      var tkns = tokens?.map(( t)=>t['symbol']);
       print('TKNS=${tkns}');
       List<Token> tknList = List.from(tkns.map((t)=>Token(t)));
       tokenList.setTokens(tknList);

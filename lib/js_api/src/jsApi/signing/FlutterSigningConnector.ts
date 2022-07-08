@@ -26,7 +26,6 @@ export class FlutterSigningConnector {
     sendMessage<TMessageType extends MessageTypes>(message: TMessageType, request: RequestTypes[TMessageType], subscriber?: (data: unknown) => void): Promise<ResponseTypes[TMessageType]> {
         return new Promise((resolve, reject): void => {
             const signRequestIdent = `${Date.now()}.${++this.idCounter}`;
-            console.log("SEMDDD=",message, request);
             this.handlers[signRequestIdent] = {reject, resolve, subscriber, messageToSign: message};
             console.log("TODO need to add account and check it in receiveMessage?");
             this.flutterJS.flutterSignatureRequest(signRequestIdent, message);
@@ -41,7 +40,7 @@ export class FlutterSigningConnector {
                 handlerObj.reject(new Error('Signature canceled'));
             }
             console.log("TODO sign with received mnemonic=", mnemonic);
-            // const signature = signer.sign(mnemonic, handlerObj.messageToSign)
+            //const signature = signer.sign(mnemonic, handlerObj.messageToSign)
             const signature = 'test signature result';
             handlerObj.resolve(signature);
         }

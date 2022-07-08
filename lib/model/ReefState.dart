@@ -35,13 +35,16 @@ class ReefState{
   }
 
   _initReefObservables(JsApiService jsApiService) async {
+
     jsApiService.jsMessageUnknownSubj.listen((JsApiMessage value) {
       print('jsMSG not handled id=${value.id}');
     });
+
     jsApiService.jsTxSignatureConfirmationMessageSubj.listen((value) {
       var sigConfirmationIdent = value.value['signatureIdent'];
       print('TODO display signature confirmation');
       var mnemonic = 'test menmonic';
+
       jsApiService.confirmTxSignature(sigConfirmationIdent, mnemonic);
     });
   }
