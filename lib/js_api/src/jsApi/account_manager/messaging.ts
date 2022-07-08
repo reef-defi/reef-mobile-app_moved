@@ -45,7 +45,7 @@ export class FlutterSigningConnector {
                 console.log("SIGNATURE REQUEST REJECTED=", signRequestIdent);
                 handlerObj.reject(new Error('Signature canceled'));
             }
-
+            console.log("TODO sign with received mnemonic=", mnemonic);
             // const signature = signer.sign(mnemonic, handlerObj.messageToSign)
             const signature = 'test signature result';
             handlerObj.resolve(signature);
