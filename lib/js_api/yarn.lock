@@ -3030,15 +3030,16 @@
   dependencies:
     "@babel/runtime" "^7.16.0"
 
-"@reef-defi/react-lib@^1.0.61":
-  version "1.0.61"
-  resolved "https://registry.yarnpkg.com/@reef-defi/react-lib/-/react-lib-1.0.61.tgz#aaf4d564819463e95b7c775f92ace12f0b734daf"
-  integrity sha512-6XRRLSjCZFqhj256HudGgtuM0WNKXZpaCNDLAQ+rULpaoF9WUTOK9h5miJRYMJjwZw9tYV7ipWKKxBjTYSHJAQ==
+"@reef-defi/react-lib@^1.0.62":
+  version "1.0.62"
+  resolved "https://registry.yarnpkg.com/@reef-defi/react-lib/-/react-lib-1.0.62.tgz#efce818b3c5aa699faf683d44b5b759f629dfa3d"
+  integrity sha512-gz6hknP1rSrF9di30SOrTTCLW//8FdRrYgS198OclM3v0bVESqbK/w0E4NCMcAAASZhAC1bdOjzcl/UMpoD5pA==
   dependencies:
     "@apollo/client" "^3.6.2"
     "@polkadot/extension-dapp" "^0.40.4"
     "@polkadot/react-identicon" "^0.86.4"
     "@reef-defi/evm-provider" "^1.0.7"
+    "@reef-defi/extension-base" "^1.0.5"
     "@reef-defi/extension-dapp" "^0.41.2"
     "@reef-defi/extension-inject" "^0.41.2"
     "@types/react-router-dom" "^5.3.0"
