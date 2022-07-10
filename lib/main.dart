@@ -159,13 +159,12 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButton: Observer(builder:(_) {
         if (reefState.accountCtrl.account.selectedSigner != null) {
           return FloatingActionButton(
-            onPressed: () =>
-                () {
+            onPressed: () {
               _testTransactionSign(
                   reefState.accountCtrl.account.selectedSigner?.address);
             },
             tooltip: 'Sign',
-            child: const Icon(Icons.key),
+            child: const Text('sign test'),
           );
         }
         return SizedBox.shrink();
