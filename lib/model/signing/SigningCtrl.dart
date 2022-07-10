@@ -10,9 +10,7 @@ class SigningCtrl {
 
     jsApi.jsTxSignatureConfirmationMessageSubj.listen((value) {
       var sigConfirmationIdent = value.value['signatureIdent'];
-      print('TODO display signature confirmation = ${value.value}');
       signatureRequests.add(value.value);
-
       // jsApi.confirmTxSignature(sigConfirmationIdent, mnemonic);
     });
 

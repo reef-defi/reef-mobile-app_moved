@@ -1,16 +1,11 @@
-import 'dart:collection';
-import 'dart:convert';
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:reef_mobile_app/components/SignatureRequestComponent.dart';
 import 'package:reef_mobile_app/components/WebViewContentWrapper.dart';
+import 'package:reef_mobile_app/model/ReefState.dart';
 import 'package:reef_mobile_app/pages/accounts.dart';
 import 'package:reef_mobile_app/service/JsApiService.dart';
-import 'package:reef_mobile_app/model/ReefState.dart';
 import 'package:reef_mobile_app/service/StorageService.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
 void main() {
   runApp(const MyApp());
@@ -86,8 +81,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
       ()async{
         var signTestRes = await reefState.jsApi.jsPromise('jsApi.testReefSignerPromise("$address")');
-        print("SGN TEST=${signTestRes}");
-
+        print("SGN TEST=$signTestRes");
       }();
       _counter++;
     });
