@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:reef_mobile_app/model/signing/SigningCtrl.dart';
 import 'package:reef_mobile_app/model/tokens/TokensCtrl.dart';
 import 'package:reef_mobile_app/service/JsApiService.dart';
 import 'package:reef_mobile_app/service/StorageService.dart';
@@ -11,11 +12,15 @@ class ReefState{
   final StorageService storage;
   late TokenCtrl tokensCtrl;
   late AccountCtrl accountCtrl;
+  late SigningCtrl signingCtrl;
 
   ReefState(JsApiService this.jsApi, StorageService this.storage) {
+
     _initAsync(jsApi);
     tokensCtrl = TokenCtrl(jsApi);
     accountCtrl = AccountCtrl(jsApi, storage);
+    signingCtrl = SigningCtrl(jsApi);
+
   }
 
   void _initAsync(JsApiService jsApi) async{
@@ -40,12 +45,5 @@ class ReefState{
       print('jsMSG not handled id=${value.id}');
     });
 
-    jsApiService.jsTxSignatureConfirmationMessageSubj.listen((value) {
-      var sigConfirmationIdent = value.value['signatureIdent'];
-      print('TODO display signature confirmation');
-      var mnemonic = 'test menmonic';
-
-      jsApiService.confirmTxSignature(sigConfirmationIdent, mnemonic);
-    });
   }
 }

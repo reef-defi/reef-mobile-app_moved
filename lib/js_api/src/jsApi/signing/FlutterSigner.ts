@@ -28,8 +28,7 @@ export default class FlutterSigner implements SignerInterface {
     public async signRaw (payload: SignerPayloadRaw): Promise<SignerResult> {
         const id = ++nextId;
         const result = await sendRequest('pub(bytes.sign)', payload);
-        console.log("FSIG payload =",payload);
-        console.log("FSIG RES",result);
+        console.log("SIG RAW RES",result);
 
         return {
             ...result,

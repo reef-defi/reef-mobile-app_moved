@@ -32,7 +32,7 @@ export class FlutterJS {
         }));
     }
 
-    flutterSignatureRequest(signatureIdent: string, value: string) {
+    flutterSignatureRequest(signatureIdent: string, value: any) {
         window[this.REEF_MOBILE_CHANNEL_NAME].postMessage(JSON.stringify({
             id: this.txSignMsgIdent,
             value:{signatureIdent, value}

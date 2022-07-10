@@ -1,5 +1,6 @@
 import type {MessageTypes, RequestTypes, ResponseTypes,} from '@reef-defi/extension-base/background/types';
 import {FlutterJS} from "../FlutterJS";
+import type {SignerPayloadRaw} from "@polkadot/types/types";
 
 interface Handler {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -27,8 +28,8 @@ export class FlutterSigningConnector {
         return new Promise((resolve, reject): void => {
             const signRequestIdent = `${Date.now()}.${++this.idCounter}`;
             this.handlers[signRequestIdent] = {reject, resolve, subscriber, messageToSign: message};
-            console.log("TODO need to add account and check it in receiveMessage?");
-            this.flutterJS.flutterSignatureRequest(signRequestIdent, message);
+            const address: string = (request as SignerPayloadRaw).address;
+            this.flutterJS.flutterSignatureRequest(signRequestIdent, request);
         });
     }
 
