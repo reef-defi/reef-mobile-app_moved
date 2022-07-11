@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/services.dart';
-import 'package:reef_mobile_app/components/WebViewStack.dart';
+import 'package:reef_mobile_app/components/WebViewOffstage.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 

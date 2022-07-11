@@ -48,3 +48,6 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 /lib/js_api/node_modules/
+/lib/js/node_modules/
+/lib/js/packages/dApp_js/node_modules/.bin/
+/lib/js/packages/flutter-js-bridge/node_modules/.bin/
