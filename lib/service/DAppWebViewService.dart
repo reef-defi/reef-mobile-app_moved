@@ -35,7 +35,7 @@ class DAppWebViewService {
 
   DAppWebViewService() {
     controllerInit.future
-        .then((ctrl) => _loadJs(ctrl, 'lib/js_api/dist/index.js'));
+        .then((ctrl) => _loadJs(ctrl, 'lib/js/packages/dApp-js/dist/index.js'));
   }
 
   Future<String> jsCall(String executeJs) {

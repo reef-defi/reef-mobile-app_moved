@@ -1,6 +1,6 @@
 import {FlutterSigningConnector} from "./FlutterSigningConnector";
 import FlutterSigner from "./FlutterSigner";
-import {FlutterJS} from "flutter-js-bridge";
+import {FlutterJS} from "../FlutterJS";
 
 export const initFlutterSigningKey = (flutterJS: FlutterJS) => {
     const fSignConnector = new FlutterSigningConnector(flutterJS);

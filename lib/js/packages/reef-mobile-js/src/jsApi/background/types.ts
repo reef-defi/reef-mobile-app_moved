@@ -13,8 +13,8 @@ import type { KeypairType } from '@polkadot/util-crypto/types';
 
 import { TypeRegistry } from '@polkadot/types';
 
-// import { ALLOWED_PATH } from '../defaults';
-// import { AuthUrls } from './handlers/State';
+import { ALLOWED_PATH } from '../defaults';
+import { AuthUrls } from './handlers/State';
 
 type KeysWithDefinedValues<T> = {
   [K in keyof T]: T[K] extends undefined ? never : K
@@ -89,10 +89,10 @@ export interface RequestSignatures {
   'pri(accounts.validate)': [RequestAccountValidate, boolean];
   'pri(accounts.changePassword)': [RequestAccountChangePassword, boolean];
   'pri(authorize.approve)': [RequestAuthorizeApprove, boolean];
-  // 'pri(authorize.list)': [null, ResponseAuthorizeList];
+  'pri(authorize.list)': [null, ResponseAuthorizeList];
   'pri(authorize.reject)': [RequestAuthorizeReject, boolean];
   'pri(authorize.requests)': [RequestAuthorizeSubscribe, boolean, AuthorizeRequest[]];
-  // 'pri(authorize.toggle)': [string, ResponseAuthorizeList];
+  'pri(authorize.toggle)': [string, ResponseAuthorizeList];
   'pri(derivation.create)': [RequestDeriveCreate, boolean];
   'pri(derivation.validate)': [RequestDeriveValidate, ResponseDeriveValidate];
   'pri(json.restore)': [RequestJsonRestore, void];
@@ -111,7 +111,7 @@ export interface RequestSignatures {
   'pri(signing.cancel)': [RequestSigningCancel, boolean];
   'pri(signing.isLocked)': [RequestSigningIsLocked, ResponseSigningIsLocked];
   'pri(signing.requests)': [RequestSigningSubscribe, boolean, SigningRequest[]];
-  // 'pri(window.open)': [AllowedPath, boolean];
+  'pri(window.open)': [AllowedPath, boolean];
   'pri(extrinsic.sign)': [SignerPayloadJSON, ResponseSigning];
   // public/external requests, i.e. from a page
   'pub(accounts.list)': [RequestAccountList, InjectedAccount[]];
@@ -372,7 +372,7 @@ export type SubscriptionMessageTypes = NoUndefinedValues<{
 }>;
 
 export type MessageTypesWithSubscriptions = keyof SubscriptionMessageTypes;
-export type MessageTypesWithNoSubscriptions = MessageTypes;//TODO not working: Exclude<MessageTypes, keyof SubscriptionMessageTypes>
+export type MessageTypesWithNoSubscriptions = Exclude<MessageTypes, keyof SubscriptionMessageTypes>
 
 export interface RequestSign {
   readonly payload: SignerPayloadJSON | SignerPayloadRaw;
@@ -394,7 +394,7 @@ export interface ResponseJsonRestore {
   error: string | null;
 }
 
-// export type AllowedPath = typeof ALLOWED_PATH[number];
+export type AllowedPath = typeof ALLOWED_PATH[number];
 
 export interface ResponseJsonGetAccountInfo {
   address: string;
@@ -403,6 +403,6 @@ export interface ResponseJsonGetAccountInfo {
   type: KeypairType;
 }
 
-/*export interface ResponseAuthorizeList {
+export interface ResponseAuthorizeList {
   list: AuthUrls;
-}*/
+}

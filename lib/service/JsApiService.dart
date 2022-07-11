@@ -35,7 +35,8 @@ class JsApiService {
 
   JsApiService() {
     controllerInit.future
-        .then((ctrl) => _loadJs(ctrl, 'lib/js_api/dist/index.js'));
+        // .then((ctrl) => _loadJs(ctrl, 'lib/js_api/dist/index.js'));
+    .then((ctrl) => _loadJs(ctrl, 'lib/js/packages/reef-mobile-js/dist/index.js'));
   }
 
   Future<String> jsCall(String executeJs) {

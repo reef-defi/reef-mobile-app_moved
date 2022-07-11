@@ -1,8 +1,8 @@
 import polyfill from './polyfill';
+import {FlutterJS} from "./jsApi/FlutterJS";
 import {appState} from "@reef-defi/react-lib";
-import {FlutterJS} from "flutter-js-bridge";
-import accountManager from "./jsApi/account_manager/index";
 import {initFlutterApi} from "./jsApi/initFlutterApi";
+import accountManager from "./jsApi/account_manager/index";
 
 polyfill;
 window['flutterJS'] = new FlutterJS(initFlutterApi);

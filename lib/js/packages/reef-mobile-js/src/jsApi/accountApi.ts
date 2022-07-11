@@ -1,6 +1,6 @@
+import {FlutterJS} from "./FlutterJS";
 import {appState} from '@reef-defi/react-lib';
 import {map} from "rxjs/operators";
-import {FlutterJS} from "flutter-js-bridge";
 
 export const innitApi = (flutterJS: FlutterJS) => {
 

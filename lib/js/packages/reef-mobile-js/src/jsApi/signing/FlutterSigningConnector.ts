@@ -1,6 +1,6 @@
 import type {MessageTypes, RequestTypes, ResponseTypes,} from '@reef-defi/extension-base/background/types';
+import {FlutterJS} from "../FlutterJS";
 import type {SignerPayloadRaw} from "@polkadot/types/types";
-import {FlutterJS} from "flutter-js-bridge";
 
 interface Handler {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
