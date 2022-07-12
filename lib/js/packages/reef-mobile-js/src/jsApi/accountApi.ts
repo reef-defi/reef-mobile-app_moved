@@ -1,4 +1,4 @@
-import {FlutterJS} from "./FlutterJS";
+import {FlutterJS} from "flutter-js-bridge/src/FlutterJS";
 import {appState} from '@reef-defi/react-lib';
 import {map} from "rxjs/operators";
 

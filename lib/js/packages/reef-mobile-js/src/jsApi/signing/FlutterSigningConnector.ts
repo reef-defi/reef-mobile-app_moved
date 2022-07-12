@@ -1,5 +1,5 @@
 import type {MessageTypes, RequestTypes, ResponseTypes,} from '@reef-defi/extension-base/background/types';
-import {FlutterJS} from "../FlutterJS";
+import {FlutterJS} from "flutter-js-bridge/src/FlutterJS";
 import type {SignerPayloadRaw} from "@polkadot/types/types";
 
 interface Handler {

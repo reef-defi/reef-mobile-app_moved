@@ -1,9 +1,9 @@
 import * as accountApi from "./accountApi";
 import {appState, AvailableNetworks, availableNetworks, ReefSigner} from "@reef-defi/react-lib";
-import {FlutterJS} from "./FlutterJS";
 import {map, switchMap} from "rxjs/operators";
 import type {InjectedAccountWithMeta} from "@reef-defi/extension-inject/types";
 import {initFlutterSigningKey} from "./signing/flutterSigningKey";
+import {FlutterJS} from "flutter-js-bridge/src/FlutterJS";
 
 export const initFlutterApi = (flutterJS: FlutterJS) => {
     try {

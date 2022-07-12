@@ -1,3 +1,3 @@
 import {FlutterJS} from "./FlutterJS";
 
-export const FlutterJS = FlutterJS;
+export default FlutterJS;
