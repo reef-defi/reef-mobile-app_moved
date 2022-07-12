@@ -55,3 +55,4 @@ app.*.map.json
 /lib/js/packages/flutter-js-bridge/node_modules/
 /lib/js/packages/reef-mobile-js/node_modules/.bin/
 /lib/js/packages/reef-mobile-js/node_modules/
+/lib/js/packages/dApp-js/node_modules/.bin/esbuild
