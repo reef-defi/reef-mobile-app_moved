@@ -3,13 +3,15 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/services.dart';
-import 'package:reef_mobile_app/components/WebViewStack.dart';
+import 'package:reef_mobile_app/components/WebViewOffstage.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class JsApiService {
   final LOG_MSG_IDENT = '_console.log';
   final API_READY_MSG_IDENT = '_windowApisReady';
+  final TX_SIGNATURE_CONFIRMATION_MSG_IDENT = '_txSignMsgIdent';
+  final TX_SIGN_CONFIRMATION_JS_FN_NAME = '_txSignConfirmationJsFnName';
   final REEF_MOBILE_CHANNEL_NAME = 'reefMobileChannel';
   final FLUTTER_SUBSCRIBE_METHOD_NAME = 'flutterSubscribe';
 
@@ -18,6 +20,7 @@ class JsApiService {
   final jsApiReady = Completer<WebViewController>();
 
   final jsMessageSubj = BehaviorSubject<JsApiMessage>();
+  final jsTxSignatureConfirmationMessageSubj = BehaviorSubject<JsApiMessage>();
   final jsMessageUnknownSubj = BehaviorSubject<JsApiMessage>();
 
   get widget {
@@ -32,7 +35,8 @@ class JsApiService {
 
   JsApiService() {
     controllerInit.future
-        .then((ctrl) => _loadJs(ctrl, 'lib/js_api/dist/index.js'));
+        // .then((ctrl) => _loadJs(ctrl, 'lib/js_api/dist/index.js'));
+    .then((ctrl) => _loadJs(ctrl, 'lib/js/packages/reef-mobile-js/dist/index.js'));
   }
 
   Future<String> jsCall(String executeJs) {
@@ -45,7 +49,7 @@ class JsApiService {
   }
 
   Stream jsObservable(String jsObsRefName) {
-    String ident = Random(DateTime.now().millisecondsSinceEpoch)
+    String ident = Random()
         .nextInt(9999999)
         .toString();
 
@@ -56,6 +60,11 @@ class JsApiService {
         .map((event) => event.value);
   }
 
+  void confirmTxSignature(String signatureIdent, String mnemonic) {
+    print('TODO GET MNEMONIC FOR ACC');
+    jsCall('${TX_SIGN_CONFIRMATION_JS_FN_NAME}("$signatureIdent", "$mnemonic")');
+  }
+
   void _loadJs(WebViewController ctrl, String assetsFilePath) async {
     var jsScript = await rootBundle.loadString(assetsFilePath, cache: true);
     var htmlString = """<html><head>
@@ -64,7 +73,12 @@ class JsApiService {
     window.global = window;
     </script>
     <script>${jsScript}</script>
-    <script>window.flutterJS.init( '$REEF_MOBILE_CHANNEL_NAME', '$LOG_MSG_IDENT', '$FLUTTER_SUBSCRIBE_METHOD_NAME', '$API_READY_MSG_IDENT')</script>
+    <script>window.flutterJS.init( '$REEF_MOBILE_CHANNEL_NAME', 
+    '$LOG_MSG_IDENT', 
+    '$FLUTTER_SUBSCRIBE_METHOD_NAME', 
+    '$API_READY_MSG_IDENT', 
+    '$TX_SIGNATURE_CONFIRMATION_MSG_IDENT', 
+    '$TX_SIGN_CONFIRMATION_JS_FN_NAME')</script>
     </head><body></body></html>""";
     ctrl.loadHtmlString(htmlString).then((value) => ctrl).catchError((err) {
       print('Error loading HTML=$err');
@@ -82,6 +96,8 @@ class JsApiService {
             print('$LOG_MSG_IDENT= ${apiMsg.value}');
           } else if (apiMsg.id == API_READY_MSG_IDENT) {
             jsApiLoaded.future.then((ctrl) => jsApiReady.complete(ctrl));
+          } else if (apiMsg.id == TX_SIGNATURE_CONFIRMATION_MSG_IDENT) {
+            jsTxSignatureConfirmationMessageSubj.add(apiMsg);
           } else if (int.tryParse(apiMsg.id) == null) {
             jsMessageUnknownSubj.add(apiMsg);
           } else {

@@ -1,14 +1,11 @@
-import 'dart:collection';
-import 'dart:convert';
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:reef_mobile_app/components/SignatureRequestComponent.dart';
+import 'package:reef_mobile_app/components/WebViewContentWrapper.dart';
+import 'package:reef_mobile_app/model/ReefState.dart';
 import 'package:reef_mobile_app/pages/accounts.dart';
 import 'package:reef_mobile_app/service/JsApiService.dart';
-import 'package:reef_mobile_app/model/ReefState.dart';
 import 'package:reef_mobile_app/service/StorageService.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
 void main() {
   runApp(const MyApp());
@@ -74,13 +71,18 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  void _incrementCounter() async {
+  void _testTransactionSign(address) async {
     setState(() {
       // This call to setState tells the Flutter framework that something has
       // changed in this State, which causes it to rerun the build method below
       // so that the display can reflect the updated values. If we changed
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
+
+      ()async{
+        var signTestRes = await reefState.jsApi.jsPromise('jsApi.testReefSignerPromise("$address")');
+        print("SGN TEST=$signTestRes");
+      }();
       _counter++;
     });
   }
@@ -93,7 +95,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-    return Scaffold(
+    var content = Scaffold(
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
@@ -119,11 +121,11 @@ class _MyHomePageState extends State<MyHomePage> {
           // horizontal).
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Container(
+            /*Container(
               width: 100.0,
               height: 100.0,
               child: jsApiService.widget,
-            ),
+            ),*/
             Observer(builder: (_) {
               if (reefState.accountCtrl.account.selectedSigner != null) {
                 return Text(
@@ -148,11 +150,22 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      floatingActionButton: Observer(builder:(_) {
+        if (reefState.accountCtrl.account.selectedSigner != null) {
+          return FloatingActionButton(
+            onPressed: () {
+              _testTransactionSign(
+                  reefState.accountCtrl.account.selectedSigner?.address);
+            },
+            tooltip: 'Sign',
+            child: const Text('sign test'),
+          );
+        }
+        return SizedBox.shrink();
+      })
     );
+    return SignatureOrContentComponent(
+        content:JsApiServiceContentWrapper(content: content, jsApiService: jsApiService),
+        reefState: reefState);
   }
 }

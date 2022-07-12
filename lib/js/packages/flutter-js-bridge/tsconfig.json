@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "paths": {
+      "crypto": [
+        "../../node_modules/crypto-browserify"
+      ]
+    },
+    "lib": [
+      "dom",
+      "es5",
+      "scripthost",
+      "es2015.promise"
+    ]
+  }
+}

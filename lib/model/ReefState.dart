@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:reef_mobile_app/model/signing/SigningCtrl.dart';
 import 'package:reef_mobile_app/model/tokens/TokensCtrl.dart';
 import 'package:reef_mobile_app/service/JsApiService.dart';
 import 'package:reef_mobile_app/service/StorageService.dart';
@@ -11,11 +12,15 @@ class ReefState{
   final StorageService storage;
   late TokenCtrl tokensCtrl;
   late AccountCtrl accountCtrl;
+  late SigningCtrl signingCtrl;
 
   ReefState(JsApiService this.jsApi, StorageService this.storage) {
+
     _initAsync(jsApi);
     tokensCtrl = TokenCtrl(jsApi);
     accountCtrl = AccountCtrl(jsApi, storage);
+    signingCtrl = SigningCtrl(jsApi);
+
   }
 
   void _initAsync(JsApiService jsApi) async{
@@ -24,21 +29,18 @@ class ReefState{
   }
 
   _initReefState(JsApiService jsApiService) async{
-    var injectSigners = [{
-      "name": 'test',
-      "signer": '',
-      "balance": '123000000000000000000',
+    var accounts = [{
       "address": '5EUWG6tCA9S8Vw6YpctbPHdSrj95d18uNhRqgDniW3g9ZoYc',
-      "evmAddress": '',
-      "isEvmClaimed": false,
-      "source": 'mobileApp',
-      "genesisHash": 'undefined'
+      "meta": {
+        "name": 'testAcc',
+        "source": 'ReefMobileWallet',
+      },
     }];
-    // var availableNetworks = jsonDecode(await jsApiService.jsCall('jsApi.availableNetworks'));
-    await jsApiService.jsCall('jsApi.initReefState("testnet", ${jsonEncode(injectSigners)})');
+    await jsApiService.jsCall('jsApi.initReefState("testnet", ${jsonEncode(accounts)})');
   }
 
   _initReefObservables(JsApiService jsApiService) async {
+
     jsApiService.jsMessageUnknownSubj.listen((JsApiMessage value) {
       print('jsMSG not handled id=${value.id}');
     });

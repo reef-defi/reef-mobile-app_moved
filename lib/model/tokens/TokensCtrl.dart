@@ -9,13 +9,15 @@ class TokenCtrl {
 
   TokenCtrl(JsApiService jsApi){
 
-
     jsApi.jsObservable('appState.selectedSignerTokenBalances\$').listen((tokens) {
-      var tkns = tokens.map(( t)=>t['symbol']);
-      print('TKNS=${tkns}');
+      var tkns = tokens?.map(( t)=>t['symbol']);
+      if(tkns==null) {
+        return;
+      }
       List<Token> tknList = List.from(tkns.map((t)=>Token(t)));
       tokenList.setTokens(tknList);
     });
+
   }
 
 }
