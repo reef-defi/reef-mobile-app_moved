@@ -61,10 +61,13 @@ class _SplashAppState extends State<SplashApp> {
     /*return Center(
       child: CircularProgressIndicator(),
     );*/
-    return Container(
-      width: 10.0,
-      height: 10.0,
-      child: ReefState.instance.jsApi.widget,
-    );
+    return Stack(children: [
+      Container(
+        width: 10.0,
+        height: 10.0,
+        child: ReefState.instance.jsApi.widget,
+      ),
+    Center(child: CircularProgressIndicator(),),
+    ],);
   }
 }
