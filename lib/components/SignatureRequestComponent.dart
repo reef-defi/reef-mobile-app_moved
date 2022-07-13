@@ -5,7 +5,7 @@ import 'package:reef_mobile_app/model/ReefState.dart';
 
 class SignatureOrContentComponent extends StatelessObserverWidget {
   final Widget content;
-  final ReefState reefState;
+  final ReefAppState reefState;
 
   const SignatureOrContentComponent(
       { Key? key, required this.content, required this.reefState })

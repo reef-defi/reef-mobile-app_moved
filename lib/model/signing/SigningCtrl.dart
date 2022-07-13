@@ -9,11 +9,14 @@ class SigningCtrl {
   SigningCtrl(JsApiService this.jsApi){
 
     jsApi.jsTxSignatureConfirmationMessageSubj.listen((value) {
-      var sigConfirmationIdent = value.value['signatureIdent'];
+      // var sigConfirmationIdent = value.value['signatureIdent'];
       signatureRequests.add(value.value);
-      // jsApi.confirmTxSignature(sigConfirmationIdent, mnemonic);
     });
 
+  }
+
+  Future<dynamic> initSignTest(String address){
+    return jsApi.jsPromise('jsApi.testReefSignerPromise("$address")');
   }
 
   confirmSignature(String sigConfirmationIdent) {

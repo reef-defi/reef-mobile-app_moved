@@ -7,21 +7,19 @@ import 'package:reef_mobile_app/service/StorageService.dart';
 
 import 'account/AccountCtrl.dart';
 
-class ReefState{
-  static ReefState? _instance;
+class ReefAppState{
+  static ReefAppState? _instance;
 
-  late JsApiService jsApi;
   late StorageService storage;
   late TokenCtrl tokensCtrl;
   late AccountCtrl accountCtrl;
   late SigningCtrl signingCtrl;
 
-  ReefState._();
+  ReefAppState._();
 
-  static ReefState get instance => _instance ??= ReefState._();
+  static ReefAppState get instance => _instance ??= ReefAppState._();
 
   init(JsApiService jsApi, StorageService storage) async {
-    this.jsApi = jsApi;
     this.storage = storage;
     await _initReefState(jsApi);
     await _initReefObservables(jsApi);
@@ -30,11 +28,6 @@ class ReefState{
     signingCtrl = SigningCtrl(jsApi);
 
   }
-
-  /*void _initAsync(JsApiService jsApi) async{
-    await _initReefState(jsApi);
-    await _initReefObservables(jsApi);
-  }*/
 
   _initReefState(JsApiService jsApiService) async{
     var accounts = [{
