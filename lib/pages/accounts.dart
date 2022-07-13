@@ -1,15 +1,12 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:reef_mobile_app/model/StorageKey.dart';
-import 'package:reef_mobile_app/model/account/account.dart';
 import 'package:reef_mobile_app/model/account/stored_account.dart';
-import 'package:reef_mobile_app/service/JsApiService.dart';
 import 'package:reef_mobile_app/service/StorageService.dart';
 
+import '../model/ReefState.dart';
+
 class AccountPage extends StatefulWidget {
-  AccountPage(this.jsApiService, this.storageService);
-  final JsApiService jsApiService;
+  const AccountPage(this.reefState, this.storageService);
+  final ReefAppState reefState;
   final StorageService storageService;
 
   @override
@@ -58,22 +55,8 @@ class _AccountPageState extends State<AccountPage> {
         'control employ home citizen film salmon divorce cousin illegal episode certain olympic';
     const address = "5EnY9eFwEDcEJ62dJWrTXhTucJ4pzGym4WZ2xcDKiT3eJecP";
 
-    var response = await widget.jsApiService.jsPromise(
-        'accountManager.Signer.sign("$mnemonic", {'
-          'address: "$address", '
-          'blockHash: "0xe1b1dda72998846487e4d858909d4f9a6bbd6e338e4588e5d809de16b1317b80", '
-          'blockNumber: "0x00000393", '
-          'era: "0x3601", '
-          'genesisHash: "0x242a54b35e1aad38f37b884eddeb71f6f9931b02fac27bf52dfb62ef754e5e62", '
-          'method: "0x040105fa8eaf04151687736326c9fea17e25fc5287613693c912909cb226aa4794f26a4882380100", '
-          'nonce: "0x0000000000000000" , '
-          'signedExtensions: ["CheckSpecVersion", "CheckTxVersion", "CheckGenesis", "CheckMortality", "CheckNonce", "CheckWeight", "ChargeTransactionPayment"], '
-          'specVersion: "0x00000026", '
-          'tip: null, '
-          'transactionVersion: "0x00000005", '
-          'version: 4, '
-        '})');
-   
+    var response = await widget.reefState.accountCtrl.signTest(address, mnemonic);
+
     print("response: $response");
   }
 
@@ -84,8 +67,7 @@ class _AccountPageState extends State<AccountPage> {
   }
 
   void generateAccount() async {
-    var response = await widget.jsApiService
-        .jsPromise('accountManager.Keyring.generate()');
+    var response = await widget.reefState.accountCtrl.generateAccount();
     print("response: $response");
 
     var account = StoredAccount.fromString(response);
@@ -93,8 +75,7 @@ class _AccountPageState extends State<AccountPage> {
   }
 
   void generateAndSaveAccount() async {
-    var response = (await widget.jsApiService
-        .jsPromise('accountManager.Keyring.generate()'));
+    var response = (await widget.reefState.accountCtrl.generateAccount());
     print("account created: $response");
 
     var account = StoredAccount.fromString(response);
@@ -102,15 +83,13 @@ class _AccountPageState extends State<AccountPage> {
   }
 
   void checkMnemonicValid(String mnemonic) async {
-    var valid = await widget.jsApiService
-        .jsPromise('accountManager.Keyring.checkMnemonicValid("$mnemonic")');
+    var valid = await widget.reefState.accountCtrl.checkMnemonicValid(mnemonic);
     print("is valid: $valid");
   }
 
   /// Returns the address of the account with the given mnemonic
   void accountFromMnemonic(String mnemonic) async {
-    var response = await widget.jsApiService
-        .jsPromise('accountManager.Keyring.accountFromMnemonic("$mnemonic")');
+    var response = await widget.reefState.accountCtrl.accountFromMnemonic(mnemonic);
 
     var account = StoredAccount.fromString(response);
     print("account from mnemonic: ${account.address}");

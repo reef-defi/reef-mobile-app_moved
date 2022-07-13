@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:reef_mobile_app/components/SignatureRequestComponent.dart';
-import 'package:reef_mobile_app/components/JsApiServiceContentWrapper.dart';
 import 'package:reef_mobile_app/model/ReefState.dart';
 import 'package:reef_mobile_app/pages/SplashScreen.dart';
 import 'package:reef_mobile_app/pages/accounts.dart';
-import 'package:reef_mobile_app/service/JsApiService.dart';
-import 'package:reef_mobile_app/service/StorageService.dart';
 
 void main() async {
   runApp(
@@ -67,7 +64,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void _navigateAccounts() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => AccountPage(ReefState.instance.jsApi, ReefState.instance.storage)),
+      MaterialPageRoute(builder: (context) => AccountPage(ReefAppState.instance, ReefAppState.instance.storage)),
     );
   }
 
@@ -80,7 +77,7 @@ class _MyHomePageState extends State<MyHomePage> {
       // called again, and so nothing would appear to happen.
 
       ()async{
-        var signTestRes = await ReefState.instance.jsApi.jsPromise('jsApi.testReefSignerPromise("$address")');
+        var signTestRes = await ReefAppState.instance.signingCtrl.initSignTest(address);
         print("SGN TEST=$signTestRes");
       }();
       _counter++;
@@ -127,15 +124,15 @@ class _MyHomePageState extends State<MyHomePage> {
               child: jsApiService.widget,
             ),*/
             Observer(builder: (_) {
-              if (ReefState.instance.accountCtrl.account.selectedSigner != null) {
+              if (ReefAppState.instance.accountCtrl.account.selectedSigner != null) {
                 return Text(
-                    ReefState.instance.accountCtrl.account.selectedSigner!.address);
+                    ReefAppState.instance.accountCtrl.account.selectedSigner!.address);
               }
               return Text('loading signer');
             }),
             Observer(builder: (_) {
               return Column(
-                  children: List.from(ReefState.instance.tokensCtrl.tokenList.tokens
+                  children: List.from(ReefAppState.instance.tokensCtrl.tokenList.tokens
                       .map((t) => Text('TKN=${t.symbol}'))));
             }),
             const Text(
@@ -151,11 +148,11 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       floatingActionButton: Observer(builder:(_) {
-        if (ReefState.instance.accountCtrl.account.selectedSigner != null) {
+        if (ReefAppState.instance.accountCtrl.account.selectedSigner != null) {
           return FloatingActionButton(
             onPressed: () {
               _testTransactionSign(
-                  ReefState.instance.accountCtrl.account.selectedSigner?.address);
+                  ReefAppState.instance.accountCtrl.account.selectedSigner?.address);
             },
             tooltip: 'Sign',
             child: const Text('sign test'),
@@ -166,6 +163,6 @@ class _MyHomePageState extends State<MyHomePage> {
     );
     return SignatureOrContentComponent(
         content:content,
-        reefState: ReefState.instance);
+        reefState: ReefAppState.instance);
   }
 }

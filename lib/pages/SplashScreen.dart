@@ -22,6 +22,7 @@ class SplashApp extends StatefulWidget {
 
 class _SplashAppState extends State<SplashApp> {
   bool _hasError = false;
+  final JsApiService jsApiService = JsApiService();
 
   @override
   void initState() {
@@ -30,9 +31,8 @@ class _SplashAppState extends State<SplashApp> {
   }
 
   Future<void> _initializeAsyncDependencies() async {
-    final jsApiService = JsApiService();
     final storageService = StorageService();
-    await ReefState.instance.init(jsApiService, storageService);
+    await ReefAppState.instance.init(jsApiService, storageService);
     widget.onInitializationComplete();
   }
 
@@ -56,6 +56,6 @@ class _SplashAppState extends State<SplashApp> {
         ),
       );
     }
-    return JsApiServiceContentWrapper(jsApiService: ReefState.instance.jsApi, content: Center(child: CircularProgressIndicator()));
+    return JsApiServiceContentWrapper(jsApiService: jsApiService, content: Center(child: CircularProgressIndicator()));
   }
 }
