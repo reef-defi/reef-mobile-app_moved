@@ -1,13 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:reef_mobile_app/components/SignatureRequestComponent.dart';
-import 'package:reef_mobile_app/components/WebViewContentWrapper.dart';
+import 'package:reef_mobile_app/components/JsApiServiceContentWrapper.dart';
 import 'package:reef_mobile_app/model/ReefState.dart';
+import 'package:reef_mobile_app/pages/SplashScreen.dart';
 import 'package:reef_mobile_app/pages/accounts.dart';
 import 'package:reef_mobile_app/service/JsApiService.dart';
 import 'package:reef_mobile_app/service/StorageService.dart';
 
-void main() {
+void main() async {
+  runApp(
+    SplashApp(
+      key: UniqueKey(),
+      onInitializationComplete: runMainApp,
+    ),
+  );
+}
+
+void runMainApp() {
   runApp(const MyApp());
 }
 
@@ -20,15 +30,6 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Reef Chain Wallet',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
         primarySwatch: Colors.blue,
       ),
       home: const MyHomePage(title: 'Reef demo'),
@@ -56,18 +57,17 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
-  final jsApiService = JsApiService();
-  final storageService = StorageService();
-  late ReefState reefState;
+  // late ReefState reefState;
 
   _MyHomePageState() {
-    reefState = ReefState(jsApiService, storageService);
+    // reefState = ReefState(jsApiService, storageService);
+
   }
 
   void _navigateAccounts() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => AccountPage(jsApiService, storageService)),
+      MaterialPageRoute(builder: (context) => AccountPage(ReefState.instance.jsApi, ReefState.instance.storage)),
     );
   }
 
@@ -80,7 +80,7 @@ class _MyHomePageState extends State<MyHomePage> {
       // called again, and so nothing would appear to happen.
 
       ()async{
-        var signTestRes = await reefState.jsApi.jsPromise('jsApi.testReefSignerPromise("$address")');
+        var signTestRes = await ReefState.instance.jsApi.jsPromise('jsApi.testReefSignerPromise("$address")');
         print("SGN TEST=$signTestRes");
       }();
       _counter++;
@@ -127,15 +127,15 @@ class _MyHomePageState extends State<MyHomePage> {
               child: jsApiService.widget,
             ),*/
             Observer(builder: (_) {
-              if (reefState.accountCtrl.account.selectedSigner != null) {
+              if (ReefState.instance.accountCtrl.account.selectedSigner != null) {
                 return Text(
-                    reefState.accountCtrl.account.selectedSigner!.address);
+                    ReefState.instance.accountCtrl.account.selectedSigner!.address);
               }
               return Text('loading signer');
             }),
             Observer(builder: (_) {
               return Column(
-                  children: List.from(reefState.tokensCtrl.tokenList.tokens
+                  children: List.from(ReefState.instance.tokensCtrl.tokenList.tokens
                       .map((t) => Text('TKN=${t.symbol}'))));
             }),
             const Text(
@@ -151,11 +151,11 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       floatingActionButton: Observer(builder:(_) {
-        if (reefState.accountCtrl.account.selectedSigner != null) {
+        if (ReefState.instance.accountCtrl.account.selectedSigner != null) {
           return FloatingActionButton(
             onPressed: () {
               _testTransactionSign(
-                  reefState.accountCtrl.account.selectedSigner?.address);
+                  ReefState.instance.accountCtrl.account.selectedSigner?.address);
             },
             tooltip: 'Sign',
             child: const Text('sign test'),
@@ -165,7 +165,7 @@ class _MyHomePageState extends State<MyHomePage> {
       })
     );
     return SignatureOrContentComponent(
-        content:JsApiServiceContentWrapper(content: content, jsApiService: jsApiService),
-        reefState: reefState);
+        content:content,
+        reefState: ReefState.instance);
   }
 }

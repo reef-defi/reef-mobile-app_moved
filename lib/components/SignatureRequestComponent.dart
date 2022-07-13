@@ -17,6 +17,7 @@ class SignatureOrContentComponent extends StatelessObserverWidget {
       var requests = this.reefState.signingCtrl.signatureRequests.sigRequests;
       var signatureRequest = requests.isNotEmpty?requests.first:null;
       var displayIdx = signatureRequest!=null?0:1;
+
       return IndexedStack(
         index: displayIdx,
         children: [
