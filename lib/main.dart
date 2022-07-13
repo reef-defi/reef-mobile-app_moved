@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:reef_mobile_app/components/SignatureRequestComponent.dart';
-import 'package:reef_mobile_app/components/WebViewContentWrapper.dart';
+import 'package:reef_mobile_app/components/JsApiServiceContentWrapper.dart';
 import 'package:reef_mobile_app/model/ReefState.dart';
 import 'package:reef_mobile_app/pages/SplashScreen.dart';
 import 'package:reef_mobile_app/pages/accounts.dart';
@@ -18,17 +18,8 @@ void main() async {
 }
 
 void runMainApp() {
-  print('RUN MAINNNNN');
-  runApp(
-    MyApp(),
-  );
-}
-/*
-
-void main() async {
   runApp(const MyApp());
 }
-*/
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -174,7 +165,7 @@ class _MyHomePageState extends State<MyHomePage> {
       })
     );
     return SignatureOrContentComponent(
-        content:JsApiServiceContentWrapper(content: content, jsApiService: ReefState.instance.jsApi),
+        content:content,
         reefState: ReefState.instance);
   }
 }

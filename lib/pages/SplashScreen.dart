@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
+import '../components/JsApiServiceContentWrapper.dart';
 import '../main.dart';
 import '../model/ReefState.dart';
 import '../service/JsApiService.dart';
@@ -29,12 +30,9 @@ class _SplashAppState extends State<SplashApp> {
   }
 
   Future<void> _initializeAsyncDependencies() async {
-    print('INIT STATE');
     final jsApiService = JsApiService();
     final storageService = StorageService();
-    print('INIT STATE1');
     await ReefState.instance.init(jsApiService, storageService);
-    print('INIT STATE2');
     widget.onInitializationComplete();
   }
 
@@ -58,16 +56,6 @@ class _SplashAppState extends State<SplashApp> {
         ),
       );
     }
-    /*return Center(
-      child: CircularProgressIndicator(),
-    );*/
-    return Stack(children: [
-      Container(
-        width: 10.0,
-        height: 10.0,
-        child: ReefState.instance.jsApi.widget,
-      ),
-    Center(child: CircularProgressIndicator(),),
-    ],);
+    return JsApiServiceContentWrapper(jsApiService: ReefState.instance.jsApi, content: Center(child: CircularProgressIndicator()));
   }
 }
