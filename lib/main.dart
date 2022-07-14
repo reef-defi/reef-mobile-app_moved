@@ -9,16 +9,19 @@ void main() async {
   runApp(
     SplashApp(
       key: UniqueKey(),
-      onInitializationComplete: runMainApp,
+      onInitializationComplete: (){return const MyHomePage(title: 'Reef demo');},
+
     ),
   );
 }
 
+/*
 void runMainApp() {
   runApp(const MyApp());
 }
+*/
 
-class MyApp extends StatelessWidget {
+/*class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
   // This widget is the root of your application.
@@ -32,7 +35,7 @@ class MyApp extends StatelessWidget {
       home: const MyHomePage(title: 'Reef demo'),
     );
   }
-}
+}*/
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key, required this.title}) : super(key: key);
