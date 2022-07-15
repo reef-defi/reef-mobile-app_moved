@@ -6,6 +6,6 @@
   ],
   "scripts": {
     "start0": "yarn --cwd ./packages/reef-mobile-js start",
-    "start1": "yarn --cwd ./packages/dApp_js start"
+    "start1": "yarn --cwd ./packages/dApp-js start"
   }
 }

@@ -4,6 +4,7 @@ import 'package:reef_mobile_app/components/SignatureRequestComponent.dart';
 import 'package:reef_mobile_app/model/ReefState.dart';
 import 'package:reef_mobile_app/pages/SplashScreen.dart';
 import 'package:reef_mobile_app/pages/accounts.dart';
+import 'package:reef_mobile_app/pages/testDapp.dart';
 
 void main() async {
   runApp(
@@ -33,6 +34,13 @@ class _MyHomePageState extends State<MyHomePage> {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => AccountPage(ReefAppState.instance, ReefAppState.instance.storage)),
+    );
+  }
+
+  void _navigateTestDApp() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => DappPage(ReefAppState.instance)),
     );
   }
 
@@ -100,6 +108,8 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             TextButton(
                 onPressed: _navigateAccounts, child: const Text('Accounts')),
+            TextButton(
+                onPressed: _navigateTestDApp, child: const Text('DApp')),
           ],
         ),
       ),
