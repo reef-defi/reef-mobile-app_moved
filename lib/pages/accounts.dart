@@ -71,6 +71,7 @@ class _AccountPageState extends State<AccountPage> {
     print("account created: $response");
 
     var account = StoredAccount.fromString(response);
+    account.name = "Generated Account";
     saveAccount(account);
   }
 
@@ -92,7 +93,8 @@ class _AccountPageState extends State<AccountPage> {
       ..mnemonic =
           "control employ home citizen film salmon divorce cousin illegal episode certain olympic"
       ..address = "5EnY9eFwEDcEJ62dJWrTXhTucJ4pzGym4WZ2xcDKiT3eJecP"
-      ..svg = "<svg></svg>";
+      ..svg = "<svg></svg>"
+      ..name = "Test account";
 
     saveAccount(account);
   }
