@@ -37,7 +37,7 @@ class ReefAppState{
         "source": 'ReefMobileWallet',
       },
     }];
-    await jsApiService.jsCall('jsApi.initReefState("testnet", ${jsonEncode(accounts)})');
+    await jsApiService.jsPromise('jsApi.initReefState("testnet", ${jsonEncode(accounts)})');
   }
 
   _initReefObservables(JsApiService jsApiService) async {

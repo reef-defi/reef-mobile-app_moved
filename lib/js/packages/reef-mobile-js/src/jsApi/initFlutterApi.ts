@@ -10,8 +10,8 @@ export const initFlutterApi = (flutterJS: FlutterJS) => {
         console.log("INIT FLUTTER JS API");
         const signingKey = initFlutterSigningKey(flutterJS);
         (window as any).jsApi = {
-            initReefState: (network: AvailableNetworks, accounts: InjectedAccountWithMeta[]) => {
-                appState.initReefState({
+            initReefState: async (network: AvailableNetworks, accounts: InjectedAccountWithMeta[]) => {
+                return appState.initReefState({
                     network: availableNetworks[network],
                     jsonAccounts: {accounts, injectedSigner:signingKey}
                 });
