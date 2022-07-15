@@ -3,11 +3,14 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/services.dart';
-import 'package:reef_mobile_app/components/WebViewOffstage.dart';
+import 'package:flutter/widgets.dart';
+import 'package:reef_mobile_app/components/WebViewFlutterJS.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class JsApiService {
+  final flutterJsFilePath;
+  final bool hiddenWidget;
   final LOG_MSG_IDENT = '_console.log';
   final API_READY_MSG_IDENT = '_windowApisReady';
   final TX_SIGNATURE_CONFIRMATION_MSG_IDENT = '_txSignMsgIdent';
@@ -23,9 +26,12 @@ class JsApiService {
   final jsTxSignatureConfirmationMessageSubj = BehaviorSubject<JsApiMessage>();
   final jsMessageUnknownSubj = BehaviorSubject<JsApiMessage>();
 
+  late Widget _wdg;
+
   get widget {
-    return WebViewOffstage(
-      controller: this.controllerInit,
+    return WebViewFlutterJS(
+      hidden: hiddenWidget,
+      controller: controllerInit,
       loaded: jsApiLoaded,
       jsChannels: _createJavascriptChannels(),
     );
@@ -33,10 +39,26 @@ class JsApiService {
 
   Future<WebViewController> get _controller => jsApiReady.future;
 
-  JsApiService() {
-    controllerInit.future
-        // .then((ctrl) => _loadJs(ctrl, 'lib/js_api/dist/index.js'));
-    .then((ctrl) => _loadJs(ctrl, 'lib/js/packages/reef-mobile-js/dist/index.js'));
+  JsApiService._(bool this.hiddenWidget, String this.flutterJsFilePath,
+      String? htmlString) {
+    _renderHtmlWithFlutterJS(flutterJsFilePath,
+        htmlString ?? "<html><head></head><body></body></html>");
+  }
+
+  JsApiService.reefAppJsApi()
+      : this._(true, 'lib/js/packages/reef-mobile-js/dist/index.js', null);
+
+  JsApiService.dAppInjectedHtml(String html)
+      : this._(false, 'lib/js/packages/dApp-js/dist/index.js', html);
+
+  void _renderHtmlWithFlutterJS(String fJsFilePath, String htmlString) {
+    controllerInit.future.then((ctrl) {
+      return _getFlutterJsHeaderTags(fJsFilePath).then((headerTags) {
+        return _insertHeaderTags(htmlString, headerTags);
+      }).then((htmlString) {
+        return _renderHtml(ctrl, htmlString);
+      });
+    });
   }
 
   Future<String> jsCall(String executeJs) {
@@ -49,9 +71,7 @@ class JsApiService {
   }
 
   Stream jsObservable(String jsObsRefName) {
-    String ident = Random()
-        .nextInt(9999999)
-        .toString();
+    String ident = Random().nextInt(9999999).toString();
 
     jsCall(
         "window['$FLUTTER_SUBSCRIBE_METHOD_NAME']('$jsObsRefName', '$ident')");
@@ -61,13 +81,13 @@ class JsApiService {
   }
 
   void confirmTxSignature(String signatureIdent, String mnemonic) {
-    print('TODO GET MNEMONIC FOR ACC');
-    jsCall('${TX_SIGN_CONFIRMATION_JS_FN_NAME}("$signatureIdent", "$mnemonic")');
+    jsCall(
+        '${TX_SIGN_CONFIRMATION_JS_FN_NAME}("$signatureIdent", "$mnemonic")');
   }
 
-  void _loadJs(WebViewController ctrl, String assetsFilePath) async {
+  Future<String> _getFlutterJsHeaderTags(String assetsFilePath) async {
     var jsScript = await rootBundle.loadString(assetsFilePath, cache: true);
-    var htmlString = """<html><head>
+    return """
     <script>
     // polyfills
     window.global = window;
@@ -79,7 +99,22 @@ class JsApiService {
     '$API_READY_MSG_IDENT', 
     '$TX_SIGNATURE_CONFIRMATION_MSG_IDENT', 
     '$TX_SIGN_CONFIRMATION_JS_FN_NAME')</script>
-    </head><body></body></html>""";
+    """;
+  }
+
+  String _insertHeaderTags(String htmlString, String headerTags) {
+    var insertAfterStr = '<head>';
+    var insertAt = htmlString.indexOf(insertAfterStr) + insertAfterStr.length;
+    if (insertAt == insertAfterStr.length) {
+      print('ERROR inserting flutter JS script tags');
+      return '';
+    }
+    return htmlString.substring(0, insertAt) +
+        headerTags +
+        htmlString.substring(insertAt);
+  }
+
+  void _renderHtml(WebViewController ctrl, String htmlString) async {
     ctrl.loadHtmlString(htmlString).then((value) => ctrl).catchError((err) {
       print('Error loading HTML=$err');
     });
