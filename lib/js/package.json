@@ -4,6 +4,10 @@
   "workspaces": [
     "packages/*"
   ],
+  "resolutions": {
+    "@polkadot/wasm-crypto": "4.6.1",
+    "@polkadot/types": "6.4.2"
+  },
   "scripts": {
     "start0": "yarn --cwd ./packages/reef-mobile-js start",
     "start1": "yarn --cwd ./packages/dApp_js start"

@@ -4,22 +4,37 @@ import {map, switchMap} from "rxjs/operators";
 import type {InjectedAccountWithMeta} from "@reef-defi/extension-inject/types";
 import {initFlutterSigningKey} from "./signing/flutterSigningKey";
 import {FlutterJS} from "flutter-js-bridge/src/FlutterJS";
+import {firstValueFrom } from "rxjs";
 
-export const initFlutterApi = (flutterJS: FlutterJS) => {
+export interface Account {
+    address: string;
+    name: string;
+};
+
+export const initFlutterApi = async (flutterJS: FlutterJS) => {
     try {
         console.log("INIT FLUTTER JS API");
         const signingKey = initFlutterSigningKey(flutterJS);
         (window as any).jsApi = {
-            initReefState: (network: AvailableNetworks, accounts: InjectedAccountWithMeta[]) => {
+            initReefState: async (selNetwork: AvailableNetworks, accounts: Account[]) => {
+                let accountsWithMeta: InjectedAccountWithMeta[] = await Promise.all(
+                    accounts.map(async (account: Account) => {
+                        return await buildAccountWithMeta(account.name, account.address);
+                    }
+                ));
+
                 appState.initReefState({
-                    network: availableNetworks[network],
-                    jsonAccounts: {accounts, injectedSigner:signingKey}
+                    network: availableNetworks[selNetwork],
+                    jsonAccounts: {accounts: accountsWithMeta, injectedSigner: signingKey}
                 });
             },
             testReefSignerPromise: (address: string) => {
-                return appState.signers$.pipe(
+                return firstValueFrom(appState.signers$.pipe(
                     map((signers: ReefSigner[]) => {
+                        console.log("ADDRESS=", address);
+                        signers.forEach(signer => console.log(signer.address));
                         const signer = signers.find(s => s.address === address);
+                        console.log("TEST SIGNER=", signer.address);
                         return signer;
                     }),
                     switchMap((signer: ReefSigner | undefined) => {
@@ -28,7 +43,7 @@ export const initFlutterApi = (flutterJS: FlutterJS) => {
                             return res;
                         });
                     })
-                ).toPromise();
+                ));
             }
         };
         // testReefObservables();
@@ -38,3 +53,15 @@ export const initFlutterApi = (flutterJS: FlutterJS) => {
         console.log("INIT ERROR=", e.message);
     }
 };
+
+const buildAccountWithMeta = async (name: string, address: string): Promise<InjectedAccountWithMeta> => {
+    const acountWithMeta: InjectedAccountWithMeta = {
+        address,
+        meta: {
+            name,
+            source: "ReefMobileWallet"
+        }
+    };
+
+    return acountWithMeta;
+}

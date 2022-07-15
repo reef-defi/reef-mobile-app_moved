@@ -14,12 +14,28 @@ class StoredAccount extends HiveObject {
   @HiveField(2)
   late String svg;
 
+  @HiveField(3)
+  late String name;
+
   static StoredAccount fromString(String jsonString) {
     var jsonObject = json.decode(jsonString);
 
     return StoredAccount()
       ..mnemonic = jsonObject['mnemonic']
       ..address = jsonObject['address']
-      ..svg = jsonObject['svg'];
+      ..svg = jsonObject['svg']
+      ..name = jsonObject['name'] ?? "";
   }
+
+   Map toJson() => {
+    'mnemonic': mnemonic,
+    'address': address,
+    'svg': svg,
+    'name': name
+  };
+
+  Map toJsonSkinny() => {
+    'address': address,
+    'name': name
+  };
 }
