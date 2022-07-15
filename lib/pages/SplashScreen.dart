@@ -1,4 +1,6 @@
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
@@ -8,9 +10,11 @@ import '../model/ReefState.dart';
 import '../service/JsApiService.dart';
 import '../service/StorageService.dart';
 
+typedef WidgetCallback = Widget Function();
+
 class SplashApp extends StatefulWidget {
-  final VoidCallback onInitializationComplete;
-  final reefAppJsApiService = JsApiService.reefAppJsApi();
+  final JsApiService jsApiService = JsApiService.reefAppJsApi();
+  WidgetCallback onInitializationComplete;
 
   SplashApp({
     required Key key,
@@ -23,6 +27,9 @@ class SplashApp extends StatefulWidget {
 
 class _SplashAppState extends State<SplashApp> {
   bool _hasError = false;
+  Widget? onInitWidget;
+  var displayContent=false;
+
 
   @override
   void initState() {
@@ -32,8 +39,11 @@ class _SplashAppState extends State<SplashApp> {
 
   Future<void> _initializeAsyncDependencies() async {
     final storageService = StorageService();
-    await ReefAppState.instance.init(widget.reefAppJsApiService, storageService);
-    widget.onInitializationComplete();
+    await ReefAppState.instance.init(widget.jsApiService, storageService);
+      setState(() {
+        displayContent = true;
+      });
+
   }
 
   @override
@@ -56,10 +66,11 @@ class _SplashAppState extends State<SplashApp> {
         ),
       );
     }
-    // return ReefJsApiWrapper(jsApiService: reefAppJsApiService, content: Center(child: CircularProgressIndicator()));
+
     return Stack(children: <Widget>[
       widget.reefAppJsApiService.widget,
-      Center(child: CircularProgressIndicator()),
+      Center(child: displayContent==false?CircularProgressIndicator():widget.onInitializationComplete()
+    ),
     ]);
   }
 }
