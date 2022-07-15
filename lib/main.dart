@@ -9,7 +9,7 @@ void main() async {
   runApp(
     SplashApp(
       key: UniqueKey(),
-      onInitializationComplete: (){return const MyHomePage(title: 'Reef demo');},
+      displayOnInit: (){return const MyHomePage(title: 'Reef demo');},
     ),
   );
 }
