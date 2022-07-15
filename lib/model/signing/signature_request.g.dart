@@ -25,19 +25,19 @@ mixin _$SignatureRequest on _SignatureRequest, Store {
     });
   }
 
-  late final _$valueAtom =
-      Atom(name: '_SignatureRequest.value', context: context);
+  late final _$payloadAtom =
+      Atom(name: '_SignatureRequest.payload', context: context);
 
   @override
-  SignatureRequestValue get value {
-    _$valueAtom.reportRead();
-    return super.value;
+  dynamic get payload {
+    _$payloadAtom.reportRead();
+    return super.payload;
   }
 
   @override
-  set value(SignatureRequestValue value) {
-    _$valueAtom.reportWrite(value, super.value, () {
-      super.value = value;
+  set payload(dynamic value) {
+    _$payloadAtom.reportWrite(value, super.payload, () {
+      super.payload = value;
     });
   }
 
@@ -45,7 +45,7 @@ mixin _$SignatureRequest on _SignatureRequest, Store {
   String toString() {
     return '''
 signatureIdent: ${signatureIdent},
-value: ${value}
+payload: ${payload}
     ''';
   }
 }

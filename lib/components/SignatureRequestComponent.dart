@@ -49,9 +49,11 @@ class SignatureOrContentComponent extends StatelessObserverWidget {
   }
 
   void _confirmSign(SignatureRequest? signatureRequest) {
-    if (signatureRequest == null) return;
     print("_confirmSign: $signatureRequest");
+    if (signatureRequest == null) return;
     reefState.signingCtrl.confirmSignature(
-        signatureRequest.signatureIdent, signatureRequest.value.address);
+      signatureRequest.signatureIdent,
+      signatureRequest.payload.address,
+    );
   }
 }
