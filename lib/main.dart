@@ -9,9 +9,7 @@ void main() async {
   runApp(
     SplashApp(
       key: UniqueKey(),
-      onInitializationComplete: () {
-        return const MyHomePage(title: 'Reef demo');
-      },
+      displayOnInit: (){return const MyHomePage(title: 'Reef demo');},
     ),
   );
 }
@@ -45,6 +43,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _testSignPayload(address) async {
+    // Sqwid auction transaction
     const payload = {
       "specVersion": "0x00000008",
       "transactionVersion": "0x00000002",

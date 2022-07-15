@@ -3,24 +3,25 @@ import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-class WebViewOffstage extends StatefulWidget {
-  WebViewOffstage({required this.controller, required this.loaded, required this.jsChannels, Key? key, }) : super(key: key); // Modify
-
+class WebViewFlutterJS extends StatefulWidget {
   final Completer<WebViewController> controller;
   final Completer<void> loaded;
   final Set<JavascriptChannel> jsChannels;
+  final bool hidden;
+
+  WebViewFlutterJS({required this.hidden, required this.controller, required this.loaded, required this.jsChannels, Key? key, }) : super(key: key); // Modify
 
   @override
-  State<WebViewOffstage> createState() => _WebViewOffstageState();
+  State<WebViewFlutterJS> createState() => _WebViewFlutterJSState();
 }
 
-class _WebViewOffstageState extends State<WebViewOffstage> {
+class _WebViewFlutterJSState extends State<WebViewFlutterJS> {
   WebViewController? _controller;
 
   @override
   Widget build(BuildContext context) {
     return Offstage(
-      offstage: true,
+      offstage: widget.hidden,
       child:
         WebView(
           javascriptMode: JavascriptMode.unrestricted,
