@@ -24,7 +24,6 @@ class _AccountPageState extends State<AccountPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            TextButton(onPressed: sign, child: const Text('Sign')),
             TextButton(
                 onPressed: _callAccountFromMnemonic,
                 child: const Text('Account from mnemonic')),
@@ -44,20 +43,13 @@ class _AccountPageState extends State<AccountPage> {
             TextButton(
                 onPressed: _callDeleteAccount,
                 child: const Text('Delete Account')),
+            TextButton(
+                onPressed: deleteAllAccounts,
+                child: const Text('Delete All Accounts')),
           ],
         ),
       ),
     );
-  }
-
-  void sign() async {
-    const mnemonic =
-        'control employ home citizen film salmon divorce cousin illegal episode certain olympic';
-    const address = "5EnY9eFwEDcEJ62dJWrTXhTucJ4pzGym4WZ2xcDKiT3eJecP";
-
-    var response = await widget.reefState.accountCtrl.signTest(address, mnemonic);
-
-    print("response: $response");
   }
 
   void _callAccountFromMnemonic() async {
@@ -79,6 +71,7 @@ class _AccountPageState extends State<AccountPage> {
     print("account created: $response");
 
     var account = StoredAccount.fromString(response);
+    account.name = "Generated Account";
     saveAccount(account);
   }
 
@@ -98,27 +91,28 @@ class _AccountPageState extends State<AccountPage> {
   void _callSaveAccount() {
     final account = StoredAccount()
       ..mnemonic =
-          "debris pink stairs furnace rescue toddler face finger vast trash repair bone"
-      ..address = "5HgkDz5N1L1PvwSZVDkdZ2fgBAWu6kAHYruH1QvCL3DvwRQj"
-      ..svg = "<svg></svg>";
+          "control employ home citizen film salmon divorce cousin illegal episode certain olympic"
+      ..address = "5EnY9eFwEDcEJ62dJWrTXhTucJ4pzGym4WZ2xcDKiT3eJecP"
+      ..svg = "<svg></svg>"
+      ..name = "Test account";
 
     saveAccount(account);
   }
 
   void _callGetAccount() {
-    const address = "5HgkDz5N1L1PvwSZVDkdZ2fgBAWu6kAHYruH1QvCL3DvwRQj";
+    const address = "5EnY9eFwEDcEJ62dJWrTXhTucJ4pzGym4WZ2xcDKiT3eJecP";
     getAccount(address);
   }
 
   void _callDeleteAccount() {
-    const address = "5HgkDz5N1L1PvwSZVDkdZ2fgBAWu6kAHYruH1QvCL3DvwRQj";
+    const address = "5EnY9eFwEDcEJ62dJWrTXhTucJ4pzGym4WZ2xcDKiT3eJecP";
     deleteAccount(address);
   }
 
   /// Save account to storage
   Future saveAccount(StoredAccount account) async {
     await widget.storageService.saveAccount(account);
-    print("Saved account ${account.address}.");
+    print("Saved account ${account.address}");
   }
 
   /// Get all accounts from storage
@@ -142,7 +136,7 @@ class _AccountPageState extends State<AccountPage> {
       print("Account not found.");
       return null;
     }
-    print("Fetched account ${account.address}.");
+    print("Fetched account ${account.address}");
     return account;
   }
 
@@ -151,7 +145,18 @@ class _AccountPageState extends State<AccountPage> {
     var account = await getAccount(address);
     if (account != null) {
       account.delete();
-      print("Deleted accont ${account.address}.");
+      print("Deleted accont ${account.address}");
     }
+  }
+
+  /// Delete all accounts from storage
+  void deleteAllAccounts() async {
+    getAllAccounts().then((accounts) {
+      if (accounts != null) {
+        accounts.forEach((account) {
+          account.delete();
+        });
+      }
+    });
   }
 }

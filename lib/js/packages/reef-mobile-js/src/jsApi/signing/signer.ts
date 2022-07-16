@@ -1,23 +1,31 @@
-import type { HexString } from '@reef-defi/util/types';
-import type { SignerPayloadJSON } from '@polkadot/types/types';
+import { u8aToHex } from "@polkadot/util";
+import { wrapBytes } from '@reef-defi/extension-dapp/wrapBytes';
 import { TypeRegistry } from '@polkadot/types';
-import Keyring from '../account_manager/keyring';
+import Keyring from '../keyring';
 import { KeyringPair } from '@polkadot/keyring/types';
+import type { SignerPayloadJSON } from '@polkadot/types/types';
 
-/**
- * Signs a payload using the given mnemonic.
- */
-async function sign(mnemonic: string, payload: SignerPayloadJSON): Promise<string>  {
-  const registry = new TypeRegistry();
-  registry.setSignedExtensions(payload.signedExtensions);
 
+async function signPayload(mnemonic: string, payload: SignerPayloadJSON): Promise<string> {
+    console.log("SIGNING PAYLOAD", payload);
+    const registry = new TypeRegistry();
+    registry.setSignedExtensions(payload.signedExtensions);
+
+    const pair: KeyringPair = await Keyring.keyPairFromMnemonic(mnemonic);
+    
+    return registry
+        .createType('ExtrinsicPayload', payload, { version: payload.version })
+        .sign(pair).signature;
+}
+
+async function signRaw(mnemonic: string, message: string): Promise<string>  {
+  console.log("SIGNING RAW", message);
   const pair: KeyringPair = await Keyring.keyPairFromMnemonic(mnemonic);
 
-  return (registry
-    .createType('ExtrinsicPayload', payload, { version: payload.version })
-    .sign(pair) as { signature: HexString }).signature;
+  return u8aToHex(pair.sign(wrapBytes(message)));
 }
 
 export default {
-  sign
+  signPayload,
+  signRaw
 };

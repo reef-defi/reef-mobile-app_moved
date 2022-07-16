@@ -56,7 +56,7 @@ class StorageService {
     var key = await secureStorage.read(key: 'encryptionKey');
     var encryptionKey = base64Url.decode(key!);
 
-    accountsBox.complete(Hive.openBox('AccountsBoxEncrypted', encryptionCipher: HiveAesCipher(encryptionKey)));
+    accountsBox.complete(Hive.openBox('AccountsBox', encryptionCipher: HiveAesCipher(encryptionKey)));
   }
 
   Future<bool> _checkPermission() async {

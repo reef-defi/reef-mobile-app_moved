@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:reef_mobile_app/model/ReefState.dart';
+import 'package:reef_mobile_app/model/signing/signature_request.dart';
 
 class SignatureOrContentComponent extends StatelessObserverWidget {
   final Widget content;
   final ReefAppState reefState;
 
   const SignatureOrContentComponent(
-      { Key? key, required this.content, required this.reefState })
-      :super(key: key);
+      {Key? key, required this.content, required this.reefState})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Observer(builder: (_) {
       var requests = this.reefState.signingCtrl.signatureRequests.sigRequests;
-      var signatureRequest = requests.isNotEmpty?requests.first:null;
-      var displayIdx = signatureRequest!=null?0:1;
+      var signatureRequest = requests.isNotEmpty ? requests.first : null;
+      var displayIdx = signatureRequest != null ? 0 : 1;
 
       return IndexedStack(
         index: displayIdx,
@@ -30,11 +30,8 @@ class SignatureOrContentComponent extends StatelessObserverWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Text(
-                    'Transaction details...${signatureRequest?['signatureIdent']}',
-                    style: Theme
-                        .of(context)
-                        .textTheme
-                        .headline4,
+                    'Transaction details...${signatureRequest?.signatureIdent}',
+                    style: Theme.of(context).textTheme.headline4,
                   ),
                 ],
               ),
@@ -52,7 +49,12 @@ class SignatureOrContentComponent extends StatelessObserverWidget {
     });
   }
 
-  void _confirmSign(dynamic signatureRequest) {
-    reefState.signingCtrl.confirmSignature(signatureRequest['signatureIdent']);
+  void _confirmSign(SignatureRequest? signatureRequest) {
+    print("_confirmSign: $signatureRequest");
+    if (signatureRequest == null) return;
+    reefState.signingCtrl.confirmSignature(
+      signatureRequest.signatureIdent,
+      signatureRequest.payload.address,
+    );
   }
 }

@@ -16,9 +16,8 @@ export default class FlutterSigner implements SignerInterface {
     public async signPayload (payload: SignerPayloadJSON): Promise<SignerResult> {
         const id = ++nextId;
         const result = await sendRequest('pub(extrinsic.sign)', payload);
-        // we add an internal id (number) - should have a mapping from the
-        // extension id (string) -> internal id (number) if we wish to provide
-        // updated via the update functionality (noop at this point)
+        console.log("SIG PAYLOAD RES", result);
+
         return {
             ...result,
             id
@@ -35,10 +34,4 @@ export default class FlutterSigner implements SignerInterface {
             id
         };
     }
-
-    // NOTE We don't listen to updates at all, if we do we can interpret the
-    // result as provided by the API here
-    // public update (id: number, status: Hash | SubmittableResult): void {
-    //   // ignore
-    // }
 }

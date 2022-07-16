@@ -13,13 +13,13 @@ mixin _$SignatureRequests on _SignatureRequests, Store {
       Atom(name: '_SignatureRequests.sigRequests', context: context);
 
   @override
-  ObservableList<dynamic> get sigRequests {
+  ObservableList<SignatureRequest> get sigRequests {
     _$sigRequestsAtom.reportRead();
     return super.sigRequests;
   }
 
   @override
-  set sigRequests(ObservableList<dynamic> value) {
+  set sigRequests(ObservableList<SignatureRequest> value) {
     _$sigRequestsAtom.reportWrite(value, super.sigRequests, () {
       super.sigRequests = value;
     });
@@ -29,11 +29,22 @@ mixin _$SignatureRequests on _SignatureRequests, Store {
       ActionController(name: '_SignatureRequests', context: context);
 
   @override
-  void add(dynamic sigRequest) {
+  void add(SignatureRequest sigRequest) {
     final _$actionInfo = _$_SignatureRequestsActionController.startAction(
-        name: '_SignatureRequests.addSignatureRequest');
+        name: '_SignatureRequests.add');
     try {
       return super.add(sigRequest);
+    } finally {
+      _$_SignatureRequestsActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void remove(String sigRequestIdent) {
+    final _$actionInfo = _$_SignatureRequestsActionController.startAction(
+        name: '_SignatureRequests.remove');
+    try {
+      return super.remove(sigRequestIdent);
     } finally {
       _$_SignatureRequestsActionController.endAction(_$actionInfo);
     }

@@ -7,7 +7,7 @@ import 'package:reef_mobile_app/service/StorageService.dart';
 
 import 'account/AccountCtrl.dart';
 
-class ReefAppState{
+class ReefAppState {
   static ReefAppState? _instance;
 
   late StorageService storage;
@@ -23,28 +23,28 @@ class ReefAppState{
     this.storage = storage;
     await _initReefState(jsApi);
     await _initReefObservables(jsApi);
+    await _initKeyring(jsApi);
     tokensCtrl = TokenCtrl(jsApi);
     accountCtrl = AccountCtrl(jsApi, storage);
-    signingCtrl = SigningCtrl(jsApi);
-
+    signingCtrl = SigningCtrl(jsApi, storage);
   }
 
-  _initReefState(JsApiService jsApiService) async{
-    var accounts = [{
-      "address": '5EUWG6tCA9S8Vw6YpctbPHdSrj95d18uNhRqgDniW3g9ZoYc',
-      "meta": {
-        "name": 'testAcc',
-        "source": 'ReefMobileWallet',
-      },
-    }];
-    await jsApiService.jsPromise('jsApi.initReefState("testnet", ${jsonEncode(accounts)})');
+  _initReefState(JsApiService jsApiService) async {
+    var accounts = [];
+    (await storage.getAllAccounts())
+        .forEach(((account) => {accounts.add(account.toJsonSkinny())}));
+
+    await jsApiService
+        .jsCall('jsApi.initReefState("testnet", ${jsonEncode(accounts)})');
   }
 
   _initReefObservables(JsApiService jsApiService) async {
-
     jsApiService.jsMessageUnknownSubj.listen((JsApiMessage value) {
       print('jsMSG not handled id=${value.id}');
     });
+  }
 
+  _initKeyring(JsApiService jsApiService) async {
+     await jsApiService.jsCall('keyring.initWasm()');
   }
 }
