@@ -15,11 +15,13 @@ export const innitApi = (flutterJS: FlutterJS) => {
             })),
         ),
         availableSigners$: appState.signers$.pipe(
-            map(signers => 
+            map(signers =>
                 signers.map(sig => ({
                     address: sig.address,
                     evmAddress: sig.evmAddress,
-                    name: sig.name
+                    name: sig.name,
+                    balance: sig.balance.toString(),
+                    isEvmClaimed: sig.isEvmClaimed
                 })
             )),
         ),

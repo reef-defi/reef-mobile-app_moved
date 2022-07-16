@@ -86,12 +86,15 @@ class _MyHomePageState extends State<MyHomePage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Observer(builder: (_) {
-                if (ReefAppState.instance.accountCtrl.account.selectedSigner !=
+                /*if (ReefAppState.instance.accountCtrl.account.selectedSigner !=
                     null) {
-                  return Text(ReefAppState
-                      .instance.accountCtrl.account.selectedSigner!.address);
+                  return Text('Selected signer = ${ReefAppState
+                      .instance.accountCtrl.account.selectedSigner!.address}');
+                }*/
+                if(ReefAppState.instance.accountCtrl.account.loadingSigners==true){
+                  return Text('loading signers');
                 }
-                return Text('loading signer');
+                return Text('signers loaded = ${ReefAppState.instance.accountCtrl.account.signers.length}');
               }),
               Observer(builder: (_) {
                 return Column(

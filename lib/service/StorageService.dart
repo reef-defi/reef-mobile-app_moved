@@ -45,7 +45,7 @@ class StorageService {
       ..registerAdapter(StoredAccountAdapter());
 
     mainBox.complete(Hive.openBox('ReefChainBox'));
-    
+
     // Encryption
     const secureStorage = FlutterSecureStorage();
     var containsEncryptionKey = await secureStorage.containsKey(key: 'encryptionKey');

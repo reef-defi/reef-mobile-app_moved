@@ -13,36 +13,43 @@ class AccountCtrl {
   final JsApiService jsApi;
 
   AccountCtrl(this.jsApi, StorageService storage) {
-    initSavedDeviceAccountAddress(jsApi, storage);
-    initJsObservables(jsApi, storage);
-    initWasm(jsApi);
+    _initSavedDeviceAccountAddress(jsApi, storage);
+    _initJsObservables(jsApi, storage);
+    _initWasm(jsApi);
   }
 
-  void initJsObservables(JsApiService jsApi, StorageService storage) {
+  void _initJsObservables(JsApiService jsApi, StorageService storage) {
     jsApi.jsObservable('account.selectedSigner\$').listen((signer) async {
       LinkedHashMap s = signer;
       await storage.setValue(StorageKey.selected_address.name, s['address']);
-      account.setSelectedSigner(ReefSigner(s["address"], s["name"]));
+      account.setSelectedSigner(toReefSigner(s));
     });
 
-    jsApi.jsObservable('account.availableSigners\$').listen((signers) async {
-      print('AVAILABLE Signers=$signers');
+    account.setLoadingSigners(true);
+    jsApi.jsObservable('account.availableSigners\$').listen(( signers) async {
+      account.setLoadingSigners(false);
+      var reefSigners = List<ReefSigner>.from(signers.map((s)=>toReefSigner(s)));
+      account.setSigners(reefSigners);
+      print('AVAILABLE Signers=$reefSigners');
     });
   }
 
-  void initSavedDeviceAccountAddress(
+  ReefSigner toReefSigner(LinkedHashMap<dynamic, dynamic> s) => ReefSigner(s["address"], s["name"], s["balance"]);
+
+  void _initSavedDeviceAccountAddress(
       JsApiService jsApi, StorageService storage) async {
     // TODO check if this address also exists in keystore
     var savedAddress = await storage.getValue(StorageKey.selected_address.name);
     if (kDebugMode) {
       print('SET SAVED ADDRESS=$savedAddress');
     }
+    // TODO check if selected is in accounts
     if (savedAddress != null) {
       jsApi.jsCall('appState.setCurrentAddress("$savedAddress")');
     }
   }
 
-  void initWasm(JsApiService jsApi) async {
+  void _initWasm(JsApiService jsApi) async {
     await jsApi.jsPromise('keyring.initWasm()');
   }
 

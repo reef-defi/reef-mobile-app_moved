@@ -36,7 +36,7 @@ class SigningCtrl {
         print("ERROR: confirmSignature - Account not found.");
         return;
       }
-
+      // TODO user feedback
       signatureRequests.remove(sigConfirmationIdent);
       jsApi.confirmTxSignature(sigConfirmationIdent, account.mnemonic);
     });

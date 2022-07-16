@@ -23,7 +23,6 @@ class ReefAppState {
     this.storage = storage;
     await _initReefState(jsApi);
     await _initReefObservables(jsApi);
-    await _initKeyring(jsApi);
     tokensCtrl = TokenCtrl(jsApi);
     accountCtrl = AccountCtrl(jsApi, storage);
     signingCtrl = SigningCtrl(jsApi, storage);
@@ -35,7 +34,7 @@ class ReefAppState {
         .forEach(((account) => {accounts.add(account.toJsonSkinny())}));
 
     await jsApiService
-        .jsCall('jsApi.initReefState("testnet", ${jsonEncode(accounts)})');
+        .jsPromise('jsApi.initReefState("testnet", ${jsonEncode(accounts)})');
   }
 
   _initReefObservables(JsApiService jsApiService) async {
@@ -44,7 +43,4 @@ class ReefAppState {
     });
   }
 
-  _initKeyring(JsApiService jsApiService) async {
-     await jsApiService.jsCall('keyring.initWasm()');
-  }
 }

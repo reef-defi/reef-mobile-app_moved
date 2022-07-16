@@ -1,17 +1,17 @@
-import { Keyring as PolkadotKeyring } from "@polkadot/keyring";
+import { Keyring as ReefKeyring } from "@reef-defi/keyring";
 import {
     mnemonicGenerate,
     mnemonicValidate,
     encodeAddress,
     cryptoWaitReady,
-} from "@polkadot/util-crypto";
-import { KeypairType } from "@polkadot/util-crypto/types";
-import { KeyringPair } from "@polkadot/keyring/types";
+} from "@reef-defi/util-crypto";
+import { KeypairType } from "@reef-defi/util-crypto/types";
+import { KeyringPair } from "@reef-defi/keyring/types";
 import { polkadotIcon } from "@polkadot/ui-shared";
 
 const CRYPTO_TYPE: KeypairType = "sr25519";
 const SS58_FORMAT = 42;
-const keyring = new PolkadotKeyring({ type: CRYPTO_TYPE, ss58Format: SS58_FORMAT });
+const keyring = new ReefKeyring({ type: CRYPTO_TYPE, ss58Format: SS58_FORMAT });
 
 export interface Account {
     mnemonic: string,
