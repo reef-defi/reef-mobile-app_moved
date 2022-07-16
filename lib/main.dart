@@ -106,6 +106,7 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButton: Observer(builder:(_) {
         if (ReefAppState.instance.accountCtrl.account.selectedSigner != null) {
           return FloatingActionButton(
+            heroTag: "signBtn1",
             onPressed: () {
               _testTransactionSign(
                   ReefAppState.instance.accountCtrl.account.selectedSigner?.address);

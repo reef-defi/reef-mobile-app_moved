@@ -40,6 +40,7 @@ class SignatureOrContentComponent extends StatelessObserverWidget {
               ),
             ),
             floatingActionButton: FloatingActionButton(
+              heroTag: "signBtn",
               onPressed: () => _confirmSign(signatureRequest),
               tooltip: 'Sign',
               child: const Icon(Icons.key),
