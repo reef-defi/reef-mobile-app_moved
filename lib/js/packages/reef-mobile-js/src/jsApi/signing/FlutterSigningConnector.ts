@@ -1,6 +1,7 @@
 import type {MessageTypes, RequestTypes, ResponseTypes,} from '@reef-defi/extension-base/background/types';
 import {FlutterJS} from "flutter-js-bridge/src/FlutterJS";
-import type {SignerPayloadRaw} from "@polkadot/types/types";
+import type {SignerPayloadRaw, SignerPayloadJSON} from "@polkadot/types/types";
+import signer from './signer';
 
 interface Handler {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -8,7 +9,8 @@ interface Handler {
     reject: (error: Error) => void;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     subscriber?: (data: any) => void;
-    messageToSign: string;
+    request: RequestTypes[MessageTypes];
+    messageType: MessageTypes;
 }
 
 type Handlers = Record<string, Handler>;
@@ -27,8 +29,7 @@ export class FlutterSigningConnector {
     sendMessage<TMessageType extends MessageTypes>(message: TMessageType, request: RequestTypes[TMessageType], subscriber?: (data: unknown) => void): Promise<ResponseTypes[TMessageType]> {
         return new Promise((resolve, reject): void => {
             const signRequestIdent = `${Date.now()}.${++this.idCounter}`;
-            this.handlers[signRequestIdent] = {reject, resolve, subscriber, messageToSign: message};
-            const address: string = (request as SignerPayloadRaw).address;
+            this.handlers[signRequestIdent] = {reject, resolve, subscriber, request: request, messageType: message};
             this.flutterJS.flutterSignatureRequest(signRequestIdent, request);
         });
     }
@@ -40,10 +41,20 @@ export class FlutterSigningConnector {
                 console.log("SIGNATURE REQUEST REJECTED=", signRequestIdent);
                 handlerObj.reject(new Error('Signature canceled'));
             }
-            console.log("TODO sign with received mnemonic=", mnemonic);
-            //const signature = signer.sign(mnemonic, handlerObj.messageToSign)
-            const signature = 'test signature result';
-            handlerObj.resolve(signature);
+            let signaturePromise: Promise<string>;
+            switch(handlerObj.messageType) {
+                case 'pub(bytes.sign)':
+                    signaturePromise = signer.signRaw(mnemonic, (handlerObj.request as SignerPayloadRaw).data);
+                    break;
+                case 'pub(extrinsic.sign)':
+                    signaturePromise = signer.signPayload(mnemonic, handlerObj.request as SignerPayloadJSON);
+                    break;
+                default: throw Error('Unknown message type');
+            }
+
+            signaturePromise.then((signature) => { 
+                handlerObj.resolve({signature}); 
+            });  
         }
     }
 

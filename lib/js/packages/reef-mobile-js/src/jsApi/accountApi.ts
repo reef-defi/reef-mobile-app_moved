@@ -14,6 +14,17 @@ export const innitApi = (flutterJS: FlutterJS) => {
                 isEvmClaimed: sig.isEvmClaimed
             })),
         ),
+        availableSigners$: appState.signers$.pipe(
+            map(signers =>
+                signers.map(sig => ({
+                    address: sig.address,
+                    evmAddress: sig.evmAddress,
+                    name: sig.name,
+                    balance: sig.balance.toString(),
+                    isEvmClaimed: sig.isEvmClaimed
+                })
+            )),
+        ),
     };
 }
 

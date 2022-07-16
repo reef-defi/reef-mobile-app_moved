@@ -25,8 +25,50 @@ mixin _$Account on _Account, Store {
     });
   }
 
+  late final _$signersAtom = Atom(name: '_Account.signers', context: context);
+
+  @override
+  ObservableList<ReefSigner> get signers {
+    _$signersAtom.reportRead();
+    return super.signers;
+  }
+
+  @override
+  set signers(ObservableList<ReefSigner> value) {
+    _$signersAtom.reportWrite(value, super.signers, () {
+      super.signers = value;
+    });
+  }
+
+  late final _$loadingSignersAtom =
+      Atom(name: '_Account.loadingSigners', context: context);
+
+  @override
+  bool get loadingSigners {
+    _$loadingSignersAtom.reportRead();
+    return super.loadingSigners;
+  }
+
+  @override
+  set loadingSigners(bool value) {
+    _$loadingSignersAtom.reportWrite(value, super.loadingSigners, () {
+      super.loadingSigners = value;
+    });
+  }
+
   late final _$_AccountActionController =
       ActionController(name: '_Account', context: context);
+
+  @override
+  void setLoadingSigners(bool val) {
+    final _$actionInfo = _$_AccountActionController.startAction(
+        name: '_Account.setLoadingSigners');
+    try {
+      return super.setLoadingSigners(val);
+    } finally {
+      _$_AccountActionController.endAction(_$actionInfo);
+    }
+  }
 
   @override
   void setSelectedSigner(ReefSigner signer) {
@@ -40,9 +82,22 @@ mixin _$Account on _Account, Store {
   }
 
   @override
+  void setSigners(List<ReefSigner> signers) {
+    final _$actionInfo =
+        _$_AccountActionController.startAction(name: '_Account.setSigners');
+    try {
+      return super.setSigners(signers);
+    } finally {
+      _$_AccountActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     return '''
-selectedSigner: ${selectedSigner}
+selectedSigner: ${selectedSigner},
+signers: ${signers},
+loadingSigners: ${loadingSigners}
     ''';
   }
 }

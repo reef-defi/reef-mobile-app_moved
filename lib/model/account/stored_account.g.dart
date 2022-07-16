@@ -19,19 +19,22 @@ class StoredAccountAdapter extends TypeAdapter<StoredAccount> {
     return StoredAccount()
       ..mnemonic = fields[0] as String
       ..address = fields[1] as String
-      ..svg = fields[2] as String;
+      ..svg = fields[2] as String
+      ..name = fields[3] as String;
   }
 
   @override
   void write(BinaryWriter writer, StoredAccount obj) {
     writer
-      ..writeByte(3)
+      ..writeByte(4)
       ..writeByte(0)
       ..write(obj.mnemonic)
       ..writeByte(1)
       ..write(obj.address)
       ..writeByte(2)
-      ..write(obj.svg);
+      ..write(obj.svg)
+      ..writeByte(3)
+      ..write(obj.name);
   }
 
   @override

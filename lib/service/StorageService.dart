@@ -45,7 +45,7 @@ class StorageService {
       ..registerAdapter(StoredAccountAdapter());
 
     mainBox.complete(Hive.openBox('ReefChainBox'));
-    
+
     // Encryption
     const secureStorage = FlutterSecureStorage();
     var containsEncryptionKey = await secureStorage.containsKey(key: 'encryptionKey');
@@ -56,7 +56,7 @@ class StorageService {
     var key = await secureStorage.read(key: 'encryptionKey');
     var encryptionKey = base64Url.decode(key!);
 
-    accountsBox.complete(Hive.openBox('AccountsBoxEncrypted', encryptionCipher: HiveAesCipher(encryptionKey)));
+    accountsBox.complete(Hive.openBox('AccountsBox', encryptionCipher: HiveAesCipher(encryptionKey)));
   }
 
   Future<bool> _checkPermission() async {

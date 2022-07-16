@@ -13,62 +13,55 @@ class AccountCtrl {
   final JsApiService jsApi;
 
   AccountCtrl(this.jsApi, StorageService storage) {
-    initSavedDeviceAccountAddress(jsApi, storage);
-    initJsObservables(jsApi, storage);
-    initWasm(jsApi);
+    _initSavedDeviceAccountAddress(jsApi, storage);
+    _initJsObservables(jsApi, storage);
+    _initWasm(jsApi);
   }
 
-  void initJsObservables(JsApiService jsApi, StorageService storage) {
+  void _initJsObservables(JsApiService jsApi, StorageService storage) {
     jsApi.jsObservable('account.selectedSigner\$').listen((signer) async {
       LinkedHashMap s = signer;
       await storage.setValue(StorageKey.selected_address.name, s['address']);
-      account.setSelectedSigner(ReefSigner(s["address"], s["name"]));
+      account.setSelectedSigner(toReefSigner(s));
+    });
+
+    account.setLoadingSigners(true);
+    jsApi.jsObservable('account.availableSigners\$').listen(( signers) async {
+      account.setLoadingSigners(false);
+      var reefSigners = List<ReefSigner>.from(signers.map((s)=>toReefSigner(s)));
+      account.setSigners(reefSigners);
+      print('AVAILABLE Signers=$reefSigners');
     });
   }
 
-  void initSavedDeviceAccountAddress(
+  ReefSigner toReefSigner(LinkedHashMap<dynamic, dynamic> s) => ReefSigner(s["address"], s["name"], s["balance"]);
+
+  void _initSavedDeviceAccountAddress(
       JsApiService jsApi, StorageService storage) async {
     // TODO check if this address also exists in keystore
     var savedAddress = await storage.getValue(StorageKey.selected_address.name);
     if (kDebugMode) {
       print('SET SAVED ADDRESS=$savedAddress');
     }
+    // TODO check if selected is in accounts
     if (savedAddress != null) {
       jsApi.jsCall('appState.setCurrentAddress("$savedAddress")');
     }
   }
 
-  void initWasm(JsApiService jsApi) async {
-    await jsApi.jsPromise('accountManager.Keyring.initWasm()');
+  void _initWasm(JsApiService jsApi) async {
+    await jsApi.jsPromise('keyring.initWasm()');
   }
 
   Future<String> generateAccount() async {
-    return await jsApi.jsPromise('accountManager.Keyring.generate()');
+    return await jsApi.jsPromise('keyring.generate()');
   }
 
   Future<String> checkMnemonicValid(String mnemonic) async {
-    return await jsApi.jsPromise('accountManager.Keyring.checkMnemonicValid("$mnemonic")');
+    return await jsApi.jsPromise('keyring.checkMnemonicValid("$mnemonic")');
   }
 
   Future<String> accountFromMnemonic(String mnemonic) async {
-    return await jsApi.jsPromise('accountManager.Keyring.accountFromMnemonic("$mnemonic")');
-  }
-
-  signTest(String address, String mnemonic) async {
-    return await jsApi.jsPromise(
-        'accountManager.Signer.sign("$mnemonic", {'
-            'address: "$address", '
-            'blockHash: "0xe1b1dda72998846487e4d858909d4f9a6bbd6e338e4588e5d809de16b1317b80", '
-            'blockNumber: "0x00000393", '
-            'era: "0x3601", '
-            'genesisHash: "0x242a54b35e1aad38f37b884eddeb71f6f9931b02fac27bf52dfb62ef754e5e62", '
-            'method: "0x040105fa8eaf04151687736326c9fea17e25fc5287613693c912909cb226aa4794f26a4882380100", '
-            'nonce: "0x0000000000000000" , '
-            'signedExtensions: ["CheckSpecVersion", "CheckTxVersion", "CheckGenesis", "CheckMortality", "CheckNonce", "CheckWeight", "ChargeTransactionPayment"], '
-            'specVersion: "0x00000026", '
-            'tip: null, '
-            'transactionVersion: "0x00000005", '
-            'version: 4, '
-            '})');
+    return await jsApi.jsPromise('keyring.accountFromMnemonic("$mnemonic")');
   }
 }
