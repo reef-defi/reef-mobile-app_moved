@@ -7,7 +7,7 @@ import '../model/ReefState.dart';
 class DappPage extends StatefulWidget {
   final ReefAppState reefState;
 
-  DappPage(this.reefState);
+  const DappPage(this.reefState);
 
   Future<String> _getHtml() async {
     var assetsFilePath = 'lib/js/packages/dApp-test-html-js/dist/index.js';
@@ -42,6 +42,7 @@ class _DappPageState extends State<DappPage> {
         dappJsApi = JsApiService.dAppInjectedHtml(html);
         dappJsApi?.jsDAppMsgSubj.listen((value) {
           print('DAPPMSG ${value.msgType}');
+          _handleDAppMsgRequest(value, dappJsApi!.sendDappMsgResponse);
         });
       });
     });
@@ -51,12 +52,22 @@ class _DappPageState extends State<DappPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Dapp'),
+        title: const Text('Dapp'),
       ),
       body: Center(
           child: dappJsApi != null
               ? dappJsApi!.widget
-              : CircularProgressIndicator()),
+              : const CircularProgressIndicator()),
     );
   }
+
+  void _handleDAppMsgRequest(JsApiMessage message, void Function(String signatureIdent, dynamic value) responseFn) {
+    switch(message.msgType){
+      case 'pub(authorize.tab)':
+        // TODO display confirmation message.origin is the app name
+        responseFn(message.id, true);
+        break;
+    }
+  }
+
 }
