@@ -1,0 +1,25 @@
+{
+  "name": "dapp",
+  "version": "0.0.1",
+  "main": "src/index.ts",
+  "license": "MIT",
+  "dependencies": {
+    "@polkadot/keyring": "^9.4.1",
+    "@polkadot/ui-shared": "^2.4.1",
+    "@popperjs/core": "^2.11.5",
+    "@reef-defi/extension-base": "^1.0.5",
+    "@reef-defi/extension-inject": "^1.0.5",
+    "crypto-browserify": "^3.12.0",
+    "esbuild": "^0.14.42",
+    "events": "^3.3.0",
+    "flutter-js-bridge": "0.0.1",
+    "stream": "^0.0.2"
+  },
+  "scripts": {
+    "build": "esbuild src/index.ts --bundle --outfile=dist/index.js --platform=browser --tsconfig=tsconfig.json",
+    "start": "esbuild src/index.ts --bundle --outfile=dist/index.js --platform=browser --watch --tsconfig=tsconfig.json"
+  },
+  "browser": {
+    "crypto": false
+  }
+}
