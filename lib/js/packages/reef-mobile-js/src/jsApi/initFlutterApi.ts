@@ -1,7 +1,7 @@
 import * as accountApi from "./accountApi";
 import {appState, AvailableNetworks, availableNetworks, ReefSigner} from "@reef-defi/react-lib";
 import {map, switchMap} from "rxjs/operators";
-import {initFlutterSigningKey} from "./signing/flutterSigningKey";
+import {getFlutterSigningKey} from "flutter-js-bridge/src/flutterSigningKey";
 import {FlutterJS} from "flutter-js-bridge/src/FlutterJS";
 import {firstValueFrom } from "rxjs";
 import {stringToHex} from '@polkadot/util';
@@ -18,7 +18,7 @@ export interface Account {
 export const initFlutterApi = async (flutterJS: FlutterJS) => {
     try {
         console.log("INIT FLUTTER JS API");
-        const signingKey = initFlutterSigningKey(flutterJS);
+        const signingKey = getFlutterSigningKey(flutterJS);
         (window as any).jsApi = {
             initReefState: async (selNetwork: AvailableNetworks, accounts: Account[]) => {
                 let accountsWithMeta: InjectedAccountWithMeta[] = await Promise.all(

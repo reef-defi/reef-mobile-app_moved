@@ -14,7 +14,9 @@ class JsApiService {
   final LOG_MSG_IDENT = '_console.log';
   final API_READY_MSG_IDENT = '_windowApisReady';
   final TX_SIGNATURE_CONFIRMATION_MSG_IDENT = '_txSignMsgIdent';
+  final DAPP_MSG_CONFIRMATION_MSG_IDENT = '_dAppMsgIdent';
   final TX_SIGN_CONFIRMATION_JS_FN_NAME = '_txSignConfirmationJsFnName';
+  final DAPP_MSG_CONFIRMATION_JS_FN_NAME = '_dAppMsgConfirmationJsFnName';
   final REEF_MOBILE_CHANNEL_NAME = 'reefMobileChannel';
   final FLUTTER_SUBSCRIBE_METHOD_NAME = 'flutterSubscribe';
 
@@ -85,6 +87,11 @@ class JsApiService {
         '${TX_SIGN_CONFIRMATION_JS_FN_NAME}("$signatureIdent", "$mnemonic")');
   }
 
+  void sendDappMsgResponse(String signatureIdent, dynamic value) {
+    jsCall(
+        '${DAPP_MSG_CONFIRMATION_JS_FN_NAME}("$signatureIdent", "$value")');
+  }
+
   Future<String> _getFlutterJsHeaderTags(String assetsFilePath) async {
     var jsScript = await rootBundle.loadString(assetsFilePath, cache: true);
     return """
@@ -93,12 +100,16 @@ class JsApiService {
     window.global = window;
     </script>
     <script>${jsScript}</script>
-    <script>window.flutterJS.init( '$REEF_MOBILE_CHANNEL_NAME', 
+    <script>window.flutterJS.init( 
+    '$REEF_MOBILE_CHANNEL_NAME', 
     '$LOG_MSG_IDENT', 
     '$FLUTTER_SUBSCRIBE_METHOD_NAME', 
     '$API_READY_MSG_IDENT', 
     '$TX_SIGNATURE_CONFIRMATION_MSG_IDENT', 
-    '$TX_SIGN_CONFIRMATION_JS_FN_NAME')</script>
+    '$TX_SIGN_CONFIRMATION_JS_FN_NAME',
+    '$DAPP_MSG_CONFIRMATION_MSG_IDENT', 
+    '$DAPP_MSG_CONFIRMATION_JS_FN_NAME',
+    )</script>
     """;
   }
 

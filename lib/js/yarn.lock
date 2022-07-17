@@ -2560,7 +2560,18 @@
     "@babel/runtime" "^7.15.4"
     "@polkadot/util" "^7.5.1"
 
-"@polkadot/types@6.12.1", "@polkadot/types@6.4.2", "@polkadot/types@~6.4.2":
+"@polkadot/types@6.12.1":
+  version "6.12.1"
+  resolved "https://registry.yarnpkg.com/@polkadot/types/-/types-6.12.1.tgz#e5d6dff997740c3da947fa67abe2e1ec144c4757"
+  integrity sha512-O37cAGUL0xiXTuO3ySweVh0OuFUD6asrd0TfuzGsEp3jAISWdElEHV5QDiftWq8J9Vf8BMgTcP2QLFbmSusxqA==
+  dependencies:
+    "@babel/runtime" "^7.16.3"
+    "@polkadot/types-known" "6.12.1"
+    "@polkadot/util" "^8.1.2"
+    "@polkadot/util-crypto" "^8.1.2"
+    rxjs "^7.4.0"
+
+"@polkadot/types@6.4.2", "@polkadot/types@~6.4.2":
   version "6.4.2"
   resolved "https://registry.yarnpkg.com/@polkadot/types/-/types-6.4.2.tgz#8df8caeceb17e9ad50094ee7a3af5f248519d4ad"
   integrity sha512-Pb9KjYWUrhHGcgZjqK3N28OWMKbi3vth1evZY9tIW8sV+m5/L8UhbUhM5XvcKQkVCv9BV0Aqbd7GvWoq9yR2dg==
@@ -2708,12 +2719,51 @@
     bn.js "^5.2.1"
     ip-regex "^4.3.0"
 
+"@polkadot/wasm-bridge@6.2.3":
+  version "6.2.3"
+  resolved "https://registry.yarnpkg.com/@polkadot/wasm-bridge/-/wasm-bridge-6.2.3.tgz#44430710b6f0e7393a69b15decc9123ef5f7ff45"
+  integrity sha512-kDPcUF5uCZJeJUlWtjk6u4KRy+RTObZbIMgZKiuCcQn9n3EYWadONvStfIyKaiFCc3VFVivzH1cUwTFxxTNHHQ==
+  dependencies:
+    "@babel/runtime" "^7.18.6"
+
+"@polkadot/wasm-crypto-asmjs@6.2.3":
+  version "6.2.3"
+  resolved "https://registry.yarnpkg.com/@polkadot/wasm-crypto-asmjs/-/wasm-crypto-asmjs-6.2.3.tgz#f2e3076bb6013431045d48a56b5ae107cb210e20"
+  integrity sha512-d/eH02d/XB/vIGIQwyoFB4zNRb3h5PlWoXolGeVSuoa8476ouEdaWhy64mFwXBmjfluaeCOFXRs+QbxetwrDZg==
+  dependencies:
+    "@babel/runtime" "^7.18.6"
+
 "@polkadot/wasm-crypto-asmjs@^4.6.1":
   version "4.6.1"
   resolved "https://registry.yarnpkg.com/@polkadot/wasm-crypto-asmjs/-/wasm-crypto-asmjs-4.6.1.tgz#4f4a5adcf8dce65666eaa0fb16b6ff7b0243aead"
   integrity sha512-1oHQjz2oEO1kCIcQniOP+dZ9N2YXf2yCLHLsKaKSvfXiWaetVCaBNB8oIHIVYvuLnVc8qlMi66O6xc1UublHsw==
   dependencies:
     "@babel/runtime" "^7.17.2"
+
+"@polkadot/wasm-crypto-asmjs@^5.1.1":
+  version "5.1.1"
+  resolved "https://registry.yarnpkg.com/@polkadot/wasm-crypto-asmjs/-/wasm-crypto-asmjs-5.1.1.tgz#6648e9c6f627501f61aef570e110022f2be1eff2"
+  integrity sha512-1WBwc2G3pZMKW1T01uXzKE30Sg22MXmF3RbbZiWWk3H2d/Er4jZQRpjumxO5YGWan+xOb7HQQdwnrUnrPgbDhg==
+  dependencies:
+    "@babel/runtime" "^7.17.8"
+
+"@polkadot/wasm-crypto-init@6.2.3":
+  version "6.2.3"
+  resolved "https://registry.yarnpkg.com/@polkadot/wasm-crypto-init/-/wasm-crypto-init-6.2.3.tgz#0cf3b59e6492cc63bb8dfb0e238fc599697af5a7"
+  integrity sha512-jDFD4ITWbvFgsGiRI61lrzI/eobG8VrI9nVCiDBqQZK7mNnGkyIdnFD1prW36uiv6/tkqSiGGvdb7dEKtmsB+Q==
+  dependencies:
+    "@babel/runtime" "^7.18.6"
+    "@polkadot/wasm-bridge" "6.2.3"
+    "@polkadot/wasm-crypto-asmjs" "6.2.3"
+    "@polkadot/wasm-crypto-wasm" "6.2.3"
+
+"@polkadot/wasm-crypto-wasm@6.2.3":
+  version "6.2.3"
+  resolved "https://registry.yarnpkg.com/@polkadot/wasm-crypto-wasm/-/wasm-crypto-wasm-6.2.3.tgz#3b47346779881c714e1130374b2f325db9c4fdbf"
+  integrity sha512-bYRhYPcR4MBLAZz8liozr8E11r7j6RLkNHu80z65lZ5AWgjDu2MgYfKxZFWZxg8rB6+V1uYFmb7czUiSWOn4Rg==
+  dependencies:
+    "@babel/runtime" "^7.18.6"
+    "@polkadot/wasm-util" "6.2.3"
 
 "@polkadot/wasm-crypto-wasm@^4.6.1":
   version "4.6.1"
@@ -2722,7 +2772,14 @@
   dependencies:
     "@babel/runtime" "^7.17.2"
 
-"@polkadot/wasm-crypto@4.6.1", "@polkadot/wasm-crypto@^4.2.1", "@polkadot/wasm-crypto@^4.4.1", "@polkadot/wasm-crypto@^5.1.1", "@polkadot/wasm-crypto@^6.2.2":
+"@polkadot/wasm-crypto-wasm@^5.1.1":
+  version "5.1.1"
+  resolved "https://registry.yarnpkg.com/@polkadot/wasm-crypto-wasm/-/wasm-crypto-wasm-5.1.1.tgz#dc371755a05fe93f87a2754a2bcf1ff42e4bb541"
+  integrity sha512-F9PZ30J2S8vUNl2oY7Myow5Xsx5z5uNVpnNlJwlmY8IXBvyucvyQ4HSdhJsrbs4W1BfFc0mHghxgp0FbBCnf/Q==
+  dependencies:
+    "@babel/runtime" "^7.17.8"
+
+"@polkadot/wasm-crypto@^4.2.1", "@polkadot/wasm-crypto@^4.4.1":
   version "4.6.1"
   resolved "https://registry.yarnpkg.com/@polkadot/wasm-crypto/-/wasm-crypto-4.6.1.tgz#12f8481e6f9021928435168beb0697d57ff573e9"
   integrity sha512-2wEftBDxDG+TN8Ah6ogtvzjdZdcF0mAjU4UNNOfpmkBCxQYZOrAHB8HXhzo3noSsKkLX7PDX57NxvJ9OhoTAjw==
@@ -2730,6 +2787,34 @@
     "@babel/runtime" "^7.17.2"
     "@polkadot/wasm-crypto-asmjs" "^4.6.1"
     "@polkadot/wasm-crypto-wasm" "^4.6.1"
+
+"@polkadot/wasm-crypto@^5.1.1":
+  version "5.1.1"
+  resolved "https://registry.yarnpkg.com/@polkadot/wasm-crypto/-/wasm-crypto-5.1.1.tgz#d1f8a0da631028ba904c374c1e8496ab3ba4636b"
+  integrity sha512-JCcAVfH8DhYuEyd4oX1ouByxhou0TvpErKn8kHjtzt7+tRoFi0nzWlmK4z49vszsV3JJgXxV81i10C0BYlwTcQ==
+  dependencies:
+    "@babel/runtime" "^7.17.8"
+    "@polkadot/wasm-crypto-asmjs" "^5.1.1"
+    "@polkadot/wasm-crypto-wasm" "^5.1.1"
+
+"@polkadot/wasm-crypto@^6.2.2":
+  version "6.2.3"
+  resolved "https://registry.yarnpkg.com/@polkadot/wasm-crypto/-/wasm-crypto-6.2.3.tgz#1b52c834a1f609d6820035d61cdfda962990ec57"
+  integrity sha512-Jq08uX16YYySanwN/37n/ZzOFv8T2H4NzLaQNjSGNbFdmKzkrlpw369XRNIVhrKGtK4v09O5ZaF5P9qc0EHgsg==
+  dependencies:
+    "@babel/runtime" "^7.18.6"
+    "@polkadot/wasm-bridge" "6.2.3"
+    "@polkadot/wasm-crypto-asmjs" "6.2.3"
+    "@polkadot/wasm-crypto-init" "6.2.3"
+    "@polkadot/wasm-crypto-wasm" "6.2.3"
+    "@polkadot/wasm-util" "6.2.3"
+
+"@polkadot/wasm-util@6.2.3":
+  version "6.2.3"
+  resolved "https://registry.yarnpkg.com/@polkadot/wasm-util/-/wasm-util-6.2.3.tgz#ffccbda4023810ac0e19327830c9bc0d4a5023bc"
+  integrity sha512-8BQ9gVSrjdc0MPWN9qtNWlMiK+J8dICu1gZJ+cy/hqKjer2MzwX4SeW2wyL5MkYYHjih3ajMRSoSA+/eY2iEwg==
+  dependencies:
+    "@babel/runtime" "^7.18.6"
 
 "@polkadot/x-bigint@8.7.1":
   version "8.7.1"
@@ -3992,9 +4077,9 @@ bindings@^1.3.0, bindings@^1.5.0:
   dependencies:
     file-uri-to-path "1.0.0"
 
-"bip32-ed25519@git+https://github.com/Zondax/bip32-ed25519.git":
+"bip32-ed25519@https://github.com/Zondax/bip32-ed25519":
   version "0.0.4"
-  resolved "git+https://github.com/Zondax/bip32-ed25519.git#0949df01b5c93885339bc28116690292088f6134"
+  resolved "https://github.com/Zondax/bip32-ed25519#0949df01b5c93885339bc28116690292088f6134"
   dependencies:
     bn.js "^5.1.1"
     elliptic "^6.4.1"

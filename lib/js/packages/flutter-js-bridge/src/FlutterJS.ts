@@ -4,7 +4,9 @@ export class FlutterJS {
 
     REEF_MOBILE_CHANNEL_NAME: string;
     TX_SIGNATURE_CONFIRMATION_JS_FN_NAME: string;
+    DAPP_REQ_CONFIRMATION_JS_FN_NAME: string;
     private txSignMsgIdent: string;
+    private txDappMsgIdent: string;
     private onInit?: (fltJS: FlutterJS) => void;
 
     constructor(onInitFn?: (fltJS: FlutterJS) => void) {
@@ -13,12 +15,15 @@ export class FlutterJS {
         }
     }
 
-    init(reefMobileChannelName: string, logIdentName: string, flutterSubscribeMethodName: string, apiReadyIdentName: string, apiTxSignIdentName: string, txSignatureConfirmationJsFnName: string) {
+    init(reefMobileChannelName: string, logIdentName: string, flutterSubscribeMethodName: string, apiReadyIdentName: string,
+         apiTxSignIdentName: string, txSignatureConfirmationJsFnName: string,
+         apiDappMsgIdentName: string, dAppMsgConfirmationJsFnName: string,
+    ) {
         this.REEF_MOBILE_CHANNEL_NAME = reefMobileChannelName;
         this.overrideJSLogs(logIdentName);
         this.registerMobileSubscriptionMethod(flutterSubscribeMethodName);
         this.initFlutterSignatureConfirmationBridge(apiTxSignIdentName, txSignatureConfirmationJsFnName);
-
+        this.initFlutterDAppConfirmationBridge(apiDappMsgIdentName, dAppMsgConfirmationJsFnName)
         if (this.onInit) {
             this.onInit(this);
             this.postToFlutterStream(apiReadyIdentName, true);
@@ -39,9 +44,21 @@ export class FlutterJS {
         }));
     }
 
+    flutterDAppMsgRequest(signatureIdent: string, value: any) {
+        window[this.REEF_MOBILE_CHANNEL_NAME].postMessage(JSON.stringify({
+            id: this.txDappMsgIdent,
+            value:{signatureIdent, value}
+        }));
+    }
+
     private initFlutterSignatureConfirmationBridge (apiTxSignIdentName: string, txSignatureConfirmationJsFnName: string) {
         this.txSignMsgIdent = apiTxSignIdentName;
         this.TX_SIGNATURE_CONFIRMATION_JS_FN_NAME = txSignatureConfirmationJsFnName;
+    }
+
+    private initFlutterDAppConfirmationBridge (apiDappMsgIdentName: string, confirmationJsFnName: string) {
+        this.txDappMsgIdent = apiDappMsgIdentName;
+        this.DAPP_REQ_CONFIRMATION_JS_FN_NAME = confirmationJsFnName;
     }
 
     private overrideJSLogs(logIdentName: string) {
