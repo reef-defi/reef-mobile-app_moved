@@ -1,24 +1,52 @@
 import 'package:flutter/material.dart';
-import 'package:reef_mobile_app/model/account/stored_account.dart';
+import 'package:flutter/services.dart';
 import 'package:reef_mobile_app/service/JsApiService.dart';
-import 'package:reef_mobile_app/service/StorageService.dart';
 
 import '../model/ReefState.dart';
 
 class DappPage extends StatefulWidget {
-  DappPage(this.reefState);
   final ReefAppState reefState;
-  final dappJsApi = JsApiService.dAppInjectedHtml("""<html><head><script>
-     
-      // const extensions = await web3Enable('hello dapp name');
-      console.log('EXTTTTT112',window.injectedWeb3);
-      </script></head><body><h1>hello DApp</h1></body>""");
+
+  DappPage(this.reefState);
+
+  Future<String> _getHtml() async {
+    var assetsFilePath = 'lib/js/packages/dApp-test-html-js/dist/index.js';
+    String testScriptTags = await _getFlutterJsHeaderTags(assetsFilePath);
+    return """<html><head>${testScriptTags}</head><body><h1>hello DApp</h1></body>""";
+  }
 
   @override
   State<DappPage> createState() => _DappPageState();
+
+  Future<String> _getFlutterJsHeaderTags(String assetsFilePath) async {
+    var jsScript = await rootBundle.loadString(assetsFilePath, cache: false);
+    return """
+    <script>
+    // polyfills
+    window.global = window;
+    </script>
+    <script>${jsScript}</script>
+    """;
+  }
 }
 
 class _DappPageState extends State<DappPage> {
+  JsApiService? dappJsApi;
+
+  @override
+  void initState() {
+    super.initState();
+
+    widget._getHtml().then((html) {
+      setState(() {
+        dappJsApi = JsApiService.dAppInjectedHtml(html);
+        dappJsApi?.jsDAppMsgSubj.listen((value) {
+          print('DAPPMSG ${value.msgType}');
+        });
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,9 +54,9 @@ class _DappPageState extends State<DappPage> {
         title: Text('Dapp'),
       ),
       body: Center(
-        child: widget.dappJsApi.widget
-      ),
+          child: dappJsApi != null
+              ? dappJsApi!.widget
+              : CircularProgressIndicator()),
     );
   }
-
 }

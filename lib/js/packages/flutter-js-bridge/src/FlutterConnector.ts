@@ -13,6 +13,7 @@ export interface Handler {
 
 type Handlers = Record<string, Handler>;
 
+type RequestMsgHandler = (flutterRequestIdent: string, actionIdent: MessageTypes, value: any) => void;
 type ResponseMsgHandler = (handlerObj: Handler, value: any) => Promise<any>;
 
 export class FlutterConnector {
@@ -21,22 +22,22 @@ export class FlutterConnector {
     handlers: Handlers = {};
     idCounter = 0;
     responseFnName: string;
-    flutterJsRequestFn: (flutterRequestIdent: string, value: any)=>void;
+    flutterJsRequestFn: RequestMsgHandler;
     responseMsgHandler: ResponseMsgHandler;
 
-    constructor(flutterJS: FlutterJS, responseFnName: string, flutterJsRequestFn: (flutterRequestIdent: string, value: any)=>void, responseMsgHandler: ResponseMsgHandler) {
+    constructor(flutterJS: FlutterJS, responseFnName: string, flutterJsRequestFn: RequestMsgHandler, responseMsgHandler: ResponseMsgHandler) {
         this.flutterJS = flutterJS;
         this.responseFnName = responseFnName;
         this.flutterJsRequestFn = flutterJsRequestFn;
-        this.responseMsgHandler=responseMsgHandler;
+        this.responseMsgHandler = responseMsgHandler;
         this.registerResponseFn(flutterJS, responseFnName);
     }
 
-    sendMessage<TMessageType extends MessageTypes>(message: TMessageType, request: RequestTypes[TMessageType], subscriber?: (data: any) => void): Promise<ResponseTypes[TMessageType]> {
+    sendMessage<TMessageType extends MessageTypes>(messageType: TMessageType, request: RequestTypes[TMessageType], subscriber?: (data: any) => void): Promise<ResponseTypes[TMessageType]> {
         return new Promise((resolve, reject): void => {
             const flutterRequestIdent = `${this.responseFnName}.${Date.now()}.${++this.idCounter}`;
-            this.handlers[flutterRequestIdent] = {reject, resolve, subscriber, request, messageType: message};
-            this.flutterJsRequestFn(flutterRequestIdent, request);
+            this.handlers[flutterRequestIdent] = {reject, resolve, subscriber, request, messageType};
+            this.flutterJsRequestFn(flutterRequestIdent, messageType, request);
         });
     }
 

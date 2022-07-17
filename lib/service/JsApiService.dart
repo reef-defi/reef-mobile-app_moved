@@ -26,6 +26,7 @@ class JsApiService {
 
   final jsMessageSubj = BehaviorSubject<JsApiMessage>();
   final jsTxSignatureConfirmationMessageSubj = BehaviorSubject<JsApiMessage>();
+  final jsDAppMsgSubj = BehaviorSubject<JsApiMessage>();
   final jsMessageUnknownSubj = BehaviorSubject<JsApiMessage>();
 
   late Widget _wdg;
@@ -144,6 +145,8 @@ class JsApiService {
             jsApiLoaded.future.then((ctrl) => jsApiReady.complete(ctrl));
           } else if (apiMsg.id == TX_SIGNATURE_CONFIRMATION_MSG_IDENT) {
             jsTxSignatureConfirmationMessageSubj.add(apiMsg);
+          }else if (apiMsg.id == DAPP_MSG_CONFIRMATION_MSG_IDENT) {
+            jsDAppMsgSubj.add(apiMsg);
           } else if (int.tryParse(apiMsg.id) == null) {
             jsMessageUnknownSubj.add(apiMsg);
           } else {
@@ -157,11 +160,13 @@ class JsApiService {
 
 class JsApiMessage {
   late String id;
+  late String msgType;
   late dynamic value;
 
-  JsApiMessage(this.id, this.value);
+  JsApiMessage(this.id, this.value, this.msgType);
 
   JsApiMessage.fromJson(Map<String, dynamic> json)
       : id = json['id'],
-        value = json['value'];
+        value = json['value'],
+  msgType = json['msgType'];
 }

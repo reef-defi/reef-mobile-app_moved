@@ -34,7 +34,6 @@ async function enable (origin: string): Promise<Injected> {
 }
 
 function inject () {
-    console.log("INJECT EXT START!!");
     injectExtension(enable, {
         name: 'reef-mobile-app',
         version: '0.0.1'// TODO process?.env?.PKG_VERSION as string

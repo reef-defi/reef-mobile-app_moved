@@ -1,6 +1,11 @@
 import polyfill from './polyfill';
-import {initDappApi} from './initDappApi';
-import {FlutterJS} from "flutter-js-bridge/src/FlutterJS";
+import {web3Enable} from "@reef-defi/extension-dapp";
 
 polyfill;
-window['flutterJS'] = new FlutterJS(initDappApi);
+
+const main = async() => {
+    const ext = await web3Enable('Test REEF DApp');
+    console.log("hello dapp111=");
+}
+main();
+

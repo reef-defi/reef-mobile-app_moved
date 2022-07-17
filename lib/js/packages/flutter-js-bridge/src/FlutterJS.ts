@@ -1,4 +1,5 @@
 import {from, Observable} from "rxjs";
+import {MessageTypes} from "@reef-defi/extension-base/background/types";
 
 export class FlutterJS {
 
@@ -30,23 +31,27 @@ export class FlutterJS {
         }
     }
 
-    postToFlutterStream(subscriptionId, value, jsChannelName?: string) {
+    postToFlutterStream(subscriptionId, value, msgType: string='', jsChannelName?: string) {
         return window[jsChannelName || this.REEF_MOBILE_CHANNEL_NAME].postMessage(JSON.stringify({
             id: subscriptionId,
+            msgType,
             value
         }));
     }
 
-    flutterSignatureRequest(signatureIdent: string, value: any) {
+    flutterSignatureRequest(signatureIdent: string, msgType: MessageTypes, value: any) {
         window[this.REEF_MOBILE_CHANNEL_NAME].postMessage(JSON.stringify({
             id: this.txSignMsgIdent,
+            msgType,
             value:{signatureIdent, value}
         }));
     }
 
-    flutterDAppMsgRequest(signatureIdent: string, value: any) {
+    flutterDAppMsgRequest(signatureIdent: string, msgType: MessageTypes, value: any) {
+        console.log("flutter REQQQ=",signatureIdent, value);
         window[this.REEF_MOBILE_CHANNEL_NAME].postMessage(JSON.stringify({
             id: this.txDappMsgIdent,
+            msgType,
             value:{signatureIdent, value}
         }));
     }
