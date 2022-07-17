@@ -8,7 +8,11 @@ import '../model/ReefState.dart';
 class DappPage extends StatefulWidget {
   DappPage(this.reefState);
   final ReefAppState reefState;
-  final dappJsApi = JsApiService.dAppInjectedHtml("<html><head><script>console.log('dapp test injected=',window.testInjected)</script></head><body><h1>hello DApp</h1></body>");
+  final dappJsApi = JsApiService.dAppInjectedHtml("""<html><head><script>
+      
+      // const extensions = await web3Enable('hello dapp name');
+      console.log('EXTTTTT',extensions);
+      </script></head><body><h1>hello DApp</h1></body>""");
 
   @override
   State<DappPage> createState() => _DappPageState();
