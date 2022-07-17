@@ -11,7 +11,7 @@ class DappPage extends StatefulWidget {
   final dappJsApi = JsApiService.dAppInjectedHtml("""<html><head><script>
       
       // const extensions = await web3Enable('hello dapp name');
-      console.log('EXTTTTT',extensions);
+      console.log('EXTTTTT');
       </script></head><body><h1>hello DApp</h1></body>""");
 
   @override

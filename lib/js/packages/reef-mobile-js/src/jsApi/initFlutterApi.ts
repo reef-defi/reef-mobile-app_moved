@@ -26,7 +26,8 @@ export const initFlutterApi = async (flutterJS: FlutterJS) => {
                         return await buildAccountWithMeta(account.name, account.address);
                     }
                 ));
-                return appState.initReefState({
+
+                await appState.initReefState({
                     network: availableNetworks[selNetwork],
                     jsonAccounts: {accounts: accountsWithMeta, injectedSigner: signingKey}
                 });
