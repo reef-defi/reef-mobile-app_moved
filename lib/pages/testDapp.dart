@@ -9,9 +9,9 @@ class DappPage extends StatefulWidget {
   DappPage(this.reefState);
   final ReefAppState reefState;
   final dappJsApi = JsApiService.dAppInjectedHtml("""<html><head><script>
-      
+     
       // const extensions = await web3Enable('hello dapp name');
-      console.log('EXTTTTT');
+      console.log('EXTTTTT112',window.injectedWeb3);
       </script></head><body><h1>hello DApp</h1></body>""");
 
   @override
