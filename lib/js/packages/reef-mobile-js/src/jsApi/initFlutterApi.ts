@@ -26,10 +26,19 @@ export const initFlutterApi = async (flutterJS: FlutterJS) => {
                     }
                 ));
 
-                await appState.initReefState({
+                const destroyFn = await appState.initReefState({
                     network: availableNetworks[selNetwork],
                     jsonAccounts: {accounts: accountsWithMeta, injectedSigner: signingKey}
                 });
+
+                /*setTimeout((  )=>{
+                    destroyFn();
+                    console.log('destroyed')
+                },5000)*/
+                window.addEventListener("beforeunload", function(e){
+                    console.log('DESTROY Reef Api');
+                    destroyFn();
+                }, false);
             },
             testReefSignerRawPromise: (address: string, message: string) => {
                 return firstValueFrom(appState.signers$.pipe(

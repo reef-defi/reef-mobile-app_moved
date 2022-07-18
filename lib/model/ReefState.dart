@@ -21,7 +21,8 @@ class ReefAppState {
 
   init(JsApiService jsApi, StorageService storage) async {
     this.storage = storage;
-    await _initReefState(jsApi);
+    print('!!!! TODO reefState DISABLED');
+    // await _initReefState(jsApi);
     await _initReefObservables(jsApi);
     tokensCtrl = TokenCtrl(jsApi);
     accountCtrl = AccountCtrl(jsApi, storage);
