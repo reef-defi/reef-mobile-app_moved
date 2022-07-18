@@ -21,7 +21,8 @@ class ReefAppState {
 
   init(JsApiService jsApi, StorageService storage) async {
     this.storage = storage;
-    await _initReefState(jsApi);
+    print('!!!! TODO reefState DISABLED');
+    // await _initReefState(jsApi);
     await _initReefObservables(jsApi);
     tokensCtrl = TokenCtrl(jsApi);
     accountCtrl = AccountCtrl(jsApi, storage);
@@ -37,9 +38,9 @@ class ReefAppState {
         .jsPromise('jsApi.initReefState("testnet", ${jsonEncode(accounts)})');
   }
 
-  _initReefObservables(JsApiService jsApiService) async {
-    jsApiService.jsMessageUnknownSubj.listen((JsApiMessage value) {
-      print('jsMSG not handled id=${value.id}');
+  _initReefObservables(JsApiService reefAppJsApiService) async {
+    reefAppJsApiService.jsMessageUnknownSubj.listen((JsApiMessage value) {
+      print('jsMSG not handled id=${value.streamId}');
     });
   }
 

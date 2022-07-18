@@ -43,29 +43,29 @@ class SigningCtrl {
   }
 
   buildSignatureRequest(JsApiMessage jsApiMessage) {
-    var signatureIdent = jsApiMessage.value["signatureIdent"];
+    var signatureIdent = jsApiMessage.reqId;
     var payload;
 
-    if (jsApiMessage.value["value"]["data"] != null) {
+    if (jsApiMessage.value["data"] != null) {
       payload = SignerPayloadRaw(
-        jsApiMessage.value["value"]["address"],
-        jsApiMessage.value["value"]["data"],
-        jsApiMessage.value["value"]["type"]
+        jsApiMessage.value["address"],
+        jsApiMessage.value["data"],
+        jsApiMessage.value["type"]
       );
     } else {
       payload = SignerPayloadJSON(
-        jsApiMessage.value["value"]["address"],
-        jsApiMessage.value["value"]["blockHash"],
-        jsApiMessage.value["value"]["blockNumber"],
-        jsApiMessage.value["value"]["era"],
-        jsApiMessage.value["value"]["genesisHash"],
-        jsApiMessage.value["value"]["method"],
-        jsApiMessage.value["value"]["nonce"],
-        jsApiMessage.value["value"]["specVersion"],
-        jsApiMessage.value["value"]["tip"],
-        jsApiMessage.value["value"]["transactionVersion"],
-        jsApiMessage.value["value"]["signedExtensions"].cast<String>(),
-        jsApiMessage.value["value"]["version"]
+        jsApiMessage.value["address"],
+        jsApiMessage.value["blockHash"],
+        jsApiMessage.value["blockNumber"],
+        jsApiMessage.value["era"],
+        jsApiMessage.value["genesisHash"],
+        jsApiMessage.value["method"],
+        jsApiMessage.value["nonce"],
+        jsApiMessage.value["specVersion"],
+        jsApiMessage.value["tip"],
+        jsApiMessage.value["transactionVersion"],
+        jsApiMessage.value["signedExtensions"].cast<String>(),
+        jsApiMessage.value["version"]
       );
     }
 

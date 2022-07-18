@@ -36,4 +36,11 @@ class _WebViewFlutterJSState extends State<WebViewFlutterJS> {
         ),
     );
   }
+
+  @override
+  void dispose(){
+    super.dispose();
+    print('WEBVIEW DISPOSEDDDDD');
+  }
+
 }
