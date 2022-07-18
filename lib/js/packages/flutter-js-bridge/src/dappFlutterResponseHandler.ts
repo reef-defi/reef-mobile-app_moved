@@ -3,6 +3,12 @@ import {Handler} from "./FlutterConnector";
 export default function dAppResponseMsgHandler(handlerObj: Handler, value: any): Promise<any> {
     let dAppPromise: Promise<any>;
     switch (handlerObj.messageType) {
+        case 'pub(bytes.sign)':
+            console.log("TODO handle response");
+            break;
+        case 'pub(extrinsic.sign)':
+            console.log("TODO handle response");
+            break;
         case 'pub(phishing.redirectIfDenied)':
             dAppPromise = Promise.resolve(false);
             break;

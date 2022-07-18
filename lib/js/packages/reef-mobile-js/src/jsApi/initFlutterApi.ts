@@ -1,7 +1,6 @@
 import * as accountApi from "./accountApi";
 import {appState, AvailableNetworks, availableNetworks, ReefSigner} from "@reef-defi/react-lib";
 import {map, switchMap} from "rxjs/operators";
-import {getFlutterSigningKey} from "flutter-js-bridge/src/flutterSigningKey";
 import {FlutterJS} from "flutter-js-bridge/src/FlutterJS";
 import {firstValueFrom } from "rxjs";
 import {stringToHex} from '@polkadot/util';
@@ -9,6 +8,8 @@ import {SignerPayloadJSON} from "@polkadot/types/types";
 import {ethers} from "ethers";
 import {Signer} from "@reef-defi/evm-provider";
 import type {InjectedAccountWithMeta} from "@reef-defi/extension-inject/types";
+import {getSignatureSendRequest} from "flutter-js-bridge/src/sendRequestSignature";
+import FlutterSigner from "./signing/FlutterSigner";
 
 export interface Account {
     address: string;
@@ -86,4 +87,10 @@ const buildAccountWithMeta = async (name: string, address: string): Promise<Inje
     };
 
     return acountWithMeta;
+}
+
+
+function getFlutterSigningKey (flutterJS: FlutterJS) {
+        let sendRequest = getSignatureSendRequest(flutterJS);
+        return  new FlutterSigner(sendRequest);
 }

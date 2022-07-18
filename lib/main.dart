@@ -5,7 +5,7 @@ import 'package:reef_mobile_app/model/ReefState.dart';
 import 'package:reef_mobile_app/model/account/ReefSigner.dart';
 import 'package:reef_mobile_app/pages/SplashScreen.dart';
 import 'package:reef_mobile_app/pages/accounts.dart';
-import 'package:reef_mobile_app/pages/testDapp.dart';
+import 'package:reef_mobile_app/pages/DAppPage.dart';
 
 void main() async {
   runApp(
@@ -40,7 +40,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void _navigateTestDApp() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => DappPage(ReefAppState.instance)),
+      MaterialPageRoute(builder: (context) => DAppPage(ReefAppState.instance)),
     );
   }
 

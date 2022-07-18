@@ -4,13 +4,15 @@ import FlutterJS from "flutter-js-bridge";
 import {getDAppSendRequestFn} from "flutter-js-bridge/src/sendRequestDApp";
 import Injected from "@reef-defi/extension-base/page/Injected";
 import Signer from "@reef-defi/extension-base/page/Signer";
+import {getSignatureSendRequest} from "flutter-js-bridge/src/sendRequestSignature";
+import FlutterSigner from "reef-mobile-js/src/jsApi/signing/FlutterSigner";
 
 let sendDAppMessage;
 let signingKey;
 
-export function injectMobileExtension(flutterJS: FlutterJS, sigKey: Signer) {
-    signingKey = sigKey;
+export function injectMobileExtension(flutterJS: FlutterJS) {
     sendDAppMessage = getDAppSendRequestFn(flutterJS);
+    signingKey = new FlutterSigner(sendDAppMessage);
     redirectIfPhishing().then((gotRedirected) => {
         if (!gotRedirected) {
             inject();

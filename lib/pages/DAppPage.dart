@@ -4,10 +4,10 @@ import 'package:reef_mobile_app/service/JsApiService.dart';
 
 import '../model/ReefState.dart';
 
-class DappPage extends StatefulWidget {
+class DAppPage extends StatefulWidget {
   final ReefAppState reefState;
 
-  const DappPage(this.reefState);
+  const DAppPage(this.reefState);
 
   Future<String> _getHtml() async {
     var assetsFilePath = 'lib/js/packages/dApp-test-html-js/dist/index.js';
@@ -16,7 +16,7 @@ class DappPage extends StatefulWidget {
   }
 
   @override
-  State<DappPage> createState() => _DappPageState();
+  State<DAppPage> createState() => _DAppPageState();
 
   Future<String> _getFlutterJsHeaderTags(String assetsFilePath) async {
     var jsScript = await rootBundle.loadString(assetsFilePath, cache: false);
@@ -30,7 +30,7 @@ class DappPage extends StatefulWidget {
   }
 }
 
-class _DappPageState extends State<DappPage> {
+class _DAppPageState extends State<DAppPage> {
   JsApiService? dappJsApi;
 
   @override
@@ -51,7 +51,7 @@ class _DappPageState extends State<DappPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Dapp'),
+        title: const Text('DApp'),
       ),
       body: Center(
           child: dappJsApi != null
@@ -71,6 +71,12 @@ class _DappPageState extends State<DappPage> {
     }
 
     switch(message.msgType){
+      case 'pub(bytes.sign)':
+        print("TODO handle request");
+        break;
+      case 'pub(extrinsic.sign)':
+        print("TODO handle request");
+        break;
       case 'pub(authorize.tab)':
         // TODO display confirmation - message.value.origin is the app name
         responseFn(message.reqId, true);
