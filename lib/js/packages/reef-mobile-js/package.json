@@ -14,7 +14,9 @@
     "esbuild": "^0.14.42",
     "events": "^3.3.0",
     "rxjs": "^7.5.5",
-    "stream": "^0.0.2"
+    "stream": "^0.0.2",
+    "react": "~17",
+    "react-dom": "~17"
   },
   "scripts": {
     "build": "esbuild src/index.ts --bundle --outfile=dist/index.js --platform=browser --tsconfig=tsconfig.json",
