@@ -62,11 +62,24 @@ class _DappPageState extends State<DappPage> {
 
   void _handleDAppMsgRequest(JsApiMessage message, void Function(String reqId, dynamic value) responseFn) {
 
+    if (message.msgType == 'pub(phishing.redirectIfDenied)') {
+      // TODO return this.redirectIfPhishing(url);
+    }
+
+    if (message.msgType != 'pub(authorize.tab)') {
+      // TODO this.#state.ensureUrlAuthorized(url);
+    }
+
     switch(message.msgType){
       case 'pub(authorize.tab)':
-        // TODO display confirmation message.origin is the app name
+        // TODO display confirmation - message.value.origin is the app name
         responseFn(message.reqId, true);
         break;
+
+      case 'pub(accounts.list)':
+        // TODO return this.accountsList(url, request as RequestAccountList);
+        responseFn(message.reqId, []);
+      break;
     }
   }
 

@@ -5,7 +5,7 @@ polyfill;
 
 const main = async() => {
     const ext = await web3Enable('Test REEF DApp');
-    console.log("hello dapp111=");
+    console.log("hello dapp111=", ext.map((e)=>e.signer.signRaw));
 }
 main();
 

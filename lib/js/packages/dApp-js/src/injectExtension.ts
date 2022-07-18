@@ -23,11 +23,13 @@ export function injectMobileExtension(flutterJS: FlutterJS, sigKey: Signer) {
 
 function redirectIfPhishing(){
     // const isInDenyList = await checkIfDenied(url);
+    // TODO sendDAppMessage('pub(phishing.redirectIfDenied)', { url })
     return Promise.resolve(false);
 }
 
 async function enable (origin: string): Promise<Injected> {
-    await sendDAppMessage('pub(authorize.tab)', { origin });
+    const res = await sendDAppMessage('pub(authorize.tab)', { origin });
+    console.log("ENABLE=",res);
     return new RMInjected(sendDAppMessage, signingKey);
 }
 
