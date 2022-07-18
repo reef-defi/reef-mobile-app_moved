@@ -28,8 +28,6 @@ function redirectIfPhishing(){
 
 async function enable (origin: string): Promise<Injected> {
     await sendDAppMessage('pub(authorize.tab)', { origin });
-    console.log("ENABLLLL=",origin);
-
     return new RMInjected(sendDAppMessage, signingKey);
 }
 

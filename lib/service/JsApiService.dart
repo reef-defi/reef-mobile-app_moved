@@ -139,6 +139,7 @@ class JsApiService {
         onMessageReceived: (message) {
           JsApiMessage apiMsg =
               JsApiMessage.fromJson(jsonDecode(message.message));
+          print('jjjjj ${message.message}');
           if (apiMsg.id == LOG_MSG_IDENT) {
             print('$LOG_MSG_IDENT= ${apiMsg.value}');
           } else if (apiMsg.id == API_READY_MSG_IDENT) {
