@@ -5,14 +5,38 @@ import 'package:reef_mobile_app/model/ReefState.dart';
 import 'package:reef_mobile_app/pages/SplashScreen.dart';
 import 'package:reef_mobile_app/pages/accounts.dart';
 import 'package:reef_mobile_app/pages/testDapp.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:reef_mobile_app/components/page_layout.dart';
+import 'package:reef_mobile_app/utils/styles.dart';
 
 void main() async {
   runApp(
     SplashApp(
       key: UniqueKey(),
-      displayOnInit: (){return const MyHomePage(title: 'Reef demo');},
+      displayOnInit: () {
+        return const MyApp();
+      },
     ),
   );
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Reef Chain Wallet',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        textTheme: GoogleFonts.latoTextTheme(
+          Theme.of(context).textTheme,
+        ),
+        colorScheme:
+            ColorScheme.fromSwatch().copyWith(primary: Styles.primaryColor),
+      ),
+      home: const BottomNav(),
+    );
+  }
 }
 
 class MyHomePage extends StatefulWidget {
@@ -99,10 +123,12 @@ class _MyHomePageState extends State<MyHomePage> {
                   return Text('Selected signer = ${ReefAppState
                       .instance.accountCtrl.account.selectedSigner!.address}');
                 }*/
-                if(ReefAppState.instance.accountCtrl.account.loadingSigners==true){
+                if (ReefAppState.instance.accountCtrl.account.loadingSigners ==
+                    true) {
                   return Text('loading signers');
                 }
-                return Text('signers loaded = ${ReefAppState.instance.accountCtrl.account.signers.length}');
+                return Text(
+                    'signers loaded = ${ReefAppState.instance.accountCtrl.account.signers.length}');
               }),
               Observer(builder: (_) {
                 return Column(
