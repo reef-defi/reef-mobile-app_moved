@@ -8,7 +8,7 @@ export const getDAppSendRequestFn = (flutterJS: FlutterJS) => {
         const fSignConnector = new FlutterConnector(
             flutterJS,
             flutterJS.DAPP_REQ_CONFIRMATION_JS_FN_NAME,
-            flutterJS.flutterDAppMsgRequest.bind(flutterJS),
+            flutterJS.sendFlutterDAppMsgRequest.bind(flutterJS),
             dAppResponseMsgHandler
         );
         dAppSendRequestFn = fSignConnector.sendMessage.bind(fSignConnector);

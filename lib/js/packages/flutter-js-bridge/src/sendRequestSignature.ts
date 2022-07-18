@@ -10,7 +10,7 @@ export const getSignatureSendRequest = (flutterJS: FlutterJS) => {
         const fSignConnector = new FlutterConnector(
             flutterJS,
             flutterJS.TX_SIGNATURE_CONFIRMATION_JS_FN_NAME,
-            flutterJS.flutterSignatureRequest.bind(flutterJS),
+            flutterJS.sendFlutterSignatureRequest.bind(flutterJS),
             signatureResponseMsgHandler
         );
         signatureSendRequestFn = fSignConnector.sendMessage.bind(fSignConnector);

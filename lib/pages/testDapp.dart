@@ -60,13 +60,13 @@ class _DappPageState extends State<DappPage> {
     );
   }
 
-  void _handleDAppMsgRequest(JsApiMessage message, void Function(String signatureIdent, dynamic value) responseFn) {
+  void _handleDAppMsgRequest(JsApiMessage message, void Function(String reqId, dynamic value) responseFn) {
 
     switch(message.msgType){
       case 'pub(authorize.tab)':
         // TODO display confirmation message.origin is the app name
-        print('HHHNDLLL2 ${message} ');
-        responseFn(message.value.id, true);
+        print('HHHNDLLL2 ${message.reqId} ');
+        responseFn(message.reqId, true);
         break;
     }
   }

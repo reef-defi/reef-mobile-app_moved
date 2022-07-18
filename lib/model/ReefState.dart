@@ -39,7 +39,7 @@ class ReefAppState {
 
   _initReefObservables(JsApiService reefAppJsApiService) async {
     reefAppJsApiService.jsMessageUnknownSubj.listen((JsApiMessage value) {
-      print('jsMSG not handled id=${value.id}');
+      print('jsMSG not handled id=${value.streamId}');
     });
   }
 
