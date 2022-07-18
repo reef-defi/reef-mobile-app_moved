@@ -60,7 +60,6 @@ export class FlutterConnector {
     private registerResponseFn(flutterJS: FlutterJS, responseFnName: string) {
         const self = this;
         window[responseFnName] = (flutterRequestIdent: string, value?: any)=> {
-            console.log("RECEIVEDMMM=",value, flutterRequestIdent);
             self.receiveMessage(flutterRequestIdent, value||null);
         }
     }

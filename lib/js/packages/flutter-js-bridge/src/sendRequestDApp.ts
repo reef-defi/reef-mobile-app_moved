@@ -18,7 +18,6 @@ export const getDAppSendRequestFn = (flutterJS: FlutterJS) => {
 
 function dAppResponseMsgHandler(handlerObj: Handler, value: any): Promise<any> {
     let dAppPromise: Promise<any>;
-    console.log('RESSS',value);
     switch (handlerObj.messageType) {
         case 'pub(phishing.redirectIfDenied)':
             dAppPromise = Promise.resolve(false);
