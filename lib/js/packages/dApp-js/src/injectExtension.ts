@@ -1,19 +1,13 @@
 import {injectExtension} from "@reef-defi/extension-inject";
-import RMInjected from "./ReefMobileInjected";
 import FlutterJS from "flutter-js-bridge";
 import {getDAppSendRequestFn} from "flutter-js-bridge/src/sendRequestDApp";
 import Injected from "@reef-defi/extension-base/page/Injected";
-import Signer from "@reef-defi/extension-base/page/Signer";
-import {getSignatureSendRequest} from "flutter-js-bridge/src/sendRequestSignature";
-import FlutterSigner from "reef-mobile-js/src/jsApi/signing/FlutterSigner";
-
 let sendDAppMessage;
-let signingKey;
 
 export function injectMobileExtension(flutterJS: FlutterJS) {
     sendDAppMessage = getDAppSendRequestFn(flutterJS);
-    signingKey = new FlutterSigner(sendDAppMessage);
-    redirectIfPhishing().then((gotRedirected) => {
+    redirectIfPhishing().then(( gotRedirected) => {
+        console.log('REDIRRRRRR', gotRedirected)
         if (!gotRedirected) {
             inject();
         }
@@ -23,16 +17,17 @@ export function injectMobileExtension(flutterJS: FlutterJS) {
     });
 }
 
-function redirectIfPhishing(){
+function redirectIfPhishing(): Promise<boolean>{
     // const isInDenyList = await checkIfDenied(url);
-    // TODO sendDAppMessage('pub(phishing.redirectIfDenied)', { url })
-    return Promise.resolve(false);
+    return sendDAppMessage('pub(phishing.redirectIfDenied)', { url: window.location.href });
+    // return Promise.resolve(resolve);
 }
 
 async function enable (origin: string): Promise<Injected> {
+    console.log('EEEEEE',origin)
     const res = await sendDAppMessage('pub(authorize.tab)', { origin });
     console.log("ENABLE=",res);
-    return new RMInjected(sendDAppMessage, signingKey);
+    return new Injected(sendDAppMessage);
 }
 
 function inject () {

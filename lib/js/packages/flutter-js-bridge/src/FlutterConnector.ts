@@ -44,16 +44,10 @@ export class FlutterConnector {
     receiveMessage(flutterRequestIdent: string, value: any) {
         const handlerObj = this.handlers[flutterRequestIdent];
         if (handlerObj) {
-            if (!value) {
-                console.log("SIGNATURE REQUEST REJECTED=", flutterRequestIdent);
-                handlerObj.reject(new Error('Signature canceled'));
-                return;
-            }
-            let signaturePromise = this.responseMsgHandler(handlerObj, value);
 
-            signaturePromise.then((signature) => {
-                handlerObj.resolve({signature});
-            });
+            let handlerPromise = this.responseMsgHandler(handlerObj, value);
+
+            handlerPromise.then(handlerObj.resolve);
         }
     }
 

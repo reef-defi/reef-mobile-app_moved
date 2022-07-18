@@ -5,11 +5,9 @@ import {FlutterJS} from "flutter-js-bridge/src/FlutterJS";
 import {firstValueFrom } from "rxjs";
 import {stringToHex} from '@polkadot/util';
 import {SignerPayloadJSON} from "@polkadot/types/types";
-import {ethers} from "ethers";
-import {Signer} from "@reef-defi/evm-provider";
 import type {InjectedAccountWithMeta} from "@reef-defi/extension-inject/types";
+import Signer from "@reef-defi/extension-base/page/Signer";
 import {getSignatureSendRequest} from "flutter-js-bridge/src/sendRequestSignature";
-import FlutterSigner from "./signing/FlutterSigner";
 
 export interface Account {
     address: string;
@@ -92,5 +90,5 @@ const buildAccountWithMeta = async (name: string, address: string): Promise<Inje
 
 function getFlutterSigningKey (flutterJS: FlutterJS) {
         let sendRequest = getSignatureSendRequest(flutterJS);
-        return  new FlutterSigner(sendRequest);
+        return  new Signer(sendRequest);
 }

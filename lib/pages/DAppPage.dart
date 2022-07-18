@@ -61,13 +61,14 @@ class _DAppPageState extends State<DAppPage> {
   }
 
   void _handleDAppMsgRequest(JsApiMessage message, void Function(String reqId, dynamic value) responseFn) {
-
     if (message.msgType == 'pub(phishing.redirectIfDenied)') {
-      // TODO return this.redirectIfPhishing(url);
+      print('flutter DAPP req=${message.msgType} value= ${message.value}');
+      responseFn(message.reqId, redirectIfPhishing(message.value['url']));
     }
 
-    if (message.msgType != 'pub(authorize.tab)') {
-      // TODO this.#state.ensureUrlAuthorized(url);
+    if (message.msgType != 'pub(authorize.tab)' && !ensureUrlAuthorized(message.value['url'])) {
+      print('Domain not authorized= ${message.value['url']}');
+      return;
     }
 
     switch(message.msgType){
@@ -87,6 +88,16 @@ class _DAppPageState extends State<DAppPage> {
         responseFn(message.reqId, []);
       break;
     }
+  }
+
+  bool redirectIfPhishing(String url) {
+    // TODO check against list
+    return false;
+  }
+
+  bool ensureUrlAuthorized(String url) {
+    // TODO check against authorized domains
+    return true;
   }
 
 }

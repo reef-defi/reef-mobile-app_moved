@@ -1,6 +1,7 @@
 import {Handler} from "./FlutterConnector";
 
 export default function dAppResponseMsgHandler(handlerObj: Handler, value: any): Promise<any> {
+    console.log('DAPP RESPONSE',handlerObj.messageType, ' VAL=',value===true);
     let dAppPromise: Promise<any>;
     switch (handlerObj.messageType) {
         case 'pub(bytes.sign)':
@@ -10,11 +11,9 @@ export default function dAppResponseMsgHandler(handlerObj: Handler, value: any):
             console.log("TODO handle response");
             break;
         case 'pub(phishing.redirectIfDenied)':
-            dAppPromise = Promise.resolve(false);
-            break;
+            return Promise.resolve(value===true);
         case 'pub(authorize.tab)':
-            dAppPromise = value===true||value==='true'?Promise.resolve(true):Promise.reject('Not approved');
-            break;
+            return value===true||value==='true'?Promise.resolve(true):Promise.reject('Not approved');
         case 'pub(accounts.list)':
             console.log("RES pub(accounts.list)=",value);
             dAppPromise = Promise.resolve([]); //Promise<InjectedAccount[]>
