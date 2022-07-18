@@ -30,7 +30,10 @@ class AccountCtrl {
       account.setLoadingSigners(false);
       var reefSigners = List<ReefSigner>.from(signers.map((s)=>toReefSigner(s)));
       account.setSigners(reefSigners);
-      print('AVAILABLE Signers=$reefSigners');
+      print('AVAILABLE Signers');
+      reefSigners.forEach((signer) {
+        print('  ${signer.name} - ${signer.address}');
+      });
     });
   }
 

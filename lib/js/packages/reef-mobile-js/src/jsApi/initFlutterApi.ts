@@ -34,8 +34,6 @@ export const initFlutterApi = async (flutterJS: FlutterJS) => {
             testReefSignerRawPromise: (address: string, message: string) => {
                 return firstValueFrom(appState.signers$.pipe(
                     map((signers: ReefSigner[]) => {
-                        console.log("ADDRESS=", address);
-                        signers.forEach(signer => console.log(signer.address));
                         const signer = signers.find(s => s.address === address);
                         console.log("TEST SIGNER RAW=", signer.address);
                         return signer;
@@ -55,14 +53,58 @@ export const initFlutterApi = async (flutterJS: FlutterJS) => {
             testReefSignerPayloadPromise: (address: string, payload: SignerPayloadJSON) => {
                 return firstValueFrom(appState.signers$.pipe(
                     map((signers: ReefSigner[]) => {
-                        console.log("ADDRESS=", address);
-                        signers.forEach(signer => console.log(signer.address));
                         const signer = signers.find(s => s.address === address);
                         console.log("TEST SIGNER PAYLOAD=", signer.address);
                         return signer;
                     }),
                     switchMap((signer: ReefSigner | undefined) => {
                         return signer.signer.signingKey.signPayload(payload);
+                    })
+                ));
+            },
+            testReefSignAndSendTxPromise: (address: string) => {
+                return firstValueFrom(appState.signers$.pipe(
+                    map((signers: ReefSigner[]) => {
+                        const signer = signers.find(s => s.address === address);
+                        console.log("TEST SIGN AND SEND=", signer.address);
+                        return signer;
+                    }),
+                    switchMap(async (signer: ReefSigner | undefined) => {
+                        // Contract data
+                        const CONTRACT_ADDRESS = "0x0a3f2785dbbc5f022de511aab8846388b78009fd";
+                        const CONTRACT_ABI = [
+                            {
+                                inputs: [
+                                    {
+                                        internalType: "uint256",
+                                        name: "positionId",
+                                        type: "uint256",
+                                    },
+                                ],
+                                name: "enterRaffle",
+                                outputs: [],
+                                stateMutability: "payable",
+                                type: "function",
+                            }
+                        ];
+
+                        // Storage and gas limits
+                        const STORAGE_LIMIT = 2000;
+
+                        // Input data
+                        const FUNCTION_NAME = "enterRaffle";
+                        const ARGS = ["164"];
+                        const VALUE_SENT = ethers.utils.parseEther("1.0");
+                        const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer.signer);
+
+                        const tx = await contract[FUNCTION_NAME](...ARGS, {
+                            value: VALUE_SENT, 
+                            customData: { storageLimit: STORAGE_LIMIT }
+                        });
+                    
+                        const receipt = await tx.wait();
+                        console.log("SIGN AND SEND RESULT=", receipt);
+                        return receipt;
                     })
                 ));
             }
