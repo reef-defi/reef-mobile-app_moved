@@ -38,6 +38,14 @@ dependencies:
   flutter_mobx: ^2.0.6+1
   webview_flutter: ^3.0.4
   rxdart: ^0.27.4
+  google_fonts: ^3.0.1
+  gap: ^2.0.0
+  flutter_svg: ^1.1.0
+  cached_network_image: ^3.2.1
+  shimmer: ^2.0.0
+  url_launcher: ^6.1.3
+  intl: ^0.17.0
+  dotted_border: ^2.0.0+2
   hive: ^2.2.2
   hive_flutter: ^1.1.0
   permission_handler: ^10.0.0
@@ -74,6 +82,7 @@ flutter:
   assets:
      - lib/js/packages/reef-mobile-js/dist/index.js
      - lib/js/packages/dApp-js/dist/index.js
+     - assets/images/
      - lib/js/packages/dApp-test-html-js/dist/index.js
 #     - lib/js_api/dist/index.js
   #   - images/a_dot_ham.jpeg

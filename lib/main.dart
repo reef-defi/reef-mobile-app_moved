@@ -5,15 +5,39 @@ import 'package:reef_mobile_app/model/ReefState.dart';
 import 'package:reef_mobile_app/model/account/ReefSigner.dart';
 import 'package:reef_mobile_app/pages/SplashScreen.dart';
 import 'package:reef_mobile_app/pages/accounts.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:reef_mobile_app/components/page_layout.dart';
+import 'package:reef_mobile_app/utils/styles.dart';
 import 'package:reef_mobile_app/pages/DAppPage.dart';
 
 void main() async {
   runApp(
     SplashApp(
       key: UniqueKey(),
-      displayOnInit: (){return const MyHomePage(title: 'Reef demo');},
+      displayOnInit: () {
+        return const MyApp();
+      },
     ),
   );
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Reef Chain Wallet',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        textTheme: GoogleFonts.latoTextTheme(
+          Theme.of(context).textTheme,
+        ),
+        colorScheme:
+            ColorScheme.fromSwatch().copyWith(primary: Styles.primaryColor),
+      ),
+      home: const BottomNav(),
+    );
+  }
 }
 
 class MyHomePage extends StatefulWidget {
