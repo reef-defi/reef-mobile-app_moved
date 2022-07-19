@@ -50,6 +50,7 @@ class _TransactionSignerState extends State<TransactionSigner> {
         children: [
           //BoxContent
           ViewBoxContainer(
+            color: Colors.white,
             child: Padding(
               padding:
                   const EdgeInsets.symmetric(vertical: 24.0, horizontal: 16.0),
@@ -231,6 +232,7 @@ class _SignMessageSignerState extends State<SignMessageSigner> {
         children: [
           //BoxContent
           ViewBoxContainer(
+            color: Colors.white,
             child: Padding(
               padding:
                   const EdgeInsets.symmetric(horizontal: 16.0, vertical: 18.0),
