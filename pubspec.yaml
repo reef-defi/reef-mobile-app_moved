@@ -83,6 +83,7 @@ flutter:
      - lib/js/packages/reef-mobile-js/dist/index.js
      - lib/js/packages/dApp-js/dist/index.js
      - assets/images/
+     - lib/js/packages/dApp-test-html-js/dist/index.js
 #     - lib/js_api/dist/index.js
   #   - images/a_dot_ham.jpeg
 
