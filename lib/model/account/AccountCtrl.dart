@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:reef_mobile_app/model/StorageKey.dart';
@@ -11,8 +12,9 @@ import 'account.dart';
 class AccountCtrl {
   final Account account = Account();
   final JsApiService jsApi;
+  final StorageService storage;
 
-  AccountCtrl(this.jsApi, StorageService storage) {
+  AccountCtrl(this.jsApi, this.storage) {
     _initSavedDeviceAccountAddress(jsApi, storage);
     _initJsObservables(jsApi, storage);
     _initWasm(jsApi);
@@ -26,15 +28,20 @@ class AccountCtrl {
     });
 
     account.setLoadingSigners(true);
-    jsApi.jsObservable('account.availableSigners\$').listen(( signers) async {
+    jsApi.jsObservable('account.availableSigners\$').listen((signers) async {
       account.setLoadingSigners(false);
-      var reefSigners = List<ReefSigner>.from(signers.map((s)=>toReefSigner(s)));
+      var reefSigners =
+          List<ReefSigner>.from(signers.map((s) => toReefSigner(s)));
       account.setSigners(reefSigners);
-      print('AVAILABLE Signers=$reefSigners');
+      print('AVAILABLE Signers: ${reefSigners.length}');
+      reefSigners.forEach((signer) {
+        print('  ${signer.name} - ${signer.address}');
+      });
     });
   }
 
-  ReefSigner toReefSigner(LinkedHashMap<dynamic, dynamic> s) => ReefSigner(s["address"], s["name"], s["balance"]);
+  ReefSigner toReefSigner(LinkedHashMap<dynamic, dynamic> s) =>
+      ReefSigner(s["address"], s["name"], s["balance"]);
 
   void _initSavedDeviceAccountAddress(
       JsApiService jsApi, StorageService storage) async {
@@ -63,5 +70,12 @@ class AccountCtrl {
 
   Future<String> accountFromMnemonic(String mnemonic) async {
     return await jsApi.jsPromise('keyring.accountFromMnemonic("$mnemonic")');
+  }
+
+  Future<void> updateAccounts() async {
+    var accounts = [];
+    (await storage.getAllAccounts())
+        .forEach(((account) => {accounts.add(account.toJsonSkinny())}));
+    jsApi.jsPromise('account.updateAccounts(${jsonEncode(accounts)})');
   }
 }

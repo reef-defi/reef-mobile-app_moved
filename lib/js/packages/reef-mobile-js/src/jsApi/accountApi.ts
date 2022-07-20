@@ -1,6 +1,8 @@
 import {FlutterJS} from "flutter-js-bridge/src/FlutterJS";
 import {appState} from '@reef-defi/react-lib';
 import {map} from "rxjs/operators";
+import { Account, buildAccountWithMeta } from "./initFlutterApi";
+import type {InjectedAccountWithMeta} from "@reef-defi/extension-inject/types";
 
 export const innitApi = (flutterJS: FlutterJS) => {
 
@@ -25,6 +27,14 @@ export const innitApi = (flutterJS: FlutterJS) => {
                 })
             )),
         ),
+        updateAccounts: async (accounts: Account[]) => {
+            let accountsWithMeta: InjectedAccountWithMeta[] = await Promise.all(
+                accounts.map(async (account: Account) => {
+                    return await buildAccountWithMeta(account.name, account.address);
+                }
+            ));
+            appState.accountsJsonSubj.next(accountsWithMeta);
+        },
     };
 }
 

@@ -75,7 +75,7 @@ export const initFlutterApi = async (flutterJS: FlutterJS) => {
     }
 };
 
-const buildAccountWithMeta = async (name: string, address: string): Promise<InjectedAccountWithMeta> => {
+export const buildAccountWithMeta = async (name: string, address: string): Promise<InjectedAccountWithMeta> => {
     const acountWithMeta: InjectedAccountWithMeta = {
         address,
         meta: {
