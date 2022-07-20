@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:reef_mobile_app/components/SignatureRequestComponent.dart';
 import 'package:reef_mobile_app/model/ReefState.dart';
+import 'package:reef_mobile_app/model/account/ReefSigner.dart';
 import 'package:reef_mobile_app/pages/SplashScreen.dart';
 import 'package:reef_mobile_app/pages/accounts.dart';
-import 'package:reef_mobile_app/pages/testDapp.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:reef_mobile_app/components/page_layout.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
+import 'package:reef_mobile_app/pages/DAppPage.dart';
 
 void main() async {
   runApp(
@@ -63,7 +64,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void _navigateTestDApp() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => DappPage(ReefAppState.instance)),
+      MaterialPageRoute(builder: (context) => DAppPage(ReefAppState.instance)),
     );
   }
 
@@ -118,17 +119,15 @@ class _MyHomePageState extends State<MyHomePage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Observer(builder: (_) {
-                /*if (ReefAppState.instance.accountCtrl.account.selectedSigner !=
-                    null) {
-                  return Text('Selected signer = ${ReefAppState
-                      .instance.accountCtrl.account.selectedSigner!.address}');
-                }*/
-                if (ReefAppState.instance.accountCtrl.account.loadingSigners ==
-                    true) {
+                if(ReefAppState.instance.accountCtrl.account.loadingSigners==true){
                   return Text('loading signers');
                 }
-                return Text(
-                    'signers loaded = ${ReefAppState.instance.accountCtrl.account.signers.length}');
+                if(ReefAppState.instance.accountCtrl.account.signers.length>0){
+                  return Text('signers loaded = ${ReefAppState.instance.accountCtrl.account.signers.map((ReefSigner s){
+                    return s.address + ' bal = ' + toBalanceDisplayString(s.balance);
+                  }).join('/////')}');
+                }
+                return Text('no signers found');
               }),
               Observer(builder: (_) {
                 return Column(
@@ -177,4 +176,6 @@ class _MyHomePageState extends State<MyHomePage> {
     return SignatureOrContentComponent(
         content: content, reefState: ReefAppState.instance);
   }
+
+  String toBalanceDisplayString(String decimalsString) => (BigInt.parse(decimalsString)/BigInt.from(10).pow(18)).toString();
 }

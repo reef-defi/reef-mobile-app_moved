@@ -20,6 +20,9 @@ class AccountCtrl {
 
   void _initJsObservables(JsApiService jsApi, StorageService storage) {
     jsApi.jsObservable('account.selectedSigner\$').listen((signer) async {
+      if(signer==null){
+        return;
+      }
       LinkedHashMap s = signer;
       await storage.setValue(StorageKey.selected_address.name, s['address']);
       account.setSelectedSigner(toReefSigner(s));
@@ -30,7 +33,9 @@ class AccountCtrl {
       account.setLoadingSigners(false);
       var reefSigners = List<ReefSigner>.from(signers.map((s)=>toReefSigner(s)));
       account.setSigners(reefSigners);
-      print('AVAILABLE Signers=$reefSigners');
+      reefSigners.forEach((element) {
+        print('AVAILABLE Signer=${element.address} bal=${element.balance}');
+      });
     });
   }
 

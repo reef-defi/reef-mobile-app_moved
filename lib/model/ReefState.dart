@@ -37,9 +37,9 @@ class ReefAppState {
         .jsPromise('jsApi.initReefState("testnet", ${jsonEncode(accounts)})');
   }
 
-  _initReefObservables(JsApiService jsApiService) async {
-    jsApiService.jsMessageUnknownSubj.listen((JsApiMessage value) {
-      print('jsMSG not handled id=${value.id}');
+  _initReefObservables(JsApiService reefAppJsApiService) async {
+    reefAppJsApiService.jsMessageUnknownSubj.listen((JsApiMessage value) {
+      print('jsMSG not handled id=${value.streamId}');
     });
   }
 

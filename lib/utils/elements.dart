@@ -27,7 +27,7 @@ class ViewBoxContainer extends StatelessWidget {
     return Container(
         width: double.infinity,
         decoration: BoxDecoration(
-            color: color,
+            color: Styles.boxBackgroundColor,
             border: Border.all(
               color: const Color(0x20000000),
               width: 1,

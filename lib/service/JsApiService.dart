@@ -11,10 +11,12 @@ import 'package:webview_flutter/webview_flutter.dart';
 class JsApiService {
   final flutterJsFilePath;
   final bool hiddenWidget;
-  final LOG_MSG_IDENT = '_console.log';
-  final API_READY_MSG_IDENT = '_windowApisReady';
-  final TX_SIGNATURE_CONFIRMATION_MSG_IDENT = '_txSignMsgIdent';
+  final LOG_STREAM_ID = '_console.log';
+  final API_READY_STREAM_ID = '_windowApisReady';
+  final TX_SIGNATURE_CONFIRMATION_STREAM_ID = '_txSignStreamId';
+  final DAPP_MSG_CONFIRMATION_STREAM_ID = '_dAppMsgIdent';
   final TX_SIGN_CONFIRMATION_JS_FN_NAME = '_txSignConfirmationJsFnName';
+  final DAPP_MSG_CONFIRMATION_JS_FN_NAME = '_dAppMsgConfirmationJsFnName';
   final REEF_MOBILE_CHANNEL_NAME = 'reefMobileChannel';
   final FLUTTER_SUBSCRIBE_METHOD_NAME = 'flutterSubscribe';
 
@@ -24,6 +26,7 @@ class JsApiService {
 
   final jsMessageSubj = BehaviorSubject<JsApiMessage>();
   final jsTxSignatureConfirmationMessageSubj = BehaviorSubject<JsApiMessage>();
+  final jsDAppMsgSubj = BehaviorSubject<JsApiMessage>();
   final jsMessageUnknownSubj = BehaviorSubject<JsApiMessage>();
 
   late Widget _wdg;
@@ -76,13 +79,18 @@ class JsApiService {
     jsCall(
         "window['$FLUTTER_SUBSCRIBE_METHOD_NAME']('$jsObsRefName', '$ident')");
     return jsMessageSubj.stream
-        .where((event) => event.id == ident)
+        .where((event) => event.streamId == ident)
         .map((event) => event.value);
   }
 
-  void confirmTxSignature(String signatureIdent, String mnemonic) {
+  void confirmTxSignature(String reqId, String mnemonic) {
     jsCall(
-        '${TX_SIGN_CONFIRMATION_JS_FN_NAME}("$signatureIdent", "$mnemonic")');
+        '${TX_SIGN_CONFIRMATION_JS_FN_NAME}("$reqId", "$mnemonic")');
+  }
+
+  void sendDappMsgResponse(String reqId, dynamic value) {
+    jsCall(
+        '${DAPP_MSG_CONFIRMATION_JS_FN_NAME}("$reqId", "$value")');
   }
 
   Future<String> _getFlutterJsHeaderTags(String assetsFilePath) async {
@@ -93,12 +101,16 @@ class JsApiService {
     window.global = window;
     </script>
     <script>${jsScript}</script>
-    <script>window.flutterJS.init( '$REEF_MOBILE_CHANNEL_NAME', 
-    '$LOG_MSG_IDENT', 
+    <script>window.flutterJS.init( 
+    '$REEF_MOBILE_CHANNEL_NAME', 
+    '$LOG_STREAM_ID', 
     '$FLUTTER_SUBSCRIBE_METHOD_NAME', 
-    '$API_READY_MSG_IDENT', 
-    '$TX_SIGNATURE_CONFIRMATION_MSG_IDENT', 
-    '$TX_SIGN_CONFIRMATION_JS_FN_NAME')</script>
+    '$API_READY_STREAM_ID', 
+    '$TX_SIGNATURE_CONFIRMATION_STREAM_ID', 
+    '$TX_SIGN_CONFIRMATION_JS_FN_NAME',
+    '$DAPP_MSG_CONFIRMATION_STREAM_ID', 
+    '$DAPP_MSG_CONFIRMATION_JS_FN_NAME',
+    )</script>
     """;
   }
 
@@ -127,13 +139,15 @@ class JsApiService {
         onMessageReceived: (message) {
           JsApiMessage apiMsg =
               JsApiMessage.fromJson(jsonDecode(message.message));
-          if (apiMsg.id == LOG_MSG_IDENT) {
-            print('$LOG_MSG_IDENT= ${apiMsg.value}');
-          } else if (apiMsg.id == API_READY_MSG_IDENT) {
+          if (apiMsg.streamId == LOG_STREAM_ID) {
+            print('$LOG_STREAM_ID= ${apiMsg.value}');
+          } else if (apiMsg.streamId == API_READY_STREAM_ID) {
             jsApiLoaded.future.then((ctrl) => jsApiReady.complete(ctrl));
-          } else if (apiMsg.id == TX_SIGNATURE_CONFIRMATION_MSG_IDENT) {
+          } else if (apiMsg.streamId == TX_SIGNATURE_CONFIRMATION_STREAM_ID) {
             jsTxSignatureConfirmationMessageSubj.add(apiMsg);
-          } else if (int.tryParse(apiMsg.id) == null) {
+          }else if (apiMsg.streamId == DAPP_MSG_CONFIRMATION_STREAM_ID) {
+            jsDAppMsgSubj.add(apiMsg);
+          } else if (int.tryParse(apiMsg.streamId) == null) {
             jsMessageUnknownSubj.add(apiMsg);
           } else {
             jsMessageSubj.add(apiMsg);
@@ -145,12 +159,16 @@ class JsApiService {
 }
 
 class JsApiMessage {
-  late String id;
+  late String streamId;
+  late String msgType;
+  late String reqId;
   late dynamic value;
 
-  JsApiMessage(this.id, this.value);
+  JsApiMessage(this.streamId, this.value, this.msgType, this.reqId);
 
   JsApiMessage.fromJson(Map<String, dynamic> json)
-      : id = json['id'],
-        value = json['value'];
+      : streamId = json['streamId'],
+        reqId = json['reqId'],
+        value = json['value'],
+        msgType = json['msgType'];
 }
