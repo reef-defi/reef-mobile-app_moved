@@ -3,8 +3,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:reef_mobile_app/components/modal.dart';
+import 'package:reef_mobile_app/model/ReefState.dart';
 import 'package:reef_mobile_app/model/account/stored_account.dart';
 import 'package:reef_mobile_app/service/JsApiService.dart';
+import 'package:reef_mobile_app/service/StorageService.dart';
 import 'package:reef_mobile_app/utils/elements.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 import 'package:flutter/services.dart';
@@ -26,9 +28,6 @@ class _AccountCreationContentState extends State<AccountCreationContent> {
   String initialText = "<No Name>";
 
   bool _checkedValue = false;
-
-  final String mnemonicText =
-      "fit trend eyebrow once funny aim cat casino couple car welcome lunch";
 
   @override
   void initState() {
@@ -89,44 +88,45 @@ class _AccountCreationContentState extends State<AccountCreationContent> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ViewBoxContainer(
+              color: Styles.whiteColor,
               child: Padding(
-            padding:
-                const EdgeInsets.symmetric(vertical: 24.0, horizontal: 16.0),
-            child: Row(
-              children: [
-                Container(
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.black12,
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(64),
-                    child: const Image(
-                      image: NetworkImage(
-                          "https://source.unsplash.com/random/128x128"),
-                      height: 64,
-                      width: 64,
-                    ),
-                  ),
-                ),
-                const Gap(12),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                padding: const EdgeInsets.symmetric(
+                    vertical: 24.0, horizontal: 16.0),
+                child: Row(
                   children: [
-                    _editTitleTextField(),
-                    const Gap(4),
-                    Row(
-                      children: const [
-                        Text("Native Address: 5F...gkgDA"),
-                        Gap(2),
-                        Icon(Icons.copy, size: 12)
+                    Container(
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.black12,
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(64),
+                        child: const Image(
+                          image: NetworkImage(
+                              "https://source.unsplash.com/random/128x128"),
+                          height: 64,
+                          width: 64,
+                        ),
+                      ),
+                    ),
+                    const Gap(12),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _editTitleTextField(),
+                        const Gap(4),
+                        Row(
+                          children: const [
+                            Text("Native Address: 5F...gkgDA"),
+                            Gap(2),
+                            Icon(Icons.copy, size: 12)
+                          ],
+                        ),
                       ],
                     ),
                   ],
                 ),
-              ],
-            ),
-          )),
+              )),
           const Gap(12),
           Text(
             "GENERATED 12-WORD MNEMONIC SEED:",
@@ -140,7 +140,7 @@ class _AccountCreationContentState extends State<AccountCreationContent> {
             width: double.infinity,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(4),
-              color: Styles.boxBackgroundColor,
+              color: Styles.whiteColor,
               border: Border.all(
                 color: const Color(0x20000000),
                 width: 1,
@@ -155,7 +155,7 @@ class _AccountCreationContentState extends State<AccountCreationContent> {
             child: Padding(
               padding: const EdgeInsets.all(12.0),
               child: Text(
-                mnemonicText,
+                widget.account?.mnemonic ?? "Loading...",
                 style: TextStyle(color: Styles.primaryAccentColorDark),
               ),
             ),
@@ -165,7 +165,10 @@ class _AccountCreationContentState extends State<AccountCreationContent> {
               style: TextButton.styleFrom(
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap),
               onPressed: () {
-                Clipboard.setData(ClipboardData(text: mnemonicText));
+                if (widget.account?.mnemonic != null) {
+                  Clipboard.setData(
+                      ClipboardData(text: widget.account?.mnemonic));
+                }
               },
               child: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -268,7 +271,6 @@ class _AccountCreationContentState extends State<AccountCreationContent> {
               ))
             ],
           ),
-          Text(widget.account?.address ?? "asd")
         ],
       ),
     );
@@ -333,53 +335,54 @@ class _AccountCreationConfirmContentState
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ViewBoxContainer(
+              color: Styles.whiteColor,
               child: Padding(
-            padding:
-                const EdgeInsets.symmetric(vertical: 24.0, horizontal: 16.0),
-            child: Row(
-              children: [
-                Container(
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.black12,
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(64),
-                    child: const Image(
-                      image: NetworkImage(
-                          "https://source.unsplash.com/random/128x128"),
-                      height: 64,
-                      width: 64,
-                    ),
-                  ),
-                ),
-                const Gap(12),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                padding: const EdgeInsets.symmetric(
+                    vertical: 24.0, horizontal: 16.0),
+                child: Row(
                   children: [
-                    Text(
-                      name,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
+                    Container(
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.black12,
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(64),
+                        child: const Image(
+                          image: NetworkImage(
+                              "https://source.unsplash.com/random/128x128"),
+                          height: 64,
+                          width: 64,
+                        ),
                       ),
                     ),
-                    const Gap(4),
-                    Row(
+                    const Gap(12),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Native Address: 5F...gkgDA",
-                          style: TextStyle(color: Colors.grey[600]!),
+                          name,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
-                        const Gap(2),
-                        const Icon(Icons.copy, size: 12)
+                        const Gap(4),
+                        Row(
+                          children: [
+                            Text(
+                              "Native Address: 5F...gkgDA",
+                              style: TextStyle(color: Colors.grey[600]!),
+                            ),
+                            const Gap(2),
+                            const Icon(Icons.copy, size: 12)
+                          ],
+                        ),
                       ],
                     ),
                   ],
                 ),
-              ],
-            ),
-          )),
+              )),
           const Gap(12),
           Text(
             "NETWORK",
@@ -531,7 +534,10 @@ class _AccountCreationConfirmContentState
 }
 
 class CurrentScreen extends StatefulWidget {
-  const CurrentScreen({Key? key}) : super(key: key);
+  CurrentScreen({Key? key}) : super(key: key);
+
+  final ReefAppState reefState = ReefAppState.instance;
+  final StorageService storageService = ReefAppState.instance.storage;
 
   @override
   State<CurrentScreen> createState() => _CurrentScreenState();
@@ -541,19 +547,24 @@ class _CurrentScreenState extends State<CurrentScreen> {
   int activeIndex = 0;
   StoredAccount? account;
 
+  void generateAccount() async {
+    var response = await widget.reefState.accountCtrl.generateAccount();
+    var generatedAccount = StoredAccount.fromString(response);
+    print("Mnemonic: ${generatedAccount.mnemonic}");
+    setState(() {
+      account = generatedAccount;
+    });
+  }
+
   nextIndex() {
     setState(() {
-      if (activeIndex + 1 < content.length) {
-        activeIndex += 1;
-      }
+      activeIndex = 1;
     });
   }
 
   prevIndex() {
     setState(() {
-      if (activeIndex - 1 >= 0) {
-        activeIndex -= 1;
-      }
+      activeIndex = 0;
     });
   }
 
@@ -561,37 +572,36 @@ class _CurrentScreenState extends State<CurrentScreen> {
 
   @override
   void initState() {
-    content.add(AccountCreationContent(next: nextIndex, account: account));
-    content
-        .add(AccountCreationConfirmContent(prev: prevIndex, account: account));
     super.initState();
+    generateAccount();
   }
 
   @override
   Widget build(BuildContext context) {
     return AnimatedSwitcher(
-        duration: const Duration(milliseconds: 500),
-        switchInCurve: Curves.easeOutExpo,
-        switchOutCurve: Curves.easeInExpo,
-        transitionBuilder: (Widget child, Animation<double> animation) {
-          return FadeTransition(
-            opacity: animation,
-            child: SlideTransition(
-              position: Tween(
-                begin: const Offset(-1.0, 0.0),
-                end: const Offset(0.0, 0.0),
-              ).animate(animation),
-              child: child,
-            ),
-          );
-        },
-        child: content[activeIndex]);
+      duration: const Duration(milliseconds: 500),
+      switchInCurve: Curves.easeOutExpo,
+      switchOutCurve: Curves.easeInExpo,
+      transitionBuilder: (Widget child, Animation<double> animation) {
+        return FadeTransition(
+          opacity: animation,
+          child: SlideTransition(
+            position: Tween(
+              begin: const Offset(-1.0, 0.0),
+              end: const Offset(0.0, 0.0),
+            ).animate(animation),
+            child: child,
+          ),
+        );
+      },
+      child: (activeIndex == 0)
+          ? AccountCreationContent(next: nextIndex, account: account)
+          : AccountCreationConfirmContent(prev: prevIndex, account: account),
+    );
   }
 }
 
 void showCreateAccountModal(BuildContext context) {
   showModal(context,
-      headText: "Create Account",
-      dismissible: false,
-      child: const CurrentScreen());
+      headText: "Create Account", dismissible: false, child: CurrentScreen());
 }

@@ -248,6 +248,14 @@ class _UserPageState extends State<UserPage> {
     accounts.forEach((account) {
       print("  ${account.address}");
     });
+
+    var account = await widget.storageService.getAccount(accounts[0].address);
+    if (account == null) {
+      print("Account not found.");
+      return null;
+    }
+    print(account.toJson());
+
     return accounts;
   }
 
