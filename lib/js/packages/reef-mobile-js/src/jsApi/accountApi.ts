@@ -9,12 +9,12 @@ export const innitApi = (flutterJS: FlutterJS) => {
     // return account.selectedSigner$ without big signer object from ReefSigner
     (window as any).account = {
         selectedSigner$: appState.selectedSigner$.pipe(
-            map(sig => ({
+            map(sig =>sig? ({
                 address: sig.address,
                 name: sig.name,
                 balance: sig.balance.toString(),
                 isEvmClaimed: sig.isEvmClaimed
-            })),
+            }):null),
         ),
         availableSigners$: appState.signers$.pipe(
             map(signers =>

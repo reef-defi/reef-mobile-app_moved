@@ -1,4 +1,3 @@
-
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -26,7 +25,7 @@ class SplashApp extends StatefulWidget {
 class _SplashAppState extends State<SplashApp> {
   bool _hasError = false;
   Widget? onInitWidget;
-  var displayContent=false;
+  var displayContent = false;
 
   @override
   void initState() {
@@ -37,15 +36,16 @@ class _SplashAppState extends State<SplashApp> {
   Future<void> _initializeAsyncDependencies() async {
     final storageService = StorageService();
     await ReefAppState.instance.init(widget.reefJsApiService, storageService);
-      setState(() {
-        displayContent = true;
-      });
+    setState(() {
+      displayContent = true;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Setting up Reef Chain App',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -65,7 +65,9 @@ class _SplashAppState extends State<SplashApp> {
 
     return Stack(children: <Widget>[
       widget.reefJsApiService.widget,
-      displayContent==false?Center(child: CircularProgressIndicator()):widget.displayOnInit(),
+      displayContent == false
+          ? Center(child: CircularProgressIndicator())
+          : widget.displayOnInit(),
     ]);
   }
 }
