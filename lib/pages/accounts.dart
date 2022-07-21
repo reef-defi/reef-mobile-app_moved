@@ -36,6 +36,8 @@ class _AccountPageState extends State<AccountPage> {
             TextButton(
                 onPressed: _callSaveAccount, child: const Text('Save Account')),
             TextButton(
+                onPressed: _updateAccount, child: const Text('Update Account')),
+            TextButton(
                 onPressed: _callGetAccount, child: const Text('Get Account')),
             TextButton(
                 onPressed: getAllAccounts,
@@ -82,7 +84,8 @@ class _AccountPageState extends State<AccountPage> {
 
   /// Returns the address of the account with the given mnemonic
   void accountFromMnemonic(String mnemonic) async {
-    var response = await widget.reefState.accountCtrl.accountFromMnemonic(mnemonic);
+    var response =
+        await widget.reefState.accountCtrl.accountFromMnemonic(mnemonic);
 
     var account = StoredAccount.fromString(response);
     print("account from mnemonic: ${account.address}");
@@ -109,10 +112,20 @@ class _AccountPageState extends State<AccountPage> {
     deleteAccount(address);
   }
 
-  /// Save account to storage
+  Future _updateAccount() async {
+    const address = "5EnY9eFwEDcEJ62dJWrTXhTucJ4pzGym4WZ2xcDKiT3eJecP";
+    var account = await getAccount(address);
+    if (account == null) return;
+    account.name = account.name == "Test account" ? "Test account edited" : "Test account";
+    saveAccount(account);
+  }
+
   Future saveAccount(StoredAccount account) async {
+    // Save to storage
     await widget.storageService.saveAccount(account);
     print("Saved account ${account.address}");
+    // Update accounts in JS
+    widget.reefState.accountCtrl.updateAccounts();
   }
 
   /// Get all accounts from storage
@@ -124,7 +137,7 @@ class _AccountPageState extends State<AccountPage> {
     }
     print("Found ${accounts.length} accounts:");
     accounts.forEach((account) {
-      print("  ${account.address}");
+      print("  ${account.name} - ${account.address}");
     });
     return accounts;
   }
@@ -136,27 +149,31 @@ class _AccountPageState extends State<AccountPage> {
       print("Account not found.");
       return null;
     }
-    print("Fetched account ${account.address}");
+    print("Fetched account ${account.name} - ${account.address}");
     return account;
   }
 
-  /// Delete account from storage
   void deleteAccount(String address) async {
     var account = await getAccount(address);
     if (account != null) {
+      // Delete from storage
       account.delete();
-      print("Deleted accont ${account.address}");
+      print("Deleted accont ${account.name} - ${account.address}");
     }
+    // Update accounts in JS
+    widget.reefState.accountCtrl.updateAccounts();
   }
 
-  /// Delete all accounts from storage
   void deleteAllAccounts() async {
     getAllAccounts().then((accounts) {
       if (accounts != null) {
+        // Delete from storage
         accounts.forEach((account) {
           account.delete();
         });
       }
     });
+    // Update accounts in JS
+    widget.reefState.accountCtrl.updateAccounts();
   }
 }

@@ -16,6 +16,7 @@ void main() async {
       key: UniqueKey(),
       displayOnInit: () {
         return const MyApp();
+        // return const TestHomePage();
       },
     ),
   );
@@ -40,17 +41,17 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
+class TestHomePage extends StatefulWidget {
+  const TestHomePage({Key? key}) : super(key: key);
 
-  final String title;
+  final String title = "Reef Mobile App";
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<TestHomePage> createState() => _TestHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  _MyHomePageState();
+class _TestHomePageState extends State<TestHomePage> {
+  _TestHomePageState();
 
   void _navigateAccounts() {
     Navigator.push(
