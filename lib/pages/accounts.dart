@@ -18,7 +18,7 @@ class _AccountPageState extends State<AccountPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Accounts'),
+        title: const Text('Accounts'),
       ),
       body: Center(
         child: Column(
@@ -82,7 +82,8 @@ class _AccountPageState extends State<AccountPage> {
 
   /// Returns the address of the account with the given mnemonic
   void accountFromMnemonic(String mnemonic) async {
-    var response = await widget.reefState.accountCtrl.accountFromMnemonic(mnemonic);
+    var response =
+        await widget.reefState.accountCtrl.accountFromMnemonic(mnemonic);
 
     var account = StoredAccount.fromString(response);
     print("account from mnemonic: ${account.address}");
