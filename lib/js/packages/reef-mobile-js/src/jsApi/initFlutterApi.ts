@@ -1,6 +1,6 @@
 import * as accountApi from "./accountApi";
 import {appState, AvailableNetworks, availableNetworks, ReefSigner} from "@reef-defi/react-lib";
-import {map, switchMap} from "rxjs/operators";
+import {map, switchMap, take} from "rxjs/operators";
 import {initFlutterSigningKey} from "./signing/flutterSigningKey";
 import {FlutterJS} from "flutter-js-bridge/src/FlutterJS";
 import {firstValueFrom } from "rxjs";
@@ -9,6 +9,7 @@ import {SignerPayloadJSON} from "@polkadot/types/types";
 import {ethers} from "ethers";
 import {Signer} from "@reef-defi/evm-provider";
 import type {InjectedAccountWithMeta} from "@reef-defi/extension-inject/types";
+import {utils} from "@reef-defi/react-lib";
 
 export interface Account {
     address: string;
@@ -98,14 +99,15 @@ export const initFlutterApi = async (flutterJS: FlutterJS) => {
                         const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer.signer);
 
                         const tx = await contract[FUNCTION_NAME](...ARGS, {
-                            value: VALUE_SENT, 
+                            value: VALUE_SENT,
                             customData: { storageLimit: STORAGE_LIMIT }
                         });
-                    
+
                         const receipt = await tx.wait();
                         console.log("SIGN AND SEND RESULT=", receipt);
                         return receipt;
-                    })
+                    }),
+                    take(1)
                 ));
             }
         };
