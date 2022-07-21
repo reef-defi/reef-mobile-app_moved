@@ -29,6 +29,11 @@ class SigningCtrl {
         .jsPromise('jsApi.testReefSignerPayloadPromise("$address", ${jsonEncode(payload)})');
   }
 
+  Future<dynamic> initSignAndSendTxTest(String address) async {
+    return jsApi
+        .jsPromise('jsApi.testReefSignAndSendTxPromise("$address")');
+  }
+  
   confirmSignature(String sigConfirmationIdent, String address) async {
     jsApi.jsObservable('account.availableSigners\$').listen((signers) async {
       var account = await storage.getAccount(address);
