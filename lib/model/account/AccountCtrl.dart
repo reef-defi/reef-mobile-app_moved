@@ -33,8 +33,9 @@ class AccountCtrl {
       account.setLoadingSigners(false);
       var reefSigners = List<ReefSigner>.from(signers.map((s)=>toReefSigner(s)));
       account.setSigners(reefSigners);
-      reefSigners.forEach((element) {
-        print('AVAILABLE Signer=${element.address} bal=${element.balance}');
+      print('AVAILABLE Signers');
+      reefSigners.forEach((signer) {
+        print('  ${signer.name} - ${signer.address}');
       });
     });
   }
