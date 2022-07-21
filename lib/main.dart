@@ -108,6 +108,12 @@ class _MyHomePageState extends State<MyHomePage> {
     print("SGN PAYLOAD TEST=$signTestRes");
   }
 
+  void _testSignAndSend(address) async {
+    var txTestRes = await ReefAppState.instance.signingCtrl
+        .initSignAndSendTxTest(address);
+    print("TX TEST=$txTestRes");
+  }
+
   @override
   Widget build(BuildContext context) {
     var content = Scaffold(
@@ -166,6 +172,15 @@ class _MyHomePageState extends State<MyHomePage> {
                     },
                     child:
                         const Text('Sign payload', textAlign: TextAlign.center),
+                  ),
+                  FloatingActionButton(
+                    heroTag: "sign_and_send",
+                    onPressed: () {
+                      _testSignAndSend(ReefAppState.instance.accountCtrl.account
+                          .selectedSigner?.address);
+                    },
+                    child: const Text('Sign and send',
+                        textAlign: TextAlign.center),
                   )
                 ],
               ),
