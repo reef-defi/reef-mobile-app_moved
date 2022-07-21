@@ -8,6 +8,7 @@ import {SignerPayloadJSON} from "@polkadot/types/types";
 import type {InjectedAccountWithMeta} from "@reef-defi/extension-inject/types";
 import Signer from "@reef-defi/extension-base/page/Signer";
 import {getSignatureSendRequest} from "flutter-js-bridge/src/sendRequestSignature";
+import ethers from "ethers";
 
 export interface Account {
     address: string;
