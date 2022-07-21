@@ -1,15 +1,13 @@
 import * as accountApi from "./accountApi";
 import {appState, AvailableNetworks, availableNetworks, ReefSigner} from "@reef-defi/react-lib";
 import {map, switchMap, take} from "rxjs/operators";
-import {initFlutterSigningKey} from "./signing/flutterSigningKey";
 import {FlutterJS} from "flutter-js-bridge/src/FlutterJS";
-import {firstValueFrom } from "rxjs";
+import {firstValueFrom} from "rxjs";
 import {stringToHex} from '@polkadot/util';
 import {SignerPayloadJSON} from "@polkadot/types/types";
 import type {InjectedAccountWithMeta} from "@reef-defi/extension-inject/types";
 import Signer from "@reef-defi/extension-base/page/Signer";
 import {getSignatureSendRequest} from "flutter-js-bridge/src/sendRequestSignature";
-import {utils} from "@reef-defi/react-lib";
 
 export interface Account {
     address: string;
