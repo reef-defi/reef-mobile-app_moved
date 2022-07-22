@@ -368,6 +368,7 @@ class _AccountCreationConfirmContentState
     _nameController.addListener(() {
       setState(() {
         name = _nameController.text;
+        widget.account?.name = name;
       });
     });
     _passwordController.addListener(() {
@@ -609,7 +610,8 @@ class _AccountCreationConfirmContentState
 }
 
 class CurrentScreen extends StatefulWidget {
-  CurrentScreen({Key? key}) : super(key: key);
+  final Function callback;
+  CurrentScreen({Key? key, required this.callback}) : super(key: key);
 
   final ReefAppState reefState = ReefAppState.instance;
   final StorageService storageService = ReefAppState.instance.storage;
@@ -635,6 +637,7 @@ class _CurrentScreenState extends State<CurrentScreen> {
 
   Future saveAccount(StoredAccount account) async {
     await widget.storageService.saveAccount(account);
+    widget.callback();
     print("Saved account ${account.address}");
   }
 
@@ -684,7 +687,9 @@ class _CurrentScreenState extends State<CurrentScreen> {
   }
 }
 
-void showCreateAccountModal(BuildContext context) {
+void showCreateAccountModal(BuildContext context, {required callback}) {
   showModal(context,
-      headText: "Create Account", dismissible: false, child: CurrentScreen());
+      headText: "Create Account",
+      dismissible: false,
+      child: CurrentScreen(callback: callback));
 }
