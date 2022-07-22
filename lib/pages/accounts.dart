@@ -48,6 +48,14 @@ class _AccountPageState extends State<AccountPage> {
             TextButton(
                 onPressed: deleteAllAccounts,
                 child: const Text('Delete All Accounts')),
+            TextButton(
+                onPressed: () async {
+                  // ReefAppState.instance.transferCtrl.testTransferTokens();
+                  var txTestRes = await ReefAppState.instance.transferCtrl
+                      .testTransferTokens();
+                  print("TX TEST=$txTestRes");
+                },
+                child: const Text('send token')),
           ],
         ),
       ),
@@ -116,7 +124,8 @@ class _AccountPageState extends State<AccountPage> {
     const address = "5EnY9eFwEDcEJ62dJWrTXhTucJ4pzGym4WZ2xcDKiT3eJecP";
     var account = await getAccount(address);
     if (account == null) return;
-    account.name = account.name == "Test account" ? "Test account edited" : "Test account";
+    account.name =
+        account.name == "Test account" ? "Test account edited" : "Test account";
     saveAccount(account);
   }
 

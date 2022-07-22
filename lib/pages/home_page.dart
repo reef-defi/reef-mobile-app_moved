@@ -18,6 +18,16 @@ import 'package:reef_mobile_app/service/JsApiService.dart';
 import 'package:reef_mobile_app/model/ReefState.dart';
 import 'package:reef_mobile_app/service/StorageService.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:reef_mobile_app/model/ReefState.dart';
+
+// void _navigateAccounts() {
+//     Navigator.push(
+//       context,
+//       MaterialPageRoute(
+//           builder: (context) => AccountPage(
+//               ReefAppState.instance, ReefAppState.instance.storage)),
+//     );
+//   }
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -177,6 +187,20 @@ class _HomePageState extends State<HomePage> {
       ),
       child: Column(
         children: [
+          ElevatedButton(
+            child: const Text('send tokens'),
+            onPressed: () async {
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(
+              //       builder: (context) => AccountPage(
+              //           ReefAppState.instance, ReefAppState.instance.storage)),
+              // );
+              var txTestRes =
+                  await ReefAppState.instance.transferCtrl.testTransferTokens();
+              print("TX TEST=$txTestRes");
+            },
+          ),
           balanceSection(),
           navSection(),
           Expanded(
