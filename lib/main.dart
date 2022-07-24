@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:reef_mobile_app/components/SignatureRequestComponent.dart';
+import 'package:reef_mobile_app/components/SignatureContentToggle.dart';
 import 'package:reef_mobile_app/model/ReefState.dart';
 import 'package:reef_mobile_app/model/account/ReefSigner.dart';
 import 'package:reef_mobile_app/pages/SplashScreen.dart';
@@ -15,7 +15,9 @@ void main() async {
     SplashApp(
       key: UniqueKey(),
       displayOnInit: () {
-        return const MyApp();
+        return const BottomNav();
+        // return const MyApp();
+        // return const TestHomePage();
       },
     ),
   );
@@ -40,17 +42,17 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
+class TestHomePage extends StatefulWidget {
+  const TestHomePage({Key? key}) : super(key: key);
 
-  final String title;
+  final String title = "Reef Mobile App";
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<TestHomePage> createState() => _TestHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  _MyHomePageState();
+class _TestHomePageState extends State<TestHomePage> {
+  _TestHomePageState();
 
   void _navigateAccounts() {
     Navigator.push(
@@ -106,6 +108,12 @@ class _MyHomePageState extends State<MyHomePage> {
     var signTestRes = await ReefAppState.instance.signingCtrl
         .initSignPayloadTest(address, payload);
     print("SGN PAYLOAD TEST=$signTestRes");
+  }
+
+  void _testSignAndSend(address) async {
+    var txTestRes = await ReefAppState.instance.signingCtrl
+        .initSignAndSendTxTest(address);
+    print("MAIN TX TEST=$txTestRes");
   }
 
   @override
@@ -166,6 +174,15 @@ class _MyHomePageState extends State<MyHomePage> {
                     },
                     child:
                         const Text('Sign payload', textAlign: TextAlign.center),
+                  ),
+                  FloatingActionButton(
+                    heroTag: "sign_and_send",
+                    onPressed: () {
+                      _testSignAndSend(ReefAppState.instance.accountCtrl.account
+                          .selectedSigner?.address);
+                    },
+                    child: const Text('Sign and send',
+                        textAlign: TextAlign.center),
                   )
                 ],
               ),
@@ -173,8 +190,7 @@ class _MyHomePageState extends State<MyHomePage> {
           }
           return SizedBox.shrink();
         }));
-    return SignatureOrContentComponent(
-        content: content, reefState: ReefAppState.instance);
+    return SignatureContentToggle(content);
   }
 
   String toBalanceDisplayString(String decimalsString) => (BigInt.parse(decimalsString)/BigInt.from(10).pow(18)).toString();

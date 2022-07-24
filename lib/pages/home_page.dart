@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:reef_mobile_app/components/SignatureContentToggle.dart';
 import 'package:reef_mobile_app/components/home/activity_view.dart';
 import 'package:reef_mobile_app/components/home/NFT_view.dart';
 import 'package:reef_mobile_app/components/home/staking_view.dart';
@@ -18,6 +19,18 @@ import 'package:reef_mobile_app/service/JsApiService.dart';
 import 'package:reef_mobile_app/model/ReefState.dart';
 import 'package:reef_mobile_app/service/StorageService.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:reef_mobile_app/model/ReefState.dart';
+
+import '../model/StorageKey.dart';
+
+// void _navigateAccounts() {
+//     Navigator.push(
+//       context,
+//       MaterialPageRoute(
+//           builder: (context) => AccountPage(
+//               ReefAppState.instance, ReefAppState.instance.storage)),
+//     );
+//   }
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -170,13 +183,29 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     SizeConfig.init(context);
 
-    return AnnotatedRegion<SystemUiOverlayStyle>(
+    return SignatureContentToggle(AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.dark,
       ),
       child: Column(
         children: [
+          ElevatedButton(
+            child: const Text('send tokens'),
+            onPressed: () async {
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(
+              //       builder: (context) => AccountPage(
+              //           ReefAppState.instance, ReefAppState.instance.storage)),
+              // );
+              var from = await ReefAppState.instance.storage
+                  .getValue(StorageKey.selected_address.name);
+              var txTestRes = await ReefAppState.instance.transferCtrl
+                  .testTransferTokens(from);
+              print("HOME PAGE TX TEST RES =$txTestRes");
+            },
+          ),
           balanceSection(),
           navSection(),
           Expanded(
@@ -192,6 +221,6 @@ class _HomePageState extends State<HomePage> {
           // test()
         ],
       ),
-    );
+    ));
   }
 }
