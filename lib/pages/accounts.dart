@@ -3,6 +3,7 @@ import 'package:reef_mobile_app/model/account/stored_account.dart';
 import 'package:reef_mobile_app/service/StorageService.dart';
 
 import '../model/ReefState.dart';
+import '../model/StorageKey.dart';
 
 class AccountPage extends StatefulWidget {
   const AccountPage(this.reefState, this.storageService);
@@ -50,9 +51,11 @@ class _AccountPageState extends State<AccountPage> {
                 child: const Text('Delete All Accounts')),
             TextButton(
                 onPressed: () async {
-                  // ReefAppState.instance.transferCtrl.testTransferTokens();
+                  var from = await ReefAppState.instance.storage.getValue(StorageKey.selected_address.name);
+
+                  print('SEND FROM= ${from}');
                   var txTestRes = await ReefAppState.instance.transferCtrl
-                      .testTransferTokens();
+                      .testTransferTokens(from);
                   print("TX TEST=$txTestRes");
                 },
                 child: const Text('send token')),

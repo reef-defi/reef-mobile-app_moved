@@ -20,6 +20,8 @@ import 'package:reef_mobile_app/service/StorageService.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:reef_mobile_app/model/ReefState.dart';
 
+import '../model/StorageKey.dart';
+
 // void _navigateAccounts() {
 //     Navigator.push(
 //       context,
@@ -196,8 +198,9 @@ class _HomePageState extends State<HomePage> {
               //       builder: (context) => AccountPage(
               //           ReefAppState.instance, ReefAppState.instance.storage)),
               // );
+              var from = await ReefAppState.instance.storage.getValue(StorageKey.selected_address.name);
               var txTestRes =
-                  await ReefAppState.instance.transferCtrl.testTransferTokens();
+                  await ReefAppState.instance.transferCtrl.testTransferTokens(from);
               print("TX TEST=$txTestRes");
             },
           ),

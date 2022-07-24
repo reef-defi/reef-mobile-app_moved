@@ -15,8 +15,8 @@ void main() async {
     SplashApp(
       key: UniqueKey(),
       displayOnInit: () {
-        return const MyApp();
-        // return const TestHomePage();
+        // return const MyApp();
+        return const TestHomePage();
       },
     ),
   );

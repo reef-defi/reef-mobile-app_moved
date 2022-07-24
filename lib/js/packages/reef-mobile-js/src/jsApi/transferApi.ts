@@ -1,12 +1,12 @@
 import {FlutterJS} from "flutter-js-bridge/src/FlutterJS";
-import {appState, Token, TokenWithAmount, ReefSigner} from '@reef-defi/react-lib';
+import {appState, Token, TokenWithAmount, ReefSigner, reefTokenWithAmount} from '@reef-defi/react-lib';
 import {map, switchMap, take} from "rxjs/operators";
 import {BigNumber, Contract} from "ethers";
 import { Provider } from "@reef-defi/evm-provider";
 import { ERC20 } from "./transfer/abi/ERC20";
 import { firstValueFrom } from "rxjs";
 
-const REEF_ADDRESS = "0x0000000000000000000000000000000001000000";
+const REEF_ADDRESS = reefTokenWithAmount().address;
 
 const assertAmount = (amount?: string): string => (!amount ? '0' : amount);
 
@@ -65,15 +65,21 @@ const getSignerEvmAddress = async (address: string, provider: Provider): Promise
 export const initApi = (flutterJS: FlutterJS) => {
     console.log ('init');
     (window as any).transfer = {
-        send: async (to: string, tokenAmount: string, tokenDecimals: number, tokenAddress: string) => {
-            return firstValueFrom(appState.selectedSigner$.pipe(
-                map((signer: ReefSigner) => {
-                    return signer;
+        // TODO add from address parameter
+        send: async (from: string, to: string, tokenAmount: string, tokenDecimals: number, tokenAddress: string) => {
+            return firstValueFrom(appState.signers$.pipe(
+                map((signers: ReefSigner[]) => {
+                    return signers.find((s)=>s.address===from);
                 }),
                 switchMap(async (signer: ReefSigner | undefined) => {
+                    if (!signer) {
+                        console.log("SEND METHOD - NO SIGNER FOUND",);
+                        return false
+                    }
                     const STORAGE_LIMIT = 2000;
                     const amount = calculateAmount ({ decimals: tokenDecimals, amount: tokenAmount });
                     const { provider } = signer.signer;
+                    console.log('SS', signer.signer, provider);
                     const tokenContract = new Contract(tokenAddress, ERC20, signer.signer);
                     try {
                         if (tokenAddress === REEF_ADDRESS && to.length === 48) {
@@ -83,13 +89,13 @@ export const initApi = (flutterJS: FlutterJS) => {
                             console.log ('transfer success');
                             return true;
                         } else {
-                            console.log ('transfering ERC20');
-                            console.log (amount, amount.toString ());
+                            console.log ('transfering REEF20');
+                            console.log (amount, amount.toString());
                             const toAddress = to.length === 48
                                 ? await getSignerEvmAddress(to, provider)
                                 : to;
-                            console.log (toAddress);
                             const ARGS = [toAddress, amount];
+                            console.log ("args=",ARGS);
                             const tx = await tokenContract ['transfer'] (...ARGS, {
                                 customData: {
                                     storageLimit: STORAGE_LIMIT
@@ -102,7 +108,7 @@ export const initApi = (flutterJS: FlutterJS) => {
                             return receipt;
                         }
                     } catch (e) {
-                        console.log(e);
+                        console.log('EEEEEE',e);
                         return null;
                     }
                 }),
