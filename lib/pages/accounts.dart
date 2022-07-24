@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:reef_mobile_app/model/account/stored_account.dart';
 import 'package:reef_mobile_app/service/StorageService.dart';
 
+import '../components/SignatureContentToggle.dart';
 import '../model/ReefState.dart';
 import '../model/StorageKey.dart';
 
@@ -17,7 +18,7 @@ class AccountPage extends StatefulWidget {
 class _AccountPageState extends State<AccountPage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    final content = Scaffold(
       appBar: AppBar(
         title: Text('Accounts'),
       ),
@@ -56,13 +57,15 @@ class _AccountPageState extends State<AccountPage> {
                   print('SEND FROM= ${from}');
                   var txTestRes = await ReefAppState.instance.transferCtrl
                       .testTransferTokens(from);
-                  print("TX TEST=$txTestRes");
+                  print("ACC TX TEST RES=$txTestRes");
                 },
                 child: const Text('send token')),
           ],
         ),
       ),
     );
+    // TODO return const SignatureOrContentComponent(
+    return SignatureContentToggle(content);
   }
 
   void _callAccountFromMnemonic() async {

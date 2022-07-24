@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:reef_mobile_app/components/SignatureContentToggle.dart';
 import 'package:reef_mobile_app/components/home/activity_view.dart';
 import 'package:reef_mobile_app/components/home/NFT_view.dart';
 import 'package:reef_mobile_app/components/home/staking_view.dart';
@@ -182,7 +183,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     SizeConfig.init(context);
 
-    return AnnotatedRegion<SystemUiOverlayStyle>(
+    return SignatureContentToggle(AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.dark,
@@ -198,10 +199,11 @@ class _HomePageState extends State<HomePage> {
               //       builder: (context) => AccountPage(
               //           ReefAppState.instance, ReefAppState.instance.storage)),
               // );
-              var from = await ReefAppState.instance.storage.getValue(StorageKey.selected_address.name);
-              var txTestRes =
-                  await ReefAppState.instance.transferCtrl.testTransferTokens(from);
-              print("TX TEST=$txTestRes");
+              var from = await ReefAppState.instance.storage
+                  .getValue(StorageKey.selected_address.name);
+              var txTestRes = await ReefAppState.instance.transferCtrl
+                  .testTransferTokens(from);
+              print("HOME PAGE TX TEST RES =$txTestRes");
             },
           ),
           balanceSection(),
@@ -219,6 +221,6 @@ class _HomePageState extends State<HomePage> {
           // test()
         ],
       ),
-    );
+    ));
   }
 }

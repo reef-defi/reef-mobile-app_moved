@@ -63,23 +63,21 @@ const getSignerEvmAddress = async (address: string, provider: Provider): Promise
 };
 
 export const initApi = (flutterJS: FlutterJS) => {
-    console.log ('init');
     (window as any).transfer = {
-        // TODO add from address parameter
         send: async (from: string, to: string, tokenAmount: string, tokenDecimals: number, tokenAddress: string) => {
             return firstValueFrom(appState.signers$.pipe(
+                take(1),
                 map((signers: ReefSigner[]) => {
                     return signers.find((s)=>s.address===from);
                 }),
                 switchMap(async (signer: ReefSigner | undefined) => {
                     if (!signer) {
-                        console.log("SEND METHOD - NO SIGNER FOUND",);
+                        console.log("transfer.send() - NO SIGNER FOUND",);
                         return false
                     }
                     const STORAGE_LIMIT = 2000;
                     const amount = calculateAmount ({ decimals: tokenDecimals, amount: tokenAmount });
                     const { provider } = signer.signer;
-                    console.log('SS', signer.signer, provider);
                     const tokenContract = new Contract(tokenAddress, ERC20, signer.signer);
                     try {
                         if (tokenAddress === REEF_ADDRESS && to.length === 48) {
@@ -101,9 +99,9 @@ export const initApi = (flutterJS: FlutterJS) => {
                                     storageLimit: STORAGE_LIMIT
                                 }
                             });
-                            console.log ('tx', tx);
+                            console.log ('tx in progress =', tx.hash);
                             const receipt = await tx.wait();
-                            console.log("SIGN AND SEND RESULT=", receipt);
+                            console.log("SIGN AND SEND RESULT=", receipt.transactionHash);
                             console.log ('transfer success');
                             return receipt;
                         }
