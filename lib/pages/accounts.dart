@@ -20,7 +20,7 @@ class _AccountPageState extends State<AccountPage> {
   Widget build(BuildContext context) {
     final content = Scaffold(
       appBar: AppBar(
-        title: Text('Accounts'),
+        title: const Text('Accounts'),
       ),
       body: Center(
         child: Column(
