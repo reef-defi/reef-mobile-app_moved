@@ -1,4 +1,5 @@
 import * as accountApi from "./accountApi";
+import * as transferApi from "./transferApi";
 import {appState, AvailableNetworks, availableNetworks, ReefSigner} from "@reef-defi/react-lib";
 import {map, switchMap, take} from "rxjs/operators";
 import {FlutterJS} from "flutter-js-bridge/src/FlutterJS";
@@ -8,7 +9,7 @@ import {SignerPayloadJSON} from "@polkadot/types/types";
 import type {InjectedAccountWithMeta} from "@reef-defi/extension-inject/types";
 import Signer from "@reef-defi/extension-base/page/Signer";
 import {getSignatureSendRequest} from "flutter-js-bridge/src/sendRequestSignature";
-import {ethers} from "ethers";
+import { ethers } from "ethers";
 
 export interface Account {
     address: string;
@@ -122,6 +123,7 @@ export const initFlutterApi = async (flutterJS: FlutterJS) => {
         };
         // testReefObservables();
         accountApi.innitApi(flutterJS);
+        transferApi.initApi(flutterJS);
 
     } catch (e) {
         console.log("INIT ERROR=", e.message);

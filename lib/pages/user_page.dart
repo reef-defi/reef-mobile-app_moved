@@ -12,6 +12,8 @@ import 'package:reef_mobile_app/utils/gradient_text.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 import 'package:reef_mobile_app/utils/functions.dart';
 
+import '../components/SignatureContentToggle.dart';
+
 class AccountBox extends StatefulWidget {
   final Map props;
   final VoidCallback callback;
@@ -314,7 +316,7 @@ class _UserPageState extends State<UserPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return SignatureContentToggle(Column(
       children: <Widget>[
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -401,6 +403,6 @@ class _UserPageState extends State<UserPage> {
           ),
         )
       ],
-    );
+    ));
   }
 }

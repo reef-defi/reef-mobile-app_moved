@@ -10,4 +10,5 @@ window['flutterJS'] = new FlutterJS(initFlutterApi);
 window['appState'] = appState;
 window['keyring'] = Keyring;
 window['signer'] = Signer;
+// window['transfer'] =
 

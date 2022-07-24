@@ -8,6 +8,8 @@ import 'package:reef_mobile_app/components/modals/token_selection_modals.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 import 'package:shimmer/shimmer.dart';
 
+import '../components/SignatureContentToggle.dart';
+
 class SwapPage extends StatefulWidget {
   const SwapPage({Key? key}) : super(key: key);
 
@@ -49,7 +51,7 @@ class _SwapPageState extends State<SwapPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return SignatureContentToggle(Padding(
       padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24),
       child: Column(
         children: [
@@ -393,6 +395,6 @@ class _SwapPageState extends State<SwapPage> {
               ]),
         ],
       ),
-    );
+    ));
   }
 }

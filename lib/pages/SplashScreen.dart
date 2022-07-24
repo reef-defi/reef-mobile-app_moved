@@ -44,7 +44,7 @@ class _SplashAppState extends State<SplashApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Setting up Reef Chain App',
+      title: 'Reef Chain App',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,

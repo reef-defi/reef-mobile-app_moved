@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:reef_mobile_app/model/account/stored_account.dart';
 import 'package:reef_mobile_app/service/StorageService.dart';
 
+import '../components/SignatureContentToggle.dart';
 import '../model/ReefState.dart';
+import '../model/StorageKey.dart';
 
 class AccountPage extends StatefulWidget {
   const AccountPage(this.reefState, this.storageService);
@@ -16,7 +18,7 @@ class AccountPage extends StatefulWidget {
 class _AccountPageState extends State<AccountPage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    final content = Scaffold(
       appBar: AppBar(
         title: Text('Accounts'),
       ),
@@ -48,10 +50,22 @@ class _AccountPageState extends State<AccountPage> {
             TextButton(
                 onPressed: deleteAllAccounts,
                 child: const Text('Delete All Accounts')),
+            TextButton(
+                onPressed: () async {
+                  var from = await ReefAppState.instance.storage.getValue(StorageKey.selected_address.name);
+
+                  print('SEND FROM= ${from}');
+                  var txTestRes = await ReefAppState.instance.transferCtrl
+                      .testTransferTokens(from);
+                  print("ACC TX TEST RES=$txTestRes");
+                },
+                child: const Text('send token')),
           ],
         ),
       ),
     );
+    // TODO return const SignatureOrContentComponent(
+    return SignatureContentToggle(content);
   }
 
   void _callAccountFromMnemonic() async {
@@ -116,7 +130,8 @@ class _AccountPageState extends State<AccountPage> {
     const address = "5EnY9eFwEDcEJ62dJWrTXhTucJ4pzGym4WZ2xcDKiT3eJecP";
     var account = await getAccount(address);
     if (account == null) return;
-    account.name = account.name == "Test account" ? "Test account edited" : "Test account";
+    account.name =
+        account.name == "Test account" ? "Test account edited" : "Test account";
     saveAccount(account);
   }
 

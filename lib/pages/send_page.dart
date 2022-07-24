@@ -6,6 +6,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:mobx/mobx.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 
+import '../components/SignatureContentToggle.dart';
+
 //TODO: Complete the second box and add modal and button
 
 class SendPage extends StatefulWidget {
@@ -23,7 +25,7 @@ class _SendPageState extends State<SendPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return SignatureContentToggle(Padding(
       padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24),
       child: Column(
         children: [
@@ -290,6 +292,6 @@ class _SendPageState extends State<SendPage> {
               ]),
         ],
       ),
-    );
+    ));
   }
 }
