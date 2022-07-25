@@ -10,14 +10,14 @@ import 'package:reef_mobile_app/service/StorageService.dart';
 import 'account.dart';
 
 class AccountCtrl {
-  final Account account = Account();
-  final JsApiService jsApi;
-  final StorageService storage;
+  final AccountsModel accountsModel = AccountsModel();
+  final JsApiService _jsApi;
+  final StorageService _storage;
 
-  AccountCtrl(this.jsApi, this.storage) {
-    _initSavedDeviceAccountAddress(jsApi, storage);
-    _initJsObservables(jsApi, storage);
-    _initWasm(jsApi);
+  AccountCtrl(this._jsApi, this._storage) {
+    _initSavedDeviceAccountAddress(_jsApi, _storage);
+    _initJsObservables(_jsApi, _storage);
+    _initWasm(_jsApi);
   }
 
   void _initJsObservables(JsApiService jsApi, StorageService storage) {
@@ -27,15 +27,15 @@ class AccountCtrl {
       }
       LinkedHashMap s = signer;
       await storage.setValue(StorageKey.selected_address.name, s['address']);
-      account.setSelectedSigner(toReefSigner(s));
+      accountsModel.setSelectedSigner(toReefSigner(s));
     });
 
-    account.setLoadingSigners(true);
+    accountsModel.setLoadingSigners(true);
     jsApi.jsObservable('account.availableSigners\$').listen((signers) async {
-      account.setLoadingSigners(false);
+      accountsModel.setLoadingSigners(false);
       var reefSigners =
           List<ReefSigner>.from(signers.map((s) => toReefSigner(s)));
-      account.setSigners(reefSigners);
+      accountsModel.setSigners(reefSigners);
       print('AVAILABLE Signers ${signers.length}');
       reefSigners.forEach((signer) {
         print('  ${signer.name} - ${signer.address}');
@@ -64,21 +64,25 @@ class AccountCtrl {
   }
 
   Future<String> generateAccount() async {
-    return await jsApi.jsPromise('keyring.generate()');
+    return await _jsApi.jsPromise('keyring.generate()');
   }
 
   Future<String> checkMnemonicValid(String mnemonic) async {
-    return await jsApi.jsPromise('keyring.checkMnemonicValid("$mnemonic")');
+    return await _jsApi.jsPromise('keyring.checkMnemonicValid("$mnemonic")');
   }
 
   Future<String> accountFromMnemonic(String mnemonic) async {
-    return await jsApi.jsPromise('keyring.accountFromMnemonic("$mnemonic")');
+    return await _jsApi.jsPromise('keyring.accountFromMnemonic("$mnemonic")');
   }
 
   Future<void> updateAccounts() async {
     var accounts = [];
-    (await storage.getAllAccounts())
+    (await _storage.getAllAccounts())
         .forEach(((account) => {accounts.add(account.toJsonSkinny())}));
-    jsApi.jsPromise('account.updateAccounts(${jsonEncode(accounts)})');
+    _jsApi.jsPromise('account.updateAccounts(${jsonEncode(accounts)})');
+  }
+
+  getAllAccounts() {
+
   }
 }
