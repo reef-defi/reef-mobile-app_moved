@@ -10,16 +10,16 @@ import '../account_box.dart';
 import '../modals/account_modals.dart';
 
 class AccountsList extends StatelessWidget {
-  final List<ReefSigner> accountMap;
+  final List<ReefSigner> signers;
   final VoidCallback selectCallback;
-  const AccountsList(this.accountMap, this.selectCallback, {Key? key}) : super(key: key);
+  const AccountsList(this.signers, this.selectCallback, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return ListView(
 // physics: const BouncingScrollPhysics(),
       padding: const EdgeInsets.all(0),
-      children: accountMap.isEmpty
+      children: signers.isEmpty
           ? [
         DottedBorder(
           dashPattern: const [4, 2],
@@ -71,7 +71,7 @@ class AccountsList extends StatelessWidget {
           ),
         )
       ]
-          : accountMap
+          : signers
           .map<Widget>((ReefSigner item) => Column(children: [
         /*AccountBox(
             props: item,
