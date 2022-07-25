@@ -122,7 +122,7 @@ export const initFlutterApi = async (flutterJS: FlutterJS) => {
             }
         };
         // testReefObservables();
-        accountApi.innitApi(flutterJS);
+        accountApi.innitApi();
         transferApi.initApi(flutterJS);
 
     } catch (e) {
