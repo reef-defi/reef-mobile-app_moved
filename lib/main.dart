@@ -140,7 +140,7 @@ class _TestHomePageState extends State<TestHomePage> {
               Observer(builder: (_) {
                 return Column(
                     children: List.from(ReefAppState
-                        .instance.tokensCtrl.tokenList.tokens
+                        .instance.tokensCtrl.tokenModel.tokens
                         .map((t) => Text('TKN=${t.symbol}'))));
               }),
               TextButton(

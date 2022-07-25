@@ -1,11 +1,11 @@
+import 'package:reef_mobile_app/model/tokens/TokenWithAmount.dart';
 import 'package:reef_mobile_app/service/JsApiService.dart';
 
-import 'token.dart';
 import 'token_list.dart';
 
 class TokenCtrl {
 
-  final TokenList tokenList = TokenList();
+  final TokenModel tokenModel = TokenModel();
 
   TokenCtrl(JsApiService jsApi){
 
@@ -14,8 +14,8 @@ class TokenCtrl {
       if(tkns==null) {
         return;
       }
-      List<Token> tknList = List.from(tkns.map((t)=>Token(t)));
-      tokenList.setTokens(tknList);
+      List<TokenWithAmount> tknList = List.from(tkns.map((t)=>TokenWithAmount.fromJSON(t)));
+      tokenModel.setTokens(tknList);
     });
 
   }

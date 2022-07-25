@@ -1,16 +1,16 @@
 import 'package:mobx/mobx.dart';
-import 'package:reef_mobile_app/model/tokens/token.dart';
+import 'package:reef_mobile_app/model/tokens/TokenWithAmount.dart';
 
-part 'token_list.g.dart';
+part 'token_model.g.dart';
 
-class TokenList = _TokenList with _$TokenList;
+class TokenModel = _TokenModel with _$TokenModel;
 
-abstract class _TokenList with Store {
+abstract class _TokenModel with Store {
   @observable
-  ObservableList<Token> tokens = ObservableList<Token>();
+  ObservableList<TokenWithAmount> tokens = ObservableList<TokenWithAmount>();
 
   @action
-  void setTokens(List<Token> tkns) {
+  void setTokens(List<TokenWithAmount> tkns) {
     this.tokens.clear();
     this.tokens.addAll(tkns);
   }
