@@ -1,13 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:reef_mobile_app/components/modal.dart';
 import 'package:reef_mobile_app/model/ReefState.dart';
 import 'package:reef_mobile_app/model/account/stored_account.dart';
-import 'package:reef_mobile_app/service/JsApiService.dart';
 import 'package:reef_mobile_app/service/StorageService.dart';
 import 'package:reef_mobile_app/utils/elements.dart';
+import 'package:reef_mobile_app/utils/functions.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 import 'package:flutter/services.dart';
 
@@ -25,13 +26,24 @@ class AccountCreationContent extends StatefulWidget {
 class _AccountCreationContentState extends State<AccountCreationContent> {
   bool _isEditingText = false;
   late TextEditingController _editingController;
-  String initialText = "<No Name>";
+  late String initialText;
 
   bool _checkedValue = false;
 
   @override
   void initState() {
     super.initState();
+    setState(() {
+      if (widget.account != null) {
+        if (widget.account?.name.isEmpty as bool) {
+          initialText = "<No Name>";
+        } else {
+          initialText = widget.account?.name as String;
+        }
+      } else {
+        initialText = "<No Name>";
+      }
+    });
     _editingController = TextEditingController(text: initialText);
     _editingController.selection = TextSelection(
       baseOffset: 0,
@@ -60,6 +72,7 @@ class _AccountCreationContentState extends State<AccountCreationContent> {
             setState(() {
               if (newValue.isNotEmpty) {
                 initialText = newValue;
+                widget.account?.name = newValue;
               }
               _isEditingText = false;
             });
@@ -100,26 +113,54 @@ class _AccountCreationContentState extends State<AccountCreationContent> {
                         color: Colors.black12,
                       ),
                       child: ClipRRect(
-                        borderRadius: BorderRadius.circular(64),
-                        child: const Image(
-                          image: NetworkImage(
-                              "https://source.unsplash.com/random/128x128"),
-                          height: 64,
-                          width: 64,
-                        ),
-                      ),
+                          borderRadius: BorderRadius.circular(64),
+                          child: (widget.account?.svg != null)
+                              ? SvgPicture.string(widget.account?.svg as String)
+                              : Container(
+                                  width: 64,
+                                  height: 64,
+                                  decoration:
+                                      BoxDecoration(color: Colors.grey[600]!),
+                                )),
                     ),
                     const Gap(12),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _editTitleTextField(),
-                        const Gap(4),
                         Row(
-                          children: const [
-                            Text("Native Address: 5F...gkgDA"),
-                            Gap(2),
-                            Icon(Icons.copy, size: 12)
+                          children: [
+                            _editTitleTextField(),
+                            const Gap(2),
+                            IconButton(
+                              padding: EdgeInsets.zero,
+                              constraints: BoxConstraints(),
+                              icon: Icon(Icons.edit,
+                                  size: 14, color: Colors.grey[600]!),
+                              onPressed: () {
+                                setState(() {
+                                  _isEditingText = true;
+                                });
+                              },
+                            )
+                          ],
+                        ),
+                        const Gap(2),
+                        Row(
+                          children: [
+                            Text(
+                              "Address: ${widget.account?.address.shorten() ?? "Loading..."}",
+                              style: TextStyle(color: Colors.grey[600]!),
+                            ),
+                            const Gap(2),
+                            IconButton(
+                              constraints: BoxConstraints(),
+                              padding: EdgeInsets.zero,
+                              icon: Icon(Icons.copy, size: 12),
+                              onPressed: () {
+                                Clipboard.setData(ClipboardData(
+                                    text: widget.account?.address));
+                              },
+                            )
                           ],
                         ),
                       ],
@@ -280,8 +321,12 @@ class _AccountCreationContentState extends State<AccountCreationContent> {
 class AccountCreationConfirmContent extends StatefulWidget {
   final VoidCallback prev;
   final StoredAccount? account;
+  final Future<dynamic> Function(StoredAccount) saveAccount;
   const AccountCreationConfirmContent(
-      {Key? key, required this.prev, required this.account})
+      {Key? key,
+      required this.prev,
+      required this.account,
+      required this.saveAccount})
       : super(key: key);
 
   @override
@@ -293,7 +338,7 @@ class _AccountCreationConfirmContentState
     extends State<AccountCreationConfirmContent> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  String name = "Boidushya";
+  late String name;
   String password = "";
   final chains = <String>[
     'Allow use on any chain',
@@ -308,10 +353,22 @@ class _AccountCreationConfirmContentState
   @override
   void initState() {
     super.initState();
+    setState(() {
+      if (widget.account != null) {
+        if (widget.account?.name.isEmpty as bool) {
+          name = "<No Name>";
+        } else {
+          name = widget.account?.name as String;
+        }
+      } else {
+        name = "<No Name>";
+      }
+    });
     _nameController.text = name == "<No Name>" ? "" : name;
     _nameController.addListener(() {
       setState(() {
         name = _nameController.text;
+        widget.account?.name = name;
       });
     });
     _passwordController.addListener(() {
@@ -347,14 +404,15 @@ class _AccountCreationConfirmContentState
                         color: Colors.black12,
                       ),
                       child: ClipRRect(
-                        borderRadius: BorderRadius.circular(64),
-                        child: const Image(
-                          image: NetworkImage(
-                              "https://source.unsplash.com/random/128x128"),
-                          height: 64,
-                          width: 64,
-                        ),
-                      ),
+                          borderRadius: BorderRadius.circular(64),
+                          child: (widget.account?.svg != null)
+                              ? SvgPicture.string(widget.account?.svg as String)
+                              : Container(
+                                  width: 64,
+                                  height: 64,
+                                  decoration:
+                                      BoxDecoration(color: Colors.grey[600]!),
+                                )),
                     ),
                     const Gap(12),
                     Column(
@@ -367,15 +425,23 @@ class _AccountCreationConfirmContentState
                             fontWeight: FontWeight.w500,
                           ),
                         ),
-                        const Gap(4),
+                        const Gap(2),
                         Row(
                           children: [
                             Text(
-                              "Native Address: 5F...gkgDA",
+                              "Address: ${widget.account?.address.shorten() ?? "Loading..."}",
                               style: TextStyle(color: Colors.grey[600]!),
                             ),
                             const Gap(2),
-                            const Icon(Icons.copy, size: 12)
+                            IconButton(
+                              constraints: BoxConstraints(),
+                              padding: EdgeInsets.zero,
+                              icon: Icon(Icons.copy, size: 12),
+                              onPressed: () {
+                                Clipboard.setData(ClipboardData(
+                                    text: widget.account?.address));
+                              },
+                            )
                           ],
                         ),
                       ],
@@ -513,9 +579,19 @@ class _AccountCreationConfirmContentState
                           : const Color(0xff9d6cff),
                       padding: const EdgeInsets.symmetric(vertical: 16),
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      if (name.isNotEmpty && password.isNotEmpty) {
+                        if (widget.account != null) {
+                          widget.saveAccount(widget.account as StoredAccount);
+                          print(
+                              "Saved account with name: ${widget.account?.name} and address: ${widget.account?.address}");
+                          Navigator.of(context).pop();
+                        }
+                      }
+                    },
                     child: const Text(
                       'Add the account with generated seed',
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
@@ -534,7 +610,8 @@ class _AccountCreationConfirmContentState
 }
 
 class CurrentScreen extends StatefulWidget {
-  CurrentScreen({Key? key}) : super(key: key);
+  final Function callback;
+  CurrentScreen({Key? key, required this.callback}) : super(key: key);
 
   final ReefAppState reefState = ReefAppState.instance;
   final StorageService storageService = ReefAppState.instance.storage;
@@ -551,9 +628,17 @@ class _CurrentScreenState extends State<CurrentScreen> {
     var response = await widget.reefState.accountCtrl.generateAccount();
     var generatedAccount = StoredAccount.fromString(response);
     print("Mnemonic: ${generatedAccount.mnemonic}");
+    print("Name: ${generatedAccount.name}");
+    print("Address: ${generatedAccount.address}");
     setState(() {
       account = generatedAccount;
     });
+  }
+
+  Future saveAccount(StoredAccount account) async {
+    await widget.storageService.saveAccount(account);
+    widget.callback();
+    print("Saved account ${account.address}");
   }
 
   nextIndex() {
@@ -596,12 +681,15 @@ class _CurrentScreenState extends State<CurrentScreen> {
       },
       child: (activeIndex == 0)
           ? AccountCreationContent(next: nextIndex, account: account)
-          : AccountCreationConfirmContent(prev: prevIndex, account: account),
+          : AccountCreationConfirmContent(
+              prev: prevIndex, account: account, saveAccount: saveAccount),
     );
   }
 }
 
-void showCreateAccountModal(BuildContext context) {
+void showCreateAccountModal(BuildContext context, {required callback}) {
   showModal(context,
-      headText: "Create Account", dismissible: false, child: CurrentScreen());
+      headText: "Create Account",
+      dismissible: false,
+      child: CurrentScreen(callback: callback));
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:reef_mobile_app/components/SignatureRequestComponent.dart';
+import 'package:reef_mobile_app/components/SignatureContentToggle.dart';
 import 'package:reef_mobile_app/model/ReefState.dart';
 import 'package:reef_mobile_app/model/account/ReefSigner.dart';
 import 'package:reef_mobile_app/pages/SplashScreen.dart';
@@ -15,7 +15,8 @@ void main() async {
     SplashApp(
       key: UniqueKey(),
       displayOnInit: () {
-        return const MyApp();
+        return const BottomNav();
+        // return const MyApp();
         // return const TestHomePage();
       },
     ),
@@ -109,6 +110,12 @@ class _TestHomePageState extends State<TestHomePage> {
     print("SGN PAYLOAD TEST=$signTestRes");
   }
 
+  void _testSignAndSend(address) async {
+    var txTestRes = await ReefAppState.instance.signingCtrl
+        .initSignAndSendTxTest(address);
+    print("MAIN TX TEST=$txTestRes");
+  }
+
   @override
   Widget build(BuildContext context) {
     var content = Scaffold(
@@ -167,6 +174,15 @@ class _TestHomePageState extends State<TestHomePage> {
                     },
                     child:
                         const Text('Sign payload', textAlign: TextAlign.center),
+                  ),
+                  FloatingActionButton(
+                    heroTag: "sign_and_send",
+                    onPressed: () {
+                      _testSignAndSend(ReefAppState.instance.accountCtrl.account
+                          .selectedSigner?.address);
+                    },
+                    child: const Text('Sign and send',
+                        textAlign: TextAlign.center),
                   )
                 ],
               ),
@@ -174,8 +190,7 @@ class _TestHomePageState extends State<TestHomePage> {
           }
           return SizedBox.shrink();
         }));
-    return SignatureOrContentComponent(
-        content: content, reefState: ReefAppState.instance);
+    return SignatureContentToggle(content);
   }
 
   String toBalanceDisplayString(String decimalsString) => (BigInt.parse(decimalsString)/BigInt.from(10).pow(18)).toString();

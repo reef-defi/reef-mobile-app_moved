@@ -1,13 +1,15 @@
 import * as accountApi from "./accountApi";
+import * as transferApi from "./transferApi";
 import {appState, AvailableNetworks, availableNetworks, ReefSigner} from "@reef-defi/react-lib";
-import {map, switchMap} from "rxjs/operators";
+import {map, switchMap, take} from "rxjs/operators";
 import {FlutterJS} from "flutter-js-bridge/src/FlutterJS";
-import {firstValueFrom } from "rxjs";
+import {firstValueFrom} from "rxjs";
 import {stringToHex} from '@polkadot/util';
 import {SignerPayloadJSON} from "@polkadot/types/types";
 import type {InjectedAccountWithMeta} from "@reef-defi/extension-inject/types";
 import Signer from "@reef-defi/extension-base/page/Signer";
 import {getSignatureSendRequest} from "flutter-js-bridge/src/sendRequestSignature";
+import { ethers } from "ethers";
 
 export interface Account {
     address: string;
@@ -43,8 +45,6 @@ export const initFlutterApi = async (flutterJS: FlutterJS) => {
             testReefSignerRawPromise: (address: string, message: string) => {
                 return firstValueFrom(appState.signers$.pipe(
                     map((signers: ReefSigner[]) => {
-                        console.log("ADDRESS=", address);
-                        signers.forEach(signer => console.log(signer.address));
                         const signer = signers.find(s => s.address === address);
                         console.log("TEST SIGNER RAW=", signer.address);
                         return signer;
@@ -64,8 +64,6 @@ export const initFlutterApi = async (flutterJS: FlutterJS) => {
             testReefSignerPayloadPromise: (address: string, payload: SignerPayloadJSON) => {
                 return firstValueFrom(appState.signers$.pipe(
                     map((signers: ReefSigner[]) => {
-                        console.log("ADDRESS=", address);
-                        signers.forEach(signer => console.log(signer.address));
                         const signer = signers.find(s => s.address === address);
                         console.log("TEST SIGNER PAYLOAD=", signer.address);
                         return signer;
@@ -74,10 +72,58 @@ export const initFlutterApi = async (flutterJS: FlutterJS) => {
                         return signer.signer.signingKey.signPayload(payload);
                     })
                 ));
+            },
+            testReefSignAndSendTxPromise: (address: string) => {
+                return firstValueFrom(appState.signers$.pipe(
+                    map((signers: ReefSigner[]) => {
+                        const signer = signers.find(s => s.address === address);
+                        console.log("TEST SIGN AND SEND=", signer.address);
+                        return signer;
+                    }),
+                    switchMap(async (signer: ReefSigner | undefined) => {
+                        // Contract data
+                        const CONTRACT_ADDRESS = "0x0a3f2785dbbc5f022de511aab8846388b78009fd";
+                        const CONTRACT_ABI = [
+                            {
+                                inputs: [
+                                    {
+                                        internalType: "uint256",
+                                        name: "positionId",
+                                        type: "uint256",
+                                    },
+                                ],
+                                name: "enterRaffle",
+                                outputs: [],
+                                stateMutability: "payable",
+                                type: "function",
+                            }
+                        ];
+
+                        // Storage and gas limits
+                        const STORAGE_LIMIT = 2000;
+
+                        // Input data
+                        const FUNCTION_NAME = "enterRaffle";
+                        const ARGS = ["164"];
+                        const VALUE_SENT = ethers.utils.parseEther("1.0");
+                        const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer.signer);
+
+                        const tx = await contract[FUNCTION_NAME](...ARGS, {
+                            value: VALUE_SENT,
+                            customData: { storageLimit: STORAGE_LIMIT }
+                        });
+
+                        const receipt = await tx.wait();
+                        console.log("SIGN AND SEND RESULT=", receipt);
+                        return receipt;
+                    }),
+                    take(1)
+                ));
             }
         };
         // testReefObservables();
         accountApi.innitApi(flutterJS);
+        transferApi.initApi(flutterJS);
 
     } catch (e) {
         console.log("INIT ERROR=", e.message);
