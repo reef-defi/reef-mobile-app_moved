@@ -1,7 +1,10 @@
+import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hive/hive.dart';
 import 'package:reef_mobile_app/components/modal.dart';
 import 'package:reef_mobile_app/components/modals/account_modals.dart';
 import 'package:reef_mobile_app/model/ReefState.dart';
@@ -88,8 +91,8 @@ class _AccountBoxState extends State<AccountBox> {
                         ),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(64),
-                          child: Image(
-                            image: NetworkImage(widget.props["logo"]),
+                          child: SvgPicture.string(
+                            widget.props["logo"],
                             height: 64,
                             width: 64,
                           ),
@@ -240,6 +243,7 @@ class UserPage extends StatefulWidget {
 }
 
 class _UserPageState extends State<UserPage> {
+  List accountMap = [];
   Future<List<StoredAccount>?> getAllAccounts() async {
     var accounts = await widget.storageService.getAllAccounts();
     if (accounts.isEmpty) {
@@ -247,8 +251,28 @@ class _UserPageState extends State<UserPage> {
       return null;
     }
     print("Found ${accounts.length} accounts:");
-    accounts.forEach((account) {
-      print("  ${account.address}");
+
+    List tempAccounts = [];
+
+    accounts.asMap().forEach((index, account) {
+      print("   ${account.address}, ${account.name}");
+
+      // TODO hardcoded: balance, evmAddress, evmBound,
+      tempAccounts.add({
+        "key": index,
+        "name": account.name.isNotEmpty ? account.name : "<No Name>",
+        "balance": 0.00,
+        "nativeAddress": account.address,
+        "evmAddress": "0x000000000000000000000000000000000",
+        "evmBound": index % 2 == 0,
+        "selected": index == 0,
+        "mnemonic": account.mnemonic,
+        "logo": account.svg,
+      });
+
+      setState(() {
+        accountMap = tempAccounts;
+      });
     });
 
     var account = await widget.storageService.getAccount(accounts[0].address);
@@ -266,53 +290,6 @@ class _UserPageState extends State<UserPage> {
     super.initState();
     getAllAccounts();
   }
-
-  List accountMap = [
-    {
-      "key": 0,
-      "name": "Reef",
-      "balance": 327060,
-      "nativeAddress": "5DiowuaekjasdasyrkwuebnrbcaqvsK",
-      "evmAddress": "0x12318923718927317298379812390459",
-      "evmBound": true,
-      "selected": true,
-      "logo":
-          "https://source.unsplash.com/random/128x128?sig=2982348901892389746",
-    },
-    {
-      "key": 1,
-      "name": "Boidu",
-      "balance": 98,
-      "nativeAddress": "5DiowuaekjasdasyrkwuebnrbcaqvsK",
-      "evmAddress": "0x12318923718927317298379812390459",
-      "evmBound": true,
-      "selected": false,
-      "logo":
-          "https://source.unsplash.com/random/128x128?sig=123984170237410289374",
-    },
-    {
-      "key": 2,
-      "name": "Test",
-      "balance": 0.00,
-      "nativeAddress": "5DiowuaekjasdasyrkwuebnrbcaqvsK",
-      "evmAddress": "0x12318923718927317298379812390459",
-      "evmBound": false,
-      "selected": false,
-      "logo":
-          "https://source.unsplash.com/random/128x128?sig=8377364829387489232342",
-    },
-    {
-      "key": 3,
-      "name": "Dont use this one",
-      "balance": 12.90,
-      "nativeAddress": "5DiowuaekjasdasyrkwuebnrbcaqvsK",
-      "evmAddress": "0x12318923718927317298379812390459",
-      "evmBound": false,
-      "selected": false,
-      "logo":
-          "https://source.unsplash.com/random/128x128?sig=6039816829381289309123",
-    },
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -356,7 +333,7 @@ class _UserPageState extends State<UserPage> {
                   MaterialButton(
                     materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     onPressed: () {
-                      showCreateAccountModal(context);
+                      showCreateAccountModal(context, callback: getAllAccounts);
                     },
                     color: Styles.textLightColor,
                     minWidth: 0,
@@ -377,29 +354,86 @@ class _UserPageState extends State<UserPage> {
         ),
         const Gap(16),
         Expanded(
-          child: ListView(
-            physics: const BouncingScrollPhysics(),
-            padding: const EdgeInsets.all(0),
-            children: accountMap
-                .map<Widget>((item) => Column(children: [
-                      AccountBox(
-                          props: item,
-                          callback: () {
-                            List temp = accountMap;
+          child: RefreshIndicator(
+            triggerMode: RefreshIndicatorTriggerMode.onEdge,
+            color: Styles.primaryAccentColorDark,
+            onRefresh: getAllAccounts,
+            child: ListView(
+              // physics: const BouncingScrollPhysics(),
+              padding: const EdgeInsets.all(0),
+              children: accountMap.isEmpty
+                  ? [
+                      DottedBorder(
+                        dashPattern: const [4, 2],
+                        color: Styles.textLightColor,
+                        borderType: BorderType.RRect,
+                        radius: const Radius.circular(8),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 18),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    "Click on ",
+                                    style:
+                                        TextStyle(color: Styles.textLightColor),
+                                  ),
+                                  const Gap(2),
+                                  MaterialButton(
+                                    materialTapTargetSize:
+                                        MaterialTapTargetSize.shrinkWrap,
+                                    onPressed: () {
+                                      showCreateAccountModal(context,
+                                          callback: getAllAccounts);
+                                    },
+                                    color: Styles.textLightColor,
+                                    minWidth: 0,
+                                    height: 0,
+                                    padding: const EdgeInsets.all(2),
+                                    shape: const CircleBorder(),
+                                    elevation: 0,
+                                    child: Icon(
+                                      Icons.add,
+                                      color: Styles.primaryBackgroundColor,
+                                      size: 15,
+                                    ),
+                                  ),
+                                  const Gap(2),
+                                  Text(
+                                    " to create a new account",
+                                    style:
+                                        TextStyle(color: Styles.textLightColor),
+                                  ),
+                                ],
+                              )),
+                        ),
+                      )
+                    ]
+                  : accountMap
+                      .map<Widget>((item) => Column(children: [
+                            AccountBox(
+                                props: item,
+                                callback: () {
+                                  List temp = accountMap;
 
-                            for (var element in temp) {
-                              element["selected"] = false;
-                            }
+                                  for (var element in temp) {
+                                    element["selected"] = false;
+                                  }
 
-                            temp[item["key"]]["selected"] = true;
+                                  temp[item["key"]]["selected"] = true;
 
-                            setState(() {
-                              accountMap = temp;
-                            });
-                          }),
-                      if (item["key"] != accountMap.length) const Gap(12)
-                    ]))
-                .toList(),
+                                  setState(() {
+                                    accountMap = temp;
+                                  });
+                                }),
+                            if (item["key"] != accountMap.length) const Gap(12)
+                          ]))
+                      .toList(),
+            ),
           ),
         )
       ],
