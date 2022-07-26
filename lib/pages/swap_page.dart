@@ -5,6 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:reef_mobile_app/components/modals/token_selection_modals.dart';
+import 'package:reef_mobile_app/model/ReefState.dart';
+import 'package:reef_mobile_app/model/StorageKey.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -55,6 +57,43 @@ class _SwapPageState extends State<SwapPage> {
       padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24),
       child: Column(
         children: [
+          // Test buttons
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                ElevatedButton(
+                  child: const Text('swap'),
+                  onPressed: () async {
+                    var signerAddress = await ReefAppState.instance.storage
+                        .getValue(StorageKey.selected_address.name);
+                    var res = await ReefAppState.instance.swapCtrl
+                        .testSwapTokens(signerAddress);
+                    print("SWAP TEST RES = $res");
+                  },
+                ),
+                ElevatedButton(
+                  child: const Text('get pool'),
+                  onPressed: () async {
+                    var signerAddress = await ReefAppState.instance.storage
+                        .getValue(StorageKey.selected_address.name);
+                    var res = await ReefAppState.instance.swapCtrl
+                        .testGetPoolReserves(signerAddress);
+                    print("RESERVES TEST RES = $res");
+                  },
+                ),
+                ElevatedButton(
+                  child: const Text('get swap amount'),
+                  onPressed: () async {
+                    var res = await ReefAppState.instance.swapCtrl.testGetSwapAmount();
+                    print("SWAP AMOUNT TEST RES = $res");
+                  },
+                )
+              ],
+            ),
+          ),
+          // end test buttons
           Text(
             "Swap",
             style: GoogleFonts.spaceGrotesk(

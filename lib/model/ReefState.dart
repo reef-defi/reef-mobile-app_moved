@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:reef_mobile_app/model/signing/SigningCtrl.dart';
+import 'package:reef_mobile_app/model/swap/SwapCtrl.dart';
 import 'package:reef_mobile_app/model/tokens/TokensCtrl.dart';
 import 'package:reef_mobile_app/model/transfer/TransferCtrl.dart';
 import 'package:reef_mobile_app/service/JsApiService.dart';
@@ -16,6 +17,7 @@ class ReefAppState {
   late AccountCtrl accountCtrl;
   late SigningCtrl signingCtrl;
   late TransferCtrl transferCtrl;
+  late SwapCtrl swapCtrl;
 
   ReefAppState._();
 
@@ -29,6 +31,7 @@ class ReefAppState {
     accountCtrl = AccountCtrl(jsApi, storage);
     signingCtrl = SigningCtrl(jsApi, storage);
     transferCtrl = TransferCtrl(jsApi);
+    swapCtrl = SwapCtrl(jsApi);
   }
 
   _initReefState(JsApiService jsApiService) async {
