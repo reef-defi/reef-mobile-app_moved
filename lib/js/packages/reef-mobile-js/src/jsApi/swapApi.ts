@@ -184,7 +184,7 @@ export const initApi = () => {
         *     returns amount of token2 received
         */
         getSwapAmount:(tokenAmount: string, buy: boolean, token1Reserve: TokenWithAmount, token2Reserve: TokenWithAmount) => {
-            return buy ? getInputAmount(tokenAmount, token1Reserve, token2Reserve) : getOutputAmount(token, token1Reserve, token2Reserve);
+            return buy ? getInputAmount(tokenAmount, token1Reserve, token2Reserve) : getOutputAmount(tokenAmount, token1Reserve, token2Reserve);
         }
     }
 }
