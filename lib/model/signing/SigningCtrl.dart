@@ -35,8 +35,7 @@ class SigningCtrl {
   }
 
   confirmSignature(String sigConfirmationIdent, String address) async {
-    jsApi.jsObservable('account.availableSigners\$').listen((signers) async {
-      var account = await storage.getAccount(address);
+    var account = await storage.getAccount(address);
       if (account == null) {
         print("ERROR: confirmSignature - Account not found.");
         return;
@@ -44,7 +43,6 @@ class SigningCtrl {
       // TODO user feedback
       signatureRequests.remove(sigConfirmationIdent);
       jsApi.confirmTxSignature(sigConfirmationIdent, account.mnemonic);
-    });
   }
 
   buildSignatureRequest(JsApiMessage jsApiMessage) {

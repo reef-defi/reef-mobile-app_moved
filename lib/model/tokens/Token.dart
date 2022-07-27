@@ -1,3 +1,5 @@
+import '../../utils/json_big_int.dart';
+
 class Token {
   final String name;
   final String address;
@@ -14,7 +16,8 @@ class Token {
     required this.balance,
     required this.decimals});
 
-  static fromJSON(dynamic json){
-    return Token(name: json['name'], address: json['address'], iconUrl: json['iconUrl'], symbol: json['symbol'], balance: json['balance'], decimals: json['decimals']);
+  static Token fromJSON(dynamic json){
+    var balanceVal = JsonBigInt.toBigInt(json['balance']);
+    return Token(name: json['name'], address: json['address'], iconUrl: json['iconUrl'], symbol: json['symbol'], balance: balanceVal??BigInt.zero, decimals: json['decimals']);
   }
 }
