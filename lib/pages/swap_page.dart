@@ -5,9 +5,9 @@ import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:reef_mobile_app/components/modals/token_selection_modals.dart';
-import 'package:reef_mobile_app/model/ReefState.dart';
+import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/StorageKey.dart';
-import 'package:reef_mobile_app/model/tokens/token.dart';
+import 'package:reef_mobile_app/model/tokens/TokenWithAmount.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -21,37 +21,41 @@ class SwapPage extends StatefulWidget {
 }
 
 class _SwapPageState extends State<SwapPage> {
-  var tokens = ReefAppState.instance.tokensCtrl.allTokens;  
+  var tokens = ReefAppState.instance.model.tokens.tokenList;
 
   // TODO: auto-select REEF token
-  var selectedToken = Token(
-        'REEF',
-        '0x0000000000000000000000000000000001000000',
-        'https://s2.coinmarketcap.com/static/img/coins/64x64/6951.png',
-        'REEF',
-        '1542087625938626180855',
-        18);
+  var selectedToken = TokenWithAmount(
+      name: 'REEF',
+      address: '0x0000000000000000000000000000000001000000',
+      iconUrl: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6951.png',
+      symbol: 'REEF',
+      balance: BigInt.parse('1542087625938626180855'),
+      decimals: 18,
+      amount: '0',
+      price: 0.0841);
   // TODO: bottom token should be empty on start
-  var selectedBottomToken = Token(
-        'Free Mint Token"',
-        '0x4676199AdA480a2fCB4b2D4232b7142AF9fe9D87',
-        '',
-        'FMT',
-        '2761008739220176308876',
-        18);
+  var selectedBottomToken = TokenWithAmount(
+      name: 'Free Mint Token',
+      address: '0x4676199AdA480a2fCB4b2D4232b7142AF9fe9D87',
+      iconUrl: '',
+      symbol: 'FMT',
+      balance: BigInt.parse('2761008739220176308876'),
+      decimals: 18,
+      amount: '0',
+      price: 0);
 
   TextEditingController amountController = TextEditingController();
   String amount = "";
   TextEditingController amountBottomController = TextEditingController();
   String amountBottom = "";
 
-  void _changeSelectedToken(Token token) {
+  void _changeSelectedToken(TokenWithAmount token) {
     setState(() {
       selectedToken = token;
     });
   }
 
-  void _changeSelectedBottomToken(Token token) {
+  void _changeSelectedBottomToken(TokenWithAmount token) {
     setState(() {
       selectedBottomToken = token;
     });
@@ -174,11 +178,11 @@ class _SwapPageState extends State<SwapPage> {
                                     else
                                       Icon(CupertinoIcons.question_circle,
                                           color: Colors.grey[600]!, size: 24),
-                                      const Gap(4),
-                                      Text(selectedToken.symbol),
-                                      const Gap(4),
-                                      Icon(CupertinoIcons.chevron_down,
-                                          size: 16, color: Styles.textLightColor)
+                                    const Gap(4),
+                                    Text(selectedToken.symbol),
+                                    const Gap(4),
+                                    Icon(CupertinoIcons.chevron_down,
+                                        size: 16, color: Styles.textLightColor)
                                   ],
                                 ),
                               ),
@@ -227,7 +231,7 @@ class _SwapPageState extends State<SwapPage> {
                             child: Row(
                               children: [
                                 Text(
-                                  "Balance: ${formatBalance(selectedToken)} ${selectedToken.symbol}",
+                                  "Balance: ${selectedToken.getBalanceDisplay()} ${selectedToken.symbol}",
                                   style: TextStyle(
                                       color: Styles.textLightColor,
                                       fontSize: 12),
@@ -284,8 +288,7 @@ class _SwapPageState extends State<SwapPage> {
                                   children: [
                                     if (selectedBottomToken.iconUrl != "")
                                       CachedNetworkImage(
-                                        imageUrl:
-                                            selectedBottomToken.iconUrl,
+                                        imageUrl: selectedBottomToken.iconUrl,
                                         width: 24,
                                         height: 24,
                                         placeholder: (context, url) =>
@@ -365,7 +368,7 @@ class _SwapPageState extends State<SwapPage> {
                             child: Row(
                               children: [
                                 Text(
-                                  "Balance: ${formatBalance(selectedBottomToken)} ${selectedBottomToken.symbol}",
+                                  "Balance: ${selectedBottomToken.getBalanceDisplay()} ${selectedBottomToken.symbol}",
                                   style: TextStyle(
                                       color: Styles.textLightColor,
                                       fontSize: 12),

@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:reef_mobile_app/components/modal.dart';
-import 'package:reef_mobile_app/model/ReefState.dart';
-import 'package:reef_mobile_app/model/tokens/token.dart';
+import 'package:reef_mobile_app/model/ReefAppState.dart';
+import 'package:reef_mobile_app/model/tokens/Token.dart';
+import 'package:reef_mobile_app/model/tokens/TokenWithAmount.dart';
 import 'package:reef_mobile_app/utils/elements.dart';
 import 'package:reef_mobile_app/utils/functions.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
@@ -26,9 +27,9 @@ class TokenSelectionState extends State<TokenSelection> {
 
   TextEditingController valueContainer = TextEditingController();
 
-  final List<Token> initialTokens = ReefAppState.instance.tokensCtrl.allTokens;  
+  final List<TokenWithAmount> initialTokens = ReefAppState.instance.model.tokens.tokenList;  
 
-  late List<Token> tokens;
+  late List<TokenWithAmount> tokens;
 
   _changeState() {
     setState(() {
@@ -228,7 +229,7 @@ class TokenSelectionState extends State<TokenSelection> {
                                           ],
                                         ),
                                       ]),
-                                      Text(formatBalance(e))
+                                      Text(e.getBalanceDisplay())
                                     ],
                                   )),
                             ),

@@ -193,5 +193,5 @@ class _TestHomePageState extends State<TestHomePage> {
     return SignatureContentToggle(content);
   }
 
-  String toBalanceDisplayString(String decimalsString) => (BigInt.parse(decimalsString)/BigInt.from(10).pow(18)).toString();
+  String toBalanceDisplayString(BigInt value) => (value/BigInt.from(10).pow(18)).toString();
 }
