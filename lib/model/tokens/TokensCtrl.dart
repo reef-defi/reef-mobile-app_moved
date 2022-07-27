@@ -1,21 +1,18 @@
+import 'package:reef_mobile_app/model/tokens/TokenWithAmount.dart';
 import 'package:reef_mobile_app/service/JsApiService.dart';
 
-import 'token.dart';
-import 'token_list.dart';
+import 'token_model.dart';
 
 class TokenCtrl {
 
-  final TokenList tokenList = TokenList();
+  TokenCtrl(JsApiService jsApi, TokenModel tokenModel){
 
-  TokenCtrl(JsApiService jsApi){
-
-    jsApi.jsObservable('appState.selectedSignerTokenBalances\$').listen((tokens) {
-      var tkns = tokens?.map(( t)=>t['symbol']);
-      if(tkns==null) {
+    jsApi.jsObservable('appState.tokenPrices\$').listen((tokens) {
+      if(tokens==null) {
         return;
       }
-      List<Token> tknList = List.from(tkns.map((t)=>Token(t)));
-      tokenList.setTokens(tknList);
+      List<TokenWithAmount> tknList = List.from(tokens.map((t)=>TokenWithAmount.fromJSON(t)));
+      tokenModel.setSelectedSignerTokens(tknList);
     });
 
   }

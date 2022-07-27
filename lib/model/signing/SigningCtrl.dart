@@ -9,11 +9,11 @@ import 'package:reef_mobile_app/service/JsApiService.dart';
 import 'package:reef_mobile_app/service/StorageService.dart';
 
 class SigningCtrl {
-  final SignatureRequests signatureRequests = SignatureRequests();
+  final SignatureRequests signatureRequests;
   final JsApiService jsApi;
   final StorageService storage;
 
-  SigningCtrl(JsApiService this.jsApi, StorageService this.storage) {
+  SigningCtrl(JsApiService this.jsApi, StorageService this.storage, SignatureRequests this.signatureRequests) {
     jsApi.jsTxSignatureConfirmationMessageSubj.listen((jsApiMessage) {
       signatureRequests.add(buildSignatureRequest(jsApiMessage));
     });
@@ -33,10 +33,9 @@ class SigningCtrl {
     return jsApi
         .jsPromise('jsApi.testReefSignAndSendTxPromise("$address")');
   }
-  
+
   confirmSignature(String sigConfirmationIdent, String address) async {
-    jsApi.jsObservable('account.availableSigners\$').listen((signers) async {
-      var account = await storage.getAccount(address);
+    var account = await storage.getAccount(address);
       if (account == null) {
         print("ERROR: confirmSignature - Account not found.");
         return;
@@ -44,7 +43,6 @@ class SigningCtrl {
       // TODO user feedback
       signatureRequests.remove(sigConfirmationIdent);
       jsApi.confirmTxSignature(sigConfirmationIdent, account.mnemonic);
-    });
   }
 
   buildSignatureRequest(JsApiMessage jsApiMessage) {

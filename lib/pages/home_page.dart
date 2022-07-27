@@ -5,7 +5,7 @@ import 'package:reef_mobile_app/components/home/NFT_view.dart';
 import 'package:reef_mobile_app/components/home/staking_view.dart';
 import 'package:reef_mobile_app/components/home/token_view.dart';
 import 'package:reef_mobile_app/service/JsApiService.dart';
-import 'package:reef_mobile_app/model/ReefState.dart';
+import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:reef_mobile_app/utils/elements.dart';
 import 'package:reef_mobile_app/utils/functions.dart';
@@ -16,10 +16,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:reef_mobile_app/pages/accounts.dart';
 import 'package:reef_mobile_app/service/JsApiService.dart';
-import 'package:reef_mobile_app/model/ReefState.dart';
+import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/service/StorageService.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-import 'package:reef_mobile_app/model/ReefState.dart';
+import 'package:reef_mobile_app/model/ReefAppState.dart';
 
 import '../model/StorageKey.dart';
 

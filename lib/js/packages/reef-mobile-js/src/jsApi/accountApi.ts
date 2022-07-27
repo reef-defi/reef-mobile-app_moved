@@ -12,7 +12,7 @@ export const innitApi = (flutterJS: FlutterJS) => {
             map(sig =>sig? ({
                 address: sig.address,
                 name: sig.name,
-                balance: sig.balance.toString(),
+                balance: sig.balance,
                 isEvmClaimed: sig.isEvmClaimed
             }):null),
         ),
@@ -22,7 +22,7 @@ export const innitApi = (flutterJS: FlutterJS) => {
                     address: sig.address,
                     evmAddress: sig.evmAddress,
                     name: sig.name,
-                    balance: sig.balance.toString(),
+                    balance: sig.balance,
                     isEvmClaimed: sig.isEvmClaimed
                 })
             )),
