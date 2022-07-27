@@ -10,11 +10,11 @@ import 'package:reef_mobile_app/service/StorageService.dart';
 import 'account.dart';
 
 class AccountCtrl {
-  final Account account = Account();
+  final Account _account ;
   final JsApiService jsApi;
   final StorageService storage;
 
-  AccountCtrl(this.jsApi, this.storage) {
+  AccountCtrl(this.jsApi, this.storage, this._account) {
     _initSavedDeviceAccountAddress(jsApi, storage);
     _initJsObservables(jsApi, storage);
     _initWasm(jsApi);
@@ -27,15 +27,15 @@ class AccountCtrl {
       }
       LinkedHashMap s = signer;
       await storage.setValue(StorageKey.selected_address.name, s['address']);
-      account.setSelectedSigner(toReefSigner(s));
+      _account.setSelectedSigner(toReefSigner(s));
     });
 
-    account.setLoadingSigners(true);
+    _account.setLoadingSigners(true);
     jsApi.jsObservable('account.availableSigners\$').listen((signers) async {
-      account.setLoadingSigners(false);
+      _account.setLoadingSigners(false);
       var reefSigners =
           List<ReefSigner>.from(signers.map((s) => toReefSigner(s)));
-      account.setSigners(reefSigners);
+      _account.setSigners(reefSigners);
       print('AVAILABLE Signers ${signers.length}');
       reefSigners.forEach((signer) {
         print('  ${signer.name} - ${signer.address}');

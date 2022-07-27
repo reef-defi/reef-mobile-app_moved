@@ -7,11 +7,11 @@ class TokenModel = _TokenModel with _$TokenModel;
 
 abstract class _TokenModel with Store {
   @observable
-  ObservableList<TokenWithAmount> tokens = ObservableList<TokenWithAmount>();
+  ObservableList<TokenWithAmount> selectedSignerTokens = ObservableList<TokenWithAmount>();
 
   @action
-  void setTokens(List<TokenWithAmount> tkns) {
-    this.tokens.clear();
-    this.tokens.addAll(tkns);
+  void setSelectedSignerTokens(List<TokenWithAmount> tkns) {
+    this.selectedSignerTokens.clear();
+    this.selectedSignerTokens.addAll(tkns);
   }
 }

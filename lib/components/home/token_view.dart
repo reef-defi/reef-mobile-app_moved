@@ -145,7 +145,7 @@ class _TokenViewState extends State<TokenView> {
                           ],
                         ))
                     .toList(),*/
-                    children: ReefAppState.instance.model.tokens.tokens.map((TokenWithAmount tkn) {
+                    children: ReefAppState.instance.model.tokens.selectedSignerTokens.map((TokenWithAmount tkn) {
                       return Text(tkn.name);
                     }).toList()
                 );

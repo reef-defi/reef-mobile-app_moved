@@ -14,6 +14,7 @@ class ReefAppState {
   static ReefAppState? _instance;
 
   final ViewModel model = ViewModel();
+
   late StorageService storage;
   late TokenCtrl tokensCtrl;
   late AccountCtrl accountCtrl;
@@ -30,8 +31,8 @@ class ReefAppState {
     await _initReefState(jsApi);
     await _initReefObservables(jsApi);
     tokensCtrl = TokenCtrl(jsApi, model.tokens);
-    accountCtrl = AccountCtrl(jsApi, storage);
-    signingCtrl = SigningCtrl(jsApi, storage);
+    accountCtrl = AccountCtrl(jsApi, storage, model.accounts);
+    signingCtrl = SigningCtrl(jsApi, storage, model.signatureRequests);
     transferCtrl = TransferCtrl(jsApi);
   }
 

@@ -13,15 +13,15 @@ mixin _$SignatureRequests on _SignatureRequests, Store {
       Atom(name: '_SignatureRequests.sigRequests', context: context);
 
   @override
-  ObservableList<SignatureRequest> get sigRequests {
+  ObservableList<SignatureRequest> get list {
     _$sigRequestsAtom.reportRead();
-    return super.sigRequests;
+    return super.list;
   }
 
   @override
-  set sigRequests(ObservableList<SignatureRequest> value) {
-    _$sigRequestsAtom.reportWrite(value, super.sigRequests, () {
-      super.sigRequests = value;
+  set list(ObservableList<SignatureRequest> value) {
+    _$sigRequestsAtom.reportWrite(value, super.list, () {
+      super.list = value;
     });
   }
 
@@ -53,7 +53,7 @@ mixin _$SignatureRequests on _SignatureRequests, Store {
   @override
   String toString() {
     return '''
-sigRequests: ${sigRequests}
+sigRequests: ${list}
     ''';
   }
 }

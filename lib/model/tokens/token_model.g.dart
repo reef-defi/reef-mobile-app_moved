@@ -12,15 +12,15 @@ mixin _$TokenModel on _TokenModel, Store {
   late final _$tokensAtom = Atom(name: '_TokenModel.tokens', context: context);
 
   @override
-  ObservableList<TokenWithAmount> get tokens {
+  ObservableList<TokenWithAmount> get selectedSignerTokens {
     _$tokensAtom.reportRead();
-    return super.tokens;
+    return super.selectedSignerTokens;
   }
 
   @override
-  set tokens(ObservableList<TokenWithAmount> value) {
-    _$tokensAtom.reportWrite(value, super.tokens, () {
-      super.tokens = value;
+  set selectedSignerTokens(ObservableList<TokenWithAmount> value) {
+    _$tokensAtom.reportWrite(value, super.selectedSignerTokens, () {
+      super.selectedSignerTokens = value;
     });
   }
 
@@ -28,11 +28,11 @@ mixin _$TokenModel on _TokenModel, Store {
       ActionController(name: '_TokenModel', context: context);
 
   @override
-  void setTokens(List<TokenWithAmount> tkns) {
+  void setSelectedSignerTokens(List<TokenWithAmount> tkns) {
     final _$actionInfo = _$_TokenModelActionController.startAction(
         name: '_TokenModel.setTokens');
     try {
-      return super.setTokens(tkns);
+      return super.setSelectedSignerTokens(tkns);
     } finally {
       _$_TokenModelActionController.endAction(_$actionInfo);
     }
@@ -41,7 +41,7 @@ mixin _$TokenModel on _TokenModel, Store {
   @override
   String toString() {
     return '''
-tokens: ${tokens}
+tokens: ${selectedSignerTokens}
     ''';
   }
 }

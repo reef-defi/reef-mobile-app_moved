@@ -127,11 +127,11 @@ class _TestHomePageState extends State<TestHomePage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Observer(builder: (_) {
-                if(ReefAppState.instance.accountCtrl.account.loadingSigners==true){
+                if(ReefAppState.instance.model.accounts.loadingSigners==true){
                   return Text('loading signers');
                 }
-                if(ReefAppState.instance.accountCtrl.account.signers.length>0){
-                  return Text('signers loaded = ${ReefAppState.instance.accountCtrl.account.signers.map((ReefSigner s){
+                if(ReefAppState.instance.model.accounts.signers.length>0){
+                  return Text('signers loaded = ${ReefAppState.instance.model.accounts.signers.map((ReefSigner s){
                     return s.address + ' bal = ' + toBalanceDisplayString(s.balance);
                   }).join('/////')}');
                 }
@@ -140,7 +140,7 @@ class _TestHomePageState extends State<TestHomePage> {
               Observer(builder: (_) {
                 return Column(
                     children: List.from(ReefAppState
-                        .instance.tokensCtrl.tokenModel.tokens
+                        .instance.model.tokens.selectedSignerTokens
                         .map((t) => Text('TKN=${t.symbol}'))));
               }),
               TextButton(
@@ -151,7 +151,7 @@ class _TestHomePageState extends State<TestHomePage> {
           ),
         ),
         floatingActionButton: Observer(builder: (_) {
-          if (ReefAppState.instance.accountCtrl.account.selectedSigner !=
+          if (ReefAppState.instance.model.accounts.selectedSigner !=
               null) {
             return Padding(
               padding: const EdgeInsets.all(8.0),
@@ -161,7 +161,7 @@ class _TestHomePageState extends State<TestHomePage> {
                   FloatingActionButton(
                     heroTag: "sign_raw",
                     onPressed: () {
-                      _testSignRaw(ReefAppState.instance.accountCtrl.account
+                      _testSignRaw(ReefAppState.instance.model.accounts
                           .selectedSigner?.address);
                     },
                     child: const Text('Sign raw', textAlign: TextAlign.center),
@@ -169,7 +169,7 @@ class _TestHomePageState extends State<TestHomePage> {
                   FloatingActionButton(
                     heroTag: "sign_payload",
                     onPressed: () {
-                      _testSignPayload(ReefAppState.instance.accountCtrl.account
+                      _testSignPayload(ReefAppState.instance.model.accounts
                           .selectedSigner?.address);
                     },
                     child:
@@ -178,7 +178,7 @@ class _TestHomePageState extends State<TestHomePage> {
                   FloatingActionButton(
                     heroTag: "sign_and_send",
                     onPressed: () {
-                      _testSignAndSend(ReefAppState.instance.accountCtrl.account
+                      _testSignAndSend(ReefAppState.instance.model.accounts
                           .selectedSigner?.address);
                     },
                     child: const Text('Sign and send',

@@ -12,7 +12,7 @@ class TokenCtrl {
         return;
       }
       List<TokenWithAmount> tknList = List.from(tokens.map((t)=>TokenWithAmount.fromJSON(t)));
-      tokenModel.setTokens(tknList);
+      tokenModel.setSelectedSignerTokens(tknList);
     });
 
   }
