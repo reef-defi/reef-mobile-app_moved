@@ -10,16 +10,16 @@ class SignatureRequests = _SignatureRequests with _$SignatureRequests;
 abstract class _SignatureRequests with Store {
 
   @observable
-  ObservableList<SignatureRequest> sigRequests = ObservableList<SignatureRequest>();
+  ObservableList<SignatureRequest> list = ObservableList<SignatureRequest>();
 
   @action
   void add(SignatureRequest sigRequest) {
-    sigRequests.add(sigRequest);
+    list.add(sigRequest);
   }
 
   @action
   void remove(String sigRequestIdent) {
-    sigRequests.removeWhere((sr) {
+    list.removeWhere((sr) {
       return sr.signatureIdent == sigRequestIdent;
     });
   }
