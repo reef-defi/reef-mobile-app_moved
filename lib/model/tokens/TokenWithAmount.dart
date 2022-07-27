@@ -1,24 +1,23 @@
-class TokenWithAmount {
-  final String name;
-  final String address;
-  final String iconUrl;
-  final String symbol;
-  final String balance;
-  final int decimals;
+import '../../utils/JsonBigInt.dart';
+import 'Token.dart';
+
+class TokenWithAmount extends Token {
   final String amount;
   final num price;
 
   const TokenWithAmount({
-    required this.name,
-    required this.address,
-    required this.iconUrl,
-    required this.symbol,
-    required this.balance,
-    required this.decimals,
+    required String name,
+    required address,
+    required iconUrl,
+    required symbol,
+    required balance,
+    required decimals,
     required this.amount,
-    required this.price});
+    required this.price}):super(name: name, address:address, iconUrl:iconUrl, symbol:symbol, balance:balance, decimals:decimals);
 
   static fromJSON(dynamic json){
-    return TokenWithAmount(name: json['name'], address: json['address'], iconUrl: json['iconUrl'], symbol: json['symbol'], balance: json['balance'], decimals: json['decimals'], amount: json['amount'], price: json['price']);
+    var balanceVal = JsonBigInt.toBigInt(json['balance']);
+    return TokenWithAmount(name: json['name'], address: json['address'], iconUrl: json['iconUrl'], symbol: json['symbol'], balance: balanceVal, decimals: json['decimals'], amount: json['amount'], price: json['price']);
   }
+
 }

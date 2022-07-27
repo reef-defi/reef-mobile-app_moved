@@ -3,7 +3,7 @@ import 'package:reef_mobile_app/model/account/stored_account.dart';
 import 'package:reef_mobile_app/service/StorageService.dart';
 
 import '../components/SignatureContentToggle.dart';
-import '../model/ReefState.dart';
+import '../model/ReefAppState.dart';
 import '../model/StorageKey.dart';
 
 class AccountPage extends StatefulWidget {

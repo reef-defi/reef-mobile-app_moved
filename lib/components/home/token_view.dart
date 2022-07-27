@@ -1,8 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import "package:flutter/material.dart";
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:reef_mobile_app/model/ReefAppState.dart';
+import 'package:reef_mobile_app/model/tokens/TokenWithAmount.dart';
 import 'package:reef_mobile_app/utils/elements.dart';
 import 'package:reef_mobile_app/utils/functions.dart';
 import 'package:reef_mobile_app/utils/gradient_text.dart';
@@ -17,7 +20,7 @@ class TokenView extends StatefulWidget {
 }
 
 class _TokenViewState extends State<TokenView> {
-  static final List _cardMap = [
+  /*static final List _cardMap = [
     {
       "key": 0,
       "name": "Reef",
@@ -50,7 +53,7 @@ class _TokenViewState extends State<TokenView> {
       "conversionRate": 0.0,
       "value": 0.0
     }
-  ];
+  ];*/
 
   Widget tokenCard(String name, String iconURL,
       {double value = 0.0,
@@ -128,8 +131,9 @@ class _TokenViewState extends State<TokenView> {
             child: Padding(
               padding:
                   const EdgeInsets.symmetric(vertical: 32, horizontal: 48.0),
-              child: Column(
-                children: _cardMap
+              child:Observer(builder: (_) {
+                return Column(
+                  /*children: _cardMap
                     .map((item) => Column(
                           children: [
                             tokenCard(item["name"], item["iconURL"],
@@ -140,7 +144,12 @@ class _TokenViewState extends State<TokenView> {
                               const Gap(24),
                           ],
                         ))
-                    .toList(),
+                    .toList(),*/
+                    children: ReefAppState.instance.model.tokens.tokens.map((TokenWithAmount tkn) {
+                      return Text(tkn.name);
+                    }).toList()
+                );
+              }
               ),
             ),
           )

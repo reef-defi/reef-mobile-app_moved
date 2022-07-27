@@ -6,7 +6,7 @@ import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 import '../main.dart';
-import '../model/ReefState.dart';
+import '../model/ReefAppState.dart';
 import '../service/JsApiService.dart';
 import '../service/StorageService.dart';
 

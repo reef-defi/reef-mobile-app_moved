@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:reef_mobile_app/service/JsApiService.dart';
 
-import '../model/ReefState.dart';
+import '../model/ReefAppState.dart';
 
 class DAppPage extends StatefulWidget {
   final ReefAppState reefState;
