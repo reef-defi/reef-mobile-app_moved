@@ -190,41 +190,22 @@ class _HomePageState extends State<HomePage> {
       ),
       child: Column(
         children: [
-          // Test buttons
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                 ElevatedButton(
-                  child: const Text('send tokens'),
-                  onPressed: () async {
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //       builder: (context) => AccountPage(
-                    //           ReefAppState.instance, ReefAppState.instance.storage)),
-                    // );
-                    var from = await ReefAppState.instance.storage
-                        .getValue(StorageKey.selected_address.name);
-                    var txTestRes = await ReefAppState.instance.transferCtrl
-                        .testTransferTokens(from);
-                    print("HOME PAGE TX TEST RES =$txTestRes");
-                  },
-                ),
-                ElevatedButton(
-                  child: const Text('test swap'),
-                  onPressed: () async {
-                    var signerAddress = await ReefAppState.instance.storage
-                        .getValue(StorageKey.selected_address.name);
-                    var swapTestRes = await ReefAppState.instance.swapCtrl
-                        .testSwapTokens(signerAddress);
-                    print("HOME PAGE SWAP TEST RES = $swapTestRes");
-                  },
-                )
-              ],
+           ElevatedButton(
+              child: const Text('send tokens'),
+              onPressed: () async {
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(
+                //       builder: (context) => AccountPage(
+                //           ReefAppState.instance, ReefAppState.instance.storage)),
+                // );
+                var from = await ReefAppState.instance.storage
+                    .getValue(StorageKey.selected_address.name);
+                var txTestRes = await ReefAppState.instance.transferCtrl
+                    .testTransferTokens(from);
+                print("HOME PAGE TX TEST RES =$txTestRes");
+              },
             ),
-          ),
           balanceSection(),
           navSection(),
           Expanded(

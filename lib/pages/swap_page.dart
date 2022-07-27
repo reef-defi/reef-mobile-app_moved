@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:reef_mobile_app/components/modals/token_selection_modals.dart';
 import 'package:reef_mobile_app/model/ReefState.dart';
 import 'package:reef_mobile_app/model/StorageKey.dart';
+import 'package:reef_mobile_app/model/tokens/token.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -20,32 +21,37 @@ class SwapPage extends StatefulWidget {
 }
 
 class _SwapPageState extends State<SwapPage> {
+  var tokens = ReefAppState.instance.tokensCtrl.allTokens;  
+
+  // TODO: auto-select REEF token
+  var selectedToken = Token(
+        'REEF',
+        '0x0000000000000000000000000000000001000000',
+        'https://s2.coinmarketcap.com/static/img/coins/64x64/6951.png',
+        'REEF',
+        '1542087625938626180855',
+        18);
+  // TODO: bottom token should be empty on start
+  var selectedBottomToken = Token(
+        'Free Mint Token"',
+        '0x4676199AdA480a2fCB4b2D4232b7142AF9fe9D87',
+        '',
+        'FMT',
+        '2761008739220176308876',
+        18);
+
   TextEditingController amountController = TextEditingController();
   String amount = "";
   TextEditingController amountBottomController = TextEditingController();
   String amountBottom = "";
 
-  Map selectedToken = {
-    "name": "REEF",
-    "address": "0x0000000000000000000000000000000001000000",
-    "logo": "https://s2.coinmarketcap.com/static/img/coins/64x64/6951.png",
-    "balance": 4200.00
-  };
-
-  Map selectedBottomToken = {
-    "name": "FMT",
-    "address": "0x4676199AdA480a2fCB4b2D4232b7142AF9fe9D87",
-    "logo": "",
-    "balance": 0.00
-  };
-
-  void _changeSelectedToken(Map token) {
+  void _changeSelectedToken(Token token) {
     setState(() {
       selectedToken = token;
     });
   }
 
-  void _changeSelectedBottomToken(Map token) {
+  void _changeSelectedBottomToken(Token token) {
     setState(() {
       selectedBottomToken = token;
     });
@@ -86,7 +92,8 @@ class _SwapPageState extends State<SwapPage> {
                 ElevatedButton(
                   child: const Text('get swap amount'),
                   onPressed: () async {
-                    var res = await ReefAppState.instance.swapCtrl.testGetSwapAmount();
+                    var res = await ReefAppState.instance.swapCtrl
+                        .testGetSwapAmount();
                     print("SWAP AMOUNT TEST RES = $res");
                   },
                 )
@@ -138,9 +145,9 @@ class _SwapPageState extends State<SwapPage> {
                                         color: Colors.black26)),
                                 child: Row(
                                   children: [
-                                    if (selectedToken["logo"].isNotEmpty)
+                                    if (selectedToken.iconUrl != "")
                                       CachedNetworkImage(
-                                        imageUrl: selectedToken["logo"],
+                                        imageUrl: selectedToken.iconUrl,
                                         width: 24,
                                         height: 24,
                                         placeholder: (context, url) =>
@@ -167,11 +174,11 @@ class _SwapPageState extends State<SwapPage> {
                                     else
                                       Icon(CupertinoIcons.question_circle,
                                           color: Colors.grey[600]!, size: 24),
-                                    const Gap(4),
-                                    Text(selectedToken["name"]),
-                                    const Gap(4),
-                                    Icon(CupertinoIcons.chevron_down,
-                                        size: 16, color: Styles.textLightColor)
+                                      const Gap(4),
+                                      Text(selectedToken.symbol),
+                                      const Gap(4),
+                                      Icon(CupertinoIcons.chevron_down,
+                                          size: 16, color: Styles.textLightColor)
                                   ],
                                 ),
                               ),
@@ -220,7 +227,7 @@ class _SwapPageState extends State<SwapPage> {
                             child: Row(
                               children: [
                                 Text(
-                                  "Balance: ${selectedToken["balance"].toStringAsFixed(2)} ${selectedToken["name"].toString().toUpperCase()}",
+                                  "Balance: ${formatBalance(selectedToken)} ${selectedToken.symbol}",
                                   style: TextStyle(
                                       color: Styles.textLightColor,
                                       fontSize: 12),
@@ -275,9 +282,10 @@ class _SwapPageState extends State<SwapPage> {
                                         color: Colors.black26)),
                                 child: Row(
                                   children: [
-                                    if (selectedBottomToken["logo"].isNotEmpty)
+                                    if (selectedBottomToken.iconUrl != "")
                                       CachedNetworkImage(
-                                        imageUrl: selectedBottomToken["logo"],
+                                        imageUrl:
+                                            selectedBottomToken.iconUrl,
                                         width: 24,
                                         height: 24,
                                         placeholder: (context, url) =>
@@ -305,7 +313,7 @@ class _SwapPageState extends State<SwapPage> {
                                       Icon(CupertinoIcons.question_circle,
                                           color: Colors.grey[600]!, size: 24),
                                     const Gap(4),
-                                    Text(selectedBottomToken["name"]),
+                                    Text(selectedBottomToken.symbol),
                                     const Gap(4),
                                     Icon(CupertinoIcons.chevron_down,
                                         size: 16, color: Styles.textLightColor)
@@ -357,7 +365,7 @@ class _SwapPageState extends State<SwapPage> {
                             child: Row(
                               children: [
                                 Text(
-                                  "Balance: ${selectedBottomToken["balance"].toStringAsFixed(2)} ${selectedBottomToken["name"].toString().toUpperCase()}",
+                                  "Balance: ${formatBalance(selectedBottomToken)} ${selectedBottomToken.symbol}",
                                   style: TextStyle(
                                       color: Styles.textLightColor,
                                       fontSize: 12),

@@ -70,6 +70,7 @@ export const initApi = () => {
     (window as any).swap = {
         // Executes a swap
         execute: async (signerAddress: string, token1: TokenWithAmount, token2: TokenWithAmount, settings: SwapSettings) => {
+            // TODO do it synchronously and wait for both observables to finish
             const routerAddress = await firstValueFrom(appState.currentNetwork$.pipe(
                 take(1),
                 switchMap(async (network: Network) => {
@@ -134,6 +135,7 @@ export const initApi = () => {
         },
         // Returns pool reserves, if pool exists
         getPoolReserves: async (signerAddress: string, token1Address: string, token2Address: string) => {
+            // TODO do it synchronously and wait for both observables to finish
             const factoryAddress = await firstValueFrom(appState.currentNetwork$.pipe(
                 take(1),
                 switchMap(async (network: Network) => {

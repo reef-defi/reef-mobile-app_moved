@@ -22,8 +22,8 @@ class SwapCtrl {
   }
 
   Future<dynamic> getSwapAmount(TokenWithAmount token, bool buy,
-      TokenWithAmount token1Reserve, TokenWithAmount token2Reserve) async {
-    return jsApi.jsPromise(
+      TokenWithAmount token1Reserve, TokenWithAmount token2Reserve) {
+    return jsApi.jsCall(
         'swap.getSwapAmount(${jsonEncode(token.toJson())}, $buy, ${jsonEncode(token1Reserve.toJson())}, ${jsonEncode(token2Reserve.toJson())})');
   }
 
