@@ -21,10 +21,10 @@ class SwapCtrl {
         'swap.getPoolReserves("$signerAddress", "$token1Address", "$token2Address")');
   }
 
-  Future<dynamic> getSwapAmount(TokenWithAmount token, bool buy,
+  dynamic getSwapAmount(String tokenAmount, bool buy,
       TokenWithAmount token1Reserve, TokenWithAmount token2Reserve) {
     return jsApi.jsCall(
-        'swap.getSwapAmount(${jsonEncode(token.toJson())}, $buy, ${jsonEncode(token1Reserve.toJson())}, ${jsonEncode(token2Reserve.toJson())})');
+        'swap.getSwapAmount($tokenAmount, $buy, ${jsonEncode(token1Reserve.toJson())}, ${jsonEncode(token2Reserve.toJson())})');
   }
 
   Future<dynamic> testSwapTokens(String signerAddress) async {
@@ -42,14 +42,13 @@ class SwapCtrl {
     return getPoolReserves(signerAddress, token1Address, token2Address);
   }
 
-  Future<dynamic> testGetSwapAmount() async {
+  dynamic testGetSwapAmount() async {
     // Buy 10 FTM with REEF
-    TokenWithAmount token = TokenWithAmount(
-        '0x0000000000000000000000000000000001000000', '10.000', 18);
+    String tokenAmount = '10.000';
     TokenWithAmount token1Reserves = TokenWithAmount(
         '0x0000000000000000000000000000000001000000', '311620000000000000000', 18);
     TokenWithAmount token2Reserves = TokenWithAmount(
         '0x4676199AdA480a2fCB4b2D4232b7142AF9fe9D87', '156388823265255224997', 18);
-    return getSwapAmount(token, false, token1Reserves, token2Reserves);
+    return getSwapAmount(tokenAmount, true, token1Reserves, token2Reserves);
   }
 }
