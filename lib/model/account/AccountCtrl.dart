@@ -10,42 +10,42 @@ import 'package:reef_mobile_app/service/StorageService.dart';
 import 'account.dart';
 
 class AccountCtrl {
-  final Account _account;
+  final AccountsModel _account;
 
-  final JsApiService jsApi;
-  final StorageService storage;
+  final JsApiService _jsApi;
+  final StorageService _storage;
 
-  AccountCtrl(this.jsApi, this.storage, this._account) {
-    _initSavedDeviceAccountAddress(jsApi, storage);
-    _initJsObservables(jsApi, storage);
-    _initWasm(jsApi);
+  AccountCtrl(this._jsApi, this._storage, this._account) {
+    _initSavedDeviceAccountAddress(_jsApi, _storage);
+    _initJsObservables(_jsApi, _storage);
+    _initWasm(_jsApi);
   }
 
-  void setSelectedAddress(JsApiService jsApi, savedAddress) {
-    jsApi.jsCall('appState.setCurrentAddress("$savedAddress")');
+  void setSelectedAddress(JsApiService _jsApi, savedAddress) {
+    _jsApi.jsCall('appState.setCurrentAddress("$savedAddress")');
   }
 
   Future<String> generateAccount() async {
-    return await jsApi.jsPromise('keyring.generate()');
+    return await _jsApi.jsPromise('keyring.generate()');
   }
 
   Future<String> checkMnemonicValid(String mnemonic) async {
-    return await jsApi.jsPromise('keyring.checkMnemonicValid("$mnemonic")');
+    return await _jsApi.jsPromise('keyring.checkMnemonicValid("$mnemonic")');
   }
 
   Future<String> accountFromMnemonic(String mnemonic) async {
-    return await jsApi.jsPromise('keyring.accountFromMnemonic("$mnemonic")');
+    return await _jsApi.jsPromise('keyring.accountFromMnemonic("$mnemonic")');
   }
 
   Future<void> updateAccounts() async {
     var accounts = [];
-    (await storage.getAllAccounts())
+    (await _storage.getAllAccounts())
         .forEach(((account) => {accounts.add(account.toJsonSkinny())}));
-    jsApi.jsPromise('account.updateAccounts(${jsonEncode(accounts)})');
+    _jsApi.jsPromise('account.updateAccounts(${jsonEncode(accounts)})');
   }
 
-  void _initJsObservables(JsApiService jsApi, StorageService storage) {
-    jsApi.jsObservable('account.selectedSigner\$').listen((signer) async {
+  void _initJsObservables(JsApiService _jsApi, StorageService storage) {
+    _jsApi.jsObservable('account.selectedSigner\$').listen((signer) async {
       if (signer == null) {
         return;
       }
@@ -55,7 +55,7 @@ class AccountCtrl {
     });
 
     _account.setLoadingSigners(true);
-    jsApi.jsObservable('account.availableSigners\$').listen((signers) async {
+    _jsApi.jsObservable('account.availableSigners\$').listen((signers) async {
       _account.setLoadingSigners(false);
       var reefSigners =
           List<ReefSigner>.from(signers.map((s) => ReefSigner.fromJson(s)));
@@ -68,7 +68,7 @@ class AccountCtrl {
   }
 
   void _initSavedDeviceAccountAddress(
-      JsApiService jsApi, StorageService storage) async {
+      JsApiService _jsApi, StorageService storage) async {
     // TODO check if this address also exists in keystore
     var savedAddress = await storage.getValue(StorageKey.selected_address.name);
     if (kDebugMode) {
@@ -76,11 +76,12 @@ class AccountCtrl {
     }
     // TODO check if selected is in accounts
     if (savedAddress != null) {
-      setSelectedAddress(jsApi, savedAddress);
+      setSelectedAddress(_jsApi, savedAddress);
     }
   }
 
-  void _initWasm(JsApiService jsApi) async {
-    await jsApi.jsPromise('keyring.initWasm()');
+  void _initWasm(JsApiService _jsApi) async {
+    await _jsApi.jsPromise('keyring.initWasm()');
   }
+
 }
