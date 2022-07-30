@@ -131,7 +131,7 @@ class _TokenViewState extends State<TokenView> {
             child: Padding(
               padding:
                   const EdgeInsets.symmetric(vertical: 32, horizontal: 48.0),
-              child:Observer(builder: (_) {
+              child: Observer(builder: (_) {
                 return Column(
                   /*children: _cardMap
                     .map((item) => Column(
@@ -145,12 +145,29 @@ class _TokenViewState extends State<TokenView> {
                           ],
                         ))
                     .toList(),*/
-                    children: ReefAppState.instance.model.tokens.selectedSignerTokens.map((TokenWithAmount tkn) {
-                      return Text(tkn.name);
-                    }).toList()
+                  children: ReefAppState
+                      .instance.model.tokens.selectedSignerTokens
+                      .map((TokenWithAmount tkn) {
+                    return Column(
+                      children: [
+                        tokenCard(tkn.name, tkn.iconUrl,
+                            tokenName: tkn.symbol,
+                            conversionRate: tkn.price.toDouble(),
+                            value: tkn.balance.toDouble()),
+                        if (tkn !=
+                            ReefAppState.instance.model.tokens
+                                .selectedSignerTokens[ReefAppState.instance
+                                    .model.tokens.selectedSignerTokens.length -
+                                1])
+                          const Gap(24),
+                      ],
+                    );
+                  }).toList(),
+                  // children: ReefAppState.instance.model.tokens.selectedSignerTokens.map((TokenWithAmount tkn) {
+                  //   return Text(tkn.name);
+                  // }).toList()
                 );
-              }
-              ),
+              }),
             ),
           )
         ]);

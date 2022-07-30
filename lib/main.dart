@@ -111,8 +111,8 @@ class _TestHomePageState extends State<TestHomePage> {
   }
 
   void _testSignAndSend(address) async {
-    var txTestRes = await ReefAppState.instance.signingCtrl
-        .initSignAndSendTxTest(address);
+    var txTestRes =
+        await ReefAppState.instance.signingCtrl.initSignAndSendTxTest(address);
     print("MAIN TX TEST=$txTestRes");
   }
 
@@ -127,12 +127,16 @@ class _TestHomePageState extends State<TestHomePage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Observer(builder: (_) {
-                if(ReefAppState.instance.model.accounts.loadingSigners==true){
+                if (ReefAppState.instance.model.accounts.loadingSigners ==
+                    true) {
                   return Text('loading signers');
                 }
-                if(ReefAppState.instance.model.accounts.signers.length>0){
-                  return Text('signers loaded = ${ReefAppState.instance.model.accounts.signers.map((ReefSigner s){
-                    return s.address + ' bal = ' + toBalanceDisplayString(s.balance);
+                if (ReefAppState.instance.model.accounts.signers.length > 0) {
+                  return Text(
+                      'signers loaded = ${ReefAppState.instance.model.accounts.signers.map((ReefSigner s) {
+                    return s.address +
+                        ' bal = ' +
+                        toBalanceDisplayString(s.balance.toString());
                   }).join('/////')}');
                 }
                 return Text('no signers found');
@@ -151,8 +155,7 @@ class _TestHomePageState extends State<TestHomePage> {
           ),
         ),
         floatingActionButton: Observer(builder: (_) {
-          if (ReefAppState.instance.model.accounts.selectedSigner !=
-              null) {
+          if (ReefAppState.instance.model.accounts.selectedSigner != null) {
             return Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
@@ -161,16 +164,16 @@ class _TestHomePageState extends State<TestHomePage> {
                   FloatingActionButton(
                     heroTag: "sign_raw",
                     onPressed: () {
-                      _testSignRaw(ReefAppState.instance.model.accounts
-                          .selectedSigner?.address);
+                      _testSignRaw(ReefAppState
+                          .instance.model.accounts.selectedSigner?.address);
                     },
                     child: const Text('Sign raw', textAlign: TextAlign.center),
                   ),
                   FloatingActionButton(
                     heroTag: "sign_payload",
                     onPressed: () {
-                      _testSignPayload(ReefAppState.instance.model.accounts
-                          .selectedSigner?.address);
+                      _testSignPayload(ReefAppState
+                          .instance.model.accounts.selectedSigner?.address);
                     },
                     child:
                         const Text('Sign payload', textAlign: TextAlign.center),
@@ -178,8 +181,8 @@ class _TestHomePageState extends State<TestHomePage> {
                   FloatingActionButton(
                     heroTag: "sign_and_send",
                     onPressed: () {
-                      _testSignAndSend(ReefAppState.instance.model.accounts
-                          .selectedSigner?.address);
+                      _testSignAndSend(ReefAppState
+                          .instance.model.accounts.selectedSigner?.address);
                     },
                     child: const Text('Sign and send',
                         textAlign: TextAlign.center),
@@ -193,5 +196,6 @@ class _TestHomePageState extends State<TestHomePage> {
     return SignatureContentToggle(content);
   }
 
-  String toBalanceDisplayString(String decimalsString) => (BigInt.parse(decimalsString)/BigInt.from(10).pow(18)).toString();
+  String toBalanceDisplayString(String decimalsString) =>
+      (BigInt.parse(decimalsString) / BigInt.from(10).pow(18)).toString();
 }
