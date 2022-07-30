@@ -22,53 +22,6 @@ class UserPage extends StatefulWidget {
 }
 
 class _UserPageState extends State<UserPage> {
-  // List accountMap = [];
-  /*Future<List<StoredAccount>?> getAllAccounts() async {
-    var accounts = await widget.accountCtrl.getAllAccounts();
-    if (accounts.isEmpty) {
-      print("No accounts found.");
-      return null;
-    }
-    print("Found ${accounts.length} accounts:");
-
-    List tempAccounts = [];
-
-    accounts.asMap().forEach((index, account) {
-      print("   ${account.address}, ${account.name}");
-
-      // TODO hardcoded: balance, evmAddress, evmBound,
-      tempAccounts.add({
-        "key": index,
-        "name": account.name.isNotEmpty ? account.name : "<No Name>",
-        "balance": 0.00,
-        "nativeAddress": account.address,
-        "evmAddress": "0x000000000000000000000000000000000",
-        "evmBound": index % 2 == 0,
-        "selected": index == 0,
-        "mnemonic": account.mnemonic,
-        "logo": account.svg,
-      });
-
-      setState(() {
-        accountMap = tempAccounts;
-      });
-    });
-
-    var account = await widget.accountCtrl.getAccount(accounts[0].address);
-    if (account == null) {
-      print("Account not found.");
-      return null;
-    }
-    print(account.toJson());
-
-    return accounts;
-  }*/
-
-  /*@override
-  void initState() {
-    super.initState();
-    // getAllAccounts();
-  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -132,16 +85,6 @@ class _UserPageState extends State<UserPage> {
           ),
         ),
         const Gap(16),
-        /*Expanded(
-          child: RefreshIndicator(
-            triggerMode: RefreshIndicatorTriggerMode.onEdge,
-            color: Styles.primaryAccentColorDark,
-            onRefresh: (){},
-            child:
-
-
-          ),
-        )*/
         Observer(builder: (_) {
           if(ReefAppState.instance.model.accounts.loadingSigners==true){
             return Text('loading signers');
