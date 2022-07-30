@@ -1,10 +1,9 @@
-import {FlutterJS} from "flutter-js-bridge/src/FlutterJS";
-import {appState} from '@reef-defi/react-lib';
+import {appState, ReefSigner} from '@reef-defi/react-lib';
 import {map} from "rxjs/operators";
 import { Account, buildAccountWithMeta } from "./initFlutterApi";
 import type {InjectedAccountWithMeta} from "@reef-defi/extension-inject/types";
 
-export const innitApi = (flutterJS: FlutterJS) => {
+export const innitApi = () => {
 
     // return account.selectedSigner$ without big signer object from ReefSigner
     (window as any).account = {
@@ -17,7 +16,7 @@ export const innitApi = (flutterJS: FlutterJS) => {
             }):null),
         ),
         availableSigners$: appState.signers$.pipe(
-            map(signers =>
+            map((signers: ReefSigner[]) =>
                 signers.map(sig => ({
                     address: sig.address,
                     evmAddress: sig.evmAddress,

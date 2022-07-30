@@ -5,7 +5,7 @@ import 'ReefSigner.dart';
 
 part 'account.g.dart';
 
-class Account = _Account with _$Account;
+class AccountsModel = _Account with _$Account;
 
 abstract class _Account with Store {
 

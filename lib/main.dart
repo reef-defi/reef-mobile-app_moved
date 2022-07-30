@@ -7,6 +7,7 @@ import 'package:reef_mobile_app/pages/SplashScreen.dart';
 import 'package:reef_mobile_app/pages/accounts.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:reef_mobile_app/components/page_layout.dart';
+import 'package:reef_mobile_app/utils/functions.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 import 'package:reef_mobile_app/pages/DAppPage.dart';
 
@@ -195,7 +196,4 @@ class _TestHomePageState extends State<TestHomePage> {
         }));
     return SignatureContentToggle(content);
   }
-
-  String toBalanceDisplayString(String decimalsString) =>
-      (BigInt.parse(decimalsString) / BigInt.from(10).pow(18)).toString();
 }
