@@ -132,7 +132,8 @@ class _TokenViewState extends State<TokenView> {
               padding:
                   const EdgeInsets.symmetric(vertical: 32, horizontal: 48.0),
               child: Observer(builder: (_) {
-                return Column(
+                return Wrap(
+                  spacing: 24,
                   /*children: _cardMap
                     .map((item) => Column(
                           children: [
@@ -154,12 +155,6 @@ class _TokenViewState extends State<TokenView> {
                             tokenName: tkn.symbol,
                             conversionRate: tkn.price.toDouble(),
                             value: tkn.balance.toDouble()),
-                        if (tkn !=
-                            ReefAppState.instance.model.tokens
-                                .selectedSignerTokens[ReefAppState.instance
-                                    .model.tokens.selectedSignerTokens.length -
-                                1])
-                          const Gap(24),
                       ],
                     );
                   }).toList(),
