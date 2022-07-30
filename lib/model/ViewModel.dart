@@ -5,6 +5,6 @@ import 'account/account.dart';
 
 class ViewModel {
   final tokens = TokenModel();
-  final accounts = Account();
+  final accounts = AccountsModel();
   final signatureRequests = SignatureRequests();
 }
