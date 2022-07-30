@@ -1,10 +1,13 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mobx/mobx.dart';
+import 'package:reef_mobile_app/components/modals/token_selection_modals.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../components/SignatureContentToggle.dart';
 
@@ -22,6 +25,19 @@ class _SendPageState extends State<SendPage> {
   String address = "";
   TextEditingController amountController = TextEditingController();
   String amount = "";
+
+  Map selectedToken = {
+    "name": "REEF",
+    "address": "0x0000000000000000000000000000000001000000",
+    "logo": "https://s2.coinmarketcap.com/static/img/coins/64x64/6951.png",
+    "balance": 4200.00
+  };
+
+  void _changeSelectedToken(Map token) {
+    setState(() {
+      selectedToken = token;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -134,7 +150,10 @@ class _SendPageState extends State<SendPage> {
                           Row(
                             children: [
                               MaterialButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  showTokenSelectionModal(context,
+                                      callback: _changeSelectedToken);
+                                },
                                 materialTapTargetSize:
                                     MaterialTapTargetSize.shrinkWrap,
                                 minWidth: 0,
@@ -148,14 +167,37 @@ class _SendPageState extends State<SendPage> {
                                         color: Colors.black26)),
                                 child: Row(
                                   children: [
-                                    const Image(
-                                      image: AssetImage(
-                                          "./assets/images/reef.png"),
-                                      width: 24,
-                                      height: 24,
-                                    ),
+                                    if (selectedToken["logo"].isNotEmpty)
+                                      CachedNetworkImage(
+                                        imageUrl: selectedToken["logo"],
+                                        width: 24,
+                                        height: 24,
+                                        placeholder: (context, url) =>
+                                            Shimmer.fromColors(
+                                          baseColor: Colors.grey[300]!,
+                                          highlightColor: Colors.grey[350]!,
+                                          child: Container(
+                                            width: 24,
+                                            height: 24,
+                                            decoration: ShapeDecoration(
+                                              color: Colors.grey[350]!,
+                                              shape: const CircleBorder(),
+                                            ),
+                                          ),
+                                        ),
+                                        errorWidget: (context, url, error) =>
+                                            const Icon(
+                                          CupertinoIcons
+                                              .exclamationmark_circle_fill,
+                                          color: Colors.black12,
+                                          size: 24,
+                                        ),
+                                      )
+                                    else
+                                      Icon(CupertinoIcons.question_circle,
+                                          color: Colors.grey[600]!, size: 24),
                                     const Gap(4),
-                                    const Text("REEF"),
+                                    Text(selectedToken["name"]),
                                     const Gap(4),
                                     Icon(CupertinoIcons.chevron_down,
                                         size: 16, color: Styles.textLightColor)
@@ -213,7 +255,7 @@ class _SendPageState extends State<SendPage> {
                             child: Row(
                               children: [
                                 Text(
-                                  "Balance: 5200.00 REEF",
+                                  "Balance: ${selectedToken["balance"].toStringAsFixed(2)} ${selectedToken["name"].toString().toUpperCase()}",
                                   style: TextStyle(
                                       color: Styles.textLightColor,
                                       fontSize: 12),

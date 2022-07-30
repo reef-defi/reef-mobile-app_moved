@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:reef_mobile_app/model/ReefState.dart';
+import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/signing/signature_request.dart';
 
 class SignatureContentToggle extends StatelessObserverWidget {
@@ -13,7 +13,7 @@ class SignatureContentToggle extends StatelessObserverWidget {
   @override
   Widget build(BuildContext context) {
     return Observer(builder: (_) {
-      var requests = ReefAppState.instance.signingCtrl.signatureRequests.sigRequests;
+      var requests = ReefAppState.instance.signingCtrl.signatureRequests.list;
       var signatureRequest = requests.isNotEmpty ? requests.first : null;
       var displayIdx = signatureRequest != null ? 0 : 1;
 

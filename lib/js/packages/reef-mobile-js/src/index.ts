@@ -11,4 +11,3 @@ window['appState'] = appState;
 window['keyring'] = Keyring;
 window['signer'] = Signer;
 // window['transfer'] =
-
