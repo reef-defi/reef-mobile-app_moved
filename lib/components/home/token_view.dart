@@ -98,6 +98,7 @@ class _TokenViewState extends State<TokenView> {
                 ),
                 const Gap(2),
                 Text(
+                  // TODO allow conversionRate to be null for no data
                   "${value != 0 ? value : 0} ${tokenName != "" ? tokenName : name.toUpperCase()} - ${conversionRate != 0 ? conversionRate.toStringAsFixed(4) : 'No pool data'}",
                   style: TextStyle(color: Styles.textLightColor, fontSize: 16),
                 ),
@@ -152,7 +153,7 @@ class _TokenViewState extends State<TokenView> {
                       children: [
                         tokenCard(tkn.name, tkn.iconUrl,
                             tokenName: tkn.symbol,
-                            conversionRate: tkn.price.toDouble(),
+                            conversionRate: tkn.price?.toDouble()??0,
                             value: tkn.balance.toDouble()),
                         if (tkn !=
                             ReefAppState.instance.model.tokens
