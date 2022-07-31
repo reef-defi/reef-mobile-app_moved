@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'account.dart';
+part of 'account_model.dart';
 
 // **************************************************************************
 // StoreGenerator
@@ -8,24 +8,25 @@ part of 'account.dart';
 
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
-mixin _$Account on _Account, Store {
-  late final _$selectedSignerAtom =
-      Atom(name: '_Account.selectedSigner', context: context);
+mixin _$AccountModel on _AccountModel, Store {
+  late final _$selectedAddressAtom =
+      Atom(name: '_AccountModel.selectedAddress', context: context);
 
   @override
-  ReefSigner? get selectedSigner {
-    _$selectedSignerAtom.reportRead();
-    return super.selectedSigner;
+  String? get selectedAddress {
+    _$selectedAddressAtom.reportRead();
+    return super.selectedAddress;
   }
 
   @override
-  set selectedSigner(ReefSigner? value) {
-    _$selectedSignerAtom.reportWrite(value, super.selectedSigner, () {
-      super.selectedSigner = value;
+  set selectedAddress(String? value) {
+    _$selectedAddressAtom.reportWrite(value, super.selectedAddress, () {
+      super.selectedAddress = value;
     });
   }
 
-  late final _$signersAtom = Atom(name: '_Account.signers', context: context);
+  late final _$signersAtom =
+      Atom(name: '_AccountModel.signers', context: context);
 
   @override
   ObservableList<ReefSigner> get signers {
@@ -41,7 +42,7 @@ mixin _$Account on _Account, Store {
   }
 
   late final _$loadingSignersAtom =
-      Atom(name: '_Account.loadingSigners', context: context);
+      Atom(name: '_AccountModel.loadingSigners', context: context);
 
   @override
   bool get loadingSigners {
@@ -56,46 +57,46 @@ mixin _$Account on _Account, Store {
     });
   }
 
-  late final _$_AccountActionController =
-      ActionController(name: '_Account', context: context);
+  late final _$_AccountModelActionController =
+      ActionController(name: '_AccountModel', context: context);
 
   @override
   void setLoadingSigners(bool val) {
-    final _$actionInfo = _$_AccountActionController.startAction(
-        name: '_Account.setLoadingSigners');
+    final _$actionInfo = _$_AccountModelActionController.startAction(
+        name: '_AccountModel.setLoadingSigners');
     try {
       return super.setLoadingSigners(val);
     } finally {
-      _$_AccountActionController.endAction(_$actionInfo);
+      _$_AccountModelActionController.endAction(_$actionInfo);
     }
   }
 
   @override
-  void setSelectedSigner(ReefSigner signer) {
-    final _$actionInfo = _$_AccountActionController.startAction(
-        name: '_Account.setSelectedSigner');
+  void setSelectedAddress(String addr) {
+    final _$actionInfo = _$_AccountModelActionController.startAction(
+        name: '_AccountModel.setSelectedAddress');
     try {
-      return super.setSelectedSigner(signer);
+      return super.setSelectedAddress(addr);
     } finally {
-      _$_AccountActionController.endAction(_$actionInfo);
+      _$_AccountModelActionController.endAction(_$actionInfo);
     }
   }
 
   @override
   void setSigners(List<ReefSigner> signers) {
-    final _$actionInfo =
-        _$_AccountActionController.startAction(name: '_Account.setSigners');
+    final _$actionInfo = _$_AccountModelActionController.startAction(
+        name: '_AccountModel.setSigners');
     try {
       return super.setSigners(signers);
     } finally {
-      _$_AccountActionController.endAction(_$actionInfo);
+      _$_AccountModelActionController.endAction(_$actionInfo);
     }
   }
 
   @override
   String toString() {
     return '''
-selectedSigner: ${selectedSigner},
+selectedAddress: ${selectedAddress},
 signers: ${signers},
 loadingSigners: ${loadingSigners}
     ''';

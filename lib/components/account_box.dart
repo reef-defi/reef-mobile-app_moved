@@ -12,11 +12,11 @@ import '../utils/gradient_text.dart';
 import '../utils/styles.dart';
 
 class AccountBox extends StatefulWidget {
-  // TODO -- final ReefSigner props;
-  final Map props;
-  final VoidCallback callback;
+  final ReefSigner reefSigner;
+  final bool selected;
+  final VoidCallback onSelected;
 
-  const AccountBox({Key? key, required this.props, required this.callback})
+  const AccountBox({Key? key, required this.reefSigner, required this.selected, required this.onSelected})
       : super(key: key);
 
   @override
@@ -29,15 +29,15 @@ class _AccountBoxState extends State<AccountBox> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: widget.callback,
+      onTap: widget.onSelected,
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
-            color: widget.props["selected"]
+            color: widget.selected
                 ? const Color(0x25bf37a7)
                 : Styles.boxBackgroundColor,
             border: Border.all(
-              color: widget.props["selected"]
+              color: widget.selected
                   ? Styles.primaryAccentColor
                   : Colors.grey[100]!,
               width: 2,
@@ -51,7 +51,7 @@ class _AccountBoxState extends State<AccountBox> {
             borderRadius: BorderRadius.circular(15)),
         child: Stack(
           children: [
-            if (widget.props["selected"])
+            if (widget.selected)
               Positioned(
                   top: 0,
                   right: 0,
@@ -86,11 +86,11 @@ class _AccountBoxState extends State<AccountBox> {
                         ),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(64),
-                          child: SvgPicture.string(
-                            widget.props["logo"],
+                          child: widget.reefSigner.iconSVG!=null ? SvgPicture.string(
+                            widget.reefSigner.iconSVG!,
                             height: 64,
                             width: 64,
-                          ),
+                          ): const SizedBox.shrink(),
                         ),
                       ),
                       const Gap(12),
@@ -98,7 +98,7 @@ class _AccountBoxState extends State<AccountBox> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            widget.props["name"],
+                            widget.reefSigner.name,
                             style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
@@ -130,9 +130,7 @@ class _AccountBoxState extends State<AccountBox> {
                               const Gap(4),
                               GradientText(
                                 showBalance
-                                    ? double.parse(
-                                    widget.props["balance"].toString())
-                                    .toStringAsFixed(2)
+                                    ? toBalanceDisplayBigInt(widget.reefSigner.balance)
                                     : "--",
                                 style: GoogleFonts.spaceGrotesk(
                                     fontSize: 14, fontWeight: FontWeight.w700),
@@ -144,7 +142,7 @@ class _AccountBoxState extends State<AccountBox> {
                           Row(
                             children: [
                               Text(
-                                "Native: ${widget.props["nativeAddress"].toString().shorten()}",
+                                "Native: ${widget.reefSigner.address.shorten()}",
                                 style: const TextStyle(fontSize: 12),
                               ),
                               const Gap(2),
@@ -155,11 +153,11 @@ class _AccountBoxState extends State<AccountBox> {
                               )
                             ],
                           ),
-                          const Gap(2),
-                          Row(
+                          /*const Gap(2),
+                          widget.reefSigner.isEvmClaimed==true ? Row(
                             children: [
                               Text(
-                                  "EVM: ${widget.props["evmAddress"].toString().shorten()}",
+                                  "EVM: ${widget.reefSigner.evmAddress.toString().shorten()}",
                                   style: const TextStyle(fontSize: 12)),
                               const Gap(2),
                               const Icon(
@@ -168,14 +166,14 @@ class _AccountBoxState extends State<AccountBox> {
                                 color: Colors.black45,
                               )
                             ],
-                          ),
+                          ):const SizedBox.shrink(),*/
                         ],
                       ),
                     ],
                   ),
                   Row(
                     children: [
-                      if (!widget.props["evmBound"])
+                      if (widget.reefSigner.isEvmClaimed)
                         Row(
                           children: [
                             DecoratedBox(

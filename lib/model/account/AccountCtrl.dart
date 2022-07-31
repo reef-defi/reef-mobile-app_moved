@@ -7,22 +7,23 @@ import 'package:reef_mobile_app/model/account/ReefSigner.dart';
 import 'package:reef_mobile_app/service/JsApiService.dart';
 import 'package:reef_mobile_app/service/StorageService.dart';
 
-import 'account.dart';
+import 'account_model.dart';
 
 class AccountCtrl {
-  final AccountsModel _account;
+  final AccountModel _accountModel;
 
   final JsApiService _jsApi;
   final StorageService _storage;
 
-  AccountCtrl(this._jsApi, this._storage, this._account) {
-    _initSavedDeviceAccountAddress(_jsApi, _storage);
+  AccountCtrl(this._jsApi, this._storage, this._accountModel) {
+    _initSavedDeviceAccountAddress(_storage);
     _initJsObservables(_jsApi, _storage);
     _initWasm(_jsApi);
   }
 
-  void setSelectedAddress(JsApiService _jsApi, savedAddress) {
-    _jsApi.jsCall('appState.setCurrentAddress("$savedAddress")');
+  void setSelectedAddress(String address) {
+    // TODO check if in signers
+    _jsApi.jsCall('appState.setCurrentAddress("$address")');
   }
 
   Future<String> generateAccount() async {
@@ -45,21 +46,30 @@ class AccountCtrl {
   }
 
   void _initJsObservables(JsApiService _jsApi, StorageService storage) {
-    _jsApi.jsObservable('account.selectedSigner\$').listen((signer) async {
+    /*_jsApi.jsObservable('account.selectedSigner\$').listen((signer) async {
       if (signer == null) {
         return;
       }
       LinkedHashMap s = signer;
       await storage.setValue(StorageKey.selected_address.name, s['address']);
-      _account.setSelectedSigner(ReefSigner.fromJson(s));
+      _accountModel.setSelectedAddress(ReefSigner.fromJson(s));
+    });*/
+
+    _jsApi.jsObservable('appState.currentAddress\$').listen(( address) async {
+      if (address == null) {
+        return;
+      }
+      print('SELECTED addr=${address}');
+      await storage.setValue(StorageKey.selected_address.name, address);
+      _accountModel.setSelectedAddress(address);
     });
 
-    _account.setLoadingSigners(true);
+    _accountModel.setLoadingSigners(true);
     _jsApi.jsObservable('account.availableSigners\$').listen((signers) async {
-      _account.setLoadingSigners(false);
+      _accountModel.setLoadingSigners(false);
       var reefSigners =
           List<ReefSigner>.from(signers.map((s) => ReefSigner.fromJson(s)));
-      _account.setSigners(reefSigners);
+      _accountModel.setSigners(reefSigners);
       print('AVAILABLE Signers ${signers.length}');
       reefSigners.forEach((signer) {
         print('  ${signer.name} - ${signer.address}');
@@ -67,8 +77,7 @@ class AccountCtrl {
     });
   }
 
-  void _initSavedDeviceAccountAddress(
-      JsApiService _jsApi, StorageService storage) async {
+  void _initSavedDeviceAccountAddress(StorageService storage) async {
     // TODO check if this address also exists in keystore
     var savedAddress = await storage.getValue(StorageKey.selected_address.name);
     if (kDebugMode) {
@@ -76,7 +85,7 @@ class AccountCtrl {
     }
     // TODO check if selected is in accounts
     if (savedAddress != null) {
-      setSelectedAddress(_jsApi, savedAddress);
+      setSelectedAddress(savedAddress);
     }
   }
 

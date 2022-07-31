@@ -11,16 +11,16 @@ import '../modals/account_modals.dart';
 
 class AccountsList extends StatelessWidget {
   final List<ReefSigner> signers;
-  final VoidCallback selectCallback;
-  const AccountsList(this.signers, this.selectCallback, {Key? key}) : super(key: key);
+  final void Function(String) selectAddress;
+  final String? selectedAddress;
+  const AccountsList(this.signers, this.selectedAddress, this.selectAddress, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return ListView(
 // physics: const BouncingScrollPhysics(),
       padding: const EdgeInsets.all(0),
-      children: signers.isEmpty
-          ? [
+      children: signers.isEmpty ? [
         DottedBorder(
           dashPattern: const [4, 2],
           color: Styles.textLightColor,
@@ -70,19 +70,19 @@ class AccountsList extends StatelessWidget {
                 )),
           ),
         )
-      ]
-          : signers
-          .map<Widget>((ReefSigner item) => Column(children: [
-        /*AccountBox(
-            props: item,
-            callback: () {
-
-            }),*/
-        Text(item.address)
-        // if (item["key"] != accountMap.length) const Gap(12)
-      ]))
-          .toList(),
+      ] : toAccountBoxList(signers),
     );
+  }
+
+  List<Widget> toAccountBoxList(List<ReefSigner> signers) {
+    signers.removeWhere((sig) => sig==null);
+
+    return signers.map<Widget>((ReefSigner signer) =>
+        AccountBox(
+            reefSigner: signer,
+            selected: selectedAddress!=null?selectedAddress==signer.address:false,
+            onSelected: () => selectAddress(signer.address))
+    ).toList();
   }
 }
 

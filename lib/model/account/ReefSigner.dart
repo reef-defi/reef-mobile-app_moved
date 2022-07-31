@@ -4,11 +4,14 @@ class ReefSigner {
   String address;
   String name;
   BigInt balance;
+  String? iconSVG;
+  String evmAddress;
+  bool isEvmClaimed;
 
-  ReefSigner(String this.address, String this.name, BigInt this.balance);
+  ReefSigner({required String this.address, required String this.name, required BigInt this.balance, required String this.evmAddress, required bool this.isEvmClaimed, this.iconSVG});
 
   static fromJson(dynamic json) {
     var balanceVal = JsonBigInt.toBigInt(json['balance']);
-    return ReefSigner(json["address"], json["name"], balanceVal??BigInt.zero);
+    return ReefSigner(address: json["address"], name: json["name"], balance: balanceVal??BigInt.zero, evmAddress: "", isEvmClaimed: false );
   }
 }

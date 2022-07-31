@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:reef_mobile_app/components/accounts/accounts_list.dart';
 import 'package:reef_mobile_app/components/modals/account_modals.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/account/AccountCtrl.dart';
@@ -87,14 +88,20 @@ class _UserPageState extends State<UserPage> {
         const Gap(16),
         Observer(builder: (_) {
           if(ReefAppState.instance.model.accounts.loadingSigners==true){
-            return Text('loading signers');
+            return Text('Loading signers');
           }
           if(ReefAppState.instance.model.accounts.signers.length>0){
-            return Text('signers loaded = ${ReefAppState.instance.model.accounts.signers.map((ReefSigner s){
-              return s.address + ' bal = ' + toBalanceDisplayBigInt(s.balance);
-            }).join('/////')}');
+            // return Text('signers loaded = ${ReefAppState.instance.model.accounts.signers.map((ReefSigner s){
+            //   return s.address + ' bal = ' + toBalanceDisplayBigInt(s.balance);
+            // }).join('/////')}');
+            return Expanded(child:
+            AccountsList(
+                ReefAppState.instance.model.accounts.signers,
+                ReefAppState.instance.model.accounts.selectedAddress,
+                ReefAppState.instance.accountCtrl.setSelectedAddress
+            ));
           }
-          return Text('no signers found');
+          return Text('No signers found');
         }),
       ],
     ));

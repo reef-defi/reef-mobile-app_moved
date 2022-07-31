@@ -3,14 +3,14 @@ import 'package:mobx/mobx.dart';
 import '../StorageKey.dart';
 import 'ReefSigner.dart';
 
-part 'account.g.dart';
+part 'account_model.g.dart';
 
-class AccountsModel = _Account with _$Account;
+class AccountModel = _AccountModel with _$AccountModel;
 
-abstract class _Account with Store {
+abstract class _AccountModel with Store {
 
   @observable
-  ReefSigner? selectedSigner;
+  String? selectedAddress;
 
   @observable
   ObservableList<ReefSigner> signers = ObservableList<ReefSigner>();
@@ -24,10 +24,8 @@ abstract class _Account with Store {
   }
 
   @action
-  void setSelectedSigner(ReefSigner signer) {
-    // TODO get and attach keystore values
-    // TODO set address not whole object
-    this.selectedSigner = signer;
+  void setSelectedAddress(String addr) {
+    selectedAddress = addr;
   }
 
   @action

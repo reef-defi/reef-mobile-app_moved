@@ -156,7 +156,7 @@ class _TestHomePageState extends State<TestHomePage> {
           ),
         ),
         floatingActionButton: Observer(builder: (_) {
-          if (ReefAppState.instance.model.accounts.selectedSigner != null) {
+          if (ReefAppState.instance.model.accounts.selectedAddress != null) {
             return Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
@@ -166,7 +166,7 @@ class _TestHomePageState extends State<TestHomePage> {
                     heroTag: "sign_raw",
                     onPressed: () {
                       _testSignRaw(ReefAppState
-                          .instance.model.accounts.selectedSigner?.address);
+                          .instance.model.accounts.selectedAddress);
                     },
                     child: const Text('Sign raw', textAlign: TextAlign.center),
                   ),
@@ -174,7 +174,7 @@ class _TestHomePageState extends State<TestHomePage> {
                     heroTag: "sign_payload",
                     onPressed: () {
                       _testSignPayload(ReefAppState
-                          .instance.model.accounts.selectedSigner?.address);
+                          .instance.model.accounts.selectedAddress);
                     },
                     child:
                         const Text('Sign payload', textAlign: TextAlign.center),
@@ -183,7 +183,7 @@ class _TestHomePageState extends State<TestHomePage> {
                     heroTag: "sign_and_send",
                     onPressed: () {
                       _testSignAndSend(ReefAppState
-                          .instance.model.accounts.selectedSigner?.address);
+                          .instance.model.accounts.selectedAddress);
                     },
                     child: const Text('Sign and send',
                         textAlign: TextAlign.center),

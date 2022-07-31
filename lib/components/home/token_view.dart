@@ -20,40 +20,6 @@ class TokenView extends StatefulWidget {
 }
 
 class _TokenViewState extends State<TokenView> {
-  /*static final List _cardMap = [
-    {
-      "key": 0,
-      "name": "Reef",
-      "iconURL": "https://s2.coinmarketcap.com/static/img/coins/64x64/6951.png",
-      "tokenName": "REEF",
-      "conversionRate": 0.003272,
-      "value": 4000.00
-    },
-    {
-      "key": 1,
-      "name": "Uniswap",
-      "iconURL": "https://s2.coinmarketcap.com/static/img/coins/64x64/7083.png",
-      "tokenName": "UNI",
-      "conversionRate": 0.0,
-      "value": 0.0
-    },
-    {
-      "key": 2,
-      "name": "Celsius",
-      "iconURL": "https://s2.coinmarketcap.com/static/img/coins/64x64/2700.png",
-      "tokenName": "CEL",
-      "conversionRate": 0.0,
-      "value": 0.0
-    },
-    {
-      "key": 3,
-      "name": "Firo",
-      "iconURL": "https://s2.coinmarketcap.com/static/img/coins/64x64/1414.png",
-      "tokenName": "FIRO",
-      "conversionRate": 0.0,
-      "value": 0.0
-    }
-  ];*/
 
   Widget tokenCard(String name, String iconURL,
       {double value = 0.0,
