@@ -66,7 +66,7 @@ class _UserPageState extends State<UserPage> {
                   MaterialButton(
                     materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     onPressed: () {
-                      showCreateAccountModal(context, callback: (){});
+                      showCreateAccountModal(context);
                     },
                     color: Styles.textLightColor,
                     minWidth: 0,

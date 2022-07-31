@@ -45,8 +45,7 @@ class AccountsList extends StatelessWidget {
                       materialTapTargetSize:
                       MaterialTapTargetSize.shrinkWrap,
                       onPressed: () {
-                        showCreateAccountModal(context,
-                            callback: (){});
+                        showCreateAccountModal(context);
                       },
                       color: Styles.textLightColor,
                       minWidth: 0,
