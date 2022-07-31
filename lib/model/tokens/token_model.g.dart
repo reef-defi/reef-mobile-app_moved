@@ -26,6 +26,38 @@ mixin _$TokenModel on _TokenModel, Store {
     });
   }
 
+  late final _$selectedSignerNFTsAtom =
+      Atom(name: '_TokenModel.selectedSignerNFTs', context: context);
+
+  @override
+  ObservableList<TokenNFT> get selectedSignerNFTs {
+    _$selectedSignerNFTsAtom.reportRead();
+    return super.selectedSignerNFTs;
+  }
+
+  @override
+  set selectedSignerNFTs(ObservableList<TokenNFT> value) {
+    _$selectedSignerNFTsAtom.reportWrite(value, super.selectedSignerNFTs, () {
+      super.selectedSignerNFTs = value;
+    });
+  }
+
+  late final _$reefPriceAtom =
+      Atom(name: '_TokenModel.reefPrice', context: context);
+
+  @override
+  double? get reefPrice {
+    _$reefPriceAtom.reportRead();
+    return super.reefPrice;
+  }
+
+  @override
+  set reefPrice(double? value) {
+    _$reefPriceAtom.reportWrite(value, super.reefPrice, () {
+      super.reefPrice = value;
+    });
+  }
+
   late final _$_TokenModelActionController =
       ActionController(name: '_TokenModel', context: context);
 
@@ -41,9 +73,33 @@ mixin _$TokenModel on _TokenModel, Store {
   }
 
   @override
+  void setSelectedSignerNFTs(List<TokenNFT> tkns) {
+    final _$actionInfo = _$_TokenModelActionController.startAction(
+        name: '_TokenModel.setSelectedSignerNFTs');
+    try {
+      return super.setSelectedSignerNFTs(tkns);
+    } finally {
+      _$_TokenModelActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setReefPrice(double value) {
+    final _$actionInfo = _$_TokenModelActionController.startAction(
+        name: '_TokenModel.setReefPrice');
+    try {
+      return super.setReefPrice(value);
+    } finally {
+      _$_TokenModelActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     return '''
-selectedSignerTokens: ${selectedSignerTokens}
+selectedSignerTokens: ${selectedSignerTokens},
+selectedSignerNFTs: ${selectedSignerNFTs},
+reefPrice: ${reefPrice}
     ''';
   }
 }

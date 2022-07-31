@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:reef_mobile_app/model/ViewModel.dart';
 import 'package:reef_mobile_app/model/signing/SigningCtrl.dart';
 import 'package:reef_mobile_app/model/tokens/TokensCtrl.dart';
-import 'package:reef_mobile_app/model/tokens/token_model.dart';
 import 'package:reef_mobile_app/model/transfer/TransferCtrl.dart';
 import 'package:reef_mobile_app/service/JsApiService.dart';
 import 'package:reef_mobile_app/service/StorageService.dart';
@@ -20,7 +19,6 @@ class ReefAppState {
   late AccountCtrl accountCtrl;
   late SigningCtrl signingCtrl;
   late TransferCtrl transferCtrl;
-  late TokenModel tokenModel;
 
   ReefAppState._();
 
