@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:reef_mobile_app/model/StorageKey.dart';
 import 'package:reef_mobile_app/model/account/ReefSigner.dart';
+import 'package:reef_mobile_app/model/account/stored_account.dart';
 import 'package:reef_mobile_app/service/JsApiService.dart';
 import 'package:reef_mobile_app/service/StorageService.dart';
 
@@ -37,11 +38,26 @@ class AccountCtrl {
     return await _jsApi.jsPromise('keyring.accountFromMnemonic("$mnemonic")');
   }
 
+  Future saveAccount(StoredAccount account) async {
+    await _storage.saveAccount(account);
+    await updateAccounts();
+    setSelectedAddress(account.address);
+  }
+
+  void deleteAccount(String address) async {
+    var account = await _storage.getAccount(address);
+    if (account != null) {
+      await account.delete();
+    }
+    //TODO if selected select index 0
+    await updateAccounts();
+  }
+
   Future<void> updateAccounts() async {
     var accounts = [];
     (await _storage.getAllAccounts())
         .forEach(((account) => {accounts.add(account.toJsonSkinny())}));
-    _jsApi.jsPromise('account.updateAccounts(${jsonEncode(accounts)})');
+    return _jsApi.jsPromise('account.updateAccounts(${jsonEncode(accounts)})');
   }
 
   void _initJsObservables(JsApiService _jsApi, StorageService storage) {

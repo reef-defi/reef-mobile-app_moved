@@ -610,8 +610,7 @@ class _AccountCreationConfirmContentState
 }
 
 class CurrentScreen extends StatefulWidget {
-  final Function callback;
-  CurrentScreen({Key? key, required this.callback}) : super(key: key);
+  CurrentScreen({Key? key}) : super(key: key);
 
   final ReefAppState reefState = ReefAppState.instance;
   final StorageService storageService = ReefAppState.instance.storage;
@@ -636,9 +635,7 @@ class _CurrentScreenState extends State<CurrentScreen> {
   }
 
   Future saveAccount(StoredAccount account) async {
-    await widget.storageService.saveAccount(account);
-    widget.callback();
-    print("Saved account ${account.address}");
+    await ReefAppState.instance.accountCtrl.saveAccount(account);
   }
 
   nextIndex() {
@@ -687,9 +684,9 @@ class _CurrentScreenState extends State<CurrentScreen> {
   }
 }
 
-void showCreateAccountModal(BuildContext context, {required callback}) {
+void showCreateAccountModal(BuildContext context) {
   showModal(context,
       headText: "Create Account",
       dismissible: false,
-      child: CurrentScreen(callback: callback));
+      child: CurrentScreen());
 }

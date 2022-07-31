@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/account/ReefSigner.dart';
 import 'package:reef_mobile_app/utils/functions.dart';
 
@@ -204,14 +205,23 @@ class _AccountBoxState extends State<AccountBox> {
                             const Gap(6),
                           ],
                         ),
-                      IconButton(
-                          padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(),
-                          onPressed: () {},
-                          icon: const Icon(
-                            Icons.more_vert,
-                            color: Colors.black45,
-                          )),
+                      GestureDetector(
+                        onDoubleTap: () {
+                          ReefAppState.instance.accountCtrl.deleteAccount(widget.reefSigner.address);
+                        },
+                        child: IconButton(
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
+                            onPressed: () {
+                              // TODO show modal with option to delete account
+                              // ReefAppState.instance.accountCtrl.deleteAccount(widget.reefSigner.address);
+                            },
+                            icon: const Icon(
+                              Icons.more_vert,
+                              color: Colors.black45,
+                            ))
+                      )
+
                     ],
                   )
                 ],
