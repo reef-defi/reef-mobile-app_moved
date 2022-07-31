@@ -15,6 +15,6 @@ class JsonBigInt {
   }
 
   static BigInt? toBigInt(dynamic jsonVal){
-    return _fromJson(jsonVal)._toBigInt();
+    return jsonVal!=null ? _fromJson(jsonVal)._toBigInt() : null;
   }
 }

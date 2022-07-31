@@ -1,6 +1,8 @@
-// TODO remove default value
-double getUSDPrice(double reefPrice, {conversionRate = 0.003272}) {
-  return reefPrice * conversionRate;
+double getBalanceValue(double balance, price) {
+  if(price == null || price == null){
+    return 0.0;
+  }
+  return balance * price;
 }
 
 extension CapitalizeExtension on String {
@@ -16,5 +18,6 @@ extension ShortenExtension on String {
 }
 
 String toBalanceDisplayString(String decimalsString) => (BigInt.parse(decimalsString)/BigInt.from(10).pow(18)).toString();
-String toBalanceDisplayBigInt(BigInt decimalsString) => (decimalsString/BigInt.from(10).pow(18)).toString();
+String toBalanceDisplayBigInt(BigInt decimalsVal) => (decimalsVal/BigInt.from(10).pow(18)).toString();
+double decimalsToDouble(BigInt decimalsVal, {int decimals = 18}) => (decimalsVal/BigInt.from(10).pow(decimals)).toDouble();
 

@@ -1,4 +1,3 @@
-import 'dart:collection';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
@@ -46,14 +45,6 @@ class AccountCtrl {
   }
 
   void _initJsObservables(JsApiService _jsApi, StorageService storage) {
-    /*_jsApi.jsObservable('account.selectedSigner\$').listen((signer) async {
-      if (signer == null) {
-        return;
-      }
-      LinkedHashMap s = signer;
-      await storage.setValue(StorageKey.selected_address.name, s['address']);
-      _accountModel.setSelectedAddress(ReefSigner.fromJson(s));
-    });*/
 
     _jsApi.jsObservable('appState.currentAddress\$').listen(( address) async {
       if (address == null) {

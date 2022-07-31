@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/utils/elements.dart';
 import 'package:reef_mobile_app/utils/functions.dart';
 import 'package:reef_mobile_app/utils/gradient_text.dart';
@@ -15,51 +17,6 @@ class ActivityView extends StatefulWidget {
 }
 
 class _ActivityViewState extends State<ActivityView> {
-  static final List _activityMap = [
-    {
-      "key": 0,
-      "type": "received",
-      "amount": 4000.0,
-      "tokenName": "REEF",
-      "timeStamp": DateTime.now().millisecondsSinceEpoch,
-    },
-    {
-      "key": 1,
-      "type": "sent",
-      "amount": 2000.0,
-      "tokenName": "REEF",
-      "timeStamp": DateTime.now()
-          .subtract(const Duration(days: 1))
-          .millisecondsSinceEpoch,
-    },
-    {
-      "key": 2,
-      "type": "received",
-      "amount": 1000.0,
-      "tokenName": "REEF",
-      "timeStamp": DateTime.now()
-          .subtract(const Duration(days: 2))
-          .millisecondsSinceEpoch,
-    },
-    {
-      "key": 3,
-      "type": "sent",
-      "amount": 500.0,
-      "tokenName": "REEF",
-      "timeStamp": DateTime.now()
-          .subtract(const Duration(days: 3))
-          .millisecondsSinceEpoch,
-    },
-    {
-      "key": 4,
-      "type": "received",
-      "amount": 50000000.0,
-      "tokenName": "REEF",
-      "timeStamp": DateTime.now()
-          .subtract(const Duration(days: 4))
-          .millisecondsSinceEpoch,
-    }
-  ];
 
   Widget activityItem(
       {required String type,
@@ -162,25 +119,20 @@ class _ActivityViewState extends State<ActivityView> {
         padding: const EdgeInsets.all(0),
         children: [
           SizedBox(
-            // constraints: const BoxConstraints.expand(),
             width: double.infinity,
-            // // replace later, just for debugging
-            // decoration: BoxDecoration(
-            //   border: Border.all(
-            //     color: Colors.red,
-            //   ),
-            // ),
             child: Padding(
               padding:
                   const EdgeInsets.symmetric(vertical: 32, horizontal: 24.0),
               child: ViewBoxContainer(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16),
-                  child: Column(
-                    children: _activityMap
-                        .map((item) => Column(
-                              children: [
-                                activityItem(
+                  child: Observer(builder: (_) {
+                    return Column(children: ReefAppState.instance.model.tokens.activity.map((element) => Text(element.timestamp.toIso8601String())).toList());
+      /*return Column(
+                      children: _activityMap
+                          .map((item) => Column(
+                        children: [
+                          activityItem(
                                     type: item["type"],
                                     tokenName: item["tokenName"],
                                     timeStamp: item["timeStamp"],
@@ -188,15 +140,16 @@ class _ActivityViewState extends State<ActivityView> {
                                     isLastElement:
                                         item["key"] == _activityMap.length - 1,
                                     isFirstElement: item["key"] == 0),
-                                if (item["key"] != _activityMap.length - 1)
-                                  const Divider(
-                                    color: Color(0x20000000),
-                                    thickness: 0.5,
-                                  ),
-                              ],
-                            ))
-                        .toList(),
-                  ),
+                          if (item["key"] != _activityMap.length - 1)
+                            const Divider(
+                              color: Color(0x20000000),
+                              thickness: 0.5,
+                            ),
+                        ],
+                      ))
+                          .toList(),
+                    );*/
+                  })
                 ),
               ),
             ),
