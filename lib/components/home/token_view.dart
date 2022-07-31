@@ -98,6 +98,7 @@ class _TokenViewState extends State<TokenView> {
                 ),
                 const Gap(2),
                 Text(
+                  // TODO allow conversionRate to be null for no data
                   "${value != 0 ? value : 0} ${tokenName != "" ? tokenName : name.toUpperCase()} - ${conversionRate != 0 ? conversionRate.toStringAsFixed(4) : 'No pool data'}",
                   style: TextStyle(color: Styles.textLightColor, fontSize: 16),
                 ),
@@ -131,8 +132,9 @@ class _TokenViewState extends State<TokenView> {
             child: Padding(
               padding:
                   const EdgeInsets.symmetric(vertical: 32, horizontal: 48.0),
-              child:Observer(builder: (_) {
-                return Column(
+              child: Observer(builder: (_) {
+                return Wrap(
+                  spacing: 24,
                   /*children: _cardMap
                     .map((item) => Column(
                           children: [
@@ -145,12 +147,23 @@ class _TokenViewState extends State<TokenView> {
                           ],
                         ))
                     .toList(),*/
-                    children: ReefAppState.instance.model.tokens.selectedSignerTokens.map((TokenWithAmount tkn) {
-                      return Text(tkn.name);
-                    }).toList()
+                  children: ReefAppState
+                      .instance.model.tokens.selectedSignerTokens
+                      .map((TokenWithAmount tkn) {
+                    return Column(
+                      children: [
+                        tokenCard(tkn.name, tkn.iconUrl,
+                            tokenName: tkn.symbol,
+                            conversionRate: tkn.price?.toDouble()??0,
+                            value: tkn.balance.toDouble()),
+                      ],
+                    );
+                  }).toList(),
+                  // children: ReefAppState.instance.model.tokens.selectedSignerTokens.map((TokenWithAmount tkn) {
+                  //   return Text(tkn.name);
+                  // }).toList()
                 );
-              }
-              ),
+              }),
             ),
           )
         ]);
