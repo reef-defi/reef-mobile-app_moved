@@ -30,6 +30,17 @@ class AccountBox extends StatefulWidget {
 class _AccountBoxState extends State<AccountBox> {
   bool showBalance = true;
 
+  String dropdownvalue = 'Item 1';
+
+  // List of items in our dropdown menu
+  var items = [
+    'Item 1',
+    'Item 2',
+    'Item 3',
+    'Item 4',
+    'Item 5',
+  ];
+
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -214,22 +225,25 @@ class _AccountBoxState extends State<AccountBox> {
                             const Gap(6),
                           ],
                         ),
-                      GestureDetector(
-                          onDoubleTap: () {
-                            ReefAppState.instance.accountCtrl
-                                .deleteAccount(widget.reefSigner.address);
-                          },
-                          child: IconButton(
-                              padding: EdgeInsets.zero,
-                              constraints: const BoxConstraints(),
-                              onPressed: () {
-                                // TODO show modal with option to delete account
-                                // ReefAppState.instance.accountCtrl.deleteAccount(widget.reefSigner.address);
-                              },
-                              icon: const Icon(
-                                Icons.more_vert,
-                                color: Colors.black45,
-                              )))
+                      PopupMenuButton<String>(
+                        icon: const Icon(
+                          Icons.more_vert,
+                          color: Colors.black45,
+                        ),
+                        enableFeedback: true,
+                        onSelected: (String choice) {
+                          choiceAction(choice, context, widget.reefSigner);
+                        },
+                        tooltip: "More Actions",
+                        itemBuilder: (BuildContext context) {
+                          return Constants.choices.map((String choice) {
+                            return PopupMenuItem<String>(
+                              value: choice,
+                              child: Text(choice),
+                            );
+                          }).toList();
+                        },
+                      ),
                     ],
                   )
                 ],
@@ -239,5 +253,55 @@ class _AccountBoxState extends State<AccountBox> {
         ),
       ),
     );
+  }
+}
+
+class Constants {
+  static const String delete = 'Delete';
+
+  static const List<String> choices = <String>[
+    delete,
+  ];
+}
+
+showAlertDialog(BuildContext context, ReefSigner signer) {
+  // set up the buttons
+  Widget cancelButton = TextButton(
+    child: const Text("Cancel"),
+    onPressed: () {
+      Navigator.of(context).pop();
+    },
+  );
+  Widget continueButton = TextButton(
+    child: const Text("Yes"),
+    onPressed: () {
+      ReefAppState.instance.accountCtrl.deleteAccount(signer.address);
+      Navigator.of(context).pop();
+    },
+  );
+
+  // set up the AlertDialog
+  AlertDialog alert = AlertDialog(
+    title: const Text("Delete Account"),
+    content: Text(
+        "Are you sure you want to delete account with name ${signer.name}?"),
+    actions: [
+      cancelButton,
+      continueButton,
+    ],
+  );
+
+  // show the dialog
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return alert;
+    },
+  );
+}
+
+void choiceAction(String choice, BuildContext context, ReefSigner signer) {
+  if (choice == Constants.delete) {
+    showAlertDialog(context, signer);
   }
 }
