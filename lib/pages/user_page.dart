@@ -23,7 +23,6 @@ class UserPage extends StatefulWidget {
 }
 
 class _UserPageState extends State<UserPage> {
-
   @override
   Widget build(BuildContext context) {
     return SignatureContentToggle(Column(
@@ -87,19 +86,21 @@ class _UserPageState extends State<UserPage> {
         ),
         const Gap(16),
         Observer(builder: (_) {
-          if(ReefAppState.instance.model.accounts.loadingSigners==true){
-            return Text('Loading signers');
+          if (ReefAppState.instance.model.accounts.loadingSigners == true) {
+            return Text(
+              'Loading signers...',
+              style: TextStyle(fontSize: 16, color: Styles.textLightColor),
+            );
           }
-          if(ReefAppState.instance.model.accounts.signers.length>0){
+          if (ReefAppState.instance.model.accounts.signers.isNotEmpty) {
             // return Text('signers loaded = ${ReefAppState.instance.model.accounts.signers.map((ReefSigner s){
             //   return s.address + ' bal = ' + toBalanceDisplayBigInt(s.balance);
             // }).join('/////')}');
-            return Expanded(child:
-            AccountsList(
-                ReefAppState.instance.model.accounts.signers,
-                ReefAppState.instance.model.accounts.selectedAddress,
-                ReefAppState.instance.accountCtrl.setSelectedAddress
-            ));
+            return Expanded(
+                child: AccountsList(
+                    ReefAppState.instance.model.accounts.signers,
+                    ReefAppState.instance.model.accounts.selectedAddress,
+                    ReefAppState.instance.accountCtrl.setSelectedAddress));
           }
           return Text('No signers found');
         }),
@@ -107,4 +108,3 @@ class _UserPageState extends State<UserPage> {
     ));
   }
 }
-

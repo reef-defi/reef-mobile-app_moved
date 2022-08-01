@@ -130,7 +130,11 @@ class _TestHomePageState extends State<TestHomePage> {
               Observer(builder: (_) {
                 if (ReefAppState.instance.model.accounts.loadingSigners ==
                     true) {
-                  return Text('loading signers');
+                  return Text(
+                    'Loading signers...',
+                    style:
+                        TextStyle(fontSize: 16, color: Styles.textLightColor),
+                  );
                 }
                 if (ReefAppState.instance.model.accounts.signers.length > 0) {
                   return Text(
@@ -165,16 +169,16 @@ class _TestHomePageState extends State<TestHomePage> {
                   FloatingActionButton(
                     heroTag: "sign_raw",
                     onPressed: () {
-                      _testSignRaw(ReefAppState
-                          .instance.model.accounts.selectedAddress);
+                      _testSignRaw(
+                          ReefAppState.instance.model.accounts.selectedAddress);
                     },
                     child: const Text('Sign raw', textAlign: TextAlign.center),
                   ),
                   FloatingActionButton(
                     heroTag: "sign_payload",
                     onPressed: () {
-                      _testSignPayload(ReefAppState
-                          .instance.model.accounts.selectedAddress);
+                      _testSignPayload(
+                          ReefAppState.instance.model.accounts.selectedAddress);
                     },
                     child:
                         const Text('Sign payload', textAlign: TextAlign.center),
@@ -182,8 +186,8 @@ class _TestHomePageState extends State<TestHomePage> {
                   FloatingActionButton(
                     heroTag: "sign_and_send",
                     onPressed: () {
-                      _testSignAndSend(ReefAppState
-                          .instance.model.accounts.selectedAddress);
+                      _testSignAndSend(
+                          ReefAppState.instance.model.accounts.selectedAddress);
                     },
                     child: const Text('Sign and send',
                         textAlign: TextAlign.center),
