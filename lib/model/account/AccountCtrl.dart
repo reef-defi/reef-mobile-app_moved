@@ -61,8 +61,7 @@ class AccountCtrl {
   }
 
   void _initJsObservables(JsApiService _jsApi, StorageService storage) {
-
-    _jsApi.jsObservable('appState.currentAddress\$').listen(( address) async {
+    _jsApi.jsObservable('appState.currentAddress\$').listen((address) async {
       if (address == null) {
         return;
       }
@@ -74,8 +73,20 @@ class AccountCtrl {
     _accountModel.setLoadingSigners(true);
     _jsApi.jsObservable('account.availableSigners\$').listen((signers) async {
       _accountModel.setLoadingSigners(false);
-      var reefSigners =
-          List<ReefSigner>.from(signers.map((s) => ReefSigner.fromJson(s)));
+
+      var accounts = [];
+
+      (await _storage.getAllAccounts()).forEach(((account) => {
+            accounts.add({"address": account.address, "svg": account.svg})
+          }));
+
+      var reefSigners = List<ReefSigner>.from(signers.map((s) {
+        s["iconSVG"] = accounts
+            .where((item) => item["address"] == s["address"])
+            .toList()[0]["svg"];
+        return ReefSigner.fromJson(s);
+      }));
+
       _accountModel.setSigners(reefSigners);
       print('AVAILABLE Signers ${signers.length}');
       reefSigners.forEach((signer) {
@@ -99,5 +110,4 @@ class AccountCtrl {
   void _initWasm(JsApiService _jsApi) async {
     await _jsApi.jsPromise('keyring.initWasm()');
   }
-
 }

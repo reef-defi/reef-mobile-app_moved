@@ -1,4 +1,3 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -17,7 +16,11 @@ class AccountBox extends StatefulWidget {
   final bool selected;
   final VoidCallback onSelected;
 
-  const AccountBox({Key? key, required this.reefSigner, required this.selected, required this.onSelected})
+  const AccountBox(
+      {Key? key,
+      required this.reefSigner,
+      required this.selected,
+      required this.onSelected})
       : super(key: key);
 
   @override
@@ -74,7 +77,7 @@ class _AccountBoxState extends State<AccountBox> {
                   )),
             Padding(
               padding:
-              const EdgeInsets.symmetric(horizontal: 16.0, vertical: 18.0),
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 18.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -87,11 +90,16 @@ class _AccountBoxState extends State<AccountBox> {
                         ),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(64),
-                          child: widget.reefSigner.iconSVG!=null ? SvgPicture.string(
-                            widget.reefSigner.iconSVG!,
-                            height: 64,
-                            width: 64,
-                          ): const SizedBox.shrink(),
+                          child: widget.reefSigner.iconSVG != null
+                              ? SvgPicture.string(
+                                  widget.reefSigner.iconSVG!,
+                                  height: 64,
+                                  width: 64,
+                                )
+                              : const SizedBox(
+                                  width: 64,
+                                  height: 64,
+                                ),
                         ),
                       ),
                       const Gap(12),
@@ -131,7 +139,8 @@ class _AccountBoxState extends State<AccountBox> {
                               const Gap(4),
                               GradientText(
                                 showBalance
-                                    ? toBalanceDisplayBigInt(widget.reefSigner.balance)
+                                    ? toBalanceDisplayBigInt(
+                                        widget.reefSigner.balance)
                                     : "--",
                                 style: GoogleFonts.spaceGrotesk(
                                     fontSize: 14, fontWeight: FontWeight.w700),
@@ -188,11 +197,11 @@ class _AccountBoxState extends State<AccountBox> {
                                     backgroundColor: Colors.black12,
                                     shape: RoundedRectangleBorder(
                                         borderRadius:
-                                        BorderRadius.circular(12)),
+                                            BorderRadius.circular(12)),
                                     padding: EdgeInsets.zero,
                                     minimumSize: const Size(75, 30),
                                     tapTargetSize:
-                                    MaterialTapTargetSize.shrinkWrap,
+                                        MaterialTapTargetSize.shrinkWrap,
                                   ),
                                   child: Text(
                                     "Bind EVM",
@@ -206,22 +215,21 @@ class _AccountBoxState extends State<AccountBox> {
                           ],
                         ),
                       GestureDetector(
-                        onDoubleTap: () {
-                          ReefAppState.instance.accountCtrl.deleteAccount(widget.reefSigner.address);
-                        },
-                        child: IconButton(
-                            padding: EdgeInsets.zero,
-                            constraints: const BoxConstraints(),
-                            onPressed: () {
-                              // TODO show modal with option to delete account
-                              // ReefAppState.instance.accountCtrl.deleteAccount(widget.reefSigner.address);
-                            },
-                            icon: const Icon(
-                              Icons.more_vert,
-                              color: Colors.black45,
-                            ))
-                      )
-
+                          onDoubleTap: () {
+                            ReefAppState.instance.accountCtrl
+                                .deleteAccount(widget.reefSigner.address);
+                          },
+                          child: IconButton(
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(),
+                              onPressed: () {
+                                // TODO show modal with option to delete account
+                                // ReefAppState.instance.accountCtrl.deleteAccount(widget.reefSigner.address);
+                              },
+                              icon: const Icon(
+                                Icons.more_vert,
+                                color: Colors.black45,
+                              )))
                     ],
                   )
                 ],
