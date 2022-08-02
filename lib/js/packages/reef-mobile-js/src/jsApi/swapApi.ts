@@ -1,7 +1,7 @@
 import { appState } from '@reef-defi/react-lib';
 import { switchMap, take } from "rxjs/operators";
 import { Contract} from "ethers";
-import { Signer as EvmProviderSigner } from "@reef-defi/evm-provider";
+import { Signer as EvmProviderSigner, Provider } from "@reef-defi/evm-provider";
 import { ReefswapRouter } from "./abi/ReefswapRouter";
 import { ERC20 } from "./abi/ERC20";
 import { combineLatest, firstValueFrom } from "rxjs";
@@ -58,10 +58,10 @@ const approveTokenAmount = async (
   const findPoolTokenAddress = async (
     address1: string,
     address2: string,
-    signer: EvmProviderSigner,
+    signerOrProvider: EvmProviderSigner | Provider,
     factoryAddress: string,
   ): Promise<string> => {
-    const reefswapFactory = new Contract(factoryAddress, ReefswapFactory, signer)
+    const reefswapFactory = new Contract(factoryAddress, ReefswapFactory, signerOrProvider)
     const address = await reefswapFactory.getPair(address1, address2);
     return address;
   };
@@ -70,6 +70,7 @@ export const initApi = () => {
     (window as any).swap = {
         // Executes a swap
         execute: async (signerAddress: string, token1: TokenWithAmount, token2: TokenWithAmount, settings: SwapSettings) => {
+            console.log(token1, token2);
             return firstValueFrom(
                 combineLatest([appState.currentNetwork$, appState.signers$]).pipe(
                     take(1),
@@ -126,26 +127,20 @@ export const initApi = () => {
             );
         },
         // Returns pool reserves, if pool exists
-        getPoolReserves: async (signerAddress: string, token1Address: string, token2Address: string) => {
+        getPoolReserves: async (token1Address: string, token2Address: string) => {
             return firstValueFrom(
-                combineLatest([appState.currentNetwork$, appState.signers$]).pipe(
+                combineLatest([appState.currentNetwork$, appState.currentProvider$]).pipe(
                     take(1),
-                    switchMap(async ([network, reefSigners]) => {
-                        const reefSigner = reefSigners.find((s)=>s.address===signerAddress);
-                        if (!reefSigner) {
-                            console.log("swap.loadPool() - NO SIGNER FOUND",);
-                            return false;
-                        }
-                        
+                    switchMap(async ([network, provider]) => {
                         const poolAddress = await findPoolTokenAddress(
-                            token1Address, token2Address, reefSigner.signer, network.factoryAddress);
-                        
+                            token1Address, token2Address, provider, network.factoryAddress);
+                        console.log("poolAddress", poolAddress);
                         if (poolAddress === EMPTY_ADDRESS) {
                             console.log("swap.loadPool() - NO POOL FOUND",);
-                            return false; // TODO differentiate between no pool and no signer
+                            return false;
                         }
     
-                        const poolContract = new Contract(poolAddress, ReefswapPair, reefSigner.signer);
+                        const poolContract = new Contract(poolAddress, ReefswapPair, provider);
                         const reserves = await poolContract.getReserves();
                         const address1 = await poolContract.token1();
                         const [finalReserve1, finalReserve2] = token1Address !== address1

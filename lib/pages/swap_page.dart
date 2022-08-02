@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:reef_mobile_app/components/modals/token_selection_modals.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/StorageKey.dart';
+import 'package:reef_mobile_app/model/swap/swap_settings.dart';
 import 'package:reef_mobile_app/model/tokens/TokenWithAmount.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 import 'package:shimmer/shimmer.dart';
@@ -24,41 +25,183 @@ class _SwapPageState extends State<SwapPage> {
   var tokens = ReefAppState.instance.model.tokens.tokenList;
 
   // TODO: auto-select REEF token
-  var selectedToken = TokenWithAmount(
+  TokenWithAmount selectedToken = TokenWithAmount(
       name: 'REEF',
       address: '0x0000000000000000000000000000000001000000',
       iconUrl: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6951.png',
       symbol: 'REEF',
       balance: BigInt.parse('1542087625938626180855'),
       decimals: 18,
-      amount: '0',
+      amount: BigInt.zero,
       price: 0.0841);
   // TODO: bottom token should be empty on start
-  var selectedBottomToken = TokenWithAmount(
+  TokenWithAmount selectedBottomToken = TokenWithAmount(
       name: 'Free Mint Token',
       address: '0x4676199AdA480a2fCB4b2D4232b7142AF9fe9D87',
       iconUrl: '',
       symbol: 'FMT',
       balance: BigInt.parse('2761008739220176308876'),
       decimals: 18,
-      amount: '0',
+      amount: BigInt.zero,
       price: 0);
 
+  SwapSettings settings = SwapSettings(1, 0.8);
+
   TextEditingController amountController = TextEditingController();
-  String amount = "";
+  String reserveTop = "";
   TextEditingController amountBottomController = TextEditingController();
-  String amountBottom = "";
+  String reserveBottom = "";
 
   void _changeSelectedToken(TokenWithAmount token) {
     setState(() {
-      selectedToken = token;
+      selectedToken = token.setAmount("0");
+      selectedBottomToken = selectedBottomToken.setAmount("0");
+      _getPoolReserves();
     });
   }
 
   void _changeSelectedBottomToken(TokenWithAmount token) {
     setState(() {
-      selectedBottomToken = token;
+      selectedBottomToken = token.setAmount("0");
+      selectedToken = selectedToken.setAmount("0");
+      _getPoolReserves();
     });
+  }
+
+  void _getPoolReserves() async {
+    var res = await ReefAppState.instance.swapCtrl
+        .getPoolReserves(selectedToken.address, selectedBottomToken.address);
+    if (res is bool && res == false) {
+      print("ERROR: Pool does not exist");
+      reserveTop = "";
+      reserveBottom = "";
+      return;
+    }
+
+    reserveTop = res["reserve1"];
+    reserveBottom = res["reserve2"];
+    print("Pool reserves: ${res['reserve1']}, ${res['reserve1']}");
+  }
+
+  Future<void> _amountTopUpdated(String value) async {
+    var formattedValue =
+        _toStringWithoutDecimals(value, selectedToken.decimals);
+
+    if (value.isEmpty ||
+        formattedValue.replaceAll(".", "").replaceAll("0", "").isEmpty) {
+      print("ERROR: Invalid value");
+      selectedBottomToken = selectedBottomToken.setAmount("0");
+      return;
+    }
+
+    selectedToken = selectedToken.setAmount(formattedValue);
+
+    if (BigInt.parse(formattedValue) > selectedToken.balance) {
+      print("WARN: Insufficient ${selectedToken.symbol} balance");
+    }
+
+    if (reserveTop.isEmpty) {
+      return; // Pool does not exist
+    }
+
+    var token1 = selectedToken.setAmount(reserveTop);
+    var token2 = selectedBottomToken.setAmount(reserveBottom);
+
+    var res = (await ReefAppState.instance.swapCtrl
+            .getSwapAmount(value, false, token1, token2))
+        .replaceAll("\"", "");
+
+    selectedBottomToken = selectedBottomToken.setAmount(res);
+
+    print("${selectedToken.amount} - ${selectedToken.getAmountDisplay()}");
+    print(
+        "${selectedBottomToken.amount} - ${selectedBottomToken.getAmountDisplay()}");
+  }
+
+  Future<void> _amountBottomUpdated(String value) async {
+    var formattedValue =
+        _toStringWithoutDecimals(value, selectedToken.decimals);
+
+    if (value.isEmpty ||
+        formattedValue.replaceAll(".", "").replaceAll("0", "").isEmpty) {
+      print("ERROR: Invalid value");
+      selectedToken = selectedToken.setAmount("0");
+      return;
+    }
+
+    selectedBottomToken = selectedBottomToken.setAmount(formattedValue);
+
+    if (reserveTop.isEmpty) {
+      return; // Pool does not exist
+    }
+
+    if (BigInt.parse(formattedValue) > BigInt.parse(reserveBottom)) {
+      print(
+          "ERROR: Insufficient ${selectedBottomToken.symbol} liquidity in pool");
+      selectedToken = selectedToken.setAmount("0");
+      return;
+    }
+
+    var token1 = selectedToken.setAmount(reserveTop);
+    var token2 = selectedBottomToken.setAmount(reserveBottom);
+
+    var res = (await ReefAppState.instance.swapCtrl
+            .getSwapAmount(value, true, token1, token2))
+        .replaceAll("\"", "");
+
+    if (BigInt.parse(res) > selectedToken.balance) {
+      print("WARN: Insufficient ${selectedToken.symbol} balance");
+    }
+
+    selectedToken = selectedToken.setAmount(res);
+
+    print("${selectedToken.amount} - ${selectedToken.getAmountDisplay()}");
+    print(
+        "${selectedBottomToken.amount} - ${selectedBottomToken.getAmountDisplay()}");
+  }
+
+  void _executeSwap() async {
+    if (selectedToken.amount <= BigInt.zero) {
+      return;
+    }
+    var signerAddress = await ReefAppState.instance.storage
+        .getValue(StorageKey.selected_address.name);
+    var res = await ReefAppState.instance.swapCtrl.swapTokens(
+        signerAddress, selectedToken, selectedBottomToken, settings);
+    _getPoolReserves();
+    print(res);
+    print(
+        "Balance ${selectedToken.symbol}: ${selectedToken.getBalanceDisplay()}");
+    print(
+        "Balance ${selectedBottomToken.symbol}: ${selectedBottomToken.getBalanceDisplay()}");
+  }
+
+  String _toAmountDisplay(String amount, int decimals) {
+    return (BigInt.parse(amount) / BigInt.from(10).pow(decimals))
+        .toStringAsFixed(decimals);
+  }
+
+  String _toStringWithoutDecimals(String amount, int decimals) {
+    var arr = amount.split(".");
+
+    var intPart = arr[0];
+    if (arr.length == 1) {
+      for (int i = 0; i < decimals; i++) {
+        intPart += "0";
+      }
+      return intPart;
+    }
+
+    while (intPart.startsWith("0")) {
+      intPart = intPart.substring(1);
+    }
+
+    var fractionalPart = arr[1];
+    while (fractionalPart.length < decimals) {
+      fractionalPart += "0";
+    }
+
+    return intPart + fractionalPart;
   }
 
   @override
@@ -67,44 +210,6 @@ class _SwapPageState extends State<SwapPage> {
       padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24),
       child: Column(
         children: [
-          // Test buttons
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                ElevatedButton(
-                  child: const Text('swap'),
-                  onPressed: () async {
-                    var signerAddress = await ReefAppState.instance.storage
-                        .getValue(StorageKey.selected_address.name);
-                    var res = await ReefAppState.instance.swapCtrl
-                        .testSwapTokens(signerAddress);
-                    print("SWAP TEST RES = $res");
-                  },
-                ),
-                ElevatedButton(
-                  child: const Text('get pool'),
-                  onPressed: () async {
-                    var signerAddress = await ReefAppState.instance.storage
-                        .getValue(StorageKey.selected_address.name);
-                    var res = await ReefAppState.instance.swapCtrl
-                        .testGetPoolReserves(signerAddress);
-                    print("RESERVES TEST RES = $res");
-                  },
-                ),
-                ElevatedButton(
-                  child: const Text('get swap amount'),
-                  onPressed: () async {
-                    var res = await ReefAppState.instance.swapCtrl
-                        .testGetSwapAmount();
-                    print("SWAP AMOUNT TEST RES = $res");
-                  },
-                )
-              ],
-            ),
-          ),
-          // end test buttons
           Text(
             "Swap",
             style: GoogleFonts.spaceGrotesk(
@@ -194,12 +299,14 @@ class _SwapPageState extends State<SwapPage> {
                                   ],
                                   keyboardType: TextInputType.number,
                                   controller: amountController,
-                                  onChanged: (text) {
-                                    setState(() {
-                                      //you can access nameController in its scope to get
-                                      // the value of text entered as shown below
-                                      amount = amountController.text;
-                                    });
+                                  onChanged: (text) async {
+                                    await _amountTopUpdated(
+                                        amountController.text);
+                                    // setState(() {
+                                    //   //you can access nameController in its scope to get
+                                    //   // the value of text entered as shown below
+                                    //   selectedToken.amount = amountController.text;
+                                    // });
                                   },
                                   decoration: InputDecoration(
                                       constraints:
@@ -237,7 +344,12 @@ class _SwapPageState extends State<SwapPage> {
                                       fontSize: 12),
                                 ),
                                 TextButton(
-                                    onPressed: () {},
+                                    onPressed: () async {
+                                      await _amountTopUpdated(
+                                          selectedToken.getBalanceDisplay(
+                                              decimalPositions:
+                                                  selectedToken.decimals));
+                                    },
                                     style: TextButton.styleFrom(
                                         padding: EdgeInsets.zero,
                                         minimumSize: const Size(30, 10),
@@ -331,13 +443,15 @@ class _SwapPageState extends State<SwapPage> {
                                     ],
                                     keyboardType: TextInputType.number,
                                     controller: amountBottomController,
-                                    onChanged: (text) {
-                                      setState(() {
-                                        //you can access nameController in its scope to get
-                                        // the value of text entered as shown below
-                                        amountBottom =
-                                            amountBottomController.text;
-                                      });
+                                    onChanged: (text) async {
+                                      await _amountBottomUpdated(
+                                          amountBottomController.text);
+                                      // setState(() async {
+                                      //you can access nameController in its scope to get
+                                      // the value of text entered as shown below
+                                      // selectedBottomToken.amount =
+                                      //     amountBottomController.text;
+                                      // });
                                     },
                                     decoration: InputDecoration(
                                         constraints:
@@ -372,20 +486,7 @@ class _SwapPageState extends State<SwapPage> {
                                   style: TextStyle(
                                       color: Styles.textLightColor,
                                       fontSize: 12),
-                                ),
-                                TextButton(
-                                    onPressed: () {},
-                                    style: TextButton.styleFrom(
-                                        padding: EdgeInsets.zero,
-                                        minimumSize: const Size(30, 10),
-                                        tapTargetSize:
-                                            MaterialTapTargetSize.shrinkWrap),
-                                    child: Text(
-                                      "(Max)",
-                                      style: TextStyle(
-                                          color: Styles.blueColor,
-                                          fontSize: 12),
-                                    ))
+                                )
                               ],
                             ),
                           )
@@ -401,14 +502,18 @@ class _SwapPageState extends State<SwapPage> {
                               borderRadius: BorderRadius.circular(40)),
                           shadowColor: const Color(0x559d6cff),
                           elevation: 5,
-                          primary: (amount.isEmpty || amountBottom.isEmpty)
+                          primary: (selectedToken.amount <= BigInt.zero ||
+                                  selectedBottomToken.amount <= BigInt.zero)
                               ? const Color(0xff9d6cff)
                               : Styles.secondaryAccentColor,
                           padding: const EdgeInsets.symmetric(vertical: 16),
                         ),
-                        onPressed: () {},
+                        onPressed: () {
+                          _executeSwap();
+                        },
                         child: Text(
-                          (amount.isEmpty || amountBottom.isEmpty)
+                          (selectedToken.amount <= BigInt.zero ||
+                                  selectedBottomToken.amount <= BigInt.zero)
                               ? "Insert amount"
                               : "Confirm Send",
                           style: const TextStyle(

@@ -42,6 +42,11 @@ const convert2Normal = (
     return parseFloat(decimalPointer);
   };
 
+const convert2String = (decimals: number, inputAmount: number): string => {
+  var outputAmount = inputAmount.toLocaleString("en",{useGrouping: false, minimumFractionDigits: decimals, maximumFractionDigits: decimals});
+  return outputAmount.startsWith("0.") ? outputAmount.replace("0.","") : outputAmount.replace(".","");
+}
+
 export const calculateAmount = ({ decimals, amount }: CalculateAmount): string => BigNumber.from(transformAmount(decimals, assertAmount(amount))).toString();
 
 export const calculateAmountWithPercentage = (
@@ -49,7 +54,7 @@ export const calculateAmountWithPercentage = (
     percentage: number,
 ): string => {
     if (!oldAmount) {
-    return '0';
+      return '0';
     }
     const amount = parseFloat(assertAmount(oldAmount)) * (1 - percentage / 100);
     return calculateAmount({ amount: amount.toString(), decimals });
@@ -57,7 +62,7 @@ export const calculateAmountWithPercentage = (
 
 export const calculateDeadline = (minutes: number): number => Date.now() + minutes * 60 * 1000;
 
-export const getOutputAmount = (inputAmountStr: string, token1Reserve: TokenWithAmount, token2Reserve: TokenWithAmount): number => {
+export const getOutputAmount = (inputAmountStr: string, token1Reserve: TokenWithAmount, token2Reserve: TokenWithAmount): string => {
     const inputAmount = parseFloat(assertAmount(inputAmountStr)) * 997;
   
     const inputReserve = convert2Normal(token1Reserve.decimals, token1Reserve.amount);
@@ -66,10 +71,10 @@ export const getOutputAmount = (inputAmountStr: string, token1Reserve: TokenWith
     const numerator = inputAmount * outputReserve;
     const denominator = inputReserve * 1000 + inputAmount;
   
-    return numerator / denominator;
+    return convert2String(token2Reserve.decimals, numerator/denominator);
   };
   
-  export const getInputAmount = (outputAmountStr: string, token1Reserve: TokenWithAmount, token2Reserve: TokenWithAmount): number => {
+  export const getInputAmount = (outputAmountStr: string, token1Reserve: TokenWithAmount, token2Reserve: TokenWithAmount): string => {
     const outputAmount = parseFloat(assertAmount(outputAmountStr));
   
     const inputReserve = convert2Normal(token1Reserve.decimals, token1Reserve.amount);
@@ -78,5 +83,5 @@ export const getOutputAmount = (inputAmountStr: string, token1Reserve: TokenWith
     const numerator = inputReserve * outputAmount * 1000;
     const denominator = (outputReserve - outputAmount) * 997;
   
-    return numerator / denominator;
+    return convert2String(token1Reserve.decimals, numerator / denominator)
   };

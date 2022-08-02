@@ -45,7 +45,7 @@ class ReefAppState {
         .forEach(((account) => {accounts.add(account.toJsonSkinny())}));
 
     await jsApiService
-        .jsPromise('jsApi.initReefState("mainnet", ${jsonEncode(accounts)})');
+        .jsPromise('jsApi.initReefState("testnet", ${jsonEncode(accounts)})');
   }
 
   _initReefObservables(JsApiService reefAppJsApiService) async {

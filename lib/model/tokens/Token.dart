@@ -21,5 +21,5 @@ class Token {
     return Token(name: json['name'], address: json['address'], iconUrl: json['iconUrl'], symbol: json['symbol'], balance: balanceVal??BigInt.zero, decimals: json['decimals']);
   }
 
-  String getBalanceDisplay({decimalPositions = 4}) => (balance/BigInt.from(10).pow(18)).toStringAsFixed(decimalPositions);
+  String getBalanceDisplay({decimalPositions = 4}) => (balance/BigInt.from(10).pow(decimals)).toStringAsFixed(decimalPositions);
 }

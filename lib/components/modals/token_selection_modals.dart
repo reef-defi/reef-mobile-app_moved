@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:reef_mobile_app/components/modal.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
-import 'package:reef_mobile_app/model/tokens/Token.dart';
 import 'package:reef_mobile_app/model/tokens/TokenWithAmount.dart';
 import 'package:reef_mobile_app/utils/elements.dart';
 import 'package:reef_mobile_app/utils/functions.dart';
@@ -15,7 +14,7 @@ import 'package:shimmer/shimmer.dart';
 class TokenSelection extends StatefulWidget {
   const TokenSelection({Key? key, required this.callback}) : super(key: key);
 
-  final Function(Token token) callback;
+  final Function(TokenWithAmount token) callback;
 
   @override
   State<TokenSelection> createState() => TokenSelectionState();

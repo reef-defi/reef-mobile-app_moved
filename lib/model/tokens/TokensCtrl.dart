@@ -24,7 +24,7 @@ class TokenCtrl {
         symbol: 'REEF',
         balance: BigInt.parse('1542087625938626180855'),
         decimals: 18,
-        amount: '0',
+        amount: BigInt.zero,
         price: 0.0841
       ),
       TokenWithAmount(
@@ -34,7 +34,7 @@ class TokenCtrl {
         symbol: 'FMT',
         balance: BigInt.parse('2761008739220176308876'),
         decimals: 18,
-        amount: '0',
+        amount: BigInt.zero,
         price: 0
       ),
       TokenWithAmount(
@@ -44,7 +44,7 @@ class TokenCtrl {
         symbol: 'RTM',
         balance: BigInt.parse('0'),
         decimals: 18,
-        amount: '0',
+        amount: BigInt.zero,
         price: 0
       )
     ];
