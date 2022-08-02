@@ -17,7 +17,8 @@ extension ShortenExtension on String {
   }
 }
 
-String toBalanceDisplayString(String decimalsString) => (BigInt.parse(decimalsString)/BigInt.from(10).pow(18)).toString();
-String toBalanceDisplayBigInt(BigInt decimalsVal) => (decimalsVal/BigInt.from(10).pow(18)).toString();
+// TODO: remove? not used
+String toAmountDisplayString(String decimalsString, {int decimals = 18, int fractionDigits = 4}) => (BigInt.parse(decimalsString)/BigInt.from(10).pow(decimals)).toStringAsFixed(fractionDigits);
+String toAmountDisplayBigInt(BigInt decimalsVal, {int decimals = 18, int fractionDigits = 4}) => (decimalsVal/BigInt.from(10).pow(decimals)).toStringAsFixed(fractionDigits);
 double decimalsToDouble(BigInt decimalsVal, {int decimals = 18}) => (decimalsVal/BigInt.from(10).pow(decimals)).toDouble();
 

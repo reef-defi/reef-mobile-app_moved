@@ -141,7 +141,7 @@ class _TestHomePageState extends State<TestHomePage> {
                       'signers loaded = ${ReefAppState.instance.model.accounts.signers.map((ReefSigner s) {
                     return s.address +
                         ' bal = ' +
-                        toBalanceDisplayString(s.balance.toString());
+                        toAmountDisplayBigInt(s.balance);
                   }).join('/////')}');
                 }
                 return Text('no signers found');

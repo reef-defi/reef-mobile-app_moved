@@ -55,6 +55,4 @@ class TokenWithAmount extends Token {
       price: price
     );
   }
-
-  String getAmountDisplay({decimalPositions = 4}) => (amount/BigInt.from(10).pow(decimals)).toStringAsFixed(decimalPositions);
 }

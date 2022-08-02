@@ -135,9 +135,9 @@ class TokenSelectionState extends State<TokenSelection> {
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       Row(children: [
-                                        if (e.iconUrl != "")
+                                        if (e.iconUrl!.isNotEmpty)
                                           CachedNetworkImage(
-                                            imageUrl: e.iconUrl,
+                                            imageUrl: e.iconUrl ?? '',
                                             height: 24,
                                             width: 24,
                                             placeholder: (context, url) =>
@@ -228,7 +228,7 @@ class TokenSelectionState extends State<TokenSelection> {
                                           ],
                                         ),
                                       ]),
-                                      Text(e.getBalanceDisplay())
+                                      Text(toAmountDisplayBigInt(e.balance, decimals: e.decimals))
                                     ],
                                   )),
                             ),

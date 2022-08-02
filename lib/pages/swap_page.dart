@@ -9,6 +9,7 @@ import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/StorageKey.dart';
 import 'package:reef_mobile_app/model/swap/swap_settings.dart';
 import 'package:reef_mobile_app/model/tokens/TokenWithAmount.dart';
+import 'package:reef_mobile_app/utils/functions.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -113,9 +114,10 @@ class _SwapPageState extends State<SwapPage> {
 
     selectedBottomToken = selectedBottomToken.setAmount(res);
 
-    print("${selectedToken.amount} - ${selectedToken.getAmountDisplay()}");
     print(
-        "${selectedBottomToken.amount} - ${selectedBottomToken.getAmountDisplay()}");
+        "${selectedToken.amount} - ${toAmountDisplayBigInt(selectedToken.amount, decimals: selectedToken.decimals)}");
+    print(
+        "${selectedBottomToken.amount} - ${toAmountDisplayBigInt(selectedBottomToken.amount, decimals: selectedBottomToken.decimals)}");
   }
 
   Future<void> _amountBottomUpdated(String value) async {
@@ -155,9 +157,10 @@ class _SwapPageState extends State<SwapPage> {
 
     selectedToken = selectedToken.setAmount(res);
 
-    print("${selectedToken.amount} - ${selectedToken.getAmountDisplay()}");
     print(
-        "${selectedBottomToken.amount} - ${selectedBottomToken.getAmountDisplay()}");
+        "${selectedToken.amount} - ${toAmountDisplayBigInt(selectedToken.amount, decimals: selectedToken.decimals)}");
+    print(
+        "${selectedBottomToken.amount} - ${toAmountDisplayBigInt(selectedBottomToken.amount, decimals: selectedBottomToken.decimals)}");
   }
 
   void _executeSwap() async {
@@ -171,9 +174,9 @@ class _SwapPageState extends State<SwapPage> {
     _getPoolReserves();
     print(res);
     print(
-        "Balance ${selectedToken.symbol}: ${selectedToken.getBalanceDisplay()}");
+        "Balance ${selectedToken.symbol}: ${toAmountDisplayBigInt(selectedToken.balance, decimals: selectedToken.decimals)}");
     print(
-        "Balance ${selectedBottomToken.symbol}: ${selectedBottomToken.getBalanceDisplay()}");
+        "Balance ${selectedBottomToken.symbol}: ${toAmountDisplayBigInt(selectedBottomToken.balance, decimals: selectedBottomToken.decimals)}");
   }
 
   String _toAmountDisplay(String amount, int decimals) {
@@ -254,9 +257,9 @@ class _SwapPageState extends State<SwapPage> {
                                         color: Colors.black26)),
                                 child: Row(
                                   children: [
-                                    if (selectedToken.iconUrl != "")
+                                    if (selectedToken.iconUrl!.isNotEmpty)
                                       CachedNetworkImage(
-                                        imageUrl: selectedToken.iconUrl,
+                                        imageUrl: selectedToken.iconUrl ?? "",
                                         width: 24,
                                         height: 24,
                                         placeholder: (context, url) =>
@@ -338,7 +341,8 @@ class _SwapPageState extends State<SwapPage> {
                             child: Row(
                               children: [
                                 Text(
-                                  "Balance: ${selectedToken.getBalanceDisplay()} ${selectedToken.symbol}",
+                                  "Balance: ${toAmountDisplayBigInt(
+                                    selectedToken.balance, decimals: selectedToken.decimals)} ${selectedToken.symbol}",
                                   style: TextStyle(
                                       color: Styles.textLightColor,
                                       fontSize: 12),
@@ -346,9 +350,12 @@ class _SwapPageState extends State<SwapPage> {
                                 TextButton(
                                     onPressed: () async {
                                       await _amountTopUpdated(
-                                          selectedToken.getBalanceDisplay(
-                                              decimalPositions:
-                                                  selectedToken.decimals));
+                                        toAmountDisplayBigInt(
+                                            selectedToken.balance,
+                                            decimals: selectedToken.decimals,
+                                            fractionDigits:
+                                                selectedToken.decimals),
+                                      );
                                     },
                                     style: TextButton.styleFrom(
                                         padding: EdgeInsets.zero,
@@ -398,9 +405,10 @@ class _SwapPageState extends State<SwapPage> {
                                         color: Colors.black26)),
                                 child: Row(
                                   children: [
-                                    if (selectedBottomToken.iconUrl != "")
+                                    if (selectedBottomToken.iconUrl!.isNotEmpty)
                                       CachedNetworkImage(
-                                        imageUrl: selectedBottomToken.iconUrl,
+                                        imageUrl:
+                                            selectedBottomToken.iconUrl ?? "",
                                         width: 24,
                                         height: 24,
                                         placeholder: (context, url) =>
@@ -482,7 +490,8 @@ class _SwapPageState extends State<SwapPage> {
                             child: Row(
                               children: [
                                 Text(
-                                  "Balance: ${selectedBottomToken.getBalanceDisplay()} ${selectedBottomToken.symbol}",
+                                  "Balance: ${toAmountDisplayBigInt(
+                                    selectedBottomToken.balance, decimals: selectedToken.decimals)} ${selectedBottomToken.symbol}",
                                   style: TextStyle(
                                       color: Styles.textLightColor,
                                       fontSize: 12),

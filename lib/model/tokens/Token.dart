@@ -20,6 +20,4 @@ class Token {
     var balanceVal = JsonBigInt.toBigInt(json['balance']);
     return Token(name: json['name']??'<no title>', address: json['address'], iconUrl: json['iconUrl']??null, symbol: json['symbol']??'<no symbol>', balance: balanceVal??BigInt.zero, decimals: json['decimals']??0);
   }
-
-  String getBalanceDisplay({decimalPositions = 4}) => (balance/BigInt.from(10).pow(decimals)).toStringAsFixed(decimalPositions);
 }
