@@ -6,6 +6,9 @@ import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mobx/mobx.dart';
 import 'package:reef_mobile_app/components/modals/token_selection_modals.dart';
+import 'package:reef_mobile_app/model/ReefAppState.dart';
+import 'package:reef_mobile_app/model/StorageKey.dart';
+import 'package:reef_mobile_app/model/tokens/TokenWithAmount.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -293,7 +296,31 @@ class _SendPageState extends State<SendPage> {
                               : Styles.secondaryAccentColor,
                           padding: const EdgeInsets.symmetric(vertical: 16),
                         ),
-                        onPressed: () {},
+                        onPressed: () async {
+                          if (address.isEmpty ||
+                              amount.isEmpty ||
+                              selectedToken['balance'] == 0) {
+                            return;
+                          }
+                          var signerAddress = await ReefAppState
+                              .instance.storage
+                              .getValue(StorageKey.selected_address.name);
+                          TokenWithAmount tokenToTranfer = TokenWithAmount(
+                              name: selectedToken['name'],
+                              address: selectedToken['address'],
+                              iconUrl: selectedToken['logo'],
+                              symbol: selectedToken['name'],
+                              balance: BigInt.from(selectedToken['balance']),
+                              decimals: 18,
+                              amount: amount,
+                              price: 1.0);
+                          var res = await ReefAppState.instance.transferCtrl
+                              .transferTokens(
+                                  signerAddress, address, tokenToTranfer);
+                          amountController.clear();
+                          valueController.clear();
+                          print('res = $res');
+                        },
                         child: Text(
                           address.isEmpty
                               ? 'Missing destination address'
