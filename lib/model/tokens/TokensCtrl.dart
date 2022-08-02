@@ -1,4 +1,6 @@
 import 'package:reef_mobile_app/model/tokens/Token.dart';
+import 'package:reef_mobile_app/model/tokens/TokenActivity.dart';
+import 'package:reef_mobile_app/model/tokens/TokenNFT.dart';
 import 'package:reef_mobile_app/model/tokens/TokenWithAmount.dart';
 import 'package:reef_mobile_app/service/JsApiService.dart';
 
@@ -49,5 +51,30 @@ class TokenCtrl {
       )
     ];
     tokenModel.setTokenList(tknList);
+    
+    jsApi.jsObservable('appState.selectedSignerNFTs\$').listen((tokens) {
+      if(tokens==null) {
+        return;
+      }
+      print('NFTs=${tokens}');
+      List<TokenNFT> tknList = List.from(tokens.map((t)=>TokenNFT.fromJSON(t)));
+      tokenModel.setSelectedSignerNFTs(tknList);
+    });
+
+    jsApi.jsObservable('appState.reefPrice\$').listen((value) {
+      if(value==null) {
+        return;
+      }
+      tokenModel.setReefPrice(value);
+    });
+
+    jsApi.jsObservable('appState.transferHistory\$').listen((items) {
+      if(items==null) {
+        return;
+      }
+      List<TokenActivity> tknList = List.from(items.map((i)=>TokenActivity.fromJSON(i)));
+      tokenModel.setTokenActivity(tknList);
+    });
+
   }
 }

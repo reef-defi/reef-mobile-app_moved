@@ -20,44 +20,11 @@ class TokenView extends StatefulWidget {
 }
 
 class _TokenViewState extends State<TokenView> {
-  /*static final List _cardMap = [
-    {
-      "key": 0,
-      "name": "Reef",
-      "iconURL": "https://s2.coinmarketcap.com/static/img/coins/64x64/6951.png",
-      "tokenName": "REEF",
-      "conversionRate": 0.003272,
-      "value": 4000.00
-    },
-    {
-      "key": 1,
-      "name": "Uniswap",
-      "iconURL": "https://s2.coinmarketcap.com/static/img/coins/64x64/7083.png",
-      "tokenName": "UNI",
-      "conversionRate": 0.0,
-      "value": 0.0
-    },
-    {
-      "key": 2,
-      "name": "Celsius",
-      "iconURL": "https://s2.coinmarketcap.com/static/img/coins/64x64/2700.png",
-      "tokenName": "CEL",
-      "conversionRate": 0.0,
-      "value": 0.0
-    },
-    {
-      "key": 3,
-      "name": "Firo",
-      "iconURL": "https://s2.coinmarketcap.com/static/img/coins/64x64/1414.png",
-      "tokenName": "FIRO",
-      "conversionRate": 0.0,
-      "value": 0.0
-    }
-  ];*/
 
-  Widget tokenCard(String name, String iconURL,
-      {double value = 0.0,
-      double conversionRate = 0.0,
+  Widget tokenCard(String name,
+      {String? iconURL,
+        double balance = 0.0,
+      double price = 0.0,
       String tokenName = ""}) {
     return ViewBoxContainer(
         child: Padding(
@@ -67,7 +34,7 @@ class _TokenViewState extends State<TokenView> {
                 SizedBox(
                     height: 48,
                     width: 48,
-                    child: CachedNetworkImage(
+                    child: iconURL!=null ? CachedNetworkImage(
                       imageUrl: iconURL,
                       placeholder: (context, url) => Shimmer.fromColors(
                         baseColor: Colors.grey[300]!,
@@ -86,7 +53,7 @@ class _TokenViewState extends State<TokenView> {
                         color: Colors.black12,
                         size: 48,
                       ),
-                    )),
+                    ): const SizedBox.shrink()),
                 const Gap(8),
                 Text(
                   name,
@@ -98,13 +65,14 @@ class _TokenViewState extends State<TokenView> {
                 ),
                 const Gap(2),
                 Text(
-                  "${value != 0 ? value : 0} ${tokenName != "" ? tokenName : name.toUpperCase()} - ${conversionRate != 0 ? conversionRate.toStringAsFixed(4) : 'No pool data'}",
+                  // TODO allow conversionRate to be null for no data
+                  "${balance != 0 ? balance : 0} ${tokenName != "" ? tokenName : name.toUpperCase()} - ${price != 0 ? price.toStringAsFixed(4) : 'No pool data'}",
                   style: TextStyle(color: Styles.textLightColor, fontSize: 16),
                 ),
                 const Gap(8),
-                if (value != 0)
+                if (balance != 0)
                   GradientText(
-                    "\$${getUSDPrice(value, conversionRate: conversionRate).toStringAsFixed(2)}",
+                    "\$${getBalanceValue(balance, price).toStringAsFixed(2)}",
                     style: GoogleFonts.spaceGrotesk(
                         fontSize: 24, fontWeight: FontWeight.w700),
                     gradient: textGradient(),
@@ -131,26 +99,25 @@ class _TokenViewState extends State<TokenView> {
             child: Padding(
               padding:
                   const EdgeInsets.symmetric(vertical: 32, horizontal: 48.0),
-              child:Observer(builder: (_) {
-                return Column(
-                  /*children: _cardMap
-                    .map((item) => Column(
-                          children: [
-                            tokenCard(item["name"], item["iconURL"],
-                                tokenName: item["tokenName"],
-                                conversionRate: item["conversionRate"],
-                                value: item["value"]),
-                            if (item["key"] != _cardMap.length - 1)
-                              const Gap(24),
-                          ],
-                        ))
-                    .toList(),*/
-                    children: ReefAppState.instance.model.tokens.selectedSignerTokens.map((TokenWithAmount tkn) {
-                      return Text(tkn.name);
-                    }).toList()
+              child: Observer(builder: (_) {
+                return Wrap(
+                  spacing: 24,
+                  children: ReefAppState
+                      .instance.model.tokens.selectedSignerTokens
+                      .map((TokenWithAmount tkn) {
+                    return Column(
+                      children: [
+                        tokenCard(tkn.name,
+                            tokenName: tkn.symbol,
+                            iconURL:  tkn.iconUrl,
+                            price: tkn.price?.toDouble()??0,
+                            balance: decimalsToDouble(tkn.balance)
+                        ),
+                      ],
+                    );
+                  }).toList(),
                 );
-              }
-              ),
+              }),
             ),
           )
         ]);

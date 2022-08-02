@@ -3,7 +3,7 @@ import '../../utils/json_big_int.dart';
 class Token {
   final String name;
   final String address;
-  final String iconUrl;
+  final String? iconUrl;
   final String symbol;
   final BigInt balance;
   final int decimals;
@@ -18,7 +18,7 @@ class Token {
 
   static Token fromJSON(dynamic json){
     var balanceVal = JsonBigInt.toBigInt(json['balance']);
-    return Token(name: json['name'], address: json['address'], iconUrl: json['iconUrl'], symbol: json['symbol'], balance: balanceVal??BigInt.zero, decimals: json['decimals']);
+    return Token(name: json['name']??'<no title>', address: json['address'], iconUrl: json['iconUrl']??null, symbol: json['symbol']??'<no symbol>', balance: balanceVal??BigInt.zero, decimals: json['decimals']??0);
   }
 
   String getBalanceDisplay({decimalPositions = 4}) => (balance/BigInt.from(10).pow(decimals)).toStringAsFixed(decimalPositions);

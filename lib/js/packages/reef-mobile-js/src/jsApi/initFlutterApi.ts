@@ -28,7 +28,7 @@ export const initFlutterApi = async (flutterJS: FlutterJS) => {
                         return await buildAccountWithMeta(account.name, account.address);
                     }
                 ));
-
+                console.log("init reef state=",accountsWithMeta.length);
                 const destroyFn = await appState.initReefState({
                     network: availableNetworks[selNetwork],
                     jsonAccounts: {accounts: accountsWithMeta, injectedSigner: signingKey}
@@ -123,7 +123,7 @@ export const initFlutterApi = async (flutterJS: FlutterJS) => {
             }
         };
         // testReefObservables();
-        accountApi.innitApi(flutterJS);
+        accountApi.innitApi();
         transferApi.initApi(flutterJS);
         swapApi.initApi();
     } catch (e) {

@@ -1,25 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:reef_mobile_app/components/SignatureContentToggle.dart';
-import 'package:reef_mobile_app/components/home/activity_view.dart';
 import 'package:reef_mobile_app/components/home/NFT_view.dart';
+import 'package:reef_mobile_app/components/home/activity_view.dart';
 import 'package:reef_mobile_app/components/home/staking_view.dart';
 import 'package:reef_mobile_app/components/home/token_view.dart';
-import 'package:reef_mobile_app/service/JsApiService.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:reef_mobile_app/model/tokens/TokenWithAmount.dart';
 import 'package:reef_mobile_app/utils/elements.dart';
 import 'package:reef_mobile_app/utils/functions.dart';
 import 'package:reef_mobile_app/utils/gradient_text.dart';
 import 'package:reef_mobile_app/utils/size_config.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:reef_mobile_app/pages/accounts.dart';
-import 'package:reef_mobile_app/service/JsApiService.dart';
-import 'package:reef_mobile_app/model/ReefAppState.dart';
-import 'package:reef_mobile_app/service/StorageService.dart';
-import 'package:webview_flutter/webview_flutter.dart';
-import 'package:reef_mobile_app/model/ReefAppState.dart';
 
 import '../model/StorageKey.dart';
 
@@ -58,7 +52,6 @@ class _HomePageState extends State<HomePage> {
   ];
 
   Widget balanceSection() {
-    const amount = 4000.00;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 24.0),
       child: Column(
@@ -73,12 +66,14 @@ class _HomePageState extends State<HomePage> {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: Center(
-                child: GradientText(
-                  "\$${getUSDPrice(amount).toStringAsFixed(2)}",
-                  style: GoogleFonts.spaceGrotesk(
-                      fontSize: 54, fontWeight: FontWeight.w700),
-                  gradient: textGradient(),
-                ),
+                child: Observer(builder: (_) {
+                  return GradientText(
+                    "\$${sumTokenBalances(ReefAppState.instance.model.tokens.selectedSignerTokens.toList()).toStringAsFixed(0)}",
+                    style: GoogleFonts.spaceGrotesk(
+                        fontSize: 54, fontWeight: FontWeight.w700),
+                    gradient: textGradient(),
+                  );
+                }),
               ),
             ),
           ]),
@@ -222,5 +217,16 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
     ));
+  }
+
+  double sumTokenBalances(List<TokenWithAmount> list) {
+    var sum = 0.0;
+    list.forEach((token) {
+      double balValue = getBalanceValue(decimalsToDouble(token.balance), token.price);
+      if(balValue>0) {
+        sum = sum + balValue;
+      }
+    });
+    return sum;
   }
 }
