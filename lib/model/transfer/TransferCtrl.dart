@@ -9,7 +9,7 @@ class TransferCtrl {
   Future<dynamic> transferTokens(
       String fromAddress, String toAddress, TokenWithAmount token) async {
     return jsApi.jsPromise(
-        'transfer.send("$fromAddress", "$toAddress", "${token.amount}", ${token.decimals}, "${token.address}")');
+        'transfer.send("$fromAddress", "$toAddress", "${token.amount.toString()}", ${token.decimals}, "${token.address}")');
   }
 
   Future<dynamic> testTransferTokens(String from) async {
@@ -26,7 +26,7 @@ class TransferCtrl {
         symbol: 'REEF',
         balance: 0,
         decimals: 18,
-        amount: '1.0',
+        amount: BigInt.one,
         price: null);
     return transferTokens(from, toAddress, tokenReef);
   }

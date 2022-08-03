@@ -26,6 +26,22 @@ mixin _$TokenModel on _TokenModel, Store {
     });
   }
 
+  late final _$tokenListAtom =
+      Atom(name: '_TokenModel.tokenList', context: context);
+
+  @override
+  ObservableList<TokenWithAmount> get tokenList {
+    _$tokenListAtom.reportRead();
+    return super.tokenList;
+  }
+
+  @override
+  set tokenList(ObservableList<TokenWithAmount> value) {
+    _$tokenListAtom.reportWrite(value, super.tokenList, () {
+      super.tokenList = value;
+    });
+  }
+
   late final _$selectedSignerNFTsAtom =
       Atom(name: '_TokenModel.selectedSignerNFTs', context: context);
 
@@ -39,6 +55,22 @@ mixin _$TokenModel on _TokenModel, Store {
   set selectedSignerNFTs(ObservableList<TokenNFT> value) {
     _$selectedSignerNFTsAtom.reportWrite(value, super.selectedSignerNFTs, () {
       super.selectedSignerNFTs = value;
+    });
+  }
+
+  late final _$activityAtom =
+      Atom(name: '_TokenModel.activity', context: context);
+
+  @override
+  ObservableList<TokenActivity> get activity {
+    _$activityAtom.reportRead();
+    return super.activity;
+  }
+
+  @override
+  set activity(ObservableList<TokenActivity> value) {
+    _$activityAtom.reportWrite(value, super.activity, () {
+      super.activity = value;
     });
   }
 
@@ -73,11 +105,33 @@ mixin _$TokenModel on _TokenModel, Store {
   }
 
   @override
+  void setTokenList(List<TokenWithAmount> tkns) {
+    final _$actionInfo = _$_TokenModelActionController.startAction(
+        name: '_TokenModel.setTokenList');
+    try {
+      return super.setTokenList(tkns);
+    } finally {
+      _$_TokenModelActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void setSelectedSignerNFTs(List<TokenNFT> tkns) {
     final _$actionInfo = _$_TokenModelActionController.startAction(
         name: '_TokenModel.setSelectedSignerNFTs');
     try {
       return super.setSelectedSignerNFTs(tkns);
+    } finally {
+      _$_TokenModelActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setTokenActivity(List<TokenActivity> items) {
+    final _$actionInfo = _$_TokenModelActionController.startAction(
+        name: '_TokenModel.setTokenActivity');
+    try {
+      return super.setTokenActivity(items);
     } finally {
       _$_TokenModelActionController.endAction(_$actionInfo);
     }
@@ -98,7 +152,9 @@ mixin _$TokenModel on _TokenModel, Store {
   String toString() {
     return '''
 selectedSignerTokens: ${selectedSignerTokens},
+tokenList: ${tokenList},
 selectedSignerNFTs: ${selectedSignerNFTs},
+activity: ${activity},
 reefPrice: ${reefPrice}
     ''';
   }

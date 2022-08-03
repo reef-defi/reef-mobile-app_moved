@@ -11,6 +11,8 @@ import 'package:reef_mobile_app/model/StorageKey.dart';
 import 'package:reef_mobile_app/model/tokens/Token.dart';
 import 'package:reef_mobile_app/model/tokens/TokenWithAmount.dart';
 import 'package:reef_mobile_app/utils/functions.dart';
+import 'package:reef_mobile_app/utils/constants.dart';
+import 'package:reef_mobile_app/utils/functions.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -65,7 +67,8 @@ class _SendPageState extends State<SendPage> {
         symbol: selectedToken.name,
         balance: selectedToken.balance,
         decimals: selectedToken.decimals,
-        amount: amount,
+        amount: BigInt.parse(toStringWithoutDecimals(
+            amount, selectedToken.decimals)),
         price: 0);
     var res = await ReefAppState.instance.transferCtrl
         .transferTokens(

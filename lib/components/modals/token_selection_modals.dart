@@ -6,6 +6,8 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:gap/gap.dart';
 import 'package:reef_mobile_app/components/modal.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
+import 'package:reef_mobile_app/model/tokens/TokenWithAmount.dart';
+import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/utils/elements.dart';
 import 'package:reef_mobile_app/utils/functions.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
@@ -246,7 +248,7 @@ class TokenSelectionState extends State<TokenSelection> {
                                           ],
                                         ),
                                       ]),
-                                      Text(toBalanceDisplayBigInt(e.balance))
+                                      Text(toAmountDisplayBigInt(e.balance, decimals: e.decimals))
                                     ],
                                   )),
                             ),

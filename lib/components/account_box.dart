@@ -150,7 +150,7 @@ class _AccountBoxState extends State<AccountBox> {
                               const Gap(4),
                               GradientText(
                                 showBalance
-                                    ? toBalanceDisplayBigInt(
+                                    ? toAmountDisplayBigInt(
                                         widget.reefSigner.balance)
                                     : "--",
                                 style: GoogleFonts.spaceGrotesk(
