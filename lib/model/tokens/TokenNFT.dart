@@ -3,7 +3,7 @@ import 'Token.dart';
 
 class TokenNFT extends Token {
 
-  final String nftId;
+  final int nftId;
   final ContractType contractType;
   final String? mimetype;
 

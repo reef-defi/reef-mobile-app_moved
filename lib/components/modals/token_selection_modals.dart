@@ -2,17 +2,22 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:gap/gap.dart';
 import 'package:reef_mobile_app/components/modal.dart';
+import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/utils/elements.dart';
 import 'package:reef_mobile_app/utils/functions.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 import 'package:shimmer/shimmer.dart';
 
-class TokenSelection extends StatefulWidget {
-  const TokenSelection({Key? key, required this.callback}) : super(key: key);
+import '../../model/tokens/Token.dart';
 
-  final Function(Map token) callback;
+class TokenSelection extends StatefulWidget {
+  const TokenSelection({Key? key, required this.callback, required this.tokens}) : super(key: key);
+
+  final Function(Token token) callback;
+  final List<Token> tokens;
 
   @override
   State<TokenSelection> createState() => TokenSelectionState();
@@ -23,7 +28,7 @@ class TokenSelectionState extends State<TokenSelection> {
   bool _isInputEmpty = true;
 
   TextEditingController valueContainer = TextEditingController();
-
+/*
   final List initialTokens = [
     {
       "name": "REEF",
@@ -43,31 +48,28 @@ class TokenSelectionState extends State<TokenSelection> {
       "logo": "",
       "balance": 0.00
     }
-  ];
+  ];*/
 
-  late List tokens;
+  late List<Token> displayTokens;
 
   _changeState() {
     setState(() {
       _isInputEmpty = valueContainer.text.isEmpty;
       if (!_isInputEmpty) {
         setState(() {
-          tokens = tokens
-              .where((e) =>
-                  e["name"]
-                      .toString()
+          displayTokens = displayTokens
+              .where((tkn) =>
+                  tkn.name
                       .toLowerCase()
                       .contains(valueContainer.text.toLowerCase()) ||
-                  e["address"]
-                      .toString()
+                  tkn.address
                       .toLowerCase()
                       .contains(valueContainer.text.toLowerCase()))
               .toList();
         });
-        print(tokens);
       } else {
         setState(() {
-          tokens = initialTokens;
+          displayTokens = widget.tokens;
         });
       }
     });
@@ -77,7 +79,7 @@ class TokenSelectionState extends State<TokenSelection> {
   void initState() {
     super.initState();
     setState(() {
-      tokens = initialTokens;
+      displayTokens = widget.tokens;
     });
     // Start listening to changes.
     valueContainer.addListener(_changeState);
@@ -119,7 +121,7 @@ class TokenSelectionState extends State<TokenSelection> {
               child: ListView(
                 shrinkWrap: true,
                 physics: const BouncingScrollPhysics(),
-                children: tokens
+                children: displayTokens
                     .map((e) => Column(
                           children: [
                             Container(
@@ -152,9 +154,9 @@ class TokenSelectionState extends State<TokenSelection> {
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       Row(children: [
-                                        if (e["logo"].isNotEmpty)
+                                        if (e.iconUrl!=null)
                                           CachedNetworkImage(
-                                            imageUrl: e["logo"],
+                                            imageUrl: e.iconUrl!,
                                             height: 24,
                                             width: 24,
                                             placeholder: (context, url) =>
@@ -188,14 +190,14 @@ class TokenSelectionState extends State<TokenSelection> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            Text(e["name"],
+                                            Text(e.name,
                                                 style: const TextStyle(
                                                     fontSize: 16)),
                                             Row(
                                               mainAxisSize: MainAxisSize.min,
                                               children: [
                                                 Text(
-                                                  e["address"]
+                                                  e.address
                                                       .toString()
                                                       .shorten(),
                                                   style: TextStyle(
@@ -217,8 +219,7 @@ class TokenSelectionState extends State<TokenSelection> {
                                                     onPressed: () {
                                                       Clipboard.setData(
                                                           ClipboardData(
-                                                              text: e[
-                                                                  "address"]));
+                                                              text: e.address));
                                                     },
                                                     child: Row(
                                                       mainAxisSize:
@@ -245,12 +246,12 @@ class TokenSelectionState extends State<TokenSelection> {
                                           ],
                                         ),
                                       ]),
-                                      Text(e["balance"].toString())
+                                      Text(toBalanceDisplayBigInt(e.balance))
                                     ],
                                   )),
                             ),
-                            if (e["address"] !=
-                                tokens[tokens.length - 1]["address"])
+                            if (e.address !=
+                                displayTokens[displayTokens.length - 1].address)
                               const Gap(4),
                           ],
                         ))
@@ -266,5 +267,9 @@ class TokenSelectionState extends State<TokenSelection> {
 
 void showTokenSelectionModal(context, {required callback}) {
   showModal(context,
-      child: TokenSelection(callback: callback), headText: "Select Token");
+      child: Observer(builder: (_){
+        var tokens = ReefAppState.instance.model.tokens.selectedSignerTokens;
+        return TokenSelection(callback: callback, tokens: tokens,);
+      }), headText: "Select Token");
+
 }

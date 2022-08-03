@@ -110,4 +110,17 @@ class AccountCtrl {
   void _initWasm(JsApiService _jsApi) async {
     await _jsApi.jsPromise('keyring.initWasm()');
   }
+
+
+  void createTestAccount() {
+    final account = StoredAccount()
+      ..mnemonic =
+          "control employ home citizen film salmon divorce cousin illegal episode certain olympic"
+      ..address = "5EnY9eFwEDcEJ62dJWrTXhTucJ4pzGym4WZ2xcDKiT3eJecP"
+      ..svg = "<svg></svg>"
+      ..name = "Test account";
+
+    saveAccount(account);
+  }
+
 }

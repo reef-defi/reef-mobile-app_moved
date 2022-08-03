@@ -8,7 +8,9 @@ import 'package:mobx/mobx.dart';
 import 'package:reef_mobile_app/components/modals/token_selection_modals.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/StorageKey.dart';
+import 'package:reef_mobile_app/model/tokens/Token.dart';
 import 'package:reef_mobile_app/model/tokens/TokenWithAmount.dart';
+import 'package:reef_mobile_app/utils/functions.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -29,21 +31,47 @@ class _SendPageState extends State<SendPage> {
   TextEditingController amountController = TextEditingController();
   String amount = "";
 
-  Map selectedToken = {
+  Token selectedToken = {
     "name": "REEF",
     "address": "0x0000000000000000000000000000000001000000",
     "logo": "https://s2.coinmarketcap.com/static/img/coins/64x64/6951.png",
     "balance": 4200.00
   };
 
-  void _changeSelectedToken(Map token) {
+  void _changeSelectedToken(Token token) {
     setState(() {
       selectedToken = token;
     });
   }
+  void _onConfirmSend() async {
+    if (address.isEmpty ||
+        amount.isEmpty ||
+        selectedToken.balance <= BigInt.zero) {
+      return;
+    }
+    var signerAddress = await ReefAppState
+        .instance.storage
+        .getValue(StorageKey.selected_address.name);
+    TokenWithAmount tokenToTranfer = TokenWithAmount(
+        name: selectedToken.name,
+        address: selectedToken.address,
+        iconUrl: selectedToken.iconUrl,
+        symbol: selectedToken.name,
+        balance: selectedToken.balance,
+        decimals: selectedToken.decimals,
+        amount: amount,
+        price: 0);
+    var res = await ReefAppState.instance.transferCtrl
+        .transferTokens(
+        signerAddress, address, tokenToTranfer);
+    amountController.clear();
+    valueController.clear();
+    print('res = $res');
+  }
 
   @override
   Widget build(BuildContext context) {
+
     return SignatureContentToggle(Padding(
       padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24),
       child: Column(
@@ -74,12 +102,14 @@ class _SendPageState extends State<SendPage> {
                         children: [
                           Expanded(
                             child: TextFormField(
-                              controller: valueController,
+                              initialValue: '0xC62B6cB2190981F83686E7751449a20D1B82C5Fc',
+                              // controller: valueController,
                               onChanged: (text) {
                                 setState(() {
                                   //you can access nameController in its scope to get
                                   // the value of text entered as shown below
-                                  address = valueController.text;
+                                  // address = valueController.text;
+                                  address = '0xC62B6cB2190981F83686E7751449a20D1B82C5Fc';
                                 });
                               },
                               decoration: InputDecoration(
@@ -170,9 +200,9 @@ class _SendPageState extends State<SendPage> {
                                         color: Colors.black26)),
                                 child: Row(
                                   children: [
-                                    if (selectedToken["logo"].isNotEmpty)
+                                    if (selectedToken.iconUrl!=null)
                                       CachedNetworkImage(
-                                        imageUrl: selectedToken["logo"],
+                                        imageUrl: selectedToken.iconUrl!,
                                         width: 24,
                                         height: 24,
                                         placeholder: (context, url) =>
@@ -200,7 +230,7 @@ class _SendPageState extends State<SendPage> {
                                       Icon(CupertinoIcons.question_circle,
                                           color: Colors.grey[600]!, size: 24),
                                     const Gap(4),
-                                    Text(selectedToken["name"]),
+                                    Text(selectedToken.name),
                                     const Gap(4),
                                     Icon(CupertinoIcons.chevron_down,
                                         size: 16, color: Styles.textLightColor)
@@ -258,7 +288,7 @@ class _SendPageState extends State<SendPage> {
                             child: Row(
                               children: [
                                 Text(
-                                  "Balance: ${selectedToken["balance"].toStringAsFixed(2)} ${selectedToken["name"].toString().toUpperCase()}",
+                                  "Balance: ${toBalanceDisplayBigInt(selectedToken.balance)} ${selectedToken.name.toUpperCase()}",
                                   style: TextStyle(
                                       color: Styles.textLightColor,
                                       fontSize: 12),
@@ -296,31 +326,7 @@ class _SendPageState extends State<SendPage> {
                               : Styles.secondaryAccentColor,
                           padding: const EdgeInsets.symmetric(vertical: 16),
                         ),
-                        onPressed: () async {
-                          if (address.isEmpty ||
-                              amount.isEmpty ||
-                              selectedToken['balance'] == 0) {
-                            return;
-                          }
-                          var signerAddress = await ReefAppState
-                              .instance.storage
-                              .getValue(StorageKey.selected_address.name);
-                          TokenWithAmount tokenToTranfer = TokenWithAmount(
-                              name: selectedToken['name'],
-                              address: selectedToken['address'],
-                              iconUrl: selectedToken['logo'],
-                              symbol: selectedToken['name'],
-                              balance: BigInt.from(selectedToken['balance']),
-                              decimals: 18,
-                              amount: amount,
-                              price: 1.0);
-                          var res = await ReefAppState.instance.transferCtrl
-                              .transferTokens(
-                                  signerAddress, address, tokenToTranfer);
-                          amountController.clear();
-                          valueController.clear();
-                          print('res = $res');
-                        },
+                        onPressed: _onConfirmSend,
                         child: Text(
                           address.isEmpty
                               ? 'Missing destination address'
