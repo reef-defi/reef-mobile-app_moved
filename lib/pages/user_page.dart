@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:gap/gap.dart';
@@ -27,6 +28,13 @@ class _UserPageState extends State<UserPage> {
   Widget build(BuildContext context) {
     return SignatureContentToggle(Column(
       children: <Widget>[
+        if (kDebugMode)ElevatedButton(
+          child: const Text('create test account'),
+          onPressed: () async {
+            ReefAppState.instance.accountCtrl.createTestAccount();
+          },
+        ),
+        const Gap(16),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 8.0),
           child: Row(
