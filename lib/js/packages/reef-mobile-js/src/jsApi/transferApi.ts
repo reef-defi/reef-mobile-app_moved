@@ -46,23 +46,22 @@ export const initApi = (flutterJS: FlutterJS) => {
                         return false
                     }
                     const STORAGE_LIMIT = 2000;
-                    const amount = calculateAmount ({ decimals: tokenDecimals, amount: tokenAmount });
                     const { provider } = signer.signer;
                     const tokenContract = new Contract(tokenAddress, ERC20, signer.signer);
                     try {
                         if (tokenAddress === REEF_ADDRESS && to.length === 48) {
                             console.log ('transfering native REEF');
-                            console.log (amount, amount.toString ());
-                            await nativeTransfer(amount, to, provider, signer);
+                            console.log (tokenAmount);
+                            await nativeTransfer(tokenAmount, to, provider, signer);
                             console.log ('transfer success');
                             return true;
                         } else {
                             console.log ('transfering REEF20');
-                            console.log (amount, amount.toString());
+                            console.log (tokenAmount);
                             const toAddress = to.length === 48
                                 ? await getSignerEvmAddress(to, provider)
                                 : to;
-                            const ARGS = [toAddress, amount];
+                            const ARGS = [toAddress, tokenAmount];
                             console.log ("args=",ARGS);
                             const tx = await tokenContract ['transfer'] (...ARGS, {
                                 customData: {
