@@ -1,5 +1,5 @@
 double getBalanceValue(double balance, price) {
-  if(price == null || price == null){
+  if (price == null || price == null) {
     return 0.0;
   }
   return balance * price;
@@ -17,10 +17,20 @@ extension ShortenExtension on String {
   }
 }
 
-// TODO: remove? not used
-String toAmountDisplayString(String decimalsString, {int decimals = 18, int fractionDigits = 4}) => (BigInt.parse(decimalsString)/BigInt.from(10).pow(decimals)).toStringAsFixed(fractionDigits);
-String toAmountDisplayBigInt(BigInt decimalsVal, {int decimals = 18, int fractionDigits = 4}) => (decimalsVal/BigInt.from(10).pow(decimals)).toStringAsFixed(fractionDigits);
-double decimalsToDouble(BigInt decimalsVal, {int decimals = 18}) => (decimalsVal/BigInt.from(10).pow(decimals)).toDouble();
+String toAmountDisplayBigInt(BigInt decimalsVal,
+    {int decimals = 18, int fractionDigits = 4}) {
+  BigInt divisor = BigInt.from(10).pow(decimals);
+  String intPart = (decimalsVal ~/ BigInt.from(10).pow(decimals)).toString();
+  if (fractionDigits == 0) return intPart;
+  String fractionalPart = decimalsVal.remainder(divisor).toString();
+  fractionalPart = fractionalPart.length < fractionDigits
+      ? fractionalPart.padRight(fractionDigits, "0")
+      : fractionalPart.substring(0, fractionDigits);
+  return "$intPart.$fractionalPart";
+}
+
+double decimalsToDouble(BigInt decimalsVal, {int decimals = 18}) =>
+    (decimalsVal / BigInt.from(10).pow(decimals)).toDouble();
 
 String toStringWithoutDecimals(String amount, int decimals) {
   var arr = amount.split(".");
