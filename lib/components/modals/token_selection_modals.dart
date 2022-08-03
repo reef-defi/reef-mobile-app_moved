@@ -16,50 +16,28 @@ import 'package:shimmer/shimmer.dart';
 import '../../model/tokens/Token.dart';
 
 class TokenSelection extends StatefulWidget {
-  const TokenSelection({Key? key, required this.callback, required this.tokens}) : super(key: key);
+  const TokenSelection({Key? key, required this.callback}) : super(key: key);
 
-  final Function(Token token) callback;
-  final List<Token> tokens;
+  final Function(TokenWithAmount token) callback;
 
   @override
   State<TokenSelection> createState() => TokenSelectionState();
 }
 
 class TokenSelectionState extends State<TokenSelection> {
-  bool value = false;
-  bool _isInputEmpty = true;
+  // bool value = false;
 
   TextEditingController valueContainer = TextEditingController();
-/*
-  final List initialTokens = [
-    {
-      "name": "REEF",
-      "address": "0x0000000000000000000000000000000001000000",
-      "logo": "https://s2.coinmarketcap.com/static/img/coins/64x64/6951.png",
-      "balance": 4200.00
-    },
-    {
-      "name": "FMT",
-      "address": "0x4676199AdA480a2fCB4b2D4232b7142AF9fe9D87",
-      "logo": "",
-      "balance": 0.00
-    },
-    {
-      "name": "CHT",
-      "address": "0xA6471d3a932be75DF9935A21549e6a40F20e5dFf",
-      "logo": "",
-      "balance": 0.00
-    }
-  ];*/
 
-  late List<Token> displayTokens;
+  // late List<TokenWithAmount> displayTokens;
+  String filterTokensBy = '';
 
   _changeState() {
     setState(() {
-      _isInputEmpty = valueContainer.text.isEmpty;
-      if (!_isInputEmpty) {
-        setState(() {
-          displayTokens = displayTokens
+      bool isInputEmpty = valueContainer.text.isEmpty;
+      if (!isInputEmpty) {
+        filterTokensBy = valueContainer.text.toLowerCase();
+        /*displayTokens = displayTokens
               .where((tkn) =>
                   tkn.name
                       .toLowerCase()
@@ -67,12 +45,9 @@ class TokenSelectionState extends State<TokenSelection> {
                   tkn.address
                       .toLowerCase()
                       .contains(valueContainer.text.toLowerCase()))
-              .toList();
-        });
+              .toList();*/
       } else {
-        setState(() {
-          displayTokens = widget.tokens;
-        });
+        filterTokensBy = '';
       }
     });
   }
@@ -80,9 +55,9 @@ class TokenSelectionState extends State<TokenSelection> {
   @override
   void initState() {
     super.initState();
-    setState(() {
+    /*setState(() {
       displayTokens = widget.tokens;
-    });
+    });*/
     // Start listening to changes.
     valueContainer.addListener(_changeState);
   }
@@ -120,145 +95,169 @@ class TokenSelectionState extends State<TokenSelection> {
             child: ConstrainedBox(
               constraints: const BoxConstraints(
                   maxHeight: 256, minWidth: double.infinity),
-              child: ListView(
-                shrinkWrap: true,
-                physics: const BouncingScrollPhysics(),
-                children: displayTokens
-                    .map((e) => Column(
-                          children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color: const Color(0x20000000),
-                                    width: 1,
-                                  ),
-                                  boxShadow: const [
-                                    BoxShadow(
-                                      color: Color(0x16000000),
-                                      blurRadius: 24,
-                                    )
-                                  ],
-                                  borderRadius: BorderRadius.circular(8)),
-                              child: MaterialButton(
-                                  splashColor: const Color(0x555531a9),
-                                  color: Colors.white,
-                                  padding:
-                                      const EdgeInsets.fromLTRB(12, 12, 12, 10),
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8)),
-                                  elevation: 0,
-                                  onPressed: () {
-                                    widget.callback(e);
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Row(children: [
-                                        if (e.iconUrl!=null)
-                                          CachedNetworkImage(
-                                            imageUrl: e.iconUrl!,
-                                            height: 24,
-                                            width: 24,
-                                            placeholder: (context, url) =>
-                                                Shimmer.fromColors(
-                                              baseColor: Colors.grey[300]!,
-                                              highlightColor: Colors.grey[350]!,
-                                              child: Container(
-                                                width: 24,
-                                                height: 24,
-                                                decoration: ShapeDecoration(
-                                                  color: Colors.grey[350]!,
-                                                  shape: const CircleBorder(),
+              child: Observer(builder: (_) {
+                var displayTokens =
+                    ReefAppState.instance.model.tokens.selectedSignerTokens.toList();
+                if (filterTokensBy.isNotEmpty) {
+                  displayTokens = displayTokens
+                      .where((tkn) =>
+                          tkn.name
+                              .toLowerCase()
+                              .contains(valueContainer.text.toLowerCase()) ||
+                          tkn.address
+                              .toLowerCase()
+                              .contains(valueContainer.text.toLowerCase()))
+                      .toList();
+                }
+                return ListView(
+                  shrinkWrap: true,
+                  physics: const BouncingScrollPhysics(),
+                  children: displayTokens
+                      .map((e) => Column(
+                            children: [
+                              Container(
+                                decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color: const Color(0x20000000),
+                                      width: 1,
+                                    ),
+                                    boxShadow: const [
+                                      BoxShadow(
+                                        color: Color(0x16000000),
+                                        blurRadius: 24,
+                                      )
+                                    ],
+                                    borderRadius: BorderRadius.circular(8)),
+                                child: MaterialButton(
+                                    splashColor: const Color(0x555531a9),
+                                    color: Colors.white,
+                                    padding: const EdgeInsets.fromLTRB(
+                                        12, 12, 12, 10),
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8)),
+                                    elevation: 0,
+                                    onPressed: () {
+                                      widget.callback(e);
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Row(children: [
+                                          if (e.iconUrl != null)
+                                            CachedNetworkImage(
+                                              imageUrl: e.iconUrl!,
+                                              height: 24,
+                                              width: 24,
+                                              placeholder: (context, url) =>
+                                                  Shimmer.fromColors(
+                                                baseColor: Colors.grey[300]!,
+                                                highlightColor:
+                                                    Colors.grey[350]!,
+                                                child: Container(
+                                                  width: 24,
+                                                  height: 24,
+                                                  decoration: ShapeDecoration(
+                                                    color: Colors.grey[350]!,
+                                                    shape: const CircleBorder(),
+                                                  ),
                                                 ),
                                               ),
-                                            ),
-                                            errorWidget:
-                                                (context, url, error) =>
-                                                    const Icon(
-                                              CupertinoIcons
-                                                  .exclamationmark_circle_fill,
-                                              color: Colors.black12,
-                                              size: 24,
-                                            ),
-                                          )
-                                        else
-                                          Icon(CupertinoIcons.question_circle,
-                                              color: Colors.grey[600]!,
-                                              size: 24),
-                                        const Gap(12),
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(e.name,
-                                                style: const TextStyle(
-                                                    fontSize: 16)),
-                                            Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                Text(
-                                                  e.address
-                                                      .toString()
-                                                      .shorten(),
-                                                  style: TextStyle(
-                                                      fontSize: 12,
-                                                      color: Colors.grey[600]!),
-                                                ),
-                                                TextButton(
-                                                    style: TextButton.styleFrom(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                    .symmetric(
-                                                                horizontal: 8,
-                                                                vertical: 6),
-                                                        minimumSize:
-                                                            const Size(0, 0),
-                                                        tapTargetSize:
-                                                            MaterialTapTargetSize
-                                                                .shrinkWrap),
-                                                    onPressed: () {
-                                                      Clipboard.setData(
-                                                          ClipboardData(
-                                                              text: e.address));
-                                                    },
-                                                    child: Row(
-                                                      mainAxisSize:
-                                                          MainAxisSize.min,
-                                                      children: [
-                                                        Icon(
-                                                          Icons.copy,
-                                                          size: 12,
-                                                          color: Styles
-                                                              .textLightColor,
-                                                        ),
-                                                        const Gap(2),
-                                                        Text(
-                                                          "Copy Address",
-                                                          style: TextStyle(
-                                                              color: Styles
-                                                                  .textColor,
-                                                              fontSize: 12),
-                                                        ),
-                                                      ],
-                                                    )),
-                                              ],
+                                              errorWidget:
+                                                  (context, url, error) =>
+                                                      const Icon(
+                                                CupertinoIcons
+                                                    .exclamationmark_circle_fill,
+                                                color: Colors.black12,
+                                                size: 24,
+                                              ),
                                             )
-                                          ],
-                                        ),
-                                      ]),
-                                      Text(toAmountDisplayBigInt(e.balance, decimals: e.decimals))
-                                    ],
-                                  )),
-                            ),
-                            if (e.address !=
-                                displayTokens[displayTokens.length - 1].address)
-                              const Gap(4),
-                          ],
-                        ))
-                    .toList(),
-              ),
+                                          else
+                                            Icon(CupertinoIcons.question_circle,
+                                                color: Colors.grey[600]!,
+                                                size: 24),
+                                          const Gap(12),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(e.name,
+                                                  style: const TextStyle(
+                                                      fontSize: 16)),
+                                              Wrap( spacing: 8.0,
+                                                  children: [
+                                                Text(toAmountDisplayBigInt(e.balance,
+                                                    decimals: e.decimals)),
+                                                Text(e.symbol)
+                                              ]),
+                                              Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Text(
+                                                    e.address
+                                                        .toString()
+                                                        .shorten(),
+                                                    style: TextStyle(
+                                                        fontSize: 12,
+                                                        color:
+                                                            Colors.grey[600]!),
+                                                  ),
+                                                  TextButton(
+                                                      style: TextButton.styleFrom(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .symmetric(
+                                                                  horizontal: 8,
+                                                                  vertical: 6),
+                                                          minimumSize:
+                                                              const Size(0, 0),
+                                                          tapTargetSize:
+                                                              MaterialTapTargetSize
+                                                                  .shrinkWrap),
+                                                      onPressed: () {
+                                                        Clipboard.setData(
+                                                            ClipboardData(
+                                                                text:
+                                                                    e.address));
+                                                      },
+                                                      child: Row(
+                                                        mainAxisSize:
+                                                            MainAxisSize.min,
+                                                        children: [
+                                                          Icon(
+                                                            Icons.copy,
+                                                            size: 12,
+                                                            color: Styles
+                                                                .textLightColor,
+                                                          ),
+                                                          const Gap(2),
+                                                          Text(
+                                                            "Copy Address",
+                                                            style: TextStyle(
+                                                                color: Styles
+                                                                    .textColor,
+                                                                fontSize: 12),
+                                                          ),
+                                                        ],
+                                                      )),
+                                                ],
+                                              )
+                                            ],
+                                          ),
+                                        ]),
+                                      ],
+                                    )),
+                              ),
+                              if (e.address !=
+                                  displayTokens[displayTokens.length - 1]
+                                      .address)
+                                const Gap(4),
+                            ],
+                          ))
+                      .toList(),
+                );
+              }),
             ),
           ),
         ],
@@ -269,9 +268,5 @@ class TokenSelectionState extends State<TokenSelection> {
 
 void showTokenSelectionModal(context, {required callback}) {
   showModal(context,
-      child: Observer(builder: (_){
-        var tokens = ReefAppState.instance.model.tokens.selectedSignerTokens;
-        return TokenSelection(callback: callback, tokens: tokens,);
-      }), headText: "Select Token");
-
+      child: TokenSelection(callback: callback), headText: "Select Token");
 }

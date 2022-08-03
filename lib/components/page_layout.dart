@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:reef_mobile_app/components/top_bar.dart';
+import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/pages/home_page.dart';
 import 'package:reef_mobile_app/pages/send_page.dart';
 import 'package:reef_mobile_app/pages/swap_page.dart';
 import 'package:reef_mobile_app/pages/user_page.dart';
+import 'package:reef_mobile_app/utils/constants.dart';
+import 'package:reef_mobile_app/utils/functions.dart';
 import "package:reef_mobile_app/utils/styles.dart";
 import 'package:reef_mobile_app/utils/svg_icon.dart';
 
@@ -21,7 +25,7 @@ class _BottomNavState extends State<BottomNav> {
   int _selectedIndex = 0;
   static final List<Widget> _widgetOptions = <Widget>[
     const HomePage(),
-    const SendPage(),
+    const SendPage(Constants.REEF_TOKEN_ADDRESS),
     const SwapPage(),
     UserPage(),
   ];

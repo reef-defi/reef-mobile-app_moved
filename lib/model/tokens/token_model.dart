@@ -4,6 +4,8 @@ import 'package:reef_mobile_app/model/tokens/TokenActivity.dart';
 import 'package:reef_mobile_app/model/tokens/TokenNFT.dart';
 import 'package:reef_mobile_app/model/tokens/TokenWithAmount.dart';
 
+import '../../utils/constants.dart';
+
 part 'token_model.g.dart';
 
 class TokenModel = _TokenModel with _$TokenModel;
@@ -53,4 +55,7 @@ abstract class _TokenModel with Store {
   void setReefPrice(double value) {
     reefPrice = value;
   }
+
+  @computed
+  TokenWithAmount get reefToken => tokenList.firstWhere((tkn) => tkn.address == Constants.REEF_TOKEN_ADDRESS);
 }

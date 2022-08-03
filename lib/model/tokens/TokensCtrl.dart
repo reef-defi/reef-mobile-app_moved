@@ -22,7 +22,7 @@ class TokenCtrl {
     List<TokenWithAmount> tknList = [
       TokenWithAmount(
           name: 'REEF',
-          address: REEF_TOKEN_ADDRESS,
+          address: Constants.REEF_TOKEN_ADDRESS,
           iconUrl:
               'https://s2.coinmarketcap.com/static/img/coins/64x64/6951.png',
           symbol: 'REEF',
