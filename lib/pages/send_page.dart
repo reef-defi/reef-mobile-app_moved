@@ -19,10 +19,13 @@ import '../components/SignatureContentToggle.dart';
 //TODO: Complete the second box and add modal and button
 
 class SendPage extends StatefulWidget {
-  const SendPage({Key? key}) : super(key: key);
+  final TokenWithAmount preselected;
+  final List<TokenWithAmount> tokens;
+  const SendPage(List<TokenWithAmount> this.tokens, TokenWithAmount this.preselected, {Key? key}) : super(key: key);
 
   @override
   State<SendPage> createState() => _SendPageState();
+
 }
 
 class _SendPageState extends State<SendPage> {
@@ -31,12 +34,15 @@ class _SendPageState extends State<SendPage> {
   TextEditingController amountController = TextEditingController();
   String amount = "";
 
-  Token selectedToken = {
-    "name": "REEF",
-    "address": "0x0000000000000000000000000000000001000000",
-    "logo": "https://s2.coinmarketcap.com/static/img/coins/64x64/6951.png",
-    "balance": 4200.00
-  };
+  Token selectedToken = widget.preselected;
+  // Token selectedToken = Token(
+  //     name: 'Reef',
+  //     address: "0x0000000000000000000000000000000001000000",
+  //     iconUrl: "https://s2.coinmarketcap.com/static/img/coins/64x64/6951.png",
+  //     balance: BigInt.one.pow(18),
+  //     decimals: 18,
+  //     symbol: 'REEF'
+  // );
 
   void _changeSelectedToken(Token token) {
     setState(() {
