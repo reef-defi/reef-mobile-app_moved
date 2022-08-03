@@ -5,6 +5,12 @@ import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:reef_mobile_app/components/modals/token_selection_modals.dart';
+import 'package:reef_mobile_app/model/ReefAppState.dart';
+import 'package:reef_mobile_app/model/StorageKey.dart';
+import 'package:reef_mobile_app/model/swap/swap_settings.dart';
+import 'package:reef_mobile_app/model/tokens/TokenWithAmount.dart';
+import 'package:reef_mobile_app/utils/constants.dart';
+import 'package:reef_mobile_app/utils/functions.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -18,35 +24,186 @@ class SwapPage extends StatefulWidget {
 }
 
 class _SwapPageState extends State<SwapPage> {
-  TextEditingController amountController = TextEditingController();
-  String amount = "";
+  var tokens = ReefAppState.instance.model.tokens.tokenList;
+
+  TokenWithAmount? selectedTopToken = ReefAppState
+      .instance.model.tokens.tokenList
+      .firstWhere((token) => token.address == REEF_TOKEN_ADDRESS);
+
+  TokenWithAmount? selectedBottomToken;
+
+  SwapSettings settings = SwapSettings(1, 0.8);
+
+  TextEditingController amountTopController = TextEditingController();
+  String reserveTop = "";
   TextEditingController amountBottomController = TextEditingController();
-  String amountBottom = "";
+  String reserveBottom = "";
 
-  Map selectedToken = {
-    "name": "REEF",
-    "address": "0x0000000000000000000000000000000001000000",
-    "logo": "https://s2.coinmarketcap.com/static/img/coins/64x64/6951.png",
-    "balance": 4200.00
-  };
-
-  Map selectedBottomToken = {
-    "name": "FMT",
-    "address": "0x4676199AdA480a2fCB4b2D4232b7142AF9fe9D87",
-    "logo": "",
-    "balance": 0.00
-  };
-
-  void _changeSelectedToken(Map token) {
+  void _changeSelectedTopToken(TokenWithAmount token) {
     setState(() {
-      selectedToken = token;
+      selectedTopToken = token;
+      _getPoolReserves();
     });
   }
 
-  void _changeSelectedBottomToken(Map token) {
+  void _changeSelectedBottomToken(TokenWithAmount token) {
     setState(() {
       selectedBottomToken = token;
+      _getPoolReserves();
     });
+  }
+
+  void _switchTokens() {
+    setState(() {
+      var temp = selectedTopToken;
+      selectedTopToken = selectedBottomToken;
+      selectedBottomToken = temp;
+      _getPoolReserves();
+    });
+  }
+
+  void _getPoolReserves() async {
+    if (selectedTopToken == null || selectedBottomToken == null) {
+      return;
+    }
+
+    selectedTopToken = selectedTopToken!.setAmount("0");
+    amountTopController.clear();
+    selectedBottomToken = selectedBottomToken!.setAmount("0");
+    amountBottomController.clear();
+
+    var res = await ReefAppState.instance.swapCtrl.getPoolReserves(
+        selectedTopToken!.address, selectedBottomToken!.address);
+    if (res is bool && res == false) {
+      print("ERROR: Pool does not exist");
+      reserveTop = "";
+      reserveBottom = "";
+      return;
+    }
+
+    reserveTop = res["reserve1"];
+    reserveBottom = res["reserve2"];
+    print("Pool reserves: ${res['reserve1']}, ${res['reserve1']}");
+  }
+
+  Future<void> _amountTopUpdated(String value) async {
+    if (selectedTopToken == null) {
+      return;
+    }
+
+    var formattedValue =
+        toStringWithoutDecimals(value, selectedTopToken!.decimals);
+
+    if (value.isEmpty ||
+        formattedValue.replaceAll(".", "").replaceAll("0", "").isEmpty) {
+      print("ERROR: Invalid value");
+      if (selectedBottomToken != null) {
+        selectedBottomToken = selectedBottomToken!.setAmount("0");
+        amountBottomController.clear();
+      }
+      return;
+    }
+
+    selectedTopToken = selectedTopToken!.setAmount(formattedValue);
+
+    if (BigInt.parse(formattedValue) > selectedTopToken!.balance) {
+      print("WARN: Insufficient ${selectedTopToken!.symbol} balance");
+    }
+
+    if (reserveTop.isEmpty) {
+      return; // Pool does not exist
+    }
+
+    var token1 = selectedTopToken!.setAmount(reserveTop);
+    var token2 = selectedBottomToken!.setAmount(reserveBottom);
+
+    var res = (await ReefAppState.instance.swapCtrl
+            .getSwapAmount(value, false, token1, token2))
+        .replaceAll("\"", "");
+
+    selectedBottomToken = selectedBottomToken!.setAmount(res);
+    amountBottomController.text = toAmountDisplayBigInt(
+        selectedBottomToken!.amount,
+        decimals: selectedBottomToken!.decimals);
+
+    print(
+        "${selectedTopToken!.amount} - ${toAmountDisplayBigInt(selectedTopToken!.amount, decimals: selectedTopToken!.decimals)}");
+    print(
+        "${selectedBottomToken!.amount} - ${toAmountDisplayBigInt(selectedBottomToken!.amount, decimals: selectedBottomToken!.decimals)}");
+  }
+
+  Future<void> _amountBottomUpdated(String value) async {
+    if (selectedBottomToken == null) {
+      return;
+    }
+
+    var formattedValue =
+        toStringWithoutDecimals(value, selectedBottomToken!.decimals);
+
+    if (value.isEmpty ||
+        formattedValue.replaceAll(".", "").replaceAll("0", "").isEmpty) {
+      print("ERROR: Invalid value");
+      if (selectedTopToken != null) {
+        selectedTopToken = selectedTopToken!.setAmount("0");
+        amountTopController.clear();
+      }
+      return;
+    }
+
+    selectedBottomToken = selectedBottomToken!.setAmount(formattedValue);
+
+    if (reserveTop.isEmpty) {
+      return; // Pool does not exist
+    }
+
+    if (BigInt.parse(formattedValue) > BigInt.parse(reserveBottom)) {
+      print(
+          "ERROR: Insufficient ${selectedBottomToken!.symbol} liquidity in pool");
+      selectedTopToken = selectedTopToken!.setAmount("0");
+      amountTopController.clear();
+      return;
+    }
+
+    var token1 = selectedTopToken!.setAmount(reserveTop);
+    var token2 = selectedBottomToken!.setAmount(reserveBottom);
+
+    var res = (await ReefAppState.instance.swapCtrl
+            .getSwapAmount(value, true, token1, token2))
+        .replaceAll("\"", "");
+
+    if (BigInt.parse(res) > selectedTopToken!.balance) {
+      print("WARN: Insufficient ${selectedTopToken!.symbol} balance");
+    }
+
+    selectedTopToken = selectedTopToken!.setAmount(res);
+    amountTopController.text = toAmountDisplayBigInt(selectedTopToken!.amount,
+        decimals: selectedTopToken!.decimals);
+
+    print(
+        "${selectedTopToken!.amount} - ${toAmountDisplayBigInt(selectedTopToken!.amount, decimals: selectedTopToken!.decimals)}");
+    print(
+        "${selectedBottomToken!.amount} - ${toAmountDisplayBigInt(selectedBottomToken!.amount, decimals: selectedBottomToken!.decimals)}");
+  }
+
+  void _executeSwap() async {
+    if (selectedTopToken == null || selectedBottomToken == null) {
+      return;
+    }
+
+    if (selectedTopToken!.amount <= BigInt.zero) {
+      return;
+    }
+    var signerAddress = await ReefAppState.instance.storage
+        .getValue(StorageKey.selected_address.name);
+    var res = await ReefAppState.instance.swapCtrl.swapTokens(
+        signerAddress, selectedTopToken!, selectedBottomToken!, settings);
+    _getPoolReserves();
+    print(res);
+  }
+
+  String _toAmountDisplay(String amount, int decimals) {
+    return (BigInt.parse(amount) / BigInt.from(10).pow(decimals))
+        .toStringAsFixed(decimals);
   }
 
   @override
@@ -84,7 +241,7 @@ class _SwapPageState extends State<SwapPage> {
                               MaterialButton(
                                 onPressed: () {
                                   showTokenSelectionModal(context,
-                                      callback: _changeSelectedToken);
+                                      callback: _changeSelectedTopToken);
                                 },
                                 materialTapTargetSize:
                                     MaterialTapTargetSize.shrinkWrap,
@@ -99,9 +256,13 @@ class _SwapPageState extends State<SwapPage> {
                                         color: Colors.black26)),
                                 child: Row(
                                   children: [
-                                    if (selectedToken["logo"].isNotEmpty)
+                                    if (selectedTopToken == null)
+                                      Text("Select token")
+                                    else if (selectedTopToken!.iconUrl !=
+                                            null &&
+                                        selectedTopToken!.iconUrl!.isNotEmpty)
                                       CachedNetworkImage(
-                                        imageUrl: selectedToken["logo"],
+                                        imageUrl: selectedTopToken!.iconUrl!,
                                         width: 24,
                                         height: 24,
                                         placeholder: (context, url) =>
@@ -128,8 +289,10 @@ class _SwapPageState extends State<SwapPage> {
                                     else
                                       Icon(CupertinoIcons.question_circle,
                                           color: Colors.grey[600]!, size: 24),
-                                    const Gap(4),
-                                    Text(selectedToken["name"]),
+                                    if (selectedTopToken != null) ...[
+                                      const Gap(4),
+                                      Text(selectedTopToken!.symbol),
+                                    ],
                                     const Gap(4),
                                     Icon(CupertinoIcons.chevron_down,
                                         size: 16, color: Styles.textLightColor)
@@ -143,13 +306,10 @@ class _SwapPageState extends State<SwapPage> {
                                         RegExp(r'[\.0-9]'))
                                   ],
                                   keyboardType: TextInputType.number,
-                                  controller: amountController,
-                                  onChanged: (text) {
-                                    setState(() {
-                                      //you can access nameController in its scope to get
-                                      // the value of text entered as shown below
-                                      amount = amountController.text;
-                                    });
+                                  controller: amountTopController,
+                                  onChanged: (text) async {
+                                    await _amountTopUpdated(
+                                        amountTopController.text);
                                   },
                                   decoration: InputDecoration(
                                       constraints:
@@ -180,25 +340,39 @@ class _SwapPageState extends State<SwapPage> {
                             width: double.infinity,
                             child: Row(
                               children: [
-                                Text(
-                                  "Balance: ${selectedToken["balance"].toStringAsFixed(2)} ${selectedToken["name"].toString().toUpperCase()}",
-                                  style: TextStyle(
-                                      color: Styles.textLightColor,
-                                      fontSize: 12),
-                                ),
-                                TextButton(
-                                    onPressed: () {},
-                                    style: TextButton.styleFrom(
-                                        padding: EdgeInsets.zero,
-                                        minimumSize: const Size(30, 10),
-                                        tapTargetSize:
-                                            MaterialTapTargetSize.shrinkWrap),
-                                    child: Text(
-                                      "(Max)",
-                                      style: TextStyle(
-                                          color: Styles.blueColor,
-                                          fontSize: 12),
-                                    ))
+                                if (selectedTopToken != null) ...[
+                                  Text(
+                                    "Balance: ${toAmountDisplayBigInt(selectedTopToken!.balance, decimals: selectedTopToken!.decimals)} ${selectedTopToken!.symbol}",
+                                    style: TextStyle(
+                                        color: Styles.textLightColor,
+                                        fontSize: 12),
+                                  ),
+                                  TextButton(
+                                      onPressed: () async {
+                                        var topTokenBalance =
+                                            toAmountDisplayBigInt(
+                                                selectedTopToken!.balance,
+                                                decimals:
+                                                    selectedTopToken!.decimals,
+                                                fractionDigits:
+                                                    selectedTopToken!.decimals);
+                                        await _amountTopUpdated(
+                                            topTokenBalance);
+                                        amountTopController.text =
+                                            topTokenBalance;
+                                      },
+                                      style: TextButton.styleFrom(
+                                          padding: EdgeInsets.zero,
+                                          minimumSize: const Size(30, 10),
+                                          tapTargetSize:
+                                              MaterialTapTargetSize.shrinkWrap),
+                                      child: Text(
+                                        "(Max)",
+                                        style: TextStyle(
+                                            color: Styles.blueColor,
+                                            fontSize: 12),
+                                      ))
+                                ]
                               ],
                             ),
                           )
@@ -236,9 +410,14 @@ class _SwapPageState extends State<SwapPage> {
                                         color: Colors.black26)),
                                 child: Row(
                                   children: [
-                                    if (selectedBottomToken["logo"].isNotEmpty)
+                                    if (selectedBottomToken == null)
+                                      Text("Select token")
+                                    else if (selectedBottomToken!.iconUrl !=
+                                            null &&
+                                        selectedBottomToken!
+                                            .iconUrl!.isNotEmpty)
                                       CachedNetworkImage(
-                                        imageUrl: selectedBottomToken["logo"],
+                                        imageUrl: selectedBottomToken!.iconUrl!,
                                         width: 24,
                                         height: 24,
                                         placeholder: (context, url) =>
@@ -265,8 +444,10 @@ class _SwapPageState extends State<SwapPage> {
                                     else
                                       Icon(CupertinoIcons.question_circle,
                                           color: Colors.grey[600]!, size: 24),
-                                    const Gap(4),
-                                    Text(selectedBottomToken["name"]),
+                                    if (selectedBottomToken != null) ...[
+                                      const Gap(4),
+                                      Text(selectedBottomToken!.symbol),
+                                    ],
                                     const Gap(4),
                                     Icon(CupertinoIcons.chevron_down,
                                         size: 16, color: Styles.textLightColor)
@@ -281,13 +462,9 @@ class _SwapPageState extends State<SwapPage> {
                                     ],
                                     keyboardType: TextInputType.number,
                                     controller: amountBottomController,
-                                    onChanged: (text) {
-                                      setState(() {
-                                        //you can access nameController in its scope to get
-                                        // the value of text entered as shown below
-                                        amountBottom =
-                                            amountBottomController.text;
-                                      });
+                                    onChanged: (text) async {
+                                      await _amountBottomUpdated(
+                                          amountBottomController.text);
                                     },
                                     decoration: InputDecoration(
                                         constraints:
@@ -317,25 +494,13 @@ class _SwapPageState extends State<SwapPage> {
                             width: double.infinity,
                             child: Row(
                               children: [
-                                Text(
-                                  "Balance: ${selectedBottomToken["balance"].toStringAsFixed(2)} ${selectedBottomToken["name"].toString().toUpperCase()}",
-                                  style: TextStyle(
-                                      color: Styles.textLightColor,
-                                      fontSize: 12),
-                                ),
-                                TextButton(
-                                    onPressed: () {},
-                                    style: TextButton.styleFrom(
-                                        padding: EdgeInsets.zero,
-                                        minimumSize: const Size(30, 10),
-                                        tapTargetSize:
-                                            MaterialTapTargetSize.shrinkWrap),
-                                    child: Text(
-                                      "(Max)",
-                                      style: TextStyle(
-                                          color: Styles.blueColor,
-                                          fontSize: 12),
-                                    ))
+                                if (selectedBottomToken != null)
+                                  Text(
+                                    "Balance: ${toAmountDisplayBigInt(selectedBottomToken!.balance, decimals: selectedBottomToken!.decimals)} ${selectedBottomToken!.symbol}",
+                                    style: TextStyle(
+                                        color: Styles.textLightColor,
+                                        fontSize: 12),
+                                  )
                               ],
                             ),
                           )
@@ -351,16 +516,31 @@ class _SwapPageState extends State<SwapPage> {
                               borderRadius: BorderRadius.circular(40)),
                           shadowColor: const Color(0x559d6cff),
                           elevation: 5,
-                          primary: (amount.isEmpty || amountBottom.isEmpty)
+                          primary: (selectedTopToken == null ||
+                                  selectedTopToken!.amount <= BigInt.zero ||
+                                  selectedBottomToken == null ||
+                                  selectedBottomToken!.amount <= BigInt.zero)
                               ? const Color(0xff9d6cff)
                               : Styles.secondaryAccentColor,
                           padding: const EdgeInsets.symmetric(vertical: 16),
                         ),
-                        onPressed: () {},
+                        onPressed: () {
+                          _executeSwap();
+                        },
                         child: Text(
-                          (amount.isEmpty || amountBottom.isEmpty)
-                              ? "Insert amount"
-                              : "Confirm Send",
+                          (() {
+                            if (selectedTopToken == null) {
+                              return "Select sell token";
+                            } else if (selectedBottomToken == null) {
+                              return "Select buy token";
+                            } else if (selectedTopToken!.amount <=
+                                    BigInt.zero ||
+                                selectedBottomToken!.amount <= BigInt.zero) {
+                              return "Insert amount";
+                            } else {
+                              return "Confirm send";
+                            }
+                          }()),
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
@@ -373,24 +553,31 @@ class _SwapPageState extends State<SwapPage> {
                 Positioned(
                   top: 96,
                   child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(4),
-                      border: Border.all(
-                          width: 0.5, color: const Color(0xffe1e2e8)),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Color(0x15000000),
-                          blurRadius: 1,
-                          offset: Offset(0, 1),
-                        )
-                      ],
-                      color: Styles.boxBackgroundColor,
-                    ),
-                    height: 28,
-                    width: 28,
-                    child: Icon(CupertinoIcons.arrow_down,
-                        size: 12, color: Styles.textLightColor),
-                  ),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(
+                            width: 0.5, color: const Color(0xffe1e2e8)),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Color(0x15000000),
+                            blurRadius: 1,
+                            offset: Offset(0, 1),
+                          )
+                        ],
+                        color: Styles.boxBackgroundColor,
+                      ),
+                      height: 28,
+                      width: 28,
+                      child: IconButton(
+                        icon: Icon(
+                          CupertinoIcons.arrow_down,
+                          color: Styles.textLightColor,
+                          size: 12,
+                        ),
+                        onPressed: () {
+                          _switchTokens();
+                        },
+                      )),
                 ),
               ]),
         ],

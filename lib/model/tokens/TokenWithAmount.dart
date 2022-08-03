@@ -1,7 +1,7 @@
 import 'Token.dart';
 
 class TokenWithAmount extends Token {
-  final String amount;
+  final BigInt amount;
   final double? price;
 
   const TokenWithAmount(
@@ -24,7 +24,7 @@ class TokenWithAmount extends Token {
   static fromJSON(dynamic json) {
     var tkn = Token.fromJSON(json);
     // TODO check why json['amount'] can be null
-    var amt = json['amount'] ?? '0';
+    var amt = BigInt.parse(json['amount'] != null && json['amount'] != "" ? json['amount'] : "0");
     var price = json['price'] == 'DataProgress_NO_DATA' ? null : json['price'];
     return TokenWithAmount(
         name: tkn.name,
@@ -35,5 +35,24 @@ class TokenWithAmount extends Token {
         decimals: tkn.decimals,
         amount: amt,
         price: price);
+  }
+
+  Map toJsonSkinny() => {
+    'address': address,
+    'decimals': decimals,
+    'amount': amount.toString(),
+  };
+
+  TokenWithAmount setAmount(String newAmount) {
+    return TokenWithAmount(
+      name: name, 
+      address: address, 
+      iconUrl: iconUrl, 
+      symbol: symbol, 
+      balance: balance, 
+      decimals: decimals, 
+      amount: BigInt.parse(newAmount), 
+      price: price
+    );
   }
 }

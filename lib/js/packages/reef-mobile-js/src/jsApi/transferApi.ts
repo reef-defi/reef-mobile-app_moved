@@ -1,43 +1,13 @@
 import {FlutterJS} from "flutter-js-bridge/src/FlutterJS";
-import {appState, Token, TokenWithAmount, ReefSigner, reefTokenWithAmount} from '@reef-defi/react-lib';
+import {appState, ReefSigner, reefTokenWithAmount} from '@reef-defi/react-lib';
 import {map, switchMap, take} from "rxjs/operators";
-import {BigNumber, Contract} from "ethers";
+import {Contract} from "ethers";
 import { Provider } from "@reef-defi/evm-provider";
-import { ERC20 } from "./transfer/abi/ERC20";
+import { ERC20 } from "./abi/ERC20";
 import { firstValueFrom } from "rxjs";
+import { calculateAmount } from "./utils/math";
 
 const REEF_ADDRESS = reefTokenWithAmount().address;
-
-const assertAmount = (amount?: string): string => (!amount ? '0' : amount);
-
-const findDecimalPoint = (amount: string): number => {
-    const { length } = amount;
-    let index = amount.indexOf(',');
-    if (index !== -1) {
-        return length - index - 1;
-    }
-    index = amount.indexOf('.');
-    if (index !== -1) {
-        return length - index - 1;
-    }
-    return 0;
-};
-
-const transformAmount = (decimals: number, amount: string): string => {
-    if (!amount) {
-        return '0'.repeat(decimals);
-    }
-    const addZeros = findDecimalPoint(amount);
-    const cleanedAmount = amount.replace(/,/g, '').replace(/\./g, '');
-    return cleanedAmount + '0'.repeat(Math.max(decimals - addZeros, 0));
-};
-
-interface CalculateAmount {
-    decimals: number;
-    amount: string;
-}
-
-const calculateAmount = ({ decimals, amount }: CalculateAmount): string => BigNumber.from(transformAmount(decimals, assertAmount(amount))).toString();
 
 const nativeTransfer = async (amount: string, destinationAddress: string, provider: Provider, signer: ReefSigner): Promise<void> => {
     try {
@@ -76,23 +46,22 @@ export const initApi = (flutterJS: FlutterJS) => {
                         return false
                     }
                     const STORAGE_LIMIT = 2000;
-                    const amount = calculateAmount ({ decimals: tokenDecimals, amount: tokenAmount });
                     const { provider } = signer.signer;
                     const tokenContract = new Contract(tokenAddress, ERC20, signer.signer);
                     try {
                         if (tokenAddress === REEF_ADDRESS && to.length === 48) {
                             console.log ('transfering native REEF');
-                            console.log (amount, amount.toString ());
-                            await nativeTransfer(amount, to, provider, signer);
+                            console.log (tokenAmount);
+                            await nativeTransfer(tokenAmount, to, provider, signer);
                             console.log ('transfer success');
                             return true;
                         } else {
                             console.log ('transfering REEF20');
-                            console.log (amount, amount.toString());
+                            console.log (tokenAmount);
                             const toAddress = to.length === 48
                                 ? await getSignerEvmAddress(to, provider)
                                 : to;
-                            const ARGS = [toAddress, amount];
+                            const ARGS = [toAddress, tokenAmount];
                             console.log ("args=",ARGS);
                             const tx = await tokenContract ['transfer'] (...ARGS, {
                                 customData: {

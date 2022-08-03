@@ -9,6 +9,8 @@ import 'package:reef_mobile_app/components/modals/token_selection_modals.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/StorageKey.dart';
 import 'package:reef_mobile_app/model/tokens/TokenWithAmount.dart';
+import 'package:reef_mobile_app/utils/constants.dart';
+import 'package:reef_mobile_app/utils/functions.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -31,9 +33,10 @@ class _SendPageState extends State<SendPage> {
 
   Map selectedToken = {
     "name": "REEF",
-    "address": "0x0000000000000000000000000000000001000000",
+    "address": REEF_TOKEN_ADDRESS,
     "logo": "https://s2.coinmarketcap.com/static/img/coins/64x64/6951.png",
-    "balance": 4200.00
+    "balance": 4200.00,
+    "decimals": 18,
   };
 
   void _changeSelectedToken(Map token) {
@@ -311,8 +314,9 @@ class _SendPageState extends State<SendPage> {
                               iconUrl: selectedToken['logo'],
                               symbol: selectedToken['name'],
                               balance: BigInt.from(selectedToken['balance']),
-                              decimals: 18,
-                              amount: amount,
+                              decimals: selectedToken['decimals'],
+                              amount: BigInt.parse(toStringWithoutDecimals(
+                                  amount, selectedToken['decimals'])),
                               price: 1.0);
                           var res = await ReefAppState.instance.transferCtrl
                               .transferTokens(
