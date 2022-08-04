@@ -163,12 +163,14 @@ class JsApiMessage {
   late String msgType;
   late String reqId;
   late dynamic value;
+  late String? url;
 
-  JsApiMessage(this.streamId, this.value, this.msgType, this.reqId);
+  JsApiMessage(this.streamId, this.value, this.msgType, this.reqId, this.url);
 
   JsApiMessage.fromJson(Map<String, dynamic> json)
       : streamId = json['streamId'],
         reqId = json['reqId'],
         value = json['value'],
+        url = json['url'],
         msgType = json['msgType'];
 }

@@ -50,11 +50,17 @@ export class FlutterJS {
     }
 
     sendFlutterDAppMsgRequest(reqId: string, msgType: MessageTypes, value: any) {
+        let url = window.location.hostname;
+        if(!url){
+            url = 'localhost';
+        }
+        console.log("UUUUU=",url);
         window[this.REEF_MOBILE_CHANNEL_NAME].postMessage(JSON.stringify({
             streamId: this.txDappStreamId,
             msgType,
             reqId,
-            value
+            value,
+            url
         }));
     }
 
