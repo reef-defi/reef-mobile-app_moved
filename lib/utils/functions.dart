@@ -1,3 +1,5 @@
+import 'package:web3dart/credentials.dart';
+
 double getBalanceValue(double balance, price) {
   if (price == null || price == null) {
     return 0.0;
@@ -53,4 +55,20 @@ String toStringWithoutDecimals(String amount, int decimals) {
   }
 
   return intPart + fractionalPart;
+}
+
+bool isEvmAddress(String address) {
+  try {
+    EthereumAddress.fromHex(address);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+bool isSubstrateAddress(String address) {
+  if (address.isEmpty || !address.startsWith("5")) {
+    return false;
+  }
+  return RegExp(r'^[A-z\d]{48}$').hasMatch(address);
 }

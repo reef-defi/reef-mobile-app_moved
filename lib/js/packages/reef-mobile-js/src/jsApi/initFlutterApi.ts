@@ -2,7 +2,9 @@ import * as accountApi from "./accountApi";
 import * as transferApi from "./transferApi";
 import * as swapApi from "./swapApi";
 import * as signApi from "./signApi";
-import {appState, AvailableNetworks, availableNetworks} from "@reef-defi/react-lib";
+import * as utilsApi from "./utilsApi";
+import {appState, AvailableNetworks, availableNetworks, ReefSigner} from "@reef-defi/react-lib";
+import {map, switchMap, take} from "rxjs/operators";
 import {FlutterJS} from "flutter-js-bridge/src/FlutterJS";
 import type {InjectedAccountWithMeta} from "@reef-defi/extension-inject/types";
 import Signer from "@reef-defi/extension-base/page/Signer";
@@ -46,6 +48,7 @@ export const initFlutterApi = async (flutterJS: FlutterJS) => {
         transferApi.initApi(flutterJS);
         swapApi.initApi();
         signApi.initApi();
+        utilsApi.initApi();
     } catch (e) {
         console.log("INIT ERROR=", e.message);
     }
