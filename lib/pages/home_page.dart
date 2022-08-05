@@ -16,6 +16,7 @@ import 'package:reef_mobile_app/utils/size_config.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 
 import '../model/StorageKey.dart';
+import 'DAppPage.dart';
 
 // void _navigateAccounts() {
 //     Navigator.push(
@@ -34,6 +35,14 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
+  void _navigateTestDApp() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => DAppPage(ReefAppState.instance)),
+    );
+  }
+
   List _viewsMap = [
     {"key": 0, "name": "Token", "active": true, "component": const TokenView()},
     {
@@ -186,20 +195,8 @@ class _HomePageState extends State<HomePage> {
       child: Column(
         children: [
            ElevatedButton(
-              child: const Text('send tokens'),
-              onPressed: () async {
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(
-                //       builder: (context) => AccountPage(
-                //           ReefAppState.instance, ReefAppState.instance.storage)),
-                // );
-                var from = await ReefAppState.instance.storage
-                    .getValue(StorageKey.selected_address.name);
-                var txTestRes = await ReefAppState.instance.transferCtrl
-                    .testTransferTokens(from);
-                print("HOME PAGE TX TEST RES =$txTestRes");
-              },
+              child: const Text('test dApp'),
+              onPressed: _navigateTestDApp,
             ),
           balanceSection(),
           navSection(),

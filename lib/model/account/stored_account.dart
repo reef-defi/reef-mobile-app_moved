@@ -27,8 +27,8 @@ class StoredAccount extends HiveObject {
       ..name = jsonObject['name'] ?? "";
   }
 
-   Map toJson() => {
-    'mnemonic': mnemonic,
+   Map toJson(bool? canIncludeKeys) => {
+    'mnemonic': canIncludeKeys!=null && canIncludeKeys == true ? mnemonic : null,
     'address': address,
     'svg': svg,
     'name': name

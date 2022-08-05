@@ -7,19 +7,17 @@ import type { SignerPayloadJSON } from '@polkadot/types/types';
 
 
 async function signPayload(mnemonic: string, payload: SignerPayloadJSON): Promise<string> {
-    console.log("SIGNING PAYLOAD", payload);
     const registry = new TypeRegistry();
     registry.setSignedExtensions(payload.signedExtensions);
 
     const pair: KeyringPair = await Keyring.keyPairFromMnemonic(mnemonic);
-    
+
     return registry
         .createType('ExtrinsicPayload', payload, { version: payload.version })
         .sign(pair).signature;
 }
 
 async function signRaw(mnemonic: string, message: string): Promise<string>  {
-  console.log("SIGNING RAW", message);
   const pair: KeyringPair = await Keyring.keyPairFromMnemonic(mnemonic);
 
   return u8aToHex(pair.sign(wrapBytes(message)));

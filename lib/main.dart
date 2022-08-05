@@ -24,6 +24,7 @@ void main() async {
   );
 }
 
+/*
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
   @override
@@ -71,7 +72,8 @@ class _TestHomePageState extends State<TestHomePage> {
     );
   }
 
-  void _testSignRaw(address) async {
+  */
+/*void _testSignRaw(address) async {
     const message = "Hello World";
     var signTestRes = await ReefAppState.instance.signingCtrl
         .initSignRawTest(address, message);
@@ -115,7 +117,8 @@ class _TestHomePageState extends State<TestHomePage> {
     var txTestRes =
         await ReefAppState.instance.signingCtrl.initSignAndSendTxTest(address);
     print("MAIN TX TEST=$txTestRes");
-  }
+  }*//*
+
 
   @override
   Widget build(BuildContext context) {
@@ -200,4 +203,4 @@ class _TestHomePageState extends State<TestHomePage> {
         }));
     return SignatureContentToggle(content);
   }
-}
+}*/

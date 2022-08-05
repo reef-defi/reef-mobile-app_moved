@@ -15,24 +15,15 @@ class SigningCtrl {
 
   SigningCtrl(JsApiService this.jsApi, StorageService this.storage, SignatureRequests this.signatureRequests) {
     jsApi.jsTxSignatureConfirmationMessageSubj.listen((jsApiMessage) {
-      signatureRequests.add(buildSignatureRequest(jsApiMessage));
+      signatureRequests.add(_buildSignatureRequest(jsApiMessage));
     });
   }
 
-  Future<dynamic> initSignRawTest(String address, String message) async {
-    return jsApi
-        .jsPromise('jsApi.testReefSignerRawPromise("$address","$message")');
-  }
+  Future<dynamic> signRaw(String address, String message) => jsApi
+        .jsPromise('signApi.signRawPromise(`$address`, `$message`);');
 
-  Future<dynamic> initSignPayloadTest(String address, Map<String, Object> payload) async {
-    return jsApi
-        .jsPromise('jsApi.testReefSignerPayloadPromise("$address", ${jsonEncode(payload)})');
-  }
-
-  Future<dynamic> initSignAndSendTxTest(String address) async {
-    return jsApi
-        .jsPromise('jsApi.testReefSignAndSendTxPromise("$address")');
-  }
+  Future<dynamic> signPayload(String address, Map<String, dynamic> payload) => jsApi
+        .jsPromise('signApi.signPayloadPromise(`$address`, ${jsonEncode(payload)})');
 
   confirmSignature(String sigConfirmationIdent, String address) async {
     var account = await storage.getAccount(address);
@@ -45,7 +36,7 @@ class SigningCtrl {
       jsApi.confirmTxSignature(sigConfirmationIdent, account.mnemonic);
   }
 
-  buildSignatureRequest(JsApiMessage jsApiMessage) {
+  _buildSignatureRequest(JsApiMessage jsApiMessage) {
     var signatureIdent = jsApiMessage.reqId;
     var payload;
 
