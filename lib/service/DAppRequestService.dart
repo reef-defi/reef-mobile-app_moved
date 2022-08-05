@@ -1,35 +1,39 @@
+import 'dart:convert';
+
+import 'package:reef_mobile_app/model/ReefAppState.dart';
+
 import 'JsApiService.dart';
 
 class DAppRequestService {
   const DAppRequestService();
 
-  void handleDAppMsgRequest(JsApiMessage message, void Function(String reqId, dynamic value) responseFn) {
+  void handleDAppMsgRequest(JsApiMessage message, void Function(String reqId, dynamic value) responseFn) async {
     if (message.msgType == 'pub(phishing.redirectIfDenied)') {
-      print('flutter DAPP req=${message.msgType} value= ${message.value}');
       responseFn(message.reqId, _redirectIfPhishing(message.value['url']));
     }
-    print('DAPP MSG= ${message.msgType} val= ${message.url}');
-    if (message.msgType != 'pub(authorize.tab)' && !_ensureUrlAuthorized(message.value['url'])) {
-      print('Domain not authorized= ${message.value['url']}');
+
+    if (message.msgType != 'pub(authorize.tab)' && !_ensureUrlAuthorized(message.url)) {
+      print('Domain not authorized= ${message.url}');
+      // TODO display alert so user is aware domain is disabled
       return;
     }
 
     switch(message.msgType){
       case 'pub(bytes.sign)':
-        print("TODO handle request");
+        var signature = await ReefAppState.instance.signingCtrl.signRaw(message.value['address'], message.value['data']);
+        responseFn(message.reqId, '${jsonEncode(signature)}');
         break;
       case 'pub(extrinsic.sign)':
-        print("TODO handle request");
+        var signature = await ReefAppState.instance.signingCtrl.signPayload(message.value['address'], message.value);
+        responseFn(message.reqId, '${jsonEncode(signature)}');
         break;
       case 'pub(authorize.tab)':
-      // TODO display confirmation - message.value.origin is the app name
-        responseFn(message.reqId, true);
+        responseFn(message.reqId, _authorizeDapp(message.value['origin'], message.url));
         break;
 
       case 'pub(accounts.list)':
-        print('dapp accountsLIST req');
-      // TODO return this.accountsList(url, request as RequestAccountList);
-        responseFn(message.reqId, ['account']);
+        var accounts = await ReefAppState.instance.accountCtrl.getAccountsList();
+        responseFn(message.reqId, '${jsonEncode(accounts)}');
         break;
     }
   }
@@ -40,7 +44,18 @@ class DAppRequestService {
   }
 
   bool _ensureUrlAuthorized(String? url) {
+    if(url == null){
+      return false;
+    }
     // TODO check against authorized domains
+    return true;
+  }
+
+  _authorizeDapp(String dAppName, String? url) {
+    if(url == null){
+      return false;
+    }
+    // TODO display modal and save url for _ensureUrlAuthorized
     return true;
   }
 }

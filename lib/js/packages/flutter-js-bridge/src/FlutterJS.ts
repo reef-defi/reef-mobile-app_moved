@@ -54,7 +54,6 @@ export class FlutterJS {
         if(!url){
             url = 'localhost';
         }
-        console.log("UUUUU=",url);
         window[this.REEF_MOBILE_CHANNEL_NAME].postMessage(JSON.stringify({
             streamId: this.txDappStreamId,
             msgType,

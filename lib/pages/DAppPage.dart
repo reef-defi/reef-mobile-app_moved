@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:reef_mobile_app/service/DAppRequestService.dart';
 import 'package:reef_mobile_app/service/JsApiService.dart';
 
+import '../components/SignatureContentToggle.dart';
 import '../model/ReefAppState.dart';
 
 class DAppPage extends StatefulWidget {
@@ -43,7 +44,8 @@ class _DAppPageState extends State<DAppPage> {
       setState(() {
         dappJsApi = JsApiService.dAppInjectedHtml(html);
         dappJsApi?.jsDAppMsgSubj.listen((value) {
-          widget.dAppRequestService.handleDAppMsgRequest(value, dappJsApi!.sendDappMsgResponse);
+          widget.dAppRequestService
+              .handleDAppMsgRequest(value, dappJsApi!.sendDappMsgResponse);
         });
       });
     });
@@ -51,7 +53,7 @@ class _DAppPageState extends State<DAppPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return SignatureContentToggle(Scaffold(
       appBar: AppBar(
         title: const Text('DApp'),
       ),
@@ -59,7 +61,6 @@ class _DAppPageState extends State<DAppPage> {
           child: dappJsApi != null
               ? dappJsApi!.widget
               : const CircularProgressIndicator()),
-    );
+    ));
   }
-
 }

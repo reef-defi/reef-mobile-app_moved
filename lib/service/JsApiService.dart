@@ -90,7 +90,7 @@ class JsApiService {
 
   void sendDappMsgResponse(String reqId, dynamic value) {
     jsCall(
-        '${DAPP_MSG_CONFIRMATION_JS_FN_NAME}("$reqId", "$value")');
+        '${DAPP_MSG_CONFIRMATION_JS_FN_NAME}(`$reqId`, `$value`)');
   }
 
   Future<String> _getFlutterJsHeaderTags(String assetsFilePath) async {
