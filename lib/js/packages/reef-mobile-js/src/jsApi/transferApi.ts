@@ -1,13 +1,11 @@
 import {FlutterJS} from "flutter-js-bridge/src/FlutterJS";
-import {appState, ReefSigner, reefTokenWithAmount} from '@reef-defi/react-lib';
+import {appState, ReefSigner } from '@reef-defi/react-lib';
 import {map, switchMap, take} from "rxjs/operators";
 import {Contract} from "ethers";
 import { Provider } from "@reef-defi/evm-provider";
 import { ERC20 } from "./abi/ERC20";
 import { firstValueFrom } from "rxjs";
-import { calculateAmount } from "./utils/math";
-
-const REEF_ADDRESS = reefTokenWithAmount().address;
+import { REEF_ADDRESS } from "./utils/commonUtils";
 
 const nativeTransfer = async (amount: string, destinationAddress: string, provider: Provider, signer: ReefSigner): Promise<void> => {
     try {

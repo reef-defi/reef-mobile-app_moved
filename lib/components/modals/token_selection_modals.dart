@@ -8,6 +8,7 @@ import 'package:reef_mobile_app/components/modal.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/tokens/TokenWithAmount.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
+import 'package:reef_mobile_app/utils/constants.dart';
 import 'package:reef_mobile_app/utils/elements.dart';
 import 'package:reef_mobile_app/utils/functions.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
@@ -96,8 +97,9 @@ class TokenSelectionState extends State<TokenSelection> {
               constraints: const BoxConstraints(
                   maxHeight: 256, minWidth: double.infinity),
               child: Observer(builder: (_) {
-                var displayTokens =
-                    ReefAppState.instance.model.tokens.selectedSignerTokens.toList();
+                var displayTokens = ReefAppState
+                    .instance.model.tokens.selectedSignerTokens
+                    .toList();
                 if (filterTokensBy.isNotEmpty) {
                   displayTokens = displayTokens
                       .where((tkn) =>
@@ -108,6 +110,19 @@ class TokenSelectionState extends State<TokenSelection> {
                               .toLowerCase()
                               .contains(valueContainer.text.toLowerCase()))
                       .toList();
+                  if (displayTokens.isEmpty &&
+                      isEvmAddress(valueContainer.text)) {
+                    ReefAppState.instance.tokensCtrl
+                        .findToken(valueContainer.text)
+                        .then((token) => {
+                              if (token != null)
+                                {
+                                  // TODO show token with option of adding to list
+                                  widget
+                                      .callback(TokenWithAmount.fromJSON(token))
+                                }
+                            });
+                  }
                 }
                 return ListView(
                   shrinkWrap: true,
@@ -185,9 +200,9 @@ class TokenSelectionState extends State<TokenSelection> {
                                               Text(e.name,
                                                   style: const TextStyle(
                                                       fontSize: 16)),
-                                              Wrap( spacing: 8.0,
-                                                  children: [
-                                                Text(toAmountDisplayBigInt(e.balance,
+                                              Wrap(spacing: 8.0, children: [
+                                                Text(toAmountDisplayBigInt(
+                                                    e.balance,
                                                     decimals: e.decimals)),
                                                 Text(e.symbol)
                                               ]),

@@ -1,6 +1,7 @@
 import * as accountApi from "./accountApi";
 import * as transferApi from "./transferApi";
 import * as swapApi from "./swapApi";
+import * as utilsApi from "./utilsApi";
 import {appState, AvailableNetworks, availableNetworks, ReefSigner} from "@reef-defi/react-lib";
 import {map, switchMap, take} from "rxjs/operators";
 import {FlutterJS} from "flutter-js-bridge/src/FlutterJS";
@@ -126,6 +127,7 @@ export const initFlutterApi = async (flutterJS: FlutterJS) => {
         accountApi.innitApi();
         transferApi.initApi(flutterJS);
         swapApi.initApi();
+        utilsApi.initApi();
     } catch (e) {
         console.log("INIT ERROR=", e.message);
     }
