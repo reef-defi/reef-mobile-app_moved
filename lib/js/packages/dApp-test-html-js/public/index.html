@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Minml example dApp</title>
+    <script src="js/index.js"></script>
+    <script>
+        async function init(){
+            window.reefSigner = await flipperApi.getSigner();
+            document.body.classList.add("reef-chain-ready");
+        };
+        init();
+    </script>
+    <style>
+        .connected{
+            display: none;
+        }
+        .reef-chain-ready .connected{
+            display: block;
+        }
+        .reef-chain-ready .connecting{
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<h3>Minml dApp</h3>
+<div class="connecting">
+    <p>Connecting to chain, please wait ...</p>
+</div>
+<div class="connected">
+    <button type="button" onclick="flipperApi.getFlipperValue(reefSigner)">log value</button>
+    <button type="button" onclick="flipperApi.flipIt(reefSigner)">flip it</button>
+</div>
+</body>
+</html>
