@@ -45,10 +45,6 @@ class JsApiService {
 
   JsApiService._(bool this.hiddenWidget, String this.flutterJsFilePath,
       {String? url, String? html}) {
-    // if(url !=null && html == null) {
-    //   _renderUrlWithFlutterJS(flutterJsFilePath, url);
-    //   return;
-    // }
     _renderWithFlutterJS(flutterJsFilePath, html, url);
   }
 
@@ -57,9 +53,6 @@ class JsApiService {
 
   JsApiService.dAppInjectedHtml(String html, String? baseUrl)
       : this._(false, 'lib/js/packages/dApp-js/dist/index.js', html:html, url: baseUrl);
-
-  // JsApiService.dAppInjectedUrl(String url)
-  //     : this._(false, 'lib/js/packages/dApp-js/dist/index.js', url:url);
 
   void _renderWithFlutterJS(String fJsFilePath, String? htmlString, String? baseUrl) {
     htmlString ??= "<html><head></head><body></body></html>";
@@ -71,15 +64,6 @@ class JsApiService {
       });
     });
   }
-
-  // void _renderUrlWithFlutterJS(String fJsFilePath, String url) {
-  //   controllerInit.future.then((ctrl) => ctrl.loadUrl(url));
-  //   jsApiLoaded.future.then((ctrl){
-  //     _getFlutterJsHeaderTags(fJsFilePath).then((headerTags) {
-  //       // add js tags - ctrl.runJavascript();
-  //     });
-  //   });
-  // }
 
   Future<String> jsCall(String executeJs) {
     return _controller
