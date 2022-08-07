@@ -7,15 +7,16 @@ import '../components/SignatureContentToggle.dart';
 import '../model/ReefAppState.dart';
 
 class DAppPage extends StatefulWidget {
+  final url = 'http://localhost:8080';
   final ReefAppState reefState;
   final DAppRequestService dAppRequestService = const DAppRequestService();
 
   const DAppPage(this.reefState);
 
-  Future<String> _getHtml() async {
-    var assetsFilePath = 'lib/js/packages/dApp-test-html-js/dist/index.js';
+  Future<String> _getTestHtml() async {
+    var assetsFilePath = 'lib/js/packages/dApp-test-html-js/public/js/index.js';
     String testScriptTags = await _getFlutterJsHeaderTags(assetsFilePath);
-    return """<html><head>${testScriptTags}</head><body><h1>hello DApp</h1></body>""";
+    return """<html><head>${testScriptTags}<script>console.log('HELLLLopooo', window.location.hostname)</script> </head><body><h1>hello DApp</h1><br/>IMG=<img src='http://localhost:8080/reef-logo.png'/> </body></html>""";
   }
 
   @override
@@ -40,9 +41,17 @@ class _DAppPageState extends State<DAppPage> {
   void initState() {
     super.initState();
 
-    widget._getHtml().then((html) {
+      /*setState(() {
+        dappJsApi = JsApiService.dAppInjectedUrl(widget.url);
+        dappJsApi?.jsDAppMsgSubj.listen((value) {
+          widget.dAppRequestService
+              .handleDAppMsgRequest(value, dappJsApi!.sendDappMsgResponse);
+        });
+      });*/
+
+    widget._getTestHtml().then((html) {
       setState(() {
-        dappJsApi = JsApiService.dAppInjectedHtml(html);
+        dappJsApi = JsApiService.dAppInjectedHtml(html, widget.url);
         dappJsApi?.jsDAppMsgSubj.listen((value) {
           widget.dAppRequestService
               .handleDAppMsgRequest(value, dappJsApi!.sendDappMsgResponse);

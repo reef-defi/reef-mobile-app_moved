@@ -22,6 +22,7 @@ class JsApiService {
 
   final controllerInit = Completer<WebViewController>();
   final jsApiLoaded = Completer<WebViewController>();
+  // when web page loads
   final jsApiReady = Completer<WebViewController>();
 
   final jsMessageSubj = BehaviorSubject<JsApiMessage>();
@@ -43,23 +44,38 @@ class JsApiService {
   Future<WebViewController> get _controller => jsApiReady.future;
 
   JsApiService._(bool this.hiddenWidget, String this.flutterJsFilePath,
-      String? htmlString) {
-    _renderHtmlWithFlutterJS(flutterJsFilePath,
-        htmlString ?? "<html><head></head><body></body></html>");
+      {String? url, String? html}) {
+    if(url !=null && html == null) {
+      _renderUrlWithFlutterJS(flutterJsFilePath, url);
+      return;
+    }
+    _renderWithFlutterJS(flutterJsFilePath, html, url);
   }
 
   JsApiService.reefAppJsApi()
-      : this._(true, 'lib/js/packages/reef-mobile-js/dist/index.js', null);
+      : this._(true, 'lib/js/packages/reef-mobile-js/dist/index.js', url:null);
 
-  JsApiService.dAppInjectedHtml(String html)
-      : this._(false, 'lib/js/packages/dApp-js/dist/index.js', html);
+  JsApiService.dAppInjectedHtml(String html, String? baseUrl)
+      : this._(false, 'lib/js/packages/dApp-js/dist/index.js', html:html, url: baseUrl);
 
-  void _renderHtmlWithFlutterJS(String fJsFilePath, String htmlString) {
+  JsApiService.dAppInjectedUrl(String url)
+      : this._(false, 'lib/js/packages/dApp-js/dist/index.js', url:url);
+
+  void _renderWithFlutterJS(String fJsFilePath, String? htmlString, String? baseUrl) {
+    htmlString ??= "<html><head></head><body></body></html>";
     controllerInit.future.then((ctrl) {
       return _getFlutterJsHeaderTags(fJsFilePath).then((headerTags) {
-        return _insertHeaderTags(htmlString, headerTags);
+        return _insertHeaderTags(htmlString!, headerTags);
       }).then((htmlString) {
-        return _renderHtml(ctrl, htmlString);
+        return _renderHtml(ctrl, htmlString, baseUrl);
+      });
+    });
+  }
+
+  void _renderUrlWithFlutterJS(String fJsFilePath, String url) {
+    jsApiLoaded.future.then((ctrl){
+      _getFlutterJsHeaderTags(fJsFilePath).then((headerTags) {
+        // add js tags - ctrl.runJavascript();
       });
     });
   }
@@ -126,8 +142,8 @@ class JsApiService {
         htmlString.substring(insertAt);
   }
 
-  void _renderHtml(WebViewController ctrl, String htmlString) async {
-    ctrl.loadHtmlString(htmlString).then((value) => ctrl).catchError((err) {
+  void _renderHtml(WebViewController ctrl, String htmlString, String? baseUrl) async {
+    ctrl.loadHtmlString(htmlString, baseUrl: baseUrl).then((value) => ctrl).catchError((err) {
       print('Error loading HTML=$err');
     });
   }

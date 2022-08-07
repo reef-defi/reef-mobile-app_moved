@@ -18,15 +18,6 @@ import 'package:reef_mobile_app/utils/styles.dart';
 import '../model/StorageKey.dart';
 import 'DAppPage.dart';
 
-// void _navigateAccounts() {
-//     Navigator.push(
-//       context,
-//       MaterialPageRoute(
-//           builder: (context) => AccountPage(
-//               ReefAppState.instance, ReefAppState.instance.storage)),
-//     );
-//   }
-
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
