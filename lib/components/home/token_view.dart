@@ -34,7 +34,8 @@ class _TokenViewState extends State<TokenView> {
                 SizedBox(
                     height: 48,
                     width: 48,
-                    child: iconURL!=null ? CachedNetworkImage(
+                    child: /* TODO fix svg image base64
+                    iconURL!=null ? CachedNetworkImage(
                       imageUrl: iconURL,
                       placeholder: (context, url) => Shimmer.fromColors(
                         baseColor: Colors.grey[300]!,
@@ -53,7 +54,7 @@ class _TokenViewState extends State<TokenView> {
                         color: Colors.black12,
                         size: 48,
                       ),
-                    ): const SizedBox.shrink()),
+                    ):*/ const SizedBox.shrink()),
                 const Gap(8),
                 Text(
                   name,

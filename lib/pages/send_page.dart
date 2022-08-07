@@ -213,7 +213,8 @@ class _SendPageState extends State<SendPage> {
                                           color: Colors.black26)),
                                   child: Row(
                                     children: [
-                                      if (selectedToken.iconUrl!=null)
+                                      /* TODO fix svg image base64
+                                          if (selectedToken.iconUrl!=null)
                                         CachedNetworkImage(
                                           imageUrl: selectedToken.iconUrl!,
                                           width: 24,
@@ -239,7 +240,7 @@ class _SendPageState extends State<SendPage> {
                                             size: 24,
                                           ),
                                         )
-                                      else
+                                      else*/
                                         Icon(CupertinoIcons.question_circle,
                                             color: Colors.grey[600]!, size: 24),
                                       const Gap(4),
