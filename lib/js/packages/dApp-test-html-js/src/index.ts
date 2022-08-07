@@ -3,7 +3,7 @@ import {flipIt, getFlipperValue} from "./flipperContract";
 import {getSigner} from "./util";
 
 polyfill;
-console.log('DAPP URL1=', window.location.host, window.location.href);
+console.log('DAPP URL=', window.location.host, window.location.href);
 (window as any).onReefInjectedPromise = ()=>new Promise(resolve => {
     setTimeout(() => resolve(), 1000);
 });
