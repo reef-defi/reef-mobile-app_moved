@@ -50,7 +50,7 @@ dependencies:
   permission_handler: ^10.0.0
   path_provider: ^2.0.11
   flutter_secure_storage: ^5.0.2
-  web3dart: 2.3.5
+  http: ^0.13.5
   #freezed: ^2.0.3+1 #immutable classes
 
 dev_dependencies:
@@ -82,9 +82,6 @@ flutter:
     - lib/js/packages/reef-mobile-js/dist/index.js
     - lib/js/packages/dApp-js/dist/index.js
     - assets/images/
-    - lib/js/packages/dApp-test-html-js/dist/index.js
-#     - lib/js_api/dist/index.js
-#   - images/a_dot_ham.jpeg
 
 # An image asset can refer to one or more resolution-specific "variants", see
 # https://flutter.dev/assets-and-images/#resolution-aware

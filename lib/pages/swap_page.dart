@@ -267,7 +267,8 @@ class _SwapPageState extends State<SwapPage> {
                                   children: [
                                     if (selectedTopToken == null)
                                       Text("Select token")
-                                    else if (selectedTopToken!.iconUrl !=
+                                    /*  TODO fix svg image base64
+                                         else if (selectedTopToken!.iconUrl !=
                                             null &&
                                         selectedTopToken!.iconUrl!.isNotEmpty)
                                       CachedNetworkImage(
@@ -294,7 +295,7 @@ class _SwapPageState extends State<SwapPage> {
                                           color: Colors.black12,
                                           size: 24,
                                         ),
-                                      )
+                                      )*/
                                     else
                                       Icon(CupertinoIcons.question_circle,
                                           color: Colors.grey[600]!, size: 24),
@@ -421,7 +422,8 @@ class _SwapPageState extends State<SwapPage> {
                                   children: [
                                     if (selectedBottomToken == null)
                                       Text("Select token")
-                                    else if (selectedBottomToken!.iconUrl !=
+                                    /* TODO fix svg image base64
+                                        else if (selectedBottomToken!.iconUrl !=
                                             null &&
                                         selectedBottomToken!
                                             .iconUrl!.isNotEmpty)
@@ -449,7 +451,7 @@ class _SwapPageState extends State<SwapPage> {
                                           color: Colors.black12,
                                           size: 24,
                                         ),
-                                      )
+                                      )*/
                                     else
                                       Icon(CupertinoIcons.question_circle,
                                           color: Colors.grey[600]!, size: 24),
