@@ -3,6 +3,7 @@ import FlutterJS from "flutter-js-bridge";
 import {getDAppSendRequestFn} from "flutter-js-bridge/src/sendRequestDApp";
 import Injected from "@reef-defi/extension-base/page/Injected";
 let sendDAppMessage;
+export const INJECTED_EXT_IDENT = 'reef-mobile-app';
 
 export async  function injectMobileExtension(flutterJS: FlutterJS) {
 
@@ -32,7 +33,7 @@ async function enable (origin: string): Promise<Injected> {
 
 function inject () {
     injectExtension(enable, {
-        name: 'reef-mobile-app',
+        name: INJECTED_EXT_IDENT,
         version: '0.0.1'// TODO process?.env?.PKG_VERSION as string
     });
         const event = new Event('reef-mobile-injected');

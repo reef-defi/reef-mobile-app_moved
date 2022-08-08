@@ -28,20 +28,17 @@ class ReefAppState {
 
   init(JsApiService jsApi, StorageService storage) async {
     this.storage = storage;
-    await _initReefState(jsApi);
     await _initReefObservables(jsApi);
     tokensCtrl = TokenCtrl(jsApi, model.tokens);
     accountCtrl = AccountCtrl(jsApi, storage, model.accounts);
     signingCtrl = SigningCtrl(jsApi, storage, model.signatureRequests);
     transferCtrl = TransferCtrl(jsApi);
     swapCtrl = SwapCtrl(jsApi);
+    await _initReefState(jsApi);
   }
 
   _initReefState(JsApiService jsApiService) async {
-    var accounts = [];
-    (await storage.getAllAccounts())
-        .forEach(((account) => {accounts.add(account.toJsonSkinny())}));
-
+    var accounts = await accountCtrl.getAccountsList();
     await jsApiService
         .jsPromise('jsApi.initReefState("testnet", ${jsonEncode(accounts)})');
   }

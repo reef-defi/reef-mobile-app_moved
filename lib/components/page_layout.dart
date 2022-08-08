@@ -14,6 +14,8 @@ import 'package:reef_mobile_app/utils/functions.dart';
 import "package:reef_mobile_app/utils/styles.dart";
 import 'package:reef_mobile_app/utils/svg_icon.dart';
 
+import 'SignatureContentToggle.dart';
+
 class BottomNav extends StatefulWidget {
   const BottomNav({Key? key}) : super(key: key);
 
@@ -32,13 +34,6 @@ class _BottomNavState extends State<BottomNav> {
 
   void _onItemTapped(int index) {
     HapticFeedback.selectionClick();
-    //
-    // Removed navbar since it takes you to a new route
-    //
-    // Navigator.push(
-    //   context,
-    //   MaterialPageRoute(builder: (context) => _widgetOptions.elementAt(index)),
-    // );
     setState(() {
       _selectedIndex = index;
     });
@@ -46,7 +41,7 @@ class _BottomNavState extends State<BottomNav> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return SignatureContentToggle(GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
         body: Center(
@@ -131,6 +126,6 @@ class _BottomNavState extends State<BottomNav> {
           onTap: _onItemTapped,
         ),
       ),
-    );
+    ));
   }
 }

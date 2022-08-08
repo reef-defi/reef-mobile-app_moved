@@ -21,6 +21,13 @@ class AccountCtrl {
     _initWasm(_jsApi);
   }
 
+  Future getAccountsList() async {
+    var accounts = [];
+    (await _storage.getAllAccounts())
+        .forEach(((account) => {accounts.add(account.toJsonSkinny())}));
+    return accounts;
+  }
+
   void setSelectedAddress(String address) {
     // TODO check if in signers
     _jsApi.jsCall('appState.setCurrentAddress("$address")');

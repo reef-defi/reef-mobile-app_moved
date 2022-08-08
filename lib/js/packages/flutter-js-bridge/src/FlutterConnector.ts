@@ -44,7 +44,6 @@ export class FlutterConnector {
     receiveMessage(flutterRequestIdent: string, value: any) {
         const handlerObj = this.handlers[flutterRequestIdent];
         if (handlerObj) {
-
             let handlerPromise = this.responseMsgHandler(handlerObj, value);
 
             handlerPromise.then(handlerObj.resolve);

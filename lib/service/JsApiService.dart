@@ -90,7 +90,7 @@ class JsApiService {
 
   void sendDappMsgResponse(String reqId, dynamic value) {
     jsCall(
-        '${DAPP_MSG_CONFIRMATION_JS_FN_NAME}("$reqId", "$value")');
+        '${DAPP_MSG_CONFIRMATION_JS_FN_NAME}(`$reqId`, `$value`)');
   }
 
   Future<String> _getFlutterJsHeaderTags(String assetsFilePath) async {
@@ -163,12 +163,14 @@ class JsApiMessage {
   late String msgType;
   late String reqId;
   late dynamic value;
+  late String? url;
 
-  JsApiMessage(this.streamId, this.value, this.msgType, this.reqId);
+  JsApiMessage(this.streamId, this.value, this.msgType, this.reqId, this.url);
 
   JsApiMessage.fromJson(Map<String, dynamic> json)
       : streamId = json['streamId'],
         reqId = json['reqId'],
         value = json['value'],
+        url = json['url'],
         msgType = json['msgType'];
 }
