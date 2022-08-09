@@ -2,6 +2,7 @@ import { appState, graphql } from '@reef-defi/react-lib';
 import { switchMap, take } from "rxjs/operators";
 import { combineLatest, firstValueFrom } from "rxjs";
 import { fetchTokenData } from './utils/tokenUtils';
+import { ethers } from 'ethers';
 
 export const initApi = () => {
     (window as any).utils = {
@@ -16,5 +17,8 @@ export const initApi = () => {
                 )
             );
         },
+        isValidEvmAddress: (address: string) => {
+            return ethers.utils.isAddress(address);
+        }
     }
 }

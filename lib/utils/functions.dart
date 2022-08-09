@@ -1,5 +1,3 @@
-import 'package:web3dart/credentials.dart';
-
 double getBalanceValue(double balance, price) {
   if (price == null || price == null) {
     return 0.0;
@@ -24,7 +22,8 @@ String toAmountDisplayBigInt(BigInt decimalsVal,
   BigInt divisor = BigInt.from(10).pow(decimals);
   String intPart = (decimalsVal ~/ BigInt.from(10).pow(decimals)).toString();
   if (fractionDigits == 0) return intPart;
-  String fractionalPart = decimalsVal.remainder(divisor).toString();
+  String fractionalPart =
+      decimalsVal.remainder(divisor).toString().padLeft(decimals, "0");
   fractionalPart = fractionalPart.length < fractionDigits
       ? fractionalPart.padRight(fractionDigits, "0")
       : fractionalPart.substring(0, fractionDigits);
@@ -57,13 +56,9 @@ String toStringWithoutDecimals(String amount, int decimals) {
   return intPart + fractionalPart;
 }
 
+// To check for valid checksum use JS utility
 bool isEvmAddress(String address) {
-  try {
-    EthereumAddress.fromHex(address);
-    return true;
-  } catch (e) {
-    return false;
-  }
+  return RegExp(r'^(0x|0X)([0-9a-fA-F]{40})$').hasMatch(address);
 }
 
 bool isSubstrateAddress(String address) {
