@@ -61,6 +61,7 @@ bool isEvmAddress(String address) {
   return RegExp(r'^(0x|0X)([0-9a-fA-F]{40})$').hasMatch(address);
 }
 
+// To check for valid checksum use JS utility
 bool isSubstrateAddress(String address) {
   if (address.isEmpty || !address.startsWith("5")) {
     return false;
