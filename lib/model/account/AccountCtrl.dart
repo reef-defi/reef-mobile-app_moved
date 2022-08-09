@@ -67,6 +67,10 @@ class AccountCtrl {
     return _jsApi.jsPromise('account.updateAccounts(${jsonEncode(accounts)})');
   }
 
+  Future<dynamic> bindEvmAccount(String address) async {
+    return _jsApi.jsPromise('account.claimEvmAccount("$address")');
+  }
+
   void _initJsObservables(JsApiService _jsApi, StorageService storage) {
     _jsApi.jsObservable('appState.currentAddress\$').listen((address) async {
       if (address == null) {
@@ -118,7 +122,6 @@ class AccountCtrl {
     await _jsApi.jsPromise('keyring.initWasm()');
   }
 
-
   void createTestAccount() {
     final account = StoredAccount()
       ..mnemonic =
@@ -129,5 +132,4 @@ class AccountCtrl {
 
     saveAccount(account);
   }
-
 }

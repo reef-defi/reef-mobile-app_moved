@@ -9,6 +9,7 @@ import 'package:reef_mobile_app/components/home/staking_view.dart';
 import 'package:reef_mobile_app/components/home/token_view.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/tokens/TokenWithAmount.dart';
+import 'package:reef_mobile_app/pages/evm_bind_page.dart';
 import 'package:reef_mobile_app/utils/elements.dart';
 import 'package:reef_mobile_app/utils/functions.dart';
 import 'package:reef_mobile_app/utils/gradient_text.dart';
@@ -26,11 +27,17 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
   void _navigateTestDApp() {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => DAppPage(ReefAppState.instance)),
+    );
+  }
+
+  void _navigateTestEvmBind() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => EvmBindPage()),
     );
   }
 
@@ -185,10 +192,13 @@ class _HomePageState extends State<HomePage> {
       ),
       child: Column(
         children: [
-           ElevatedButton(
-              child: const Text('test dApp'),
-              onPressed: _navigateTestDApp,
-            ),
+          ElevatedButton(
+            child: const Text('test dApp'),
+            onPressed: _navigateTestDApp,
+          ),
+          ElevatedButton(
+              child: const Text('test bind EVM account'),
+              onPressed: _navigateTestEvmBind),
           balanceSection(),
           navSection(),
           Expanded(
@@ -210,8 +220,9 @@ class _HomePageState extends State<HomePage> {
   double sumTokenBalances(List<TokenWithAmount> list) {
     var sum = 0.0;
     list.forEach((token) {
-      double balValue = getBalanceValue(decimalsToDouble(token.balance), token.price);
-      if(balValue>0) {
+      double balValue =
+          getBalanceValue(decimalsToDouble(token.balance), token.price);
+      if (balValue > 0) {
         sum = sum + balValue;
       }
     });
