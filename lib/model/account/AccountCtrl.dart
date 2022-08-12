@@ -69,7 +69,7 @@ class AccountCtrl {
 
   void _initJsObservables(JsApiService _jsApi, StorageService storage) {
     _jsApi.jsObservable('appState.currentAddress\$').listen((address) async {
-      if (address == null) {
+      if (address == null || address=='') {
         return;
       }
       print('SELECTED addr=${address}');
