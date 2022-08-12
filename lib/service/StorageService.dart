@@ -48,12 +48,12 @@ class StorageService {
 
     // Encryption
     const secureStorage = FlutterSecureStorage();
-    var containsEncryptionKey = await secureStorage.containsKey(key: 'encryptionKey');
-    if (!containsEncryptionKey) {
+    var key = await secureStorage.read(key: 'encryptionKey');
+    if (key==null) {
       var key = Hive.generateSecureKey();
       await secureStorage.write(key: 'encryptionKey', value: base64UrlEncode(key));
     }
-    var key = await secureStorage.read(key: 'encryptionKey');
+    key = await secureStorage.read(key: 'encryptionKey');
     var encryptionKey = base64Url.decode(key!);
 
     accountsBox.complete(Hive.openBox('AccountsBox', encryptionCipher: HiveAesCipher(encryptionKey)));
