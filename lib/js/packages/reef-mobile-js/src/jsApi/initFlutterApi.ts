@@ -3,13 +3,12 @@ import * as transferApi from "./transferApi";
 import * as swapApi from "./swapApi";
 import * as signApi from "./signApi";
 import * as utilsApi from "./utilsApi";
-import {appState, AvailableNetworks, availableNetworks, ReefSigner} from "@reef-defi/react-lib";
-import {map, switchMap, take} from "rxjs/operators";
+import {appState, AvailableNetworks, availableNetworks} from "@reef-defi/react-lib";
 import {FlutterJS} from "flutter-js-bridge/src/FlutterJS";
 import type {InjectedAccountWithMeta} from "@reef-defi/extension-inject/types";
 import Signer from "@reef-defi/extension-base/page/Signer";
 import {getSignatureSendRequest} from "flutter-js-bridge/src/sendRequestSignature";
-import {INJECTED_EXT_IDENT} from "dapp/src/injectExtension";
+import {REEF_EXTENSION_IDENT} from "@reef-defi/extension-inject";
 
 export interface Account {
     address: string;
@@ -27,7 +26,7 @@ export const initFlutterApi = async (flutterJS: FlutterJS) => {
                         return await buildAccountWithMeta(account.name, account.address);
                     }
                 ));
-                // console.log("init reef state=",accountsWithMeta.length);
+                console.log("init reef accs len=",accountsWithMeta.length);
                 const destroyFn = await appState.initReefState({
                     network: availableNetworks[selNetwork],
                     jsonAccounts: {accounts: accountsWithMeta, injectedSigner: signingKey}
@@ -59,13 +58,12 @@ export const buildAccountWithMeta = async (name: string, address: string): Promi
         address,
         meta: {
             name,
-            source: INJECTED_EXT_IDENT
+            source: REEF_EXTENSION_IDENT
         }
     };
 
     return acountWithMeta;
 }
-
 
 function getFlutterSigningKey (flutterJS: FlutterJS) {
         let sendRequest = getSignatureSendRequest(flutterJS);
