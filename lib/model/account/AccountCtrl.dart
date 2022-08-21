@@ -130,7 +130,7 @@ class AccountCtrl {
       ..address = "5EnY9eFwEDcEJ62dJWrTXhTucJ4pzGym4WZ2xcDKiT3eJecP"
       ..svg = "<svg></svg>"
       ..name = "Test account";
-
+    print('create test account ${account.address}');
     saveAccount(account);
   }
 }
