@@ -32,6 +32,7 @@ export const innitApi = () => {
                     return await buildAccountWithMeta(account.name, account.address);
                 }
             ));
+            console.log("updateAccounts=",accountsWithMeta);
             appState.accountsJsonSubj.next(accountsWithMeta);
         },
     };

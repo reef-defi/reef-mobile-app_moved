@@ -67,9 +67,14 @@ class AccountCtrl {
     return _jsApi.jsPromise('account.updateAccounts(${jsonEncode(accounts)})');
   }
 
+  Future<bool> isValidEvmAddress(String address) async {
+    var res = await _jsApi.jsCall('utils.isValidEvmAddress("$address")');
+    return res == 'true';
+  }
+
   void _initJsObservables(JsApiService _jsApi, StorageService storage) {
     _jsApi.jsObservable('appState.currentAddress\$').listen((address) async {
-      if (address == null) {
+      if (address == null || address=='') {
         return;
       }
       print('SELECTED addr=${address}');
@@ -118,7 +123,6 @@ class AccountCtrl {
     await _jsApi.jsPromise('keyring.initWasm()');
   }
 
-
   void createTestAccount() {
     final account = StoredAccount()
       ..mnemonic =
@@ -126,8 +130,7 @@ class AccountCtrl {
       ..address = "5EnY9eFwEDcEJ62dJWrTXhTucJ4pzGym4WZ2xcDKiT3eJecP"
       ..svg = "<svg></svg>"
       ..name = "Test account";
-
+    print('create test account ${account.address}');
     saveAccount(account);
   }
-
 }

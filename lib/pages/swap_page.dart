@@ -24,7 +24,8 @@ class SwapPage extends StatefulWidget {
 }
 
 class _SwapPageState extends State<SwapPage> {
-  var tokens = ReefAppState.instance.model.tokens.tokenList;
+  // TODO: use tokenList instead of selectedSignerTokens
+  var tokens = ReefAppState.instance.model.tokens.selectedSignerTokens;
 
   TokenWithAmount? selectedTopToken = ReefAppState
       .instance.model.tokens.tokenList
@@ -206,12 +207,20 @@ class _SwapPageState extends State<SwapPage> {
         .toStringAsFixed(decimals);
   }
 
+  void _testFindToken() async {
+    var res = await ReefAppState.instance.tokensCtrl
+        .findToken(Constants.REEF_TOKEN_ADDRESS);
+    print("TEST FIND TOKEN: ${res}");
+    tokens.add(TokenWithAmount.fromJSON(res));
+  }
+
   @override
   Widget build(BuildContext context) {
     return SignatureContentToggle(Padding(
       padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24),
       child: Column(
         children: [
+          TextButton(onPressed: _testFindToken, child: Text("Test")),
           Text(
             "Swap",
             style: GoogleFonts.spaceGrotesk(
@@ -527,22 +536,25 @@ class _SwapPageState extends State<SwapPage> {
                           padding: const EdgeInsets.symmetric(vertical: 16),
                         ),
                         onPressed: () {
+                          if (selectedTopToken == null ||
+                              selectedTopToken!.amount <= BigInt.zero ||
+                              selectedBottomToken == null ||
+                              selectedBottomToken!.amount <= BigInt.zero) {
+                            return;
+                          }
                           _executeSwap();
                         },
                         child: Text(
-                          (() {
-                            if (selectedTopToken == null) {
-                              return "Select sell token";
-                            } else if (selectedBottomToken == null) {
-                              return "Select buy token";
-                            } else if (selectedTopToken!.amount <=
-                                    BigInt.zero ||
-                                selectedBottomToken!.amount <= BigInt.zero) {
-                              return "Insert amount";
-                            } else {
-                              return "Confirm send";
-                            }
-                          }()),
+                          // TODO changes not reflected in UI
+                          (selectedTopToken == null
+                              ? "Select sell token"
+                              : selectedBottomToken == null
+                                  ? "Select buy token"
+                                  : selectedTopToken!.amount <= BigInt.zero ||
+                                          selectedBottomToken!.amount <=
+                                              BigInt.zero
+                                      ? "Insert amount"
+                                      : "Swap"),
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w700,

@@ -1,11 +1,12 @@
-import {injectExtension} from "@reef-defi/extension-inject";
+import {injectExtension, REEF_EXTENSION_IDENT, REEF_INJECTED_EVENT, startInjection} from "@reef-defi/extension-inject";
 import FlutterJS from "flutter-js-bridge";
 import {getDAppSendRequestFn} from "flutter-js-bridge/src/sendRequestDApp";
 import Injected from "@reef-defi/extension-base/page/Injected";
 let sendDAppMessage;
-export const INJECTED_EXT_IDENT = 'reef-mobile';
 
-export async  function injectMobileExtension(flutterJS: FlutterJS) {
+startInjection(REEF_EXTENSION_IDENT);
+
+export async function injectMobileExtension(flutterJS: FlutterJS) {
 
     sendDAppMessage = getDAppSendRequestFn(flutterJS);
     redirectIfPhishing().then(( gotRedirected) => {
@@ -33,9 +34,10 @@ async function enable (origin: string): Promise<Injected> {
 
 function inject () {
     injectExtension(enable, {
-        name: INJECTED_EXT_IDENT,
+        name: REEF_EXTENSION_IDENT,
         version: '0.0.1'// TODO process?.env?.PKG_VERSION as string
     });
-        const event = new Event('reef-injected');
-        document.dispatchEvent(event);
+    console.log('injectCALL')
+    const event = new Event(REEF_INJECTED_EVENT);
+    document.dispatchEvent(event);
 }

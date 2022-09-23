@@ -49,7 +49,7 @@ class JsApiService {
   }
 
   JsApiService.reefAppJsApi()
-      : this._(true, 'lib/js/packages/reef-mobile-js/dist/index.js', url:null);
+      : this._(true, 'lib/js/packages/reef-mobile-js/dist/index.js', url:'https://app.reef.io');
 
   JsApiService.dAppInjectedHtml(String html, String? baseUrl)
       : this._(false, 'lib/js/packages/dApp-js/dist/index.js', html:html, url: baseUrl);
