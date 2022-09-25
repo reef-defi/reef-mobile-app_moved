@@ -8,8 +8,10 @@ import '../components/SignatureContentToggle.dart';
 import '../model/ReefAppState.dart';
 
 class DAppPage extends StatefulWidget {
-  final url = 'https://min-dapp.web.app';
+  // final url = 'https://min-dapp.web.app';
   // final url = 'https://app.reef.io';
+  final url = 'https://mobile-dapp-test.web.app/testnet';
+
   final ReefAppState reefState;
   final DAppRequestService dAppRequestService = const DAppRequestService();
 
@@ -21,7 +23,6 @@ class DAppPage extends StatefulWidget {
 
   @override
   State<DAppPage> createState() => _DAppPageState();
-
 }
 
 class _DAppPageState extends State<DAppPage> {

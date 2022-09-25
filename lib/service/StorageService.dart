@@ -7,9 +7,11 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:reef_mobile_app/model/account/stored_account.dart';
+import 'package:reef_mobile_app/model/metadata/metadata.dart';
 
 class StorageService {
   Completer<Box<dynamic>> mainBox = Completer();
+  Completer<Box<dynamic>> metadataBox = Completer();
   Completer<Box<dynamic>> accountsBox = Completer();
 
   StorageService() {
@@ -17,46 +19,69 @@ class StorageService {
     _initAsync();
   }
 
-  Future<dynamic> getValue(String key)=>mainBox.future.then((Box<dynamic> box) => box.get(key));
+  Future<dynamic> getValue(String key) =>
+      mainBox.future.then((Box<dynamic> box) => box.get(key));
 
-  Future<dynamic> setValue(String key, dynamic value)=>mainBox.future.then((Box<dynamic> box) => box.put(key, value));
+  Future<dynamic> setValue(String key, dynamic value) =>
+      mainBox.future.then((Box<dynamic> box) => box.put(key, value));
 
-  Future<dynamic> deleteValue(String key)=>mainBox.future.then((Box<dynamic> box) => box.delete(key));
+  Future<dynamic> deleteValue(String key) =>
+      mainBox.future.then((Box<dynamic> box) => box.delete(key));
 
-  Future<dynamic> getAccount(String address)=>accountsBox.future.then((Box<dynamic> box) => box.get(address));
+  Future<dynamic> getMetadata(String genesisHash) =>
+      metadataBox.future.then((Box<dynamic> box) => box.get(genesisHash));
 
-  Future<List<StoredAccount>> getAllAccounts()=>accountsBox.future.then((Box<dynamic> box) => box.values.toList().cast<StoredAccount>());
+  Future<List<Metadata>> getAllMetadatas() => metadataBox.future
+      .then((Box<dynamic> box) => box.values.toList().cast<Metadata>());
 
-  Future<dynamic> saveAccount(StoredAccount account)=>accountsBox.future.then((Box<dynamic> box) => box.put(account.address, account));
+  Future<dynamic> saveMetadata(Metadata metadata) => metadataBox.future
+      .then((Box<dynamic> box) => box.put(metadata.genesisHash, metadata));
 
-  Future<dynamic> deleteAccount(String address)=>mainBox.future.then((Box<dynamic> box) => box.delete(address));
+  Future<dynamic> deleteMetadata(String genesisHash) =>
+      metadataBox.future.then((Box<dynamic> box) => box.delete(genesisHash));
+
+  Future<dynamic> getAccount(String address) =>
+      accountsBox.future.then((Box<dynamic> box) => box.get(address));
+
+  Future<List<StoredAccount>> getAllAccounts() => accountsBox.future
+      .then((Box<dynamic> box) => box.values.toList().cast<StoredAccount>());
+
+  Future<dynamic> saveAccount(StoredAccount account) => accountsBox.future
+      .then((Box<dynamic> box) => box.put(account.address, account));
+
+  Future<dynamic> deleteAccount(String address) =>
+      accountsBox.future.then((Box<dynamic> box) => box.delete(address));
 
   _initAsync() async {
-    if(await _checkPermission() ){
+    if (await _checkPermission()) {
       _initHive();
     }
   }
 
   _initHive() async {
     var dir = await getApplicationDocumentsDirectory();
-    var path = dir.path+"/hive_store";
+    var path = dir.path + "/hive_store";
     Hive
       ..init(path)
-      ..registerAdapter(StoredAccountAdapter());
+      ..registerAdapter(StoredAccountAdapter())
+      ..registerAdapter(MetadataAdapter());
 
     mainBox.complete(Hive.openBox('ReefChainBox'));
+    metadataBox.complete(Hive.openBox('MetadataBox'));
 
     // Encryption
     const secureStorage = FlutterSecureStorage();
     var key = await secureStorage.read(key: 'encryptionKey');
-    if (key==null) {
+    if (key == null) {
       var key = Hive.generateSecureKey();
-      await secureStorage.write(key: 'encryptionKey', value: base64UrlEncode(key));
+      await secureStorage.write(
+          key: 'encryptionKey', value: base64UrlEncode(key));
     }
     key = await secureStorage.read(key: 'encryptionKey');
     var encryptionKey = base64Url.decode(key!);
 
-    accountsBox.complete(Hive.openBox('AccountsBox', encryptionCipher: HiveAesCipher(encryptionKey)));
+    accountsBox.complete(Hive.openBox('AccountsBox',
+        encryptionCipher: HiveAesCipher(encryptionKey)));
   }
 
   Future<bool> _checkPermission() async {
