@@ -90,7 +90,7 @@ class DAppRequestService {
     print(
         "chain: ${metadata.chain}, icon: ${metadata.icon}, decimals: ${metadata.tokenDecimals}, symbol: ${metadata.tokenSymbol}, upgrade: ${chain != null ? chain.specVersion : '<unknown>'} -> ${metadata.specVersion}");
     await ReefAppState.instance.storage.saveMetadata(metadata);
-
+    
     return true;
   }
 
