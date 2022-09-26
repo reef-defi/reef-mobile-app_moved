@@ -1,9 +1,7 @@
 import 'dart:convert';
 
 import 'package:reef_mobile_app/model/ReefAppState.dart';
-import 'package:reef_mobile_app/model/StorageKey.dart';
 import 'package:reef_mobile_app/model/metadata/metadata.dart';
-import 'package:reef_mobile_app/service/StorageService.dart';
 
 import 'JsApiService.dart';
 
@@ -89,18 +87,18 @@ class DAppRequestService {
         await ReefAppState.instance.storage.getMetadata(metadata.genesisHash);
     print(
         "chain: ${metadata.chain}, icon: ${metadata.icon}, decimals: ${metadata.tokenDecimals}, symbol: ${metadata.tokenSymbol}, upgrade: ${chain != null ? chain.specVersion : '<unknown>'} -> ${metadata.specVersion}");
+    print(
+        "This approval will add the metadata to your mobile app, allowing future requests to be decoded using this metadata.");
+    print("Yes, do this metadata update");
+    print("Reject");
     await ReefAppState.instance.storage.saveMetadata(metadata);
-    
     return true;
   }
 
   Future<String> _metadataList() async {
     var metadatas = await ReefAppState.instance.storage.getAllMetadatas();
     var injectedMetadataKnown = [];
-    print('METADATA LIST length: ${metadatas.length}');
     for (var metadata in metadatas) {
-      metadata.delete();
-      print('   spec version: ${metadata.specVersion}');
       injectedMetadataKnown.add(metadata.toInjectedMetadataKnownJson());
     }
     return jsonEncode(injectedMetadataKnown);
