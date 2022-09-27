@@ -29,22 +29,20 @@ class Metadata extends HiveObject {
   @HiveField(7)
   late dynamic types;
 
-  // Optional fields
-  // ?
   @HiveField(8)
   late String color;
 
-  // ?
   @HiveField(9)
   late String chainType;
 
-  // ?
   @HiveField(10)
   late dynamic userExtensions;
 
-  // ?
   @HiveField(11)
   late String metaCalls;
+
+  @HiveField(12)
+  late String from;
 
   static Metadata fromMap(Map map) {
     return Metadata()
@@ -59,10 +57,12 @@ class Metadata extends HiveObject {
       ..color = map['color'] ?? ""
       ..chainType = map['chainType'] ?? ""
       ..userExtensions = map['userExtensions'] ?? {}
-      ..metaCalls = map['metaCalls'] ?? "";
+      ..metaCalls = map['metaCalls'] ?? ""
+      ..from = map['from'] ?? "";
   }
 
   Map toJson() => {
+        'from': from,
         'chain': chain,
         'genesisHash': genesisHash,
         'icon': icon,

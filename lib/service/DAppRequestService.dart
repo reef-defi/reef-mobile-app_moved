@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:reef_mobile_app/components/modals/metadata_aproval_modal.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/metadata/metadata.dart';
 
@@ -82,16 +83,15 @@ class DAppRequestService {
 
   Future<bool> _metadataProvide(Map metadataMap) async {
     Metadata metadata = Metadata.fromMap(metadataMap);
-    // TODO confirmation modal
     var chain =
         await ReefAppState.instance.storage.getMetadata(metadata.genesisHash);
-    print(
-        "chain: ${metadata.chain}, icon: ${metadata.icon}, decimals: ${metadata.tokenDecimals}, symbol: ${metadata.tokenSymbol}, upgrade: ${chain != null ? chain.specVersion : '<unknown>'} -> ${metadata.specVersion}");
-    print(
-        "This approval will add the metadata to your mobile app, allowing future requests to be decoded using this metadata.");
-    print("Yes, do this metadata update");
-    print("Reject");
-    await ReefAppState.instance.storage.saveMetadata(metadata);
+    var currVersion =
+        chain != null ? chain.specVersion.toString() : '<unknown>';
+    showMetadataAprovalModal(
+        metadata: metadata,
+        currVersion: currVersion,
+        callback: () => {ReefAppState.instance.storage.saveMetadata(metadata)});
+    // TODO return result of callback
     return true;
   }
 
