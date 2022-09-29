@@ -7,7 +7,9 @@ import 'package:reef_mobile_app/components/home/NFT_view.dart';
 import 'package:reef_mobile_app/components/home/activity_view.dart';
 import 'package:reef_mobile_app/components/home/staking_view.dart';
 import 'package:reef_mobile_app/components/home/token_view.dart';
+import 'package:reef_mobile_app/components/modals/metadata_aproval_modal.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
+import 'package:reef_mobile_app/model/metadata/metadata.dart';
 import 'package:reef_mobile_app/model/tokens/TokenWithAmount.dart';
 import 'package:reef_mobile_app/utils/elements.dart';
 import 'package:reef_mobile_app/utils/functions.dart';
@@ -26,7 +28,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
   void _navigateTestDApp() {
     Navigator.push(
       context,
@@ -174,6 +175,35 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  void _testMetadata() async {
+    var metadataMap = await ReefAppState.instance.metadataCtrl.getMetadata();
+    print(metadataMap);
+    Metadata metadata = Metadata.fromMap(metadataMap);
+    var chain =
+        await ReefAppState.instance.storage.getMetadata(metadata.genesisHash);
+    int currVersionNum = chain != null ? chain.specVersion : 0;
+    if (metadata.specVersion > currVersionNum) {
+      String currVersionString =
+          chain != null ? chain.specVersion.toString() : '<unknown>';
+      showMetadataAprovalModal(
+          metadata: metadata,
+          currVersion: currVersionString,
+          callback: () =>
+              {ReefAppState.instance.storage.saveMetadata(metadata)});
+    } else {
+      // TODO: show error
+      print('Metadata is up to date');
+    }
+  }
+
+  // Just for testing!
+  void _testDeleteMetadata() async {
+    var metadatas = await ReefAppState.instance.storage.getAllMetadatas();
+    for (var metadata in metadatas) {
+      metadata.delete();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     SizeConfig.init(context);
@@ -185,10 +215,18 @@ class _HomePageState extends State<HomePage> {
       ),
       child: Column(
         children: [
-           ElevatedButton(
-              child: const Text('test dApp'),
-              onPressed: _navigateTestDApp,
-            ),
+          ElevatedButton(
+            child: const Text('test dApp'),
+            onPressed: _navigateTestDApp,
+          ),
+          ElevatedButton(
+            child: const Text('test get metadata'),
+            onPressed: () => _testMetadata(),
+          ),
+          ElevatedButton(
+            child: const Text('test delete metadata'),
+            onPressed: () => _testDeleteMetadata(),
+          ),
           balanceSection(),
           navSection(),
           Expanded(
@@ -210,8 +248,9 @@ class _HomePageState extends State<HomePage> {
   double sumTokenBalances(List<TokenWithAmount> list) {
     var sum = 0.0;
     list.forEach((token) {
-      double balValue = getBalanceValue(decimalsToDouble(token.balance), token.price);
-      if(balValue>0) {
+      double balValue =
+          getBalanceValue(decimalsToDouble(token.balance), token.price);
+      if (balValue > 0) {
         sum = sum + balValue;
       }
     });

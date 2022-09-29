@@ -11,6 +11,7 @@ class DAppPage extends StatefulWidget {
   // final url = 'https://min-dapp.web.app';
   // final url = 'https://app.reef.io';
   final url = 'https://mobile-dapp-test.web.app/testnet';
+  // final url = "https://console.reefscan.com/#/settings/metadata";
 
   final ReefAppState reefState;
   final DAppRequestService dAppRequestService = const DAppRequestService();
