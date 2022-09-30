@@ -204,6 +204,10 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  void _testDecodeMethod() async {
+    ReefAppState.instance.signingCtrl.decodeMethod();
+  }
+
   @override
   Widget build(BuildContext context) {
     SizeConfig.init(context);
@@ -226,6 +230,10 @@ class _HomePageState extends State<HomePage> {
           ElevatedButton(
             child: const Text('test delete metadata'),
             onPressed: () => _testDeleteMetadata(),
+          ),
+          ElevatedButton(
+            child: const Text('test decode method'),
+            onPressed: () => _testDecodeMethod(),
           ),
           balanceSection(),
           navSection(),
