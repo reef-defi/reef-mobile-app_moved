@@ -68,16 +68,12 @@ class _MetadataAprovalState extends State<MetadataAproval> {
                 1: FlexColumnWidth(4),
               },
               children: createTable(keyTexts: [
-                "From",
                 "Chain",
-                "Icon",
                 "Decimals",
                 "Symbol",
                 "Upgrade"
               ], valueTexts: [
-                widget.metadata.from,
                 widget.metadata.chain,
-                widget.metadata.icon,
                 widget.metadata.tokenDecimals.toString(),
                 widget.metadata.tokenSymbol,
                 "${widget.currVersion} -> ${widget.metadata.specVersion}"

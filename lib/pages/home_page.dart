@@ -175,27 +175,6 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  void _testMetadata() async {
-    var metadataMap = await ReefAppState.instance.metadataCtrl.getMetadata();
-    print(metadataMap);
-    Metadata metadata = Metadata.fromMap(metadataMap);
-    var chain =
-        await ReefAppState.instance.storage.getMetadata(metadata.genesisHash);
-    int currVersionNum = chain != null ? chain.specVersion : 0;
-    if (metadata.specVersion > currVersionNum) {
-      String currVersionString =
-          chain != null ? chain.specVersion.toString() : '<unknown>';
-      showMetadataAprovalModal(
-          metadata: metadata,
-          currVersion: currVersionString,
-          callback: () =>
-              {ReefAppState.instance.storage.saveMetadata(metadata)});
-    } else {
-      // TODO: show error
-      print('Metadata is up to date');
-    }
-  }
-
   // Just for testing!
   void _testDeleteMetadata() async {
     var metadatas = await ReefAppState.instance.storage.getAllMetadatas();
@@ -219,22 +198,17 @@ class _HomePageState extends State<HomePage> {
       ),
       child: Column(
         children: [
-          ElevatedButton(
-            child: const Text('test dApp'),
-            onPressed: _navigateTestDApp,
-          ),
-          ElevatedButton(
-            child: const Text('test get metadata'),
-            onPressed: () => _testMetadata(),
-          ),
-          ElevatedButton(
-            child: const Text('test delete metadata'),
-            onPressed: () => _testDeleteMetadata(),
-          ),
-          ElevatedButton(
-            child: const Text('test decode method'),
-            onPressed: () => _testDecodeMethod(),
-          ),
+          Row(children: [
+            ElevatedButton(
+              child: const Text('test dApp'),
+              onPressed: _navigateTestDApp,
+            ),
+            ElevatedButton(
+              child: const Text('test delete metadata'),
+              onPressed: () => _testDeleteMetadata(),
+            )
+          ]),
+
           balanceSection(),
           navSection(),
           Expanded(
