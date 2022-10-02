@@ -105,68 +105,78 @@ class _AccountCreationContentState extends State<AccountCreationContent> {
               child: Padding(
                 padding: const EdgeInsets.symmetric(
                     vertical: 24.0, horizontal: 16.0),
-                child: Row(
-                  children: [
-                    Container(
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.black12,
-                      ),
-                      child: ClipRRect(
-                          borderRadius: BorderRadius.circular(64),
-                          child: (widget.account?.svg != null)
-                              ? SvgPicture.string(widget.account?.svg as String)
-                              : Container(
-                                  width: 64,
-                                  height: 64,
-                                  decoration:
-                                      BoxDecoration(color: Colors.grey[600]!),
-                                )),
-                    ),
-                    const Gap(12),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            _editTitleTextField(),
-                            const Gap(2),
-                            IconButton(
-                              padding: EdgeInsets.zero,
-                              constraints: BoxConstraints(),
-                              icon: Icon(Icons.edit,
-                                  size: 14, color: Colors.grey[600]!),
-                              onPressed: () {
-                                setState(() {
-                                  _isEditingText = true;
-                                });
-                              },
-                            )
-                          ],
+                child:
+                 ClipRect(
+                   child: Row(
+                    children: [
+                      Container(
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.black12,
                         ),
-                        const Gap(2),
-                        Row(
+                        child: ClipRRect(
+                            borderRadius: BorderRadius.circular(64),
+                            child: (widget.account?.svg != null)
+                                ? SvgPicture.string(widget.account?.svg as String)
+                                : Container(
+                                    width: 64,
+                                    height: 64,
+                                    decoration:
+                                        BoxDecoration(color: Colors.grey[600]!),
+                                  )),
+                      ),
+                      const Gap(12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              "Address: ${widget.account?.address.shorten() ?? "Loading..."}",
-                              style: TextStyle(color: Colors.grey[600]!),
+                            Row(
+                              children: [
+                                _editTitleTextField(),
+                                const Gap(2),
+                                IconButton(
+                                  padding: EdgeInsets.zero,
+                                  constraints: BoxConstraints(),
+                                  icon: Icon(Icons.edit,
+                                      size: 14, color: Colors.grey[600]!),
+                                  onPressed: () {
+                                    setState(() {
+                                      _isEditingText = true;
+                                    });
+                                  },
+                                )
+                              ],
                             ),
                             const Gap(2),
-                            IconButton(
-                              constraints: BoxConstraints(),
-                              padding: EdgeInsets.zero,
-                              icon: Icon(Icons.copy, size: 12),
-                              onPressed: () {
-                                Clipboard.setData(ClipboardData(
-                                    text: widget.account?.address));
-                              },
-                            )
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    "Address: ${widget.account?.address.shorten() ?? "Loading..."}",
+                                    style: TextStyle(color: Colors.grey[600]!),
+                                    overflow: TextOverflow.fade,
+                                    maxLines: 1,
+                                    softWrap: false
+                                  ),
+                                ),
+                                const Gap(2),
+                                IconButton(
+                                  constraints: BoxConstraints(),
+                                  padding: EdgeInsets.zero,
+                                  icon: Icon(Icons.copy, size: 12),
+                                  onPressed: () {
+                                    Clipboard.setData(ClipboardData(
+                                        text: widget.account?.address));
+                                  },
+                                )
+                              ],
+                            ),
                           ],
                         ),
-                      ],
-                    ),
-                  ],
+                      ),
+                    ],
                 ),
+                 ),
               )),
           const Gap(12),
           Text(

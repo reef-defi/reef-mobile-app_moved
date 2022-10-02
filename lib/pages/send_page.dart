@@ -80,7 +80,8 @@ class _SendPageState extends State<SendPage> {
 
   @override
   Widget build(BuildContext context) {
-    return SignatureContentToggle(Padding(
+    return
+      SignatureContentToggle(Padding(
       padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24),
       child: Column(
         children: [
