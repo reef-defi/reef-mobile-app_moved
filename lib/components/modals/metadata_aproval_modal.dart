@@ -36,7 +36,7 @@ List<TableRow> createTable({required keyTexts, required valueTexts}) {
 
 class MetadataAproval extends StatefulWidget {
   final Metadata metadata;
-  final String currVersion;
+  final int currVersion;
   final Function() callback;
   const MetadataAproval(
       {Key? key,
@@ -55,6 +55,19 @@ class _MetadataAprovalState extends State<MetadataAproval> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.currVersion == widget.metadata.specVersion) {
+      return const Padding(
+          padding: EdgeInsets.fromLTRB(24, 0, 24, 32.0),
+          child: Text(
+            "Metadata is already up to date.",
+            style: TextStyle(fontSize: 16),
+            overflow: TextOverflow.ellipsis,
+          ));
+    }
+
+    String currVersion =
+        widget.currVersion == 0 ? "<unknown>" : widget.currVersion.toString();
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 0, 24, 32.0),
       child: Column(
@@ -76,7 +89,7 @@ class _MetadataAprovalState extends State<MetadataAproval> {
                 widget.metadata.chain,
                 widget.metadata.tokenDecimals.toString(),
                 widget.metadata.tokenSymbol,
-                "${widget.currVersion} -> ${widget.metadata.specVersion}"
+                "$currVersion -> ${widget.metadata.specVersion}"
               ]),
             ),
           ),

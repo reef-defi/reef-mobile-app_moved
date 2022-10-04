@@ -29,7 +29,6 @@ class DAppRequestService {
         responseFn(message.reqId, '${jsonEncode(signature)}');
         break;
       case 'pub(extrinsic.sign)':
-        _checkMetadata();
         var signature = await ReefAppState.instance.signingCtrl
             .signPayload(message.value['address'], message.value);
         responseFn(message.reqId, '${jsonEncode(signature)}');
@@ -86,8 +85,7 @@ class DAppRequestService {
     Metadata metadata = Metadata.fromMap(metadataMap);
     var chain =
         await ReefAppState.instance.storage.getMetadata(metadata.genesisHash);
-    var currVersion =
-        chain != null ? chain.specVersion.toString() : '<unknown>';
+    var currVersion = chain != null ? chain.specVersion.toString() : 0;
     showMetadataAprovalModal(
         metadata: metadata,
         currVersion: currVersion,
@@ -103,22 +101,5 @@ class DAppRequestService {
       injectedMetadataKnown.add(metadata.toInjectedMetadataKnownJson());
     }
     return jsonEncode(injectedMetadataKnown);
-  }
-
-  void _checkMetadata() async {
-    var metadataMap = await ReefAppState.instance.metadataCtrl.getMetadata();
-    Metadata metadata = Metadata.fromMap(metadataMap);
-    var chain =
-        await ReefAppState.instance.storage.getMetadata(metadata.genesisHash);
-    int currVersionNum = chain != null ? chain.specVersion : 0;
-    if (metadata.specVersion > currVersionNum) {
-      String currVersionString =
-          chain != null ? chain.specVersion.toString() : '<unknown>';
-      showMetadataAprovalModal(
-          metadata: metadata,
-          currVersion: currVersionString,
-          callback: () =>
-              {ReefAppState.instance.storage.saveMetadata(metadata)});
-    }
   }
 }

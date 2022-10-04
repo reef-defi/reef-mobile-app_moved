@@ -7,9 +7,7 @@ import 'package:reef_mobile_app/components/home/NFT_view.dart';
 import 'package:reef_mobile_app/components/home/activity_view.dart';
 import 'package:reef_mobile_app/components/home/staking_view.dart';
 import 'package:reef_mobile_app/components/home/token_view.dart';
-import 'package:reef_mobile_app/components/modals/metadata_aproval_modal.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
-import 'package:reef_mobile_app/model/metadata/metadata.dart';
 import 'package:reef_mobile_app/model/tokens/TokenWithAmount.dart';
 import 'package:reef_mobile_app/utils/elements.dart';
 import 'package:reef_mobile_app/utils/functions.dart';
@@ -17,7 +15,6 @@ import 'package:reef_mobile_app/utils/gradient_text.dart';
 import 'package:reef_mobile_app/utils/size_config.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 
-import '../model/StorageKey.dart';
 import 'DAppPage.dart';
 
 class HomePage extends StatefulWidget {
@@ -28,10 +25,11 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  void _navigateTestDApp() {
+  void _navigateTestDApp(String url) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => DAppPage(ReefAppState.instance)),
+      MaterialPageRoute(
+          builder: (context) => DAppPage(ReefAppState.instance, url)),
     );
   }
 
@@ -175,18 +173,6 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  // Just for testing!
-  void _testDeleteMetadata() async {
-    var metadatas = await ReefAppState.instance.storage.getAllMetadatas();
-    for (var metadata in metadatas) {
-      metadata.delete();
-    }
-  }
-
-  void _testDecodeMethod() async {
-    ReefAppState.instance.signingCtrl.decodeMethod();
-  }
-
   @override
   Widget build(BuildContext context) {
     SizeConfig.init(context);
@@ -200,15 +186,18 @@ class _HomePageState extends State<HomePage> {
         children: [
           Row(children: [
             ElevatedButton(
-              child: const Text('test dApp'),
-              onPressed: _navigateTestDApp,
+              child: const Text('test dApp 1'),
+              onPressed: () =>
+                  _navigateTestDApp("https://mobile-dapp-test.web.app/testnet"),
+              // https://min-dapp.web.app
+              // https://app.reef.io
             ),
             ElevatedButton(
-              child: const Text('test delete metadata'),
-              onPressed: () => _testDeleteMetadata(),
-            )
+              child: const Text('test dApp 2'),
+              onPressed: () => _navigateTestDApp(
+                  "https://console.reefscan.com/#/settings/metadata"),
+            ),
           ]),
-
           balanceSection(),
           navSection(),
           Expanded(

@@ -28,7 +28,7 @@ export const initApi = () => {
                             genesisHash: api.genesisHash.toHex(),
                             icon: CHAIN_TYPE,
                             metaCalls: base64Encode(api.runtimeMetadata.asCallsOnly.toU8a()),
-                            specVersion: parseInt(api.runtimeVersion.specVersion.toString(), 16),
+                            specVersion: parseInt(api.runtimeVersion.specVersion.toString()),
                             ss58Format: DEFAULT_SS58,
                             tokenDecimals: TOKEN_DECIMALS,
                             tokenSymbol: TOKEN_SYMBOL,

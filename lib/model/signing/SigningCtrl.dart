@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:reef_mobile_app/model/account/stored_account.dart';
 import 'package:reef_mobile_app/model/signing/signature_request.dart';
 import 'package:reef_mobile_app/model/signing/signer_payload_json.dart';
 import 'package:reef_mobile_app/model/signing/signature_requests.dart';
@@ -27,7 +26,8 @@ class SigningCtrl {
       jsApi.jsPromise(
           'signApi.signPayloadPromise(`$address`, ${jsonEncode(payload)})');
 
-  Future<dynamic> decodeMethod() => jsApi.jsPromise('utils.decodeMethod()');
+  Future<dynamic> decodeMethod(String data, dynamic types) =>
+      jsApi.jsPromise('utils.decodeMethod(`$data`, ${jsonEncode(types)})');
 
   confirmSignature(String sigConfirmationIdent, String address) async {
     var account = await storage.getAccount(address);
