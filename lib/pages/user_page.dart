@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -8,11 +7,11 @@ import 'package:reef_mobile_app/components/accounts/accounts_list.dart';
 import 'package:reef_mobile_app/components/modals/account_modals.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/account/AccountCtrl.dart';
-import 'package:reef_mobile_app/utils/functions.dart';
+import 'package:reef_mobile_app/model/metadata/metadata.dart';
+import 'package:reef_mobile_app/components/modals/metadata_aproval_modal.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 
 import '../components/SignatureContentToggle.dart';
-import '../model/account/ReefSigner.dart';
 
 class UserPage extends StatefulWidget {
   UserPage({Key? key}) : super(key: key);
@@ -23,17 +22,48 @@ class UserPage extends StatefulWidget {
   State<UserPage> createState() => _UserPageState();
 }
 
+_checkMetadata() async {
+  var metadataMap = await ReefAppState.instance.metadataCtrl.getMetadata();
+  Metadata metadata = Metadata.fromMap(metadataMap);
+  var chain =
+      await ReefAppState.instance.storage.getMetadata(metadata.genesisHash);
+  int currVersion = chain != null ? chain.specVersion : 0;
+  showMetadataAprovalModal(
+      metadata: metadata,
+      currVersion: currVersion,
+      callback: () => {ReefAppState.instance.storage.saveMetadata(metadata)});
+}
+
+// Functionality just for testing purposes!
+void _deleteMetadata() async {
+  var metadatas = await ReefAppState.instance.storage.getAllMetadatas();
+  for (var metadata in metadatas) {
+    metadata.delete();
+  }
+}
+
 class _UserPageState extends State<UserPage> {
   @override
   Widget build(BuildContext context) {
     return SignatureContentToggle(Column(
       children: <Widget>[
-        if (kDebugMode)ElevatedButton(
-          child: const Text('create test account'),
-          onPressed: () async {
-            ReefAppState.instance.accountCtrl.createTestAccount();
-          },
-        ),
+        if (kDebugMode)
+          Row(children: [
+            ElevatedButton(
+              child: const Text('create account'),
+              onPressed: () async {
+                ReefAppState.instance.accountCtrl.createTestAccount();
+              },
+            ),
+            ElevatedButton(
+              child: const Text('check meta'),
+              onPressed: () => _checkMetadata(),
+            ),
+            ElevatedButton(
+              child: const Text('delete meta'),
+              onPressed: () => _deleteMetadata(),
+            ),
+          ]),
         const Gap(16),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 8.0),

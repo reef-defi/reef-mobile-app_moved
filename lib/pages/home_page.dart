@@ -15,7 +15,6 @@ import 'package:reef_mobile_app/utils/gradient_text.dart';
 import 'package:reef_mobile_app/utils/size_config.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 
-import '../model/StorageKey.dart';
 import 'DAppPage.dart';
 
 class HomePage extends StatefulWidget {
@@ -26,11 +25,11 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
-  void _navigateTestDApp() {
+  void _navigateTestDApp(String url) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => DAppPage(ReefAppState.instance)),
+      MaterialPageRoute(
+          builder: (context) => DAppPage(ReefAppState.instance, url)),
     );
   }
 
@@ -185,10 +184,20 @@ class _HomePageState extends State<HomePage> {
       ),
       child: Column(
         children: [
-           ElevatedButton(
-              child: const Text('test dApp'),
-              onPressed: _navigateTestDApp,
+          Row(children: [
+            ElevatedButton(
+              child: const Text('test dApp 1'),
+              onPressed: () =>
+                  _navigateTestDApp("https://mobile-dapp-test.web.app/testnet"),
+              // https://min-dapp.web.app
+              // https://app.reef.io
             ),
+            ElevatedButton(
+              child: const Text('test dApp 2'),
+              onPressed: () => _navigateTestDApp(
+                  "https://console.reefscan.com/#/settings/metadata"),
+            ),
+          ]),
           balanceSection(),
           navSection(),
           Expanded(
@@ -210,8 +219,9 @@ class _HomePageState extends State<HomePage> {
   double sumTokenBalances(List<TokenWithAmount> list) {
     var sum = 0.0;
     list.forEach((token) {
-      double balValue = getBalanceValue(decimalsToDouble(token.balance), token.price);
-      if(balValue>0) {
+      double balValue =
+          getBalanceValue(decimalsToDouble(token.balance), token.price);
+      if (balValue > 0) {
         sum = sum + balValue;
       }
     });

@@ -72,9 +72,13 @@ class AccountCtrl {
     return res == 'true';
   }
 
+  Stream availableSignersStream() {
+    return _jsApi.jsObservable('account.availableSigners\$');
+  }
+
   void _initJsObservables(JsApiService _jsApi, StorageService storage) {
     _jsApi.jsObservable('appState.currentAddress\$').listen((address) async {
-      if (address == null || address=='') {
+      if (address == null || address == '') {
         return;
       }
       print('SELECTED addr=${address}');
