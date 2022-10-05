@@ -28,13 +28,14 @@ class MetadataAdapter extends TypeAdapter<Metadata> {
       ..color = fields[8] as String
       ..chainType = fields[9] as String
       ..userExtensions = fields[10] as dynamic
-      ..metaCalls = fields[11] as String;
+      ..metaCalls = fields[11] as String
+      ..from = fields[12] as String;
   }
 
   @override
   void write(BinaryWriter writer, Metadata obj) {
     writer
-      ..writeByte(12)
+      ..writeByte(13)
       ..writeByte(0)
       ..write(obj.chain)
       ..writeByte(1)
@@ -58,7 +59,9 @@ class MetadataAdapter extends TypeAdapter<Metadata> {
       ..writeByte(10)
       ..write(obj.userExtensions)
       ..writeByte(11)
-      ..write(obj.metaCalls);
+      ..write(obj.metaCalls)
+      ..writeByte(12)
+      ..write(obj.from);
   }
 
   @override
