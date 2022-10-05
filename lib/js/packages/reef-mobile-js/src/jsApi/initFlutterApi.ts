@@ -3,6 +3,7 @@ import * as transferApi from "./transferApi";
 import * as swapApi from "./swapApi";
 import * as signApi from "./signApi";
 import * as utilsApi from "./utilsApi";
+import * as metadataApi from "./metadataApi";
 import {appState, AvailableNetworks, availableNetworks} from "@reef-defi/react-lib";
 import {FlutterJS} from "flutter-js-bridge/src/FlutterJS";
 import type {InjectedAccountWithMeta} from "@reef-defi/extension-inject/types";
@@ -48,6 +49,7 @@ export const initFlutterApi = async (flutterJS: FlutterJS) => {
         swapApi.initApi();
         signApi.initApi();
         utilsApi.initApi();
+        metadataApi.initApi();
     } catch (e) {
         console.log("INIT ERROR=", e.message);
     }

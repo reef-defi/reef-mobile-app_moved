@@ -11,6 +11,8 @@ import '../service/StorageService.dart';
 
 typedef WidgetCallback = Widget Function();
 
+final navigatorKey = GlobalKey<NavigatorState>();
+
 class SplashApp extends StatefulWidget {
   final JsApiService reefJsApiService = JsApiService.reefAppJsApi();
   WidgetCallback displayOnInit;
@@ -58,6 +60,7 @@ class _SplashAppState extends State<SplashApp> {
         primarySwatch: Colors.blue,
       ),
       home: _buildBody(),
+      navigatorKey: navigatorKey,
     );
   }
 
