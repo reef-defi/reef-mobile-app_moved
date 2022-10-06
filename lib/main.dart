@@ -7,7 +7,6 @@ import 'package:reef_mobile_app/pages/SplashScreen.dart';
 import 'package:reef_mobile_app/pages/accounts.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:reef_mobile_app/components/page_layout.dart';
-import 'package:reef_mobile_app/pages/authentication.dart';
 import 'package:reef_mobile_app/utils/functions.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 import 'package:reef_mobile_app/pages/DAppPage.dart';
@@ -17,7 +16,6 @@ void main() async {
     SplashApp(
       key: UniqueKey(),
       displayOnInit: () {
-        return const AuthenticationPage();
         return const BottomNav();
         // return const MyApp();
         // return const TestHomePage();

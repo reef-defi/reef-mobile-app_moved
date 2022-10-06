@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:reef_mobile_app/components/accounts/accounts_list.dart';
 import 'package:reef_mobile_app/components/modals/account_modals.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
+import 'package:reef_mobile_app/model/StorageKey.dart';
 import 'package:reef_mobile_app/model/account/AccountCtrl.dart';
 import 'package:reef_mobile_app/model/metadata/metadata.dart';
 import 'package:reef_mobile_app/components/modals/metadata_aproval_modal.dart';
@@ -35,7 +36,7 @@ _checkMetadata() async {
 }
 
 // Functionality just for testing purposes!
-void _deleteMetadata() async {
+_deleteMetadata() async {
   var metadatas = await ReefAppState.instance.storage.getAllMetadatas();
   for (var metadata in metadatas) {
     metadata.delete();
@@ -64,6 +65,16 @@ class _UserPageState extends State<UserPage> {
               onPressed: () => _deleteMetadata(),
             ),
           ]),
+        Row(children: [
+          ElevatedButton(
+            child: const Text('delete password'),
+            onPressed: () {
+              // Functionality just for testing purposes!
+              ReefAppState.instance.storage
+                  .deleteValue(StorageKey.password.name);
+            },
+          ),
+        ]),
         const Gap(16),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 8.0),
