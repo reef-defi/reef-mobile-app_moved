@@ -1,1 +1,4 @@
-enum StorageKey { selected_address }
+enum StorageKey {
+  selected_address,
+  password,
+}

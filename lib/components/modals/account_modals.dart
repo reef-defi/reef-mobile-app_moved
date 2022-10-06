@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:reef_mobile_app/components/modal.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
+import 'package:reef_mobile_app/model/StorageKey.dart';
 import 'package:reef_mobile_app/model/account/stored_account.dart';
 import 'package:reef_mobile_app/service/StorageService.dart';
 import 'package:reef_mobile_app/utils/elements.dart';
@@ -340,6 +341,7 @@ class _AccountCreationConfirmContentState
   final TextEditingController _passwordController = TextEditingController();
   late String name;
   String password = "";
+  bool _hasPassword = false;
   final chains = <String>[
     'Allow use on any chain',
     'Reef Chain',
@@ -376,6 +378,11 @@ class _AccountCreationConfirmContentState
         password = _passwordController.text;
       });
     });
+    ReefAppState.instance.storage
+        .getValue(StorageKey.password.name)
+        .then((value) => setState(() {
+              _hasPassword = value != null && value.isNotEmpty;
+            }));
   }
 
   @override
@@ -514,33 +521,35 @@ class _AccountCreationConfirmContentState
             ),
           ),
           const Gap(8),
-          Text(
-            "A NEW PASSWORD FOR THIS ACCOUNT",
-            style: TextStyle(
-                fontSize: 10,
-                fontWeight: FontWeight.w500,
-                color: Styles.textLightColor),
-          ),
-          const Gap(8),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-            decoration: BoxDecoration(
-              color: Styles.whiteColor,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: const Color(0x20000000),
-                width: 1,
+          if (!_hasPassword) ...[
+            Text(
+              "A PASSWORD FOR REEF APP",
+              style: TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w500,
+                  color: Styles.textLightColor),
+            ),
+            const Gap(8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+              decoration: BoxDecoration(
+                color: Styles.whiteColor,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: const Color(0x20000000),
+                  width: 1,
+                ),
+              ),
+              child: TextField(
+                controller: _passwordController,
+                obscureText: true,
+                decoration: const InputDecoration.collapsed(hintText: ''),
+                style: const TextStyle(
+                  fontSize: 16,
+                ),
               ),
             ),
-            child: TextField(
-              controller: _passwordController,
-              obscureText: true,
-              decoration: const InputDecoration.collapsed(hintText: ''),
-              style: const TextStyle(
-                fontSize: 16,
-              ),
-            ),
-          ),
+          ],
           const Gap(24),
           Container(
             decoration: BoxDecoration(
@@ -583,6 +592,8 @@ class _AccountCreationConfirmContentState
                       if (name.isNotEmpty && password.isNotEmpty) {
                         if (widget.account != null) {
                           widget.saveAccount(widget.account as StoredAccount);
+                          ReefAppState.instance.storage
+                              .setValue(StorageKey.password.name, password);
                           print(
                               "Saved account with name: ${widget.account?.name} and address: ${widget.account?.address}");
                           Navigator.of(context).pop();
@@ -686,7 +697,5 @@ class _CurrentScreenState extends State<CurrentScreen> {
 
 void showCreateAccountModal(BuildContext context) {
   showModal(context,
-      headText: "Create Account",
-      dismissible: false,
-      child: CurrentScreen());
+      headText: "Create Account", dismissible: false, child: CurrentScreen());
 }

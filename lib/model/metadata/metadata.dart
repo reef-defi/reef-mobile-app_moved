@@ -1,5 +1,4 @@
 import 'package:hive/hive.dart';
-import 'dart:convert';
 
 part 'metadata.g.dart';
 
@@ -41,9 +40,6 @@ class Metadata extends HiveObject {
   @HiveField(11)
   late String metaCalls;
 
-  @HiveField(12)
-  late String from;
-
   static Metadata fromMap(Map map) {
     return Metadata()
       ..chain = map['chain']
@@ -57,12 +53,10 @@ class Metadata extends HiveObject {
       ..color = map['color'] ?? ""
       ..chainType = map['chainType'] ?? ""
       ..userExtensions = map['userExtensions'] ?? {}
-      ..metaCalls = map['metaCalls'] ?? ""
-      ..from = map['from'] ?? "";
+      ..metaCalls = map['metaCalls'] ?? "";
   }
 
   Map toJson() => {
-        'from': from,
         'chain': chain,
         'genesisHash': genesisHash,
         'icon': icon,
