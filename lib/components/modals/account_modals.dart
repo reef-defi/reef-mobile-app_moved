@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
@@ -576,24 +575,29 @@ class _AccountCreationConfirmContentState
                 Expanded(
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      splashFactory: !(name.isNotEmpty && password.isNotEmpty)
+                      splashFactory: !(name.isNotEmpty &&
+                              (!_hasPassword || password.isNotEmpty))
                           ? NoSplash.splashFactory
                           : InkSplash.splashFactory,
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(40)),
                       shadowColor: const Color(0x559d6cff),
                       elevation: 5,
-                      primary: (name.isNotEmpty && password.isNotEmpty)
+                      backgroundColor: (name.isNotEmpty &&
+                              (!_hasPassword || password.isNotEmpty))
                           ? Styles.secondaryAccentColor
                           : const Color(0xff9d6cff),
                       padding: const EdgeInsets.symmetric(vertical: 16),
                     ),
                     onPressed: () {
-                      if (name.isNotEmpty && password.isNotEmpty) {
+                      if (name.isNotEmpty &&
+                          (_hasPassword || password.isNotEmpty)) {
                         if (widget.account != null) {
                           widget.saveAccount(widget.account as StoredAccount);
-                          ReefAppState.instance.storage
-                              .setValue(StorageKey.password.name, password);
+                          if (password.isNotEmpty) {
+                            ReefAppState.instance.storage
+                                .setValue(StorageKey.password.name, password);
+                          }
                           print(
                               "Saved account with name: ${widget.account?.name} and address: ${widget.account?.address}");
                           Navigator.of(context).pop();

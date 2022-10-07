@@ -194,7 +194,7 @@ class _AccountBoxState extends State<AccountBox> {
                   ),
                   Row(
                     children: [
-                      if (widget.reefSigner.isEvmClaimed)
+                      if (!widget.reefSigner.isEvmClaimed)
                         Row(
                           children: [
                             DecoratedBox(
@@ -203,19 +203,21 @@ class _AccountBoxState extends State<AccountBox> {
                                   gradient: textGradient(),
                                   borderRadius: BorderRadius.circular(12)),
                               child: TextButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    _bind(widget.reefSigner.address);
+                                  },
                                   style: TextButton.styleFrom(
                                     backgroundColor: Colors.black12,
                                     shape: RoundedRectangleBorder(
                                         borderRadius:
                                             BorderRadius.circular(12)),
                                     padding: EdgeInsets.zero,
-                                    minimumSize: const Size(75, 30),
+                                    minimumSize: const Size(95, 30),
                                     tapTargetSize:
                                         MaterialTapTargetSize.shrinkWrap,
                                   ),
                                   child: Text(
-                                    "Bind EVM",
+                                    "Connect EVM",
                                     style: TextStyle(
                                         color: Styles.whiteColor,
                                         fontWeight: FontWeight.w600,
@@ -262,6 +264,13 @@ class Constants {
   static const List<String> choices = <String>[
     delete,
   ];
+}
+
+_bind(String address) async {
+  var response =
+      await ReefAppState.instance.accountCtrl.bindEvmAccount(address);
+  // TODO wait for tx to be included in block ?
+  print(response);
 }
 
 showAlertDialog(BuildContext context, ReefSigner signer) {

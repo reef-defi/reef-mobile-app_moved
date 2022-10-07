@@ -206,8 +206,7 @@ class _HomePageState extends State<HomePage> {
                   "https://console.reefscan.com/#/settings/metadata"),
             ),
             ElevatedButton(
-                child: const Text('test bind EVM account'),
-                onPressed: _navigateTestEvmBind),
+                child: const Text('bind EVM'), onPressed: _navigateTestEvmBind),
           ]),
           balanceSection(),
           navSection(),

@@ -1,23 +1,9 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:gap/gap.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:mobx/mobx.dart';
-import 'package:reef_mobile_app/components/modals/token_selection_modals.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
-import 'package:reef_mobile_app/model/StorageKey.dart';
 import 'package:reef_mobile_app/model/account/ReefSigner.dart';
 import 'package:reef_mobile_app/model/account/stored_account.dart';
-import 'package:reef_mobile_app/model/tokens/Token.dart';
 import 'package:reef_mobile_app/model/tokens/TokenWithAmount.dart';
-import 'package:reef_mobile_app/utils/functions.dart';
 import 'package:reef_mobile_app/utils/constants.dart';
-import 'package:reef_mobile_app/utils/functions.dart';
-import 'package:reef_mobile_app/utils/styles.dart';
-import 'package:shimmer/shimmer.dart';
 
 import '../components/SignatureContentToggle.dart';
 
@@ -67,7 +53,7 @@ class _EvmBindPageState extends State<EvmBindPage> {
     ReefSigner newSigner = ReefAppState.instance.model.accounts.signers
         .firstWhere((signer) => signer.address == newNativeAddress);
     print(
-        "isEvmClaimed ${newSigner.isEvmClaimed} - evmAddress: ${newSigner.evmAddress}");
+        "${newSigner.address}: isEvmClaimed ${newSigner.isEvmClaimed} - evmAddress: ${newSigner.evmAddress}");
   }
 
   void _delete() {

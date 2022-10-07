@@ -51,12 +51,6 @@ class _UserPageState extends State<UserPage> {
         if (kDebugMode)
           Row(children: [
             ElevatedButton(
-              child: const Text('create account'),
-              onPressed: () async {
-                ReefAppState.instance.accountCtrl.createTestAccount();
-              },
-            ),
-            ElevatedButton(
               child: const Text('check meta'),
               onPressed: () => _checkMetadata(),
             ),
@@ -64,17 +58,15 @@ class _UserPageState extends State<UserPage> {
               child: const Text('delete meta'),
               onPressed: () => _deleteMetadata(),
             ),
+            ElevatedButton(
+              child: const Text('delete password'),
+              onPressed: () {
+                // Functionality just for testing purposes!
+                ReefAppState.instance.storage
+                    .deleteValue(StorageKey.password.name);
+              },
+            ),
           ]),
-        Row(children: [
-          ElevatedButton(
-            child: const Text('delete password'),
-            onPressed: () {
-              // Functionality just for testing purposes!
-              ReefAppState.instance.storage
-                  .deleteValue(StorageKey.password.name);
-            },
-          ),
-        ]),
         const Gap(16),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 8.0),
