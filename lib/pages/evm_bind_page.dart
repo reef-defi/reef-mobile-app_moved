@@ -7,6 +7,7 @@ import 'package:reef_mobile_app/utils/constants.dart';
 
 import '../components/SignatureContentToggle.dart';
 
+// TODO delete this file
 class EvmBindPage extends StatefulWidget {
   const EvmBindPage({Key? key}) : super(key: key);
 
@@ -49,7 +50,6 @@ class _EvmBindPageState extends State<EvmBindPage> {
   }
 
   void _check() async {
-    // TODO signer is not updated after binding
     ReefSigner newSigner = ReefAppState.instance.model.accounts.signers
         .firstWhere((signer) => signer.address == newNativeAddress);
     print(

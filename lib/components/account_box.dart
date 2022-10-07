@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:reef_mobile_app/components/modals/bind_modal.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/account/ReefSigner.dart';
 import 'package:reef_mobile_app/utils/functions.dart';
@@ -204,7 +205,13 @@ class _AccountBoxState extends State<AccountBox> {
                                   borderRadius: BorderRadius.circular(12)),
                               child: TextButton(
                                   onPressed: () {
-                                    _bind(widget.reefSigner.address);
+                                    showBindEvmModal(context,
+                                        bindFor: widget.reefSigner,
+                                        callback: () => {
+                                              setState(() {
+                                                print("callback");
+                                              })
+                                            });
                                   },
                                   style: TextButton.styleFrom(
                                     backgroundColor: Colors.black12,
@@ -264,13 +271,6 @@ class Constants {
   static const List<String> choices = <String>[
     delete,
   ];
-}
-
-_bind(String address) async {
-  var response =
-      await ReefAppState.instance.accountCtrl.bindEvmAccount(address);
-  // TODO wait for tx to be included in block ?
-  print(response);
 }
 
 showAlertDialog(BuildContext context, ReefSigner signer) {
