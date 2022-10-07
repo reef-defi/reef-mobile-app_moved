@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:reef_mobile_app/model/account/stored_account.dart';
 import 'package:reef_mobile_app/model/signing/signature_request.dart';
 import 'package:reef_mobile_app/model/signing/signer_payload_json.dart';
 import 'package:reef_mobile_app/model/signing/signature_requests.dart';
@@ -13,27 +12,32 @@ class SigningCtrl {
   final JsApiService jsApi;
   final StorageService storage;
 
-  SigningCtrl(JsApiService this.jsApi, StorageService this.storage, SignatureRequests this.signatureRequests) {
+  SigningCtrl(JsApiService this.jsApi, StorageService this.storage,
+      SignatureRequests this.signatureRequests) {
     jsApi.jsTxSignatureConfirmationMessageSubj.listen((jsApiMessage) {
       signatureRequests.add(_buildSignatureRequest(jsApiMessage));
     });
   }
 
-  Future<dynamic> signRaw(String address, String message) => jsApi
-        .jsPromise('signApi.signRawPromise(`$address`, `$message`);');
+  Future<dynamic> signRaw(String address, String message) =>
+      jsApi.jsPromise('signApi.signRawPromise(`$address`, `$message`);');
 
-  Future<dynamic> signPayload(String address, Map<String, dynamic> payload) => jsApi
-        .jsPromise('signApi.signPayloadPromise(`$address`, ${jsonEncode(payload)})');
+  Future<dynamic> signPayload(String address, Map<String, dynamic> payload) =>
+      jsApi.jsPromise(
+          'signApi.signPayloadPromise(`$address`, ${jsonEncode(payload)})');
+
+  Future<dynamic> decodeMethod(String data, dynamic types) =>
+      jsApi.jsPromise('utils.decodeMethod(`$data`, ${jsonEncode(types)})');
 
   confirmSignature(String sigConfirmationIdent, String address) async {
     var account = await storage.getAccount(address);
-      if (account == null) {
-        print("ERROR: confirmSignature - Account not found.");
-        return;
-      }
-      // TODO user feedback
-      signatureRequests.remove(sigConfirmationIdent);
-      jsApi.confirmTxSignature(sigConfirmationIdent, account.mnemonic);
+    if (account == null) {
+      print("ERROR: confirmSignature - Account not found.");
+      return;
+    }
+    // TODO user feedback
+    signatureRequests.remove(sigConfirmationIdent);
+    jsApi.confirmTxSignature(sigConfirmationIdent, account.mnemonic);
   }
 
   _buildSignatureRequest(JsApiMessage jsApiMessage) {
@@ -41,26 +45,22 @@ class SigningCtrl {
     var payload;
 
     if (jsApiMessage.value["data"] != null) {
-      payload = SignerPayloadRaw(
-        jsApiMessage.value["address"],
-        jsApiMessage.value["data"],
-        jsApiMessage.value["type"]
-      );
+      payload = SignerPayloadRaw(jsApiMessage.value["address"],
+          jsApiMessage.value["data"], jsApiMessage.value["type"]);
     } else {
       payload = SignerPayloadJSON(
-        jsApiMessage.value["address"],
-        jsApiMessage.value["blockHash"],
-        jsApiMessage.value["blockNumber"],
-        jsApiMessage.value["era"],
-        jsApiMessage.value["genesisHash"],
-        jsApiMessage.value["method"],
-        jsApiMessage.value["nonce"],
-        jsApiMessage.value["specVersion"],
-        jsApiMessage.value["tip"],
-        jsApiMessage.value["transactionVersion"],
-        jsApiMessage.value["signedExtensions"].cast<String>(),
-        jsApiMessage.value["version"]
-      );
+          jsApiMessage.value["address"],
+          jsApiMessage.value["blockHash"],
+          jsApiMessage.value["blockNumber"],
+          jsApiMessage.value["era"],
+          jsApiMessage.value["genesisHash"],
+          jsApiMessage.value["method"],
+          jsApiMessage.value["nonce"],
+          jsApiMessage.value["specVersion"],
+          jsApiMessage.value["tip"],
+          jsApiMessage.value["transactionVersion"],
+          jsApiMessage.value["signedExtensions"].cast<String>(),
+          jsApiMessage.value["version"]);
     }
 
     return SignatureRequest(signatureIdent, payload);

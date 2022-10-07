@@ -22,7 +22,8 @@ String toAmountDisplayBigInt(BigInt decimalsVal,
   BigInt divisor = BigInt.from(10).pow(decimals);
   String intPart = (decimalsVal ~/ BigInt.from(10).pow(decimals)).toString();
   if (fractionDigits == 0) return intPart;
-  String fractionalPart = decimalsVal.remainder(divisor).toString();
+  String fractionalPart =
+      decimalsVal.remainder(divisor).toString().padLeft(decimals, "0");
   fractionalPart = fractionalPart.length < fractionDigits
       ? fractionalPart.padRight(fractionDigits, "0")
       : fractionalPart.substring(0, fractionDigits);
@@ -53,4 +54,17 @@ String toStringWithoutDecimals(String amount, int decimals) {
   }
 
   return intPart + fractionalPart;
+}
+
+// To check for valid checksum use JS utility
+bool isEvmAddress(String address) {
+  return RegExp(r'^(0x|0X)([0-9a-fA-F]{40})$').hasMatch(address);
+}
+
+// To check for valid checksum use JS utility
+bool isSubstrateAddress(String address) {
+  if (address.isEmpty || !address.startsWith("5")) {
+    return false;
+  }
+  return RegExp(r'^[A-z\d]{48}$').hasMatch(address);
 }

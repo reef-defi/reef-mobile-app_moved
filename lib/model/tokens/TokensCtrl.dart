@@ -8,7 +8,9 @@ import 'package:reef_mobile_app/utils/constants.dart';
 import 'token_model.dart';
 
 class TokenCtrl {
-  TokenCtrl(JsApiService jsApi, TokenModel tokenModel) {
+  final JsApiService jsApi;
+
+  TokenCtrl(this.jsApi, TokenModel tokenModel) {
     jsApi.jsObservable('appState.tokenPrices\$').listen((tokens) {
       if (tokens == null) {
         return;
@@ -76,5 +78,9 @@ class TokenCtrl {
           List.from(items.map((i) => TokenActivity.fromJSON(i)));
       tokenModel.setTokenActivity(tknList);
     });
+  }
+
+  Future<dynamic> findToken(String address) async {
+    return jsApi.jsPromise('utils.findToken("$address")');
   }
 }
