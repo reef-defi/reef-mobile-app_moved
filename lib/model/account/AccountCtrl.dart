@@ -67,6 +67,10 @@ class AccountCtrl {
     return _jsApi.jsPromise('account.updateAccounts(${jsonEncode(accounts)})');
   }
 
+  Future<dynamic> bindEvmAccount(String address) async {
+    return _jsApi.jsPromise('account.claimEvmAccount("$address")');
+  }
+
   Future<bool> isValidEvmAddress(String address) async {
     var res = await _jsApi.jsCall('utils.isValidEvmAddress("$address")');
     return res == 'true';
@@ -106,7 +110,7 @@ class AccountCtrl {
       _accountModel.setSigners(reefSigners);
       print('AVAILABLE Signers ${signers.length}');
       reefSigners.forEach((signer) {
-        print('  ${signer.name} - ${signer.address}');
+        print('  ${signer.name} - ${signer.address} - ${signer.isEvmClaimed}');
       });
     });
   }
@@ -125,16 +129,5 @@ class AccountCtrl {
 
   void _initWasm(JsApiService _jsApi) async {
     await _jsApi.jsPromise('keyring.initWasm()');
-  }
-
-  void createTestAccount() {
-    final account = StoredAccount()
-      ..mnemonic =
-          "control employ home citizen film salmon divorce cousin illegal episode certain olympic"
-      ..address = "5EnY9eFwEDcEJ62dJWrTXhTucJ4pzGym4WZ2xcDKiT3eJecP"
-      ..svg = "<svg></svg>"
-      ..name = "Test account";
-    print('create test account ${account.address}');
-    saveAccount(account);
   }
 }

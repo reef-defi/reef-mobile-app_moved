@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:reef_mobile_app/components/modals/bind_modal.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/account/ReefSigner.dart';
 import 'package:reef_mobile_app/utils/functions.dart';
@@ -194,7 +195,7 @@ class _AccountBoxState extends State<AccountBox> {
                   ),
                   Row(
                     children: [
-                      if (widget.reefSigner.isEvmClaimed)
+                      if (!widget.reefSigner.isEvmClaimed)
                         Row(
                           children: [
                             DecoratedBox(
@@ -203,19 +204,27 @@ class _AccountBoxState extends State<AccountBox> {
                                   gradient: textGradient(),
                                   borderRadius: BorderRadius.circular(12)),
                               child: TextButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    showBindEvmModal(context,
+                                        bindFor: widget.reefSigner,
+                                        callback: () => {
+                                              setState(() {
+                                                print("callback");
+                                              })
+                                            });
+                                  },
                                   style: TextButton.styleFrom(
                                     backgroundColor: Colors.black12,
                                     shape: RoundedRectangleBorder(
                                         borderRadius:
                                             BorderRadius.circular(12)),
                                     padding: EdgeInsets.zero,
-                                    minimumSize: const Size(75, 30),
+                                    minimumSize: const Size(95, 30),
                                     tapTargetSize:
                                         MaterialTapTargetSize.shrinkWrap,
                                   ),
                                   child: Text(
-                                    "Bind EVM",
+                                    "Connect EVM",
                                     style: TextStyle(
                                         color: Styles.whiteColor,
                                         fontWeight: FontWeight.w600,

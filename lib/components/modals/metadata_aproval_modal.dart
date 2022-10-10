@@ -139,7 +139,7 @@ class _MetadataAprovalState extends State<MetadataAproval> {
                           borderRadius: BorderRadius.circular(40)),
                       shadowColor: const Color(0x559d6cff),
                       elevation: 5,
-                      primary: Styles.primaryAccentColorDark,
+                      backgroundColor: Styles.primaryAccentColorDark,
                       padding: const EdgeInsets.symmetric(vertical: 16),
                     ),
                     onPressed: () async {

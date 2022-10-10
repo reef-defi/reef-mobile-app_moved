@@ -22,8 +22,8 @@ class ReefSigner {
         address: json["address"],
         name: json["name"],
         balance: balanceVal ?? BigInt.zero,
-        evmAddress: "",
-        isEvmClaimed: false,
+        evmAddress: json["evmAddress"] ?? '',
+        isEvmClaimed: json["isEvmClaimed"],
         iconSVG: json["iconSVG"]);
   }
 }
