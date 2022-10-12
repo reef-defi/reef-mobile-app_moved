@@ -2,94 +2,32 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:reef_mobile_app/components/modal.dart';
-import 'package:reef_mobile_app/model/metadata/metadata.dart';
 import 'package:reef_mobile_app/pages/SplashScreen.dart';
 import 'package:reef_mobile_app/utils/elements.dart';
-import 'package:reef_mobile_app/utils/gradient_text.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 
-List<TableRow> createTable({required keyTexts, required valueTexts}) {
-  List<TableRow> rows = [];
-  for (int i = 0; i < keyTexts.length; ++i) {
-    rows.add(TableRow(children: [
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 4.0),
-        child: GradientText(
-          keyTexts[i],
-          gradient: textGradient(),
-          textAlign: TextAlign.right,
-          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
-        ),
-      ),
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 4.0),
-        child: Text(
-          valueTexts[i],
-          style: const TextStyle(fontSize: 12),
-          overflow: TextOverflow.ellipsis,
-        ),
-      ),
-    ]));
-  }
-  return rows;
-}
-
-class MetadataAproval extends StatefulWidget {
-  final Metadata metadata;
-  final int currVersion;
-  const MetadataAproval(
-      {Key? key, required this.metadata, required this.currVersion})
+class AuthUrlAproval extends StatefulWidget {
+  final String origin;
+  final String url;
+  const AuthUrlAproval({Key? key, required this.origin, required this.url})
       : super(key: key);
 
   @override
-  State<MetadataAproval> createState() => _MetadataAprovalState();
+  State<AuthUrlAproval> createState() => _AuthUrlAprovalState();
 }
 
-class _MetadataAprovalState extends State<MetadataAproval> {
-  TextEditingController valueContainer = TextEditingController();
-  bool value = false;
-
+class _AuthUrlAprovalState extends State<AuthUrlAproval> {
   @override
   Widget build(BuildContext context) {
-    if (widget.currVersion == widget.metadata.specVersion) {
-      return const Padding(
-          padding: EdgeInsets.fromLTRB(24, 0, 24, 32.0),
-          child: Text(
-            "Metadata is already up to date.",
-            style: TextStyle(fontSize: 16),
-            overflow: TextOverflow.ellipsis,
-          ));
-    }
-
-    String currVersion =
-        widget.currVersion == 0 ? "<unknown>" : widget.currVersion.toString();
-
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 0, 24, 32.0),
       child: Column(
         children: [
-          //Information Section
-          Padding(
-            padding: const EdgeInsets.only(bottom: 16.0),
-            child: Table(
-              columnWidths: const {
-                0: IntrinsicColumnWidth(),
-                1: FlexColumnWidth(4),
-              },
-              children: createTable(keyTexts: [
-                "Chain",
-                "Decimals",
-                "Symbol",
-                "Upgrade"
-              ], valueTexts: [
-                widget.metadata.chain,
-                widget.metadata.tokenDecimals.toString(),
-                widget.metadata.tokenSymbol,
-                "$currVersion -> ${widget.metadata.specVersion}"
-              ]),
-            ),
+          Text(
+            "An application, self-identifying as ${widget.origin} is requesting access from ${widget.url}.",
+            style: const TextStyle(fontSize: 16),
           ),
-          //BoxContent
+          const Gap(16),
           ViewBoxContainer(
             color: Colors.white,
             child: Padding(
@@ -113,7 +51,7 @@ class _MetadataAprovalState extends State<MetadataAproval> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                "This approval will add the metadata to your mobile app, allowing future requests to be decoded using this metadata.",
+                                "Only approve this request if you trust the application. Approving gives the application access to the addresses of your accounts.",
                                 style: TextStyle(
                                     fontSize: 16, color: Styles.textColor),
                                 textAlign: TextAlign.justify,
@@ -142,7 +80,7 @@ class _MetadataAprovalState extends State<MetadataAproval> {
                       Navigator.pop(context, true);
                     },
                     child: const Text(
-                      'Yes, do this metadata update',
+                      'Yes, allow this application access',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
@@ -169,10 +107,12 @@ class _MetadataAprovalState extends State<MetadataAproval> {
   }
 }
 
-Future<dynamic> showMetadataAprovalModal(
-    {required metadata, required currVersion}) {
+Future<dynamic> showAuthUrlAprovalModal({required origin, required url}) {
   return showModal(navigatorKey.currentContext,
-      child: MetadataAproval(metadata: metadata, currVersion: currVersion),
+      child: AuthUrlAproval(
+        origin: origin,
+        url: url,
+      ),
       dismissible: false,
-      headText: "Metadata");
+      headText: "Authorize");
 }

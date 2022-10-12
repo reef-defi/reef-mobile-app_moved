@@ -1,10 +1,18 @@
 import 'dart:convert';
 
+import 'package:reef_mobile_app/components/modals/auth_url_aproval_modal.dart';
 import 'package:reef_mobile_app/components/modals/metadata_aproval_modal.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
+import 'package:reef_mobile_app/model/auth_url/auth_url.dart';
 import 'package:reef_mobile_app/model/metadata/metadata.dart';
 
 import 'JsApiService.dart';
+
+enum AuthUrlStatus {
+  authorized,
+  notAuthorized,
+  notFound,
+}
 
 class DAppRequestService {
   const DAppRequestService();
@@ -16,9 +24,8 @@ class DAppRequestService {
     }
 
     if (message.msgType != 'pub(authorize.tab)' &&
-        !_ensureUrlAuthorized(message.url)) {
-      print('Domain not authorized= ${message.url}');
-      // TODO display alert so user is aware domain is disabled
+        await _getAuthUrlStatus(message.url) != AuthUrlStatus.authorized) {
+      print('Domain not authorized= ${message.url} - ${message.msgType}');
       return;
     }
 
@@ -35,7 +42,7 @@ class DAppRequestService {
         break;
       case 'pub(authorize.tab)':
         responseFn(message.reqId,
-            _authorizeDapp(message.value['origin'], message.url));
+            await _authorizeDapp(message.value['origin'], message.url));
         break;
       case 'pub(accounts.list)':
         var accounts =
@@ -65,20 +72,31 @@ class DAppRequestService {
     return false;
   }
 
-  bool _ensureUrlAuthorized(String? url) {
-    if (url == null) {
-      return false;
-    }
-    // TODO check against authorized domains
-    return true;
+  Future<AuthUrlStatus> _getAuthUrlStatus(String? url) async {
+    if (url == null) return AuthUrlStatus.notFound;
+
+    var authUrl = await ReefAppState.instance.storage.getAuthUrl(url);
+    if (authUrl == null) return AuthUrlStatus.notFound;
+
+    return authUrl.isAllowed
+        ? AuthUrlStatus.authorized
+        : AuthUrlStatus.notAuthorized;
   }
 
-  _authorizeDapp(String dAppName, String? url) {
-    if (url == null) {
-      return false;
+  Future<bool> _authorizeDapp(String dAppName, String? url) async {
+    switch (await _getAuthUrlStatus(url)) {
+      case AuthUrlStatus.authorized:
+        return true;
+      case AuthUrlStatus.notFound:
+        var response =
+            await showAuthUrlAprovalModal(origin: dAppName, url: url);
+        await ReefAppState.instance.storage
+            .saveAuthUrl(AuthUrl(url!, response == true));
+        return response == true;
+      case AuthUrlStatus.notAuthorized:
+      default:
+        return false;
     }
-    // TODO display modal and save url for _ensureUrlAuthorized
-    return true;
   }
 
   Future<bool> _metadataProvide(Map metadataMap) async {
@@ -86,12 +104,15 @@ class DAppRequestService {
     var chain =
         await ReefAppState.instance.storage.getMetadata(metadata.genesisHash);
     var currVersion = chain != null ? chain.specVersion.toString() : 0;
-    showMetadataAprovalModal(
-        metadata: metadata,
-        currVersion: currVersion,
-        callback: () => {ReefAppState.instance.storage.saveMetadata(metadata)});
-    // TODO return result of callback
-    return true;
+    var response = await showMetadataAprovalModal(
+      metadata: metadata,
+      currVersion: currVersion,
+    );
+    if (response == true) {
+      await ReefAppState.instance.storage.saveMetadata(metadata);
+      return true;
+    }
+    return false;
   }
 
   Future<String> _metadataList() async {
