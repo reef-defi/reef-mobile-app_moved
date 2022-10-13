@@ -701,5 +701,5 @@ class _CurrentScreenState extends State<CurrentScreen> {
 
 void showCreateAccountModal(BuildContext context) {
   showModal(context,
-      headText: "Create Account", dismissible: false, child: CurrentScreen());
+      headText: "Create Account", dismissible: true, child: CurrentScreen());
 }

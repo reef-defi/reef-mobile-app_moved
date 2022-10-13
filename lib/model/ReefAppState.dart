@@ -1,7 +1,9 @@
 import 'dart:convert';
 
+import 'package:reef_mobile_app/model/StorageKey.dart';
 import 'package:reef_mobile_app/model/ViewModel.dart';
 import 'package:reef_mobile_app/model/metadata/MetadataCtrl.dart';
+import 'package:reef_mobile_app/model/network/NetworkCtrl.dart';
 import 'package:reef_mobile_app/model/signing/SigningCtrl.dart';
 import 'package:reef_mobile_app/model/swap/SwapCtrl.dart';
 import 'package:reef_mobile_app/model/tokens/TokensCtrl.dart';
@@ -23,6 +25,7 @@ class ReefAppState {
   late TransferCtrl transferCtrl;
   late SwapCtrl swapCtrl;
   late MetadataCtrl metadataCtrl;
+  late NetworkCtrl networkCtrl;
 
   ReefAppState._();
 
@@ -37,13 +40,19 @@ class ReefAppState {
     transferCtrl = TransferCtrl(jsApi);
     swapCtrl = SwapCtrl(jsApi);
     metadataCtrl = MetadataCtrl(jsApi, storage);
-    await _initReefState(jsApi);
+    // TODO change default network to mainnet
+    Network currentNetwork =
+        await storage.getValue(StorageKey.network.name) == Network.mainnet.name
+            ? Network.mainnet
+            : Network.testnet;
+    networkCtrl = NetworkCtrl(storage, jsApi, currentNetwork);
+    await _initReefState(jsApi, currentNetwork);
   }
 
-  _initReefState(JsApiService jsApiService) async {
+  _initReefState(JsApiService jsApiService, Network currentNetwork) async {
     var accounts = await accountCtrl.getAccountsList();
-    await jsApiService
-        .jsPromise('jsApi.initReefState("testnet", ${jsonEncode(accounts)})');
+    await jsApiService.jsPromise(
+        'jsApi.initReefState("${currentNetwork.name}", ${jsonEncode(accounts)})');
   }
 
   _initReefObservables(JsApiService reefAppJsApiService) async {

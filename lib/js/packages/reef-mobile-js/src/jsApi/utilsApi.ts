@@ -1,4 +1,4 @@
-import { appState, graphql } from '@reef-defi/react-lib';
+import { appState, graphql, availableNetworks, Network } from '@reef-defi/react-lib';
 import { map, switchMap, take } from "rxjs/operators";
 import { combineLatest, firstValueFrom } from "rxjs";
 import { fetchTokenData } from './utils/tokenUtils';
@@ -69,8 +69,11 @@ export const initApi = () => {
                     return { methodName, argsString, info };
                 }),
                 take(1)
-            )
-        );
-        }
+            ));
+        },
+        setCurrentNetwork: (networkName: string) => {
+            const network: Network = availableNetworks[networkName] || availableNetworks.mainnet;
+            appState.setCurrentNetwork(network);
+        },
     }
 }

@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:reef_mobile_app/components/accounts/accounts_list.dart';
 import 'package:reef_mobile_app/components/modals/account_modals.dart';
 import 'package:reef_mobile_app/components/modals/auth_url_list_modal.dart';
+import 'package:reef_mobile_app/components/switch_network.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/StorageKey.dart';
 import 'package:reef_mobile_app/model/account/AccountCtrl.dart';
@@ -60,6 +61,7 @@ class _UserPageState extends State<UserPage> {
               child: const Text('website access'),
               onPressed: () => showAuthUrlListModal(context),
             ),
+            const SwitchNetwork()
           ]),
         Row(children: [
           ElevatedButton(
