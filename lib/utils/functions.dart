@@ -68,3 +68,14 @@ bool isSubstrateAddress(String address) {
   }
   return RegExp(r'^[A-z\d]{48}$').hasMatch(address);
 }
+
+String stripUrl(String? url) {
+  if (url != null &&
+      (url.startsWith('http:') ||
+          url.startsWith('https:') ||
+          url.startsWith('ipfs:') ||
+          url.startsWith('ipns:'))) {
+    return url.split("/")[2];
+  }
+  return '';
+}
