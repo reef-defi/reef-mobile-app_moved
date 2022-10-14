@@ -436,5 +436,5 @@ void showSigningModal(context, {required variant, info}) {
       break;
   }
   showModal(context,
-      child: variants[variantIndex], dismissible: false, headText: variant);
+      child: variants[variantIndex], dismissible: true, headText: variant);
 }
