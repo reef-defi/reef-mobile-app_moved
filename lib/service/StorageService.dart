@@ -7,10 +7,12 @@ import 'package:path_provider/path_provider.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:reef_mobile_app/model/account/stored_account.dart';
 import 'package:reef_mobile_app/model/metadata/metadata.dart';
+import 'package:reef_mobile_app/model/auth_url/auth_url.dart';
 
 class StorageService {
   Completer<Box<dynamic>> mainBox = Completer();
   Completer<Box<dynamic>> metadataBox = Completer();
+  Completer<Box<dynamic>> authUrlsBox = Completer();
   Completer<Box<dynamic>> accountsBox = Completer();
 
   StorageService() {
@@ -39,6 +41,18 @@ class StorageService {
   Future<dynamic> deleteMetadata(String genesisHash) =>
       metadataBox.future.then((Box<dynamic> box) => box.delete(genesisHash));
 
+  Future<dynamic> getAuthUrl(String url) =>
+      authUrlsBox.future.then((Box<dynamic> box) => box.get(url));
+
+  Future<List<AuthUrl>> getAllAuthUrls() => authUrlsBox.future
+      .then((Box<dynamic> box) => box.values.toList().cast<AuthUrl>());
+
+  Future<dynamic> saveAuthUrl(AuthUrl authUrl) => authUrlsBox.future
+      .then((Box<dynamic> box) => box.put(authUrl.url, authUrl));
+
+  Future<dynamic> deleteAuthUrl(String url) =>
+      authUrlsBox.future.then((Box<dynamic> box) => box.delete(url));
+
   Future<dynamic> getAccount(String address) =>
       accountsBox.future.then((Box<dynamic> box) => box.get(address));
 
@@ -63,10 +77,12 @@ class StorageService {
     Hive
       ..init(path)
       ..registerAdapter(StoredAccountAdapter())
-      ..registerAdapter(MetadataAdapter());
+      ..registerAdapter(MetadataAdapter())
+      ..registerAdapter(AuthUrlAdapter());
 
     mainBox.complete(Hive.openBox('ReefChainBox'));
     metadataBox.complete(Hive.openBox('MetadataBox'));
+    authUrlsBox.complete(Hive.openBox('AuthUrlsBox'));
 
     // Encryption
     const secureStorage = FlutterSecureStorage();

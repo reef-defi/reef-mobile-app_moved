@@ -5,20 +5,24 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:reef_mobile_app/utils/elements.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 
-void showModal(context, {child, dismissible = true, headText}) {
-  showDialog(
+Future<dynamic> showModal(context, {child, dismissible = true, headText}) {
+  return showDialog(
       context: context,
       barrierDismissible: dismissible,
-      builder: (BuildContext context) =>
-          CustomModal(child: child, headText: headText));
+      builder: (BuildContext context) => CustomModal(
+          child: child, headText: headText, dismissible: dismissible));
 }
 
 class CustomModal extends StatefulWidget {
   final Widget child;
   final String headText;
+  final bool dismissible;
 
   const CustomModal(
-      {Key? key, required this.child, this.headText = "Transaction"})
+      {Key? key,
+      required this.child,
+      this.headText = "Transaction",
+      this.dismissible = true})
       : super(key: key);
 
   @override
@@ -89,7 +93,7 @@ class CustomModalState extends State<CustomModal>
                             children: [
                               Padding(
                                 padding: const EdgeInsets.symmetric(
-                                    horizontal: 12.0),
+                                    horizontal: 12.0, vertical: 8),
                                 child: Row(
                                   children: [
                                     const Image(
@@ -109,21 +113,22 @@ class CustomModalState extends State<CustomModal>
                                   ],
                                 ),
                               ),
-                              ElevatedButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                style: ElevatedButton.styleFrom(
-                                    shape: const CircleBorder(),
-                                    padding: const EdgeInsets.all(8),
-                                    minimumSize: const Size.fromRadius(4),
-                                    primary: Styles.whiteColor,
-                                    onPrimary: Colors.grey[300],
-                                    elevation: 2,
-                                    shadowColor: Colors.black12),
-                                child: const Icon(CupertinoIcons.xmark,
-                                    color: Colors.black87, size: 12),
-                              )
+                              if (widget.dismissible)
+                                ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                      shape: const CircleBorder(),
+                                      padding: const EdgeInsets.all(8),
+                                      minimumSize: const Size.fromRadius(4),
+                                      backgroundColor: Styles.whiteColor,
+                                      foregroundColor: Colors.grey[300],
+                                      elevation: 2,
+                                      shadowColor: Colors.black12),
+                                  child: const Icon(CupertinoIcons.xmark,
+                                      color: Colors.black87, size: 12),
+                                )
                             ],
                           ),
                         ),

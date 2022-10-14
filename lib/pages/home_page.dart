@@ -9,7 +9,7 @@ import 'package:reef_mobile_app/components/home/staking_view.dart';
 import 'package:reef_mobile_app/components/home/token_view.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/tokens/TokenWithAmount.dart';
-import 'package:reef_mobile_app/pages/evm_bind_page.dart';
+import 'package:reef_mobile_app/pages/test_page.dart';
 import 'package:reef_mobile_app/utils/elements.dart';
 import 'package:reef_mobile_app/utils/functions.dart';
 import 'package:reef_mobile_app/utils/gradient_text.dart';
@@ -34,10 +34,10 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void _navigateTestEvmBind() {
+  void _navigateTestPage() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => EvmBindPage()),
+      MaterialPageRoute(builder: (context) => const TestPage()),
     );
   }
 
@@ -205,8 +205,8 @@ class _HomePageState extends State<HomePage> {
               onPressed: () => _navigateTestDApp(
                   "https://console.reefscan.com/#/settings/metadata"),
             ),
-            ElevatedButton(
-                child: const Text('bind EVM'), onPressed: _navigateTestEvmBind),
+            // ElevatedButton(
+            //     child: const Text('auth dapp'), onPressed: _navigateTestPage),
           ]),
           balanceSection(),
           navSection(),

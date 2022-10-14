@@ -5,6 +5,7 @@ import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:reef_mobile_app/components/accounts/accounts_list.dart';
 import 'package:reef_mobile_app/components/modals/account_modals.dart';
+import 'package:reef_mobile_app/components/modals/auth_url_list_modal.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/StorageKey.dart';
 import 'package:reef_mobile_app/model/account/AccountCtrl.dart';
@@ -29,10 +30,11 @@ _checkMetadata() async {
   var chain =
       await ReefAppState.instance.storage.getMetadata(metadata.genesisHash);
   int currVersion = chain != null ? chain.specVersion : 0;
-  showMetadataAprovalModal(
-      metadata: metadata,
-      currVersion: currVersion,
-      callback: () => {ReefAppState.instance.storage.saveMetadata(metadata)});
+  var response = await showMetadataAprovalModal(
+      metadata: metadata, currVersion: currVersion);
+  if (response == true) {
+    ReefAppState.instance.storage.saveMetadata(metadata);
+  }
 }
 
 // Functionality just for testing purposes!
@@ -55,18 +57,24 @@ class _UserPageState extends State<UserPage> {
               onPressed: () => _checkMetadata(),
             ),
             ElevatedButton(
-              child: const Text('delete meta'),
-              onPressed: () => _deleteMetadata(),
-            ),
-            ElevatedButton(
-              child: const Text('delete password'),
-              onPressed: () {
-                // Functionality just for testing purposes!
-                ReefAppState.instance.storage
-                    .deleteValue(StorageKey.password.name);
-              },
+              child: const Text('website access'),
+              onPressed: () => showAuthUrlListModal(context),
             ),
           ]),
+        Row(children: [
+          ElevatedButton(
+            child: const Text('delete meta'),
+            onPressed: () => _deleteMetadata(),
+          ),
+          ElevatedButton(
+            child: const Text('delete password'),
+            onPressed: () {
+              // Functionality just for testing purposes!
+              ReefAppState.instance.storage
+                  .deleteValue(StorageKey.password.name);
+            },
+          ),
+        ]),
         const Gap(16),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 8.0),
