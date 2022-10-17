@@ -14,6 +14,7 @@ class StorageService {
   Completer<Box<dynamic>> metadataBox = Completer();
   Completer<Box<dynamic>> authUrlsBox = Completer();
   Completer<Box<dynamic>> accountsBox = Completer();
+  Completer<Box<dynamic>> jwtsBox = Completer();
 
   StorageService() {
     _checkPermission();
@@ -65,6 +66,15 @@ class StorageService {
   Future<dynamic> deleteAccount(String address) =>
       accountsBox.future.then((Box<dynamic> box) => box.delete(address));
 
+  Future<dynamic> getJwt(String address) =>
+      jwtsBox.future.then((Box<dynamic> box) => box.get(address));
+
+  Future<dynamic> saveJwt(String address, String jwt) =>
+      jwtsBox.future.then((Box<dynamic> box) => box.put(address, jwt));
+
+  Future<dynamic> deleteJwt(String address) =>
+      jwtsBox.future.then((Box<dynamic> box) => box.delete(address));
+
   _initAsync() async {
     if (await _checkPermission()) {
       _initHive();
@@ -83,6 +93,7 @@ class StorageService {
     mainBox.complete(Hive.openBox('ReefChainBox'));
     metadataBox.complete(Hive.openBox('MetadataBox'));
     authUrlsBox.complete(Hive.openBox('AuthUrlsBox'));
+    jwtsBox.complete(Hive.openBox('JwtsBox'));
 
     // Encryption
     const secureStorage = FlutterSecureStorage();

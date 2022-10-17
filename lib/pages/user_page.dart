@@ -76,6 +76,12 @@ class _UserPageState extends State<UserPage> {
                   .deleteValue(StorageKey.password.name);
             },
           ),
+          ElevatedButton(
+            child: const Text('delete jwts'),
+            onPressed: () async => ReefAppState.instance.storage.deleteJwt(
+                await ReefAppState.instance.storage
+                    .getValue(StorageKey.selected_address.name)),
+          ),
         ]),
         const Gap(16),
         Padding(
