@@ -3,9 +3,9 @@ class BcPair {
   final String fiatCurrency;
   final String? paymentMethod;
   final num? size;
-  final num? quotation;
-  final num? minLimit;
-  final num? maxLimit;
+  num? quotation;
+  num? minLimit;
+  num? maxLimit;
 
   BcPair(
       {required this.cryptoCurrency,

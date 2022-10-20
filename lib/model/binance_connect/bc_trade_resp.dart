@@ -5,7 +5,7 @@ class BcTradeResp {
   final String eternalRedirectUrl;
   final bool? bindingStatus;
   final num? expiredTime;
-  final num? token;
+  final String? token;
 
   BcTradeResp(
       {required this.internalOrderId,

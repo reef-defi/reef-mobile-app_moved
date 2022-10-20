@@ -117,7 +117,7 @@ class _BottomNavState extends State<BottomNav> {
               label: 'Swap',
             ),
             BottomNavigationBarItem(
-              icon: Icon(CupertinoIcons.creditcard),
+              icon: Icon(CupertinoIcons.money_dollar_circle),
               label: 'Buy',
             ),
             BottomNavigationBarItem(
