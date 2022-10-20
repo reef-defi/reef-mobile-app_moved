@@ -5,6 +5,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:reef_mobile_app/components/top_bar.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
+import 'package:reef_mobile_app/pages/buy_page.dart';
 import 'package:reef_mobile_app/pages/home_page.dart';
 import 'package:reef_mobile_app/pages/send_page.dart';
 import 'package:reef_mobile_app/pages/swap_page.dart';
@@ -29,6 +30,7 @@ class _BottomNavState extends State<BottomNav> {
     const HomePage(),
     const SendPage(Constants.REEF_TOKEN_ADDRESS),
     const SwapPage(),
+    const BuyPage(),
     UserPage(),
   ];
 
@@ -113,6 +115,10 @@ class _BottomNavState extends State<BottomNav> {
             BottomNavigationBarItem(
               icon: Icon(CupertinoIcons.arrow_right_arrow_left_square),
               label: 'Swap',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(CupertinoIcons.money_dollar_circle),
+              label: 'Buy',
             ),
             BottomNavigationBarItem(
               icon: SvgIcon(
