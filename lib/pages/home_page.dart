@@ -25,7 +25,7 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage>{
   void _navigateTestDApp(String url) {
     Navigator.push(
       context,
@@ -40,6 +40,8 @@ class _HomePageState extends State<HomePage> {
       MaterialPageRoute(builder: (context) => const TestPage()),
     );
   }
+
+  double _textSize = 84.0;
 
   List _viewsMap = [
     {"key": 0, "name": "Token", "active": true, "component": const TokenView()},
@@ -58,32 +60,41 @@ class _HomePageState extends State<HomePage> {
     }
   ];
 
-  Widget balanceSection() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 24.0),
-      child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text("Balance",
-                style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w700,
-                    color: Styles.textColor)),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Center(
-                child: Observer(builder: (_) {
-                  return GradientText(
-                    "\$${sumTokenBalances(ReefAppState.instance.model.tokens.selectedSignerTokens.toList()).toStringAsFixed(0)}",
-                    style: GoogleFonts.spaceGrotesk(
-                        fontSize: 54, fontWeight: FontWeight.w700),
-                    gradient: textGradient(),
-                  );
-                }),
-              ),
-            ),
-          ]),
+  Widget balanceSection(double size) {
+    bool _isBigText = size > 42;
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
+      curve: Curves.easeInOutCirc,
+      width: size,
+      child: FittedBox(
+        fit: BoxFit.contain,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical:24.0),
+          child: Column(
+              mainAxisAlignment:  MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                if(_isBigText) Text("Balance",
+                    style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w700,
+                        color: Styles.textColor)),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Center(
+                    child: Observer(builder: (_) {
+                      return GradientText(
+                        "\$${sumTokenBalances(ReefAppState.instance.model.tokens.selectedSignerTokens.toList()).toStringAsFixed(0)}",
+                        style: GoogleFonts.spaceGrotesk(
+                            fontSize: 54, fontWeight: FontWeight.w700),
+                        gradient: textGradient(),
+                      );
+                    }),
+                  ),
+                ),
+              ]),
+        ),
+      )
     );
   }
 
@@ -185,46 +196,69 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     SizeConfig.init(context);
 
+
     return SignatureContentToggle(AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.dark,
       ),
-      child: Column(
-        children: [
-          Row(children: [
-            ElevatedButton(
-              child: const Text('test dApp 1'),
-              onPressed: () =>
-                  _navigateTestDApp("https://mobile-dapp-test.web.app/testnet"),
-              // https://min-dapp.web.app
-              // https://app.reef.io
+      child: NotificationListener(
+        child:Column(
+          children: [
+            Row(children: [
+              ElevatedButton(
+                child: const Text('test dApp 1'),
+                onPressed: () =>
+                    _navigateTestDApp("https://mobile-dapp-test.web.app/testnet"),
+                // https://min-dapp.web.app
+                // https://app.reef.io
+              ),
+              ElevatedButton(
+                child: const Text('test dApp 2'),
+                onPressed: () => _navigateTestDApp(
+                    "https://console.reefscan.com/#/settings/metadata"),
+              ),
+              // ElevatedButton(
+              //     child: const Text('test'), onPressed: _navigateTestPage),
+            ]),
+            balanceSection(_textSize),
+            navSection(),
+            Expanded(
+              // height: ((size.height + 64) / 2),
+              // width: double.infinity,
+              child: GestureDetector(
+                  onHorizontalDragEnd: (DragEndDetails details) =>
+                      _onHorizontalDrag(details),
+                  child: _viewsMap.where((option) => option["active"]).toList()[0]
+                  ["component"]),
             ),
-            ElevatedButton(
-              child: const Text('test dApp 2'),
-              onPressed: () => _navigateTestDApp(
-                  "https://console.reefscan.com/#/settings/metadata"),
-            ),
-            // ElevatedButton(
-            //     child: const Text('test'), onPressed: _navigateTestPage),
-          ]),
-          balanceSection(),
-          navSection(),
-          Expanded(
-            // height: ((size.height + 64) / 2),
-            // width: double.infinity,
-            child: GestureDetector(
-                onHorizontalDragEnd: (DragEndDetails details) =>
-                    _onHorizontalDrag(details),
-                child: _viewsMap.where((option) => option["active"]).toList()[0]
-                    ["component"]),
-          ),
-          // TODO: ADD ALERT SYSTEM FOR ERRORS HERE
-          // test()
-        ],
-      ),
+            // TODO: ADD ALERT SYSTEM FOR ERRORS HERE
+            // test()
+          ],
+        ),
+        onNotification: (t) {
+          if (t is ScrollUpdateNotification) {
+            if(t.metrics.pixels! > 120 && t.scrollDelta! > 0){
+              setState(() {
+                _textSize = 42.0 ;
+              });
+            }
+            if(t.metrics.pixels! < 120 && t.scrollDelta! < 0){
+              setState(() {
+                _textSize = 84.0;
+              });
+            }
+            // print("scroll delta:");
+            // print(t.scrollDelta);
+            // print("scroll pixels:");
+            // print(t.metrics.pixels);
+          }
+          return true;
+        },
+      )
     ));
   }
+
 
   double sumTokenBalances(List<TokenWithAmount> list) {
     var sum = 0.0;
