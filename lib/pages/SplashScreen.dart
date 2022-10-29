@@ -95,6 +95,9 @@ class _SplashAppState extends State<SplashApp> {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        textTheme: GoogleFonts.poppinsTextTheme(
+          Theme.of(context).textTheme,
+        )
       ),
       home: _buildBody(),
       navigatorKey: navigatorKey,
@@ -151,7 +154,7 @@ class _SplashAppState extends State<SplashApp> {
                       children: [
                         Text(
                           "Loading App",
-                          style: GoogleFonts.lato(
+                          style: GoogleFonts.poppins(
                               fontWeight: FontWeight.w400,
                               fontSize: 16,
                               color: Styles.textLightColor,

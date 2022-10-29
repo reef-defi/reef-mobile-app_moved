@@ -111,21 +111,21 @@ class _HomePageState extends State<HomePage>{
         });
       },
       child: (AnimatedContainer(
-          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(5),
-            color: member["active"] ? Styles.whiteColor : Styles.navColor,
+            borderRadius: BorderRadius.circular(9),
+            color: member["active"] ? Styles.whiteColor : Styles.primaryBackgroundColor,
             boxShadow: member["active"]
                 ? [
                     const BoxShadow(
                       color: Colors.black12,
-                      blurRadius: 2,
-                      offset: Offset(0, 2),
+                      blurRadius: 5,
+                      offset: Offset(0, 2.5),
                     )
                   ]
                 : [],
           ),
-          duration: const Duration(milliseconds: 150),
+          duration: const Duration(milliseconds: 200),
           child: Opacity(
             opacity: member["active"] ? 1 : 0.5,
             child: Text(
@@ -144,11 +144,22 @@ class _HomePageState extends State<HomePage>{
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(7),
-        color: Styles.navColor,
-        border: Border.all(
-          color: const Color(0x88dcd7ea),
-        ),
+        borderRadius: BorderRadius.circular(15),
+        color: Styles.primaryBackgroundColor,
+          boxShadow: [
+            BoxShadow(
+              color: HSLColor.fromAHSL(1, 256.3636363636, 0.379310344828, 0.843137254902).toColor(),
+              offset: Offset(10, 10),
+              blurRadius: 20,
+              spreadRadius: -5,
+            ),
+             BoxShadow(
+              color: HSLColor.fromAHSL(1, 256.3636363636, 0.379310344828, 1).toColor(),
+              offset: Offset(-10, -10),
+              blurRadius: 20,
+              spreadRadius: -5,
+            ),
+          ]
       ),
       child: Padding(
         padding: const EdgeInsets.all(7.0),
