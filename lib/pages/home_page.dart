@@ -150,14 +150,14 @@ class _HomePageState extends State<HomePage>{
             BoxShadow(
               color: HSLColor.fromAHSL(1, 256.3636363636, 0.379310344828, 0.843137254902).toColor(),
               offset: Offset(10, 10),
-              blurRadius: 30,
-              spreadRadius: 1,
+              blurRadius: 20,
+              spreadRadius: -5,
             ),
              BoxShadow(
               color: HSLColor.fromAHSL(1, 256.3636363636, 0.379310344828, 1).toColor(),
               offset: Offset(-10, -10),
-              blurRadius: 30,
-              spreadRadius: 1,
+              blurRadius: 20,
+              spreadRadius: -5,
             ),
           ]
       ),
