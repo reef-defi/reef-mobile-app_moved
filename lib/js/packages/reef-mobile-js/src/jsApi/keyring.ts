@@ -86,6 +86,13 @@ async function accountFromMnemonic(mnemonic: string): Promise<string> {
 }
 
 /**
+ * Check if mnemonic is valid.
+ */
+function checkMnemonicValid(mnemonic: string): any {
+    return mnemonicValidate(mnemonic).toString();
+}
+
+/**
  * Get SVG icons of addresses.
  */
 function genIcons(addresses: string[]): string[][] {
@@ -104,4 +111,5 @@ export default {
     generate,
     keyPairFromMnemonic,
     accountFromMnemonic,
+    checkMnemonicValid
 };

@@ -37,8 +37,10 @@ class AccountCtrl {
     return await _jsApi.jsPromise('keyring.generate()');
   }
 
-  Future<String> checkMnemonicValid(String mnemonic) async {
-    return await _jsApi.jsPromise('keyring.checkMnemonicValid("$mnemonic")');
+  Future<bool> checkMnemonicValid(String mnemonic) async {
+    var isValid =
+        await _jsApi.jsPromise('keyring.checkMnemonicValid("$mnemonic")');
+    return isValid == 'true';
   }
 
   Future<String> accountFromMnemonic(String mnemonic) async {

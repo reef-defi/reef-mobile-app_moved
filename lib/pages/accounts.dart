@@ -7,9 +7,9 @@ import '../model/ReefAppState.dart';
 import '../model/StorageKey.dart';
 
 class AccountPage extends StatefulWidget {
-  const AccountPage(this.reefState, this.storageService);
-  final ReefAppState reefState;
-  final StorageService storageService;
+  AccountPage();
+  final ReefAppState reefState = ReefAppState.instance;
+  final StorageService storageService = ReefAppState.instance.storage;
 
   @override
   State<AccountPage> createState() => _AccountPageState();
@@ -52,7 +52,8 @@ class _AccountPageState extends State<AccountPage> {
                 child: const Text('Delete All Accounts')),
             TextButton(
                 onPressed: () async {
-                  var from = await ReefAppState.instance.storage.getValue(StorageKey.selected_address.name);
+                  var from = await ReefAppState.instance.storage
+                      .getValue(StorageKey.selected_address.name);
 
                   print('SEND FROM= ${from}');
                   var txTestRes = await ReefAppState.instance.transferCtrl
@@ -98,6 +99,8 @@ class _AccountPageState extends State<AccountPage> {
 
   /// Returns the address of the account with the given mnemonic
   void accountFromMnemonic(String mnemonic) async {
+    // checkMnemonicValid(mnemonic);
+
     var response =
         await widget.reefState.accountCtrl.accountFromMnemonic(mnemonic);
 

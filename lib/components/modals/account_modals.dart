@@ -12,6 +12,285 @@ import 'package:reef_mobile_app/utils/functions.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 import 'package:flutter/services.dart';
 
+class AccountImportContent extends StatefulWidget {
+  final VoidCallback next;
+  const AccountImportContent({Key? key, required this.next}) : super(key: key);
+
+  @override
+  State<AccountImportContent> createState() => _AccountImportContentState();
+}
+
+class _AccountImportContentState extends State<AccountImportContent> {
+  bool _isEditingText = false;
+  late TextEditingController _editingController;
+  String nameText = "<No Name>";
+  final TextEditingController _mnemonicController = TextEditingController();
+  late String mnemonic = "";
+  StoredAccount? account;
+  bool errorMnemonic = false;
+
+  bool _checkedValue = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _editingController = TextEditingController(text: nameText);
+    _editingController.selection = TextSelection(
+      baseOffset: 0,
+      extentOffset: _editingController.value.text.length,
+    );
+    _mnemonicController.addListener(() {
+      setState(() {
+        mnemonic = _mnemonicController.text;
+        validateSeed();
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _editingController.dispose();
+    super.dispose();
+  }
+
+  validateSeed() async {
+    if (mnemonic.split(" ").length != 12 && mnemonic.split(" ").length != 24) {
+      errorMnemonic = true;
+      return;
+    }
+
+    errorMnemonic =
+        !(await ReefAppState.instance.accountCtrl.checkMnemonicValid(mnemonic));
+
+    var response =
+        await ReefAppState.instance.accountCtrl.accountFromMnemonic(mnemonic);
+    var importedAccount = StoredAccount.fromString(response);
+    setState(() {
+      account = importedAccount;
+    });
+  }
+
+  Widget _editTitleTextField() {
+    if (_isEditingText) {
+      return IntrinsicWidth(
+        child: TextField(
+          controller: _editingController,
+          autofocus: true,
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
+          decoration: InputDecoration.collapsed(hintText: nameText),
+          onSubmitted: (newValue) {
+            setState(() {
+              if (newValue.isNotEmpty) {
+                nameText = newValue;
+                account!.name = newValue;
+              }
+              _isEditingText = false;
+            });
+          },
+        ),
+      );
+    }
+    return InkWell(
+        onTap: () {
+          setState(() {
+            _isEditingText = true;
+          });
+        },
+        child: Text(nameText,
+            style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: Styles.textColor)));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 0, left: 24, bottom: 24, right: 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (account != null) ...[
+            ViewBoxContainer(
+                color: Styles.whiteColor,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 24.0, horizontal: 16.0),
+                  child: ClipRect(
+                    child: Row(
+                      children: [
+                        Container(
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.black12,
+                          ),
+                          child: ClipRRect(
+                              borderRadius: BorderRadius.circular(64),
+                              child: (account?.svg != null)
+                                  ? SvgPicture.string(account!.svg)
+                                  : Container(
+                                      width: 64,
+                                      height: 64,
+                                      decoration: BoxDecoration(
+                                          color: Colors.grey[600]!),
+                                    )),
+                        ),
+                        const Gap(12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  _editTitleTextField(),
+                                  const Gap(2),
+                                  IconButton(
+                                    padding: EdgeInsets.zero,
+                                    constraints: const BoxConstraints(),
+                                    icon: Icon(Icons.edit,
+                                        size: 14, color: Colors.grey[600]!),
+                                    onPressed: () {
+                                      setState(() {
+                                        _isEditingText = true;
+                                      });
+                                    },
+                                  )
+                                ],
+                              ),
+                              const Gap(2),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                        "Address: ${account?.address.shorten() ?? "Loading..."}",
+                                        style:
+                                            TextStyle(color: Colors.grey[600]!),
+                                        overflow: TextOverflow.fade,
+                                        maxLines: 1,
+                                        softWrap: false),
+                                  ),
+                                  const Gap(2),
+                                  IconButton(
+                                    constraints: const BoxConstraints(),
+                                    padding: EdgeInsets.zero,
+                                    icon: const Icon(Icons.copy, size: 12),
+                                    onPressed: () {
+                                      Clipboard.setData(ClipboardData(
+                                          text: account!.address));
+                                    },
+                                  )
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                )),
+            const Gap(12),
+          ],
+          Text(
+            "EXISTING 12 OR 24-WORD MNEMONIC SEED:",
+            style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: Styles.textLightColor),
+          ),
+          const Gap(8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+            decoration: BoxDecoration(
+              color: Styles.whiteColor,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color:
+                    errorMnemonic ? Styles.errorColor : const Color(0x20000000),
+                width: 1,
+              ),
+            ),
+            child: TextField(
+              controller: _mnemonicController,
+              maxLines: 3,
+              decoration: const InputDecoration.collapsed(hintText: ''),
+              style: TextStyle(
+                color: errorMnemonic ? Styles.errorColor : Styles.textColor,
+              ),
+            ),
+          ),
+          if (errorMnemonic) ...[
+            const Gap(8),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(
+                  CupertinoIcons.exclamationmark_triangle_fill,
+                  color: Styles.errorColor,
+                ),
+                const Gap(8),
+                Flexible(
+                  child: Text(
+                    "Invalid mnemonic seed",
+                    style: TextStyle(color: Colors.grey[600], fontSize: 15),
+                  ),
+                ),
+              ],
+            ),
+          ],
+          const Gap(24),
+          Stack(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    splashFactory: !_checkedValue
+                        ? NoSplash.splashFactory
+                        : InkSplash.splashFactory,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(40)),
+                    shadowColor: const Color(0x559d6cff),
+                    elevation: 5,
+                    backgroundColor: !_checkedValue
+                        ? const Color(0xff9d6cff)
+                        : Styles.secondaryAccentColor,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                  ),
+                  onPressed: () {
+                    if (_checkedValue) widget.next();
+                  },
+                  child: const Text(
+                    'Next Step',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ),
+              Positioned.fill(
+                  child: Align(
+                alignment: Alignment.centerRight,
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 16),
+                  child: Icon(Icons.arrow_forward,
+                      color: Styles.whiteColor, size: 20),
+                ),
+              ))
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class AccountCreationContent extends StatefulWidget {
   final VoidCallback next;
   final StoredAccount? account;
@@ -105,9 +384,8 @@ class _AccountCreationContentState extends State<AccountCreationContent> {
               child: Padding(
                 padding: const EdgeInsets.symmetric(
                     vertical: 24.0, horizontal: 16.0),
-                child:
-                 ClipRect(
-                   child: Row(
+                child: ClipRect(
+                  child: Row(
                     children: [
                       Container(
                         decoration: const BoxDecoration(
@@ -117,7 +395,8 @@ class _AccountCreationContentState extends State<AccountCreationContent> {
                         child: ClipRRect(
                             borderRadius: BorderRadius.circular(64),
                             child: (widget.account?.svg != null)
-                                ? SvgPicture.string(widget.account?.svg as String)
+                                ? SvgPicture.string(
+                                    widget.account?.svg as String)
                                 : Container(
                                     width: 64,
                                     height: 64,
@@ -136,7 +415,7 @@ class _AccountCreationContentState extends State<AccountCreationContent> {
                                 const Gap(2),
                                 IconButton(
                                   padding: EdgeInsets.zero,
-                                  constraints: BoxConstraints(),
+                                  constraints: const BoxConstraints(),
                                   icon: Icon(Icons.edit,
                                       size: 14, color: Colors.grey[600]!),
                                   onPressed: () {
@@ -152,18 +431,18 @@ class _AccountCreationContentState extends State<AccountCreationContent> {
                               children: [
                                 Expanded(
                                   child: Text(
-                                    "Address: ${widget.account?.address.shorten() ?? "Loading..."}",
-                                    style: TextStyle(color: Colors.grey[600]!),
-                                    overflow: TextOverflow.fade,
-                                    maxLines: 1,
-                                    softWrap: false
-                                  ),
+                                      "Address: ${widget.account?.address.shorten() ?? "Loading..."}",
+                                      style:
+                                          TextStyle(color: Colors.grey[600]!),
+                                      overflow: TextOverflow.fade,
+                                      maxLines: 1,
+                                      softWrap: false),
                                 ),
                                 const Gap(2),
                                 IconButton(
-                                  constraints: BoxConstraints(),
+                                  constraints: const BoxConstraints(),
                                   padding: EdgeInsets.zero,
-                                  icon: Icon(Icons.copy, size: 12),
+                                  icon: const Icon(Icons.copy, size: 12),
                                   onPressed: () {
                                     Clipboard.setData(ClipboardData(
                                         text: widget.account?.address));
@@ -175,14 +454,14 @@ class _AccountCreationContentState extends State<AccountCreationContent> {
                         ),
                       ),
                     ],
+                  ),
                 ),
-                 ),
               )),
           const Gap(12),
           Text(
             "GENERATED 12-WORD MNEMONIC SEED:",
             style: TextStyle(
-                fontSize: 10,
+                fontSize: 12,
                 fontWeight: FontWeight.w500,
                 color: Styles.textLightColor),
           ),
@@ -294,7 +573,7 @@ class _AccountCreationContentState extends State<AccountCreationContent> {
                         borderRadius: BorderRadius.circular(40)),
                     shadowColor: const Color(0x559d6cff),
                     elevation: 5,
-                    primary: !_checkedValue
+                    backgroundColor: !_checkedValue
                         ? const Color(0xff9d6cff)
                         : Styles.secondaryAccentColor,
                     padding: const EdgeInsets.symmetric(vertical: 16),
@@ -332,11 +611,13 @@ class AccountCreationConfirmContent extends StatefulWidget {
   final VoidCallback prev;
   final StoredAccount? account;
   final Future<dynamic> Function(StoredAccount) saveAccount;
+  final bool fromMnemonic;
   const AccountCreationConfirmContent(
       {Key? key,
       required this.prev,
       required this.account,
-      required this.saveAccount})
+      required this.saveAccount,
+      required this.fromMnemonic})
       : super(key: key);
 
   @override
@@ -450,9 +731,9 @@ class _AccountCreationConfirmContentState
                             ),
                             const Gap(2),
                             IconButton(
-                              constraints: BoxConstraints(),
+                              constraints: const BoxConstraints(),
                               padding: EdgeInsets.zero,
-                              icon: Icon(Icons.copy, size: 12),
+                              icon: const Icon(Icons.copy, size: 12),
                               onPressed: () {
                                 Clipboard.setData(ClipboardData(
                                     text: widget.account?.address));
@@ -614,10 +895,12 @@ class _AccountCreationConfirmContentState
                         }
                       }
                     },
-                    child: const Text(
-                      'Add the account with generated seed',
+                    child: Text(
+                      widget.fromMnemonic
+                          ? 'Import the account'
+                          : 'Add the account',
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
                       ),
@@ -635,8 +918,9 @@ class _AccountCreationConfirmContentState
 }
 
 class CurrentScreen extends StatefulWidget {
-  CurrentScreen({Key? key}) : super(key: key);
+  CurrentScreen({Key? key, required this.fromMnemonic}) : super(key: key);
 
+  final bool fromMnemonic;
   final ReefAppState reefState = ReefAppState.instance;
   final StorageService storageService = ReefAppState.instance.storage;
 
@@ -651,9 +935,6 @@ class _CurrentScreenState extends State<CurrentScreen> {
   void generateAccount() async {
     var response = await widget.reefState.accountCtrl.generateAccount();
     var generatedAccount = StoredAccount.fromString(response);
-    print("Mnemonic: ${generatedAccount.mnemonic}");
-    print("Name: ${generatedAccount.name}");
-    print("Address: ${generatedAccount.address}");
     setState(() {
       account = generatedAccount;
     });
@@ -680,7 +961,9 @@ class _CurrentScreenState extends State<CurrentScreen> {
   @override
   void initState() {
     super.initState();
-    generateAccount();
+    if (!widget.fromMnemonic) {
+      generateAccount();
+    }
   }
 
   @override
@@ -702,14 +985,21 @@ class _CurrentScreenState extends State<CurrentScreen> {
         );
       },
       child: (activeIndex == 0)
-          ? AccountCreationContent(next: nextIndex, account: account)
+          ? widget.fromMnemonic
+              ? AccountImportContent(next: nextIndex)
+              : AccountCreationContent(next: nextIndex, account: account)
           : AccountCreationConfirmContent(
-              prev: prevIndex, account: account, saveAccount: saveAccount),
+              prev: prevIndex,
+              account: account,
+              saveAccount: saveAccount,
+              fromMnemonic: widget.fromMnemonic),
     );
   }
 }
 
-void showCreateAccountModal(BuildContext context) {
+void showCreateAccountModal(BuildContext context, {bool fromMnemonic = false}) {
   showModal(context,
-      headText: "Create Account", dismissible: true, child: CurrentScreen());
+      headText: fromMnemonic ? "Import Account" : "Create Account",
+      dismissible: true,
+      child: CurrentScreen(fromMnemonic: fromMnemonic));
 }

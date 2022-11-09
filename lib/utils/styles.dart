@@ -18,4 +18,5 @@ class Styles {
   static const Color boxBackgroundColor = Color(0xfff8f7fc);
   static const Color splashBackgroundColor = Color(0xfffef9f6);
   static Color textLightColor = const Color(0xff898e9c);
+  static Color errorColor = const Color(0xFFCC0B0B);
 }

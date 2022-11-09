@@ -122,6 +122,24 @@ class _UserPageState extends State<UserPage> {
                   MaterialButton(
                     materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     onPressed: () {
+                      showCreateAccountModal(context, fromMnemonic: true);
+                    },
+                    color: Styles.textLightColor,
+                    minWidth: 0,
+                    height: 0,
+                    padding: const EdgeInsets.all(2),
+                    shape: const CircleBorder(),
+                    elevation: 0,
+                    child: Icon(
+                      Icons.key,
+                      color: Styles.primaryBackgroundColor,
+                      size: 20,
+                    ),
+                  ),
+                  const Gap(12),
+                  MaterialButton(
+                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    onPressed: () {
                       showCreateAccountModal(context);
                     },
                     color: Styles.textLightColor,
