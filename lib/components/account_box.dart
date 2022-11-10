@@ -231,7 +231,7 @@ class _AccountBoxState extends State<AccountBox> {
                                         fontSize: 12),
                                   )),
                             ),
-                            const Gap(6),
+                            const Gap(4),
                           ],
                         ),
                       PopupMenuButton<String>(

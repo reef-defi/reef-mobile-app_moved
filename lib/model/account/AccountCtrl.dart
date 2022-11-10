@@ -28,6 +28,10 @@ class AccountCtrl {
     return accounts;
   }
 
+  Future getAccount(String address) async {
+    return await _storage.getAccount(address);
+  }
+
   void setSelectedAddress(String address) {
     // TODO check if in signers
     _jsApi.jsCall('appState.setCurrentAddress("$address")');
@@ -103,9 +107,9 @@ class AccountCtrl {
           }));
 
       var reefSigners = List<ReefSigner>.from(signers.map((s) {
-        s["iconSVG"] = accounts
-            .where((item) => item["address"] == s["address"])
-            .toList()[0]["svg"];
+        dynamic list =
+            accounts.where((item) => item["address"] == s["address"]).toList();
+        if (list.length > 0) s["iconSVG"] = list[0]["svg"];
         return ReefSigner.fromJson(s);
       }));
 

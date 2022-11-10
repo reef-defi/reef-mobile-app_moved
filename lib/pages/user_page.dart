@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -84,6 +85,51 @@ class _UserPageState extends State<UserPage> {
           ),
         ]),
         const Gap(16),
+        Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+          MaterialButton(
+            onPressed: () => print("TODO: Implement"),
+            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            minWidth: 0,
+            height: 36,
+            elevation: 0,
+            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+                side: const BorderSide(color: Colors.black26)),
+            child: Row(children: [
+              Icon(
+                Icons.add_circle_rounded,
+                color: Styles.textLightColor,
+                size: 22,
+              ),
+              const Gap(4),
+              Text(
+                "Add Account",
+                style: GoogleFonts.roboto(
+                    color: Styles.textLightColor,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500),
+              )
+            ]),
+          ),
+          const Gap(8),
+          MaterialButton(
+            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            onPressed: () {
+              print("TODO: Implement");
+            },
+            minWidth: 0,
+            height: 0,
+            padding: const EdgeInsets.all(6),
+            shape: CircleBorder(side: BorderSide(color: Styles.textLightColor)),
+            elevation: 0,
+            child: Icon(
+              CupertinoIcons.gear_solid,
+              color: Styles.textLightColor,
+              size: 24,
+            ),
+          )
+        ]),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 8.0),
           child: Row(
