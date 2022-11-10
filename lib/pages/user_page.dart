@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -5,6 +6,7 @@ import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:reef_mobile_app/components/accounts/accounts_list.dart';
 import 'package:reef_mobile_app/components/modals/account_modals.dart';
+import 'package:reef_mobile_app/components/modals/add_account_modal.dart';
 import 'package:reef_mobile_app/components/modals/auth_url_list_modal.dart';
 import 'package:reef_mobile_app/components/switch_network.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
@@ -47,6 +49,19 @@ _deleteMetadata() async {
 }
 
 class _UserPageState extends State<UserPage> {
+  void openModal(String modalName) {
+    switch (modalName) {
+      case 'addAccount':
+        showCreateAccountModal(context);
+        break;
+      case 'importAccount':
+        showCreateAccountModal(context, fromMnemonic: true);
+        break;
+      default:
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SignatureContentToggle(Column(
@@ -84,6 +99,53 @@ class _UserPageState extends State<UserPage> {
           ),
         ]),
         const Gap(16),
+        Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+          MaterialButton(
+            onPressed: () => showAddAccountModal('Add account menu', openModal,
+                context: context),
+            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            minWidth: 0,
+            height: 36,
+            elevation: 0,
+            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+                side: const BorderSide(color: Colors.black26)),
+            child: Row(children: [
+              Icon(
+                Icons.add_circle_rounded,
+                color: Styles.textLightColor,
+                size: 22,
+              ),
+              const Gap(4),
+              Text(
+                "Add Account",
+                style: GoogleFonts.roboto(
+                    color: Styles.textLightColor,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500),
+              )
+            ]),
+          ),
+          const Gap(8),
+          MaterialButton(
+            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            onPressed: () {
+              print("TODO: Implement");
+            },
+            minWidth: 0,
+            height: 0,
+            padding: const EdgeInsets.all(6),
+            shape: CircleBorder(side: BorderSide(color: Styles.textLightColor)),
+            elevation: 0,
+            child: Icon(
+              CupertinoIcons.gear_solid,
+              color: Styles.textLightColor,
+              size: 24,
+            ),
+          ),
+          const Gap(8)
+        ]),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 8.0),
           child: Row(
@@ -118,24 +180,7 @@ class _UserPageState extends State<UserPage> {
                       size: 28,
                     ),
                   ),
-                  const Gap(12),
-                  MaterialButton(
-                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    onPressed: () {
-                      showCreateAccountModal(context);
-                    },
-                    color: Styles.textLightColor,
-                    minWidth: 0,
-                    height: 0,
-                    padding: const EdgeInsets.all(2),
-                    shape: const CircleBorder(),
-                    elevation: 0,
-                    child: Icon(
-                      Icons.add,
-                      color: Styles.primaryBackgroundColor,
-                      size: 20,
-                    ),
-                  )
+                  const Gap(8)
                 ],
               ),
             ],
@@ -159,7 +204,7 @@ class _UserPageState extends State<UserPage> {
                     ReefAppState.instance.model.accounts.selectedAddress,
                     ReefAppState.instance.accountCtrl.setSelectedAddress));
           }
-          return Text('No signers found');
+          return const Text('No signers found');
         }),
       ],
     ));
