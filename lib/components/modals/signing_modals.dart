@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:reef_mobile_app/components/modal.dart';
+import 'package:reef_mobile_app/model/signing/signature_request.dart';
+import 'package:reef_mobile_app/model/signing/signer_payload_json.dart';
 import 'package:reef_mobile_app/utils/elements.dart';
 import 'package:reef_mobile_app/utils/gradient_text.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
@@ -33,7 +35,8 @@ List<TableRow> createTable({required keyTexts, required valueTexts}) {
 }
 
 class TransactionSigner extends StatefulWidget {
-  const TransactionSigner({Key? key}) : super(key: key);
+  final SignerPayloadJSON payload;
+  const TransactionSigner(this.payload, {Key? key}) : super(key: key);
 
   @override
   State<TransactionSigner> createState() => _TransactionSignerState();
@@ -123,48 +126,21 @@ class _TransactionSignerState extends State<TransactionSigner> {
                 1: FlexColumnWidth(4),
               },
               children: createTable(keyTexts: [
-                "From",
                 "Genesis",
                 "Version",
                 "Nonce",
                 "Method Data",
-                "Lifetime"
               ], valueTexts: [
-                "https://dev.sqwid.app",
-                "0x4a8f300114F6a3CEd6847f8Cb18264C2d9B82d59",
-                "8",
-                "571",
-                "0x4a8f300114F6a3CEd6847f8Cb18264C2d9B82d59",
-                "mortal, valid from 3,430,111 to 3,430,175"
+                widget.payload.genesisHash,
+                widget.payload.specVersion.toString(),
+                widget.payload.nonce.toString(),
+                widget.payload.method,
               ]),
             ),
           ),
           //Signing Button Section
           Column(
             children: [
-              Row(
-                children: [
-                  Checkbox(
-                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    fillColor: MaterialStateProperty.all<Color>(
-                        Styles.secondaryAccentColor),
-                    value: value,
-                    onChanged: (bool? value) {
-                      setState(() {
-                        this.value = value ?? false;
-                      });
-                    },
-                  ),
-                  Flexible(
-                    child: Text(
-                      "Extend the period without password by 15 minutes",
-                      style:
-                          TextStyle(color: Styles.textLightColor, fontSize: 12),
-                    ),
-                  )
-                ],
-              ),
-              const Gap(12),
               Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
@@ -176,7 +152,7 @@ class _TransactionSignerState extends State<TransactionSigner> {
                         borderRadius: BorderRadius.circular(40)),
                     shadowColor: const Color(0x559d6cff),
                     elevation: 5,
-                    primary: Styles.secondaryAccentColor,
+                    backgroundColor: Styles.secondaryAccentColor,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
                   onPressed: () {},
@@ -420,21 +396,12 @@ class _SignMessageSignerState extends State<SignMessageSigner> {
   }
 }
 
-List<Widget> variants = [
-  const TransactionSigner(),
-  const SignMessageSigner(),
-];
-
-void showSigningModal(context, {required variant, info}) {
-  int variantIndex = 0;
-  switch (variant) {
-    case "Transaction":
-      variantIndex = 0;
-      break;
-    case "Sign message":
-      variantIndex = 1;
-      break;
-  }
+void showSigningModal(context, SignatureRequest signatureRequest) {
+  var isTransaction = true;
   showModal(context,
-      child: variants[variantIndex], dismissible: true, headText: variant);
+      child: isTransaction
+          ? TransactionSigner(signatureRequest.payload)
+          : SignMessageSigner(),
+      dismissible: true,
+      headText: isTransaction ? "Sign Transaction" : "Sign Message");
 }

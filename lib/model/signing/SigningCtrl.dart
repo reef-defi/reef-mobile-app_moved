@@ -1,9 +1,11 @@
 import 'dart:convert';
 
+import 'package:reef_mobile_app/components/modals/signing_modals.dart';
 import 'package:reef_mobile_app/model/signing/signature_request.dart';
 import 'package:reef_mobile_app/model/signing/signer_payload_json.dart';
 import 'package:reef_mobile_app/model/signing/signature_requests.dart';
 import 'package:reef_mobile_app/model/signing/signer_payload_raw.dart';
+import 'package:reef_mobile_app/pages/SplashScreen.dart';
 import 'package:reef_mobile_app/service/JsApiService.dart';
 import 'package:reef_mobile_app/service/StorageService.dart';
 
@@ -12,10 +14,11 @@ class SigningCtrl {
   final JsApiService jsApi;
   final StorageService storage;
 
-  SigningCtrl(JsApiService this.jsApi, StorageService this.storage,
-      SignatureRequests this.signatureRequests) {
+  SigningCtrl(this.jsApi, this.storage, this.signatureRequests) {
     jsApi.jsTxSignatureConfirmationMessageSubj.listen((jsApiMessage) {
-      signatureRequests.add(_buildSignatureRequest(jsApiMessage));
+      var signatureRequest = _buildSignatureRequest(jsApiMessage);
+      signatureRequests.add(signatureRequest);
+      showSigningModal(navigatorKey.currentContext, signatureRequest);
     });
   }
 
