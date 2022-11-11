@@ -4,7 +4,6 @@ import 'package:reef_mobile_app/components/SignatureContentToggle.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/account/ReefSigner.dart';
 import 'package:reef_mobile_app/pages/SplashScreen.dart';
-import 'package:reef_mobile_app/pages/accounts.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:reef_mobile_app/components/page_layout.dart';
 import 'package:reef_mobile_app/utils/functions.dart';
@@ -55,16 +54,7 @@ class TestHomePage extends StatefulWidget {
 
 class _TestHomePageState extends State<TestHomePage> {
   _TestHomePageState();
-
-  void _navigateAccounts() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) => AccountPage(
-              ReefAppState.instance, ReefAppState.instance.storage)),
-    );
-  }
-
+  
   void _navigateTestDApp() {
     Navigator.push(
       context,
@@ -155,8 +145,6 @@ class _TestHomePageState extends State<TestHomePage> {
                         .instance.model.tokens.selectedSignerTokens
                         .map((t) => Text('TKN=${t.symbol}'))));
               }),
-              TextButton(
-                  onPressed: _navigateAccounts, child: const Text('Accounts')),
               TextButton(
                   onPressed: _navigateTestDApp, child: const Text('DApp')),
             ],

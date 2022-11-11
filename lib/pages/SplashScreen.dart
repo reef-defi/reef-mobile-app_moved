@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -244,9 +245,22 @@ class _SplashAppState extends State<SplashApp> {
             ),
             const Gap(8),
             if (_wrongPassword)
-              const Text(
-                "Wrong password",
-                style: TextStyle(color: Colors.red),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(
+                    CupertinoIcons.exclamationmark_triangle_fill,
+                    color: Styles.errorColor,
+                    size: 16,
+                  ),
+                  const Gap(8),
+                  Flexible(
+                    child: Text(
+                      "Password is incorrect",
+                      style: TextStyle(color: Colors.grey[600], fontSize: 13),
+                    ),
+                  ),
+                ],
               ),
             const Gap(12),
             Container(

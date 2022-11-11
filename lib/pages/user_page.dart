@@ -27,27 +27,6 @@ class UserPage extends StatefulWidget {
   State<UserPage> createState() => _UserPageState();
 }
 
-_checkMetadata() async {
-  var metadataMap = await ReefAppState.instance.metadataCtrl.getMetadata();
-  Metadata metadata = Metadata.fromMap(metadataMap);
-  var chain =
-      await ReefAppState.instance.storage.getMetadata(metadata.genesisHash);
-  int currVersion = chain != null ? chain.specVersion : 0;
-  var response = await showMetadataAprovalModal(
-      metadata: metadata, currVersion: currVersion);
-  if (response == true) {
-    ReefAppState.instance.storage.saveMetadata(metadata);
-  }
-}
-
-// Functionality just for testing purposes!
-_deleteMetadata() async {
-  var metadatas = await ReefAppState.instance.storage.getAllMetadatas();
-  for (var metadata in metadatas) {
-    metadata.delete();
-  }
-}
-
 class _UserPageState extends State<UserPage> {
   void openModal(String modalName) {
     switch (modalName) {
@@ -66,39 +45,6 @@ class _UserPageState extends State<UserPage> {
   Widget build(BuildContext context) {
     return SignatureContentToggle(Column(
       children: <Widget>[
-        if (kDebugMode)
-          Row(children: [
-            ElevatedButton(
-              child: const Text('check meta'),
-              onPressed: () => _checkMetadata(),
-            ),
-            ElevatedButton(
-              child: const Text('website access'),
-              onPressed: () => showAuthUrlListModal(context),
-            ),
-            const SwitchNetwork()
-          ]),
-        Row(children: [
-          ElevatedButton(
-            child: const Text('delete meta'),
-            onPressed: () => _deleteMetadata(),
-          ),
-          ElevatedButton(
-            child: const Text('delete password'),
-            onPressed: () {
-              // Functionality just for testing purposes!
-              ReefAppState.instance.storage
-                  .deleteValue(StorageKey.password.name);
-            },
-          ),
-          ElevatedButton(
-            child: const Text('delete jwts'),
-            onPressed: () async => ReefAppState.instance.storage.deleteJwt(
-                await ReefAppState.instance.storage
-                    .getValue(StorageKey.selected_address.name)),
-          ),
-        ]),
-        const Gap(16),
         Row(mainAxisAlignment: MainAxisAlignment.end, children: [
           MaterialButton(
             onPressed: () => showAddAccountModal('Add account menu', openModal,
@@ -126,23 +72,6 @@ class _UserPageState extends State<UserPage> {
                     fontWeight: FontWeight.w500),
               )
             ]),
-          ),
-          const Gap(8),
-          MaterialButton(
-            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            onPressed: () {
-              print("TODO: Implement");
-            },
-            minWidth: 0,
-            height: 0,
-            padding: const EdgeInsets.all(6),
-            shape: CircleBorder(side: BorderSide(color: Styles.textLightColor)),
-            elevation: 0,
-            child: Icon(
-              CupertinoIcons.gear_solid,
-              color: Styles.textLightColor,
-              size: 24,
-            ),
           ),
           const Gap(8)
         ]),
