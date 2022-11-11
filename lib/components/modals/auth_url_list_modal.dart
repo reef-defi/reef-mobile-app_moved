@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
 import 'package:reef_mobile_app/components/modal.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/auth_url/auth_url.dart';
@@ -52,18 +51,16 @@ class _AuthUrlListState extends State<AuthUrlList> {
                 ],
               );
             }).toList(),
-            const Gap(16),
-            // TODO: Remove button after testing
-            ElevatedButton(
-                onPressed: () {
-                  for (var authUrl in authUrls) {
-                    authUrl.delete();
-                  }
-                  setState(() {
-                    authUrls = [];
-                  });
-                },
-                child: const Text('Delete all'))
+            // ElevatedButton(
+            //     onPressed: () {
+            //       for (var authUrl in authUrls) {
+            //         authUrl.delete();
+            //       }
+            //       setState(() {
+            //         authUrls = [];
+            //       });
+            //     },
+            //     child: const Text('Delete all'))
           ],
         ],
       ),

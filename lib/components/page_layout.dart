@@ -8,6 +8,7 @@ import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/pages/buy_page.dart';
 import 'package:reef_mobile_app/pages/home_page.dart';
 import 'package:reef_mobile_app/pages/send_page.dart';
+import 'package:reef_mobile_app/pages/settings_page.dart';
 import 'package:reef_mobile_app/pages/swap_page.dart';
 import 'package:reef_mobile_app/pages/user_page.dart';
 import 'package:reef_mobile_app/utils/constants.dart';
@@ -32,6 +33,7 @@ class _BottomNavState extends State<BottomNav> {
     const SwapPage(),
     const BuyPage(),
     UserPage(),
+    const SettingsPage()
   ];
 
   void _onItemTapped(int index) {
@@ -126,6 +128,10 @@ class _BottomNavState extends State<BottomNav> {
                 height: 20,
               ),
               label: 'Buy',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(CupertinoIcons.gear_solid),
+              label: 'Settings',
             ),
           ],
           currentIndex: _selectedIndex,

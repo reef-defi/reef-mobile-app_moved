@@ -35,6 +35,7 @@ class AddAccount extends StatelessWidget {
                 ],
               ),
             ),
+            const Gap(8),
             MaterialButton(
               materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
               onPressed: () {
