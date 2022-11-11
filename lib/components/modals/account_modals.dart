@@ -149,6 +149,7 @@ class _AccountImportContentState extends State<AccountImportContent> {
                 Icon(
                   CupertinoIcons.exclamationmark_triangle_fill,
                   color: Styles.errorColor,
+                  size: 16,
                 ),
                 const Gap(8),
                 Flexible(
@@ -156,7 +157,7 @@ class _AccountImportContentState extends State<AccountImportContent> {
                     errorDuplicated
                         ? "This account has already been added"
                         : "Invalid mnemonic seed",
-                    style: TextStyle(color: Colors.grey[600], fontSize: 15),
+                    style: TextStyle(color: Colors.grey[600], fontSize: 13),
                   ),
                 ),
               ],
@@ -308,12 +309,13 @@ class _AccountCreationContentState extends State<AccountCreationContent> {
               Icon(
                 CupertinoIcons.exclamationmark_triangle_fill,
                 color: Styles.primaryAccentColorDark,
+                size: 16,
               ),
               const Gap(8),
               Flexible(
                 child: Text(
                   "Please write down your wallet's mnemonic seed and keep it in a safe place. The mnemonic can be used to restore your wallet. Keep it carefully to not lose your assets.",
-                  style: TextStyle(color: Colors.grey[600], fontSize: 14),
+                  style: TextStyle(color: Colors.grey[600], fontSize: 13),
                 ),
               ),
             ],
@@ -415,9 +417,14 @@ class _AccountCreationConfirmContentState
     extends State<AccountCreationConfirmContent> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
   late String name;
   String password = "";
+  String confirmPassword = "";
   bool _hasPassword = false;
+  bool _passwordError = false;
+  bool _confirmPasswordError = false;
 
   @override
   void initState() {
@@ -441,8 +448,17 @@ class _AccountCreationConfirmContentState
       });
     });
     _passwordController.addListener(() {
+      if (password == _passwordController.text) return;
       setState(() {
         password = _passwordController.text;
+        _passwordError = password.length < 6;
+      });
+    });
+    _confirmPasswordController.addListener(() {
+      if (confirmPassword == _confirmPasswordController.text) return;
+      setState(() {
+        confirmPassword = _confirmPasswordController.text;
+        _confirmPasswordError = password != confirmPassword;
       });
     });
     ReefAppState.instance.storage
@@ -493,7 +509,7 @@ class _AccountCreationConfirmContentState
               ),
             ),
           ),
-          const Gap(8),
+          const Gap(16),
           if (!_hasPassword) ...[
             Text(
               "A PASSWORD FOR REEF APP",
@@ -509,7 +525,9 @@ class _AccountCreationConfirmContentState
                 color: Styles.whiteColor,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: const Color(0x20000000),
+                  color: _passwordError
+                      ? Styles.errorColor
+                      : const Color(0x20000000),
                   width: 1,
                 ),
               ),
@@ -522,6 +540,79 @@ class _AccountCreationConfirmContentState
                 ),
               ),
             ),
+            if (_passwordError) ...[
+              const Gap(8),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(
+                    CupertinoIcons.exclamationmark_triangle_fill,
+                    color: Styles.errorColor,
+                    size: 16,
+                  ),
+                  const Gap(8),
+                  Flexible(
+                    child: Text(
+                      "Password is too short",
+                      style: TextStyle(color: Colors.grey[600], fontSize: 13),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+            if (password.isNotEmpty && !_passwordError) ...[
+              const Gap(16),
+              Text(
+                "REPEAT PASSWORD FOR VERIFICATION",
+                style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w500,
+                    color: Styles.textLightColor),
+              ),
+              const Gap(8),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                decoration: BoxDecoration(
+                  color: Styles.whiteColor,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: _confirmPasswordError
+                        ? Styles.errorColor
+                        : const Color(0x20000000),
+                    width: 1,
+                  ),
+                ),
+                child: TextField(
+                  controller: _confirmPasswordController,
+                  obscureText: true,
+                  decoration: const InputDecoration.collapsed(hintText: ''),
+                  style: const TextStyle(
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+              if (_confirmPasswordError) ...[
+                const Gap(8),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Icon(
+                      CupertinoIcons.exclamationmark_triangle_fill,
+                      color: Styles.errorColor,
+                      size: 16,
+                    ),
+                    const Gap(8),
+                    Flexible(
+                      child: Text(
+                        "Passwords do not match",
+                        style: TextStyle(color: Colors.grey[600], fontSize: 13),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ]
           ],
           const Gap(24),
           Container(
@@ -558,17 +649,23 @@ class _AccountCreationConfirmContentState
                       shadowColor: const Color(0x559d6cff),
                       elevation: 5,
                       backgroundColor: (name.isNotEmpty &&
-                              (!_hasPassword || password.isNotEmpty))
+                              (_hasPassword ||
+                                  (password.isNotEmpty &&
+                                      !_passwordError &&
+                                      !_confirmPasswordError)))
                           ? Styles.secondaryAccentColor
                           : const Color(0xff9d6cff),
                       padding: const EdgeInsets.symmetric(vertical: 16),
                     ),
                     onPressed: () {
                       if (name.isNotEmpty &&
-                          (_hasPassword || password.isNotEmpty)) {
+                          (_hasPassword ||
+                              (password.isNotEmpty &&
+                                  !_passwordError &&
+                                  !_confirmPasswordError))) {
                         if (widget.account != null) {
                           widget.saveAccount(widget.account as StoredAccount);
-                          if (password.isNotEmpty) {
+                          if (!_hasPassword && password.isNotEmpty) {
                             ReefAppState.instance.storage
                                 .setValue(StorageKey.password.name, password);
                           }
@@ -594,7 +691,6 @@ class _AccountCreationConfirmContentState
         ],
       ),
     );
-    ;
   }
 }
 
