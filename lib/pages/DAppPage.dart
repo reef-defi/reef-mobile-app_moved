@@ -28,7 +28,7 @@ class _DAppPageState extends State<DAppPage> {
   @override
   void initState() {
     super.initState();
-
+print('TODO dapp injection not working check js build !!!!!!!!');
     widget._getHtml(widget.url).then((html) {
       setState(() {
         dappJsApi = JsApiService.dAppInjectedHtml(html, widget.url);

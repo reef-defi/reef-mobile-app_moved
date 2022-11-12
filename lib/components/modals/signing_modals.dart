@@ -428,6 +428,7 @@ List<Widget> variants = [
 void showSigningModal(context, {required variant, info}) {
   int variantIndex = 0;
   switch (variant) {
+    // TODO replace strings with Enum
     case "Transaction":
       variantIndex = 0;
       break;

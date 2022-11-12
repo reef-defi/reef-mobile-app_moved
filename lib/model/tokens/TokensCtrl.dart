@@ -20,8 +20,8 @@ class TokenCtrl {
       tokenModel.setSelectedSignerTokens(tknList);
     });
 
-    // TODO get real list with all available tokens
-    List<TokenWithAmount> tknList = [
+    // get real list with all available tokens
+    /*List<TokenWithAmount> tknList = [
       TokenWithAmount(
           name: 'REEF',
           address: Constants.REEF_TOKEN_ADDRESS,
@@ -51,7 +51,7 @@ class TokenCtrl {
           amount: BigInt.zero,
           price: 0)
     ];
-    tokenModel.setTokenList(tknList);
+    tokenModel.setTokenList(tknList);*/
 
     jsApi.jsObservable('appState.selectedSignerNFTs\$').listen((tokens) {
       if (tokens == null) {

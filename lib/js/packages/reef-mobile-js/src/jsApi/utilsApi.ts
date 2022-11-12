@@ -73,7 +73,7 @@ export const initApi = () => {
         },
         setCurrentNetwork: (networkName: string) => {
             const network: Network = availableNetworks[networkName] || availableNetworks.mainnet;
-            appState.setCurrentNetwork(network);
+            return appState.setCurrentNetwork(network);
         },
     }
 }

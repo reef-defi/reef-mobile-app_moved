@@ -52,18 +52,18 @@ class _UserPageState extends State<UserPage> {
             children: [
               Row(
                 children: [
-                  const Image(
-                    image: AssetImage("./assets/images/reef.png"),
-                    width: 24,
-                    height: 24,
-                  ),
+                  // const Image(
+                  //   image: AssetImage("./assets/images/reef.png"),
+                  //   width: 24,
+                  //   height: 24,
+                  // ),
                   const Gap(8),
                   Text(
                     "Accounts",
                     style: GoogleFonts.spaceGrotesk(
-                        fontSize: 18,
-                        color: Styles.textColor,
-                        fontWeight: FontWeight.w500),
+                        fontWeight: FontWeight.w500,
+                        fontSize: 32,
+                        color: Colors.grey[800]),
                   ),
                 ],
               ),

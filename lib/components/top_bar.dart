@@ -1,27 +1,18 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
-import 'package:reef_mobile_app/components/modals/signing_modals.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/utils/size_config.dart';
-import 'package:reef_mobile_app/utils/styles.dart';
 
 Widget topBar(BuildContext context) {
   SizeConfig.init(context);
 
-  _handleTap() {
-    if (kDebugMode) {
-      print("Notification icon clicked");
-      HapticFeedback.selectionClick();
-      showSigningModal(context, variant: "Sign message");
-    }
-  }
-
   return Container(
     color: Colors.transparent,
-    // padding: const EdgeInsets.symmetric(horizontal: 16),
     child: Column(
       children: <Widget>[
         Gap(getProportionateScreenHeight(50)),
@@ -29,16 +20,31 @@ Widget topBar(BuildContext context) {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             SvgPicture.asset(
-              'assets/images/reef.svg',
+              'assets/images/reef-logo-light.svg',
               semanticsLabel: "Reef Logo",
-              height: 32,
+              height: 46,
             ),
+            Observer(builder: (_) {
+              var selAddr =
+                  ReefAppState.instance.model.accounts.selectedAddress;
+              if (selAddr == null
+                  || ReefAppState.instance.model.accounts.signers == null
+                  || ReefAppState.instance.model.accounts.signers.length<1
+              ) {
+                return SizedBox.shrink();
+              }
+              var selSigner = ReefAppState.instance.model.accounts.signers
+                  .firstWhere((element) => element.address == selAddr);
+
+              return accountBar(context, selSigner.name);
+            })
+
             // Text('Hi $username',
             //     style: GoogleFonts.spaceGrotesk(
             //         color: Colors.black87,
             //         fontSize: 18,
             //         fontWeight: FontWeight.bold)),
-            MaterialButton(
+            /*MaterialButton(
               minWidth: 0,
               materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
               onPressed: _handleTap,
@@ -61,11 +67,38 @@ Widget topBar(BuildContext context) {
                 child: Icon(CupertinoIcons.bell_fill,
                     size: 16, color: Styles.whiteColor),
               ),
-            )
+            )*/
           ],
         ),
         const Gap(16),
       ],
     ),
   );
+}
+
+Widget accountBar(BuildContext context, String title) {
+  SizeConfig.init(context);
+
+  return Container(
+      // color: Colors.purple,
+      decoration: BoxDecoration(
+          border: Border.all(color: Colors.white30, width: 2),
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(color: Colors.white30, blurRadius: 2, spreadRadius: 1)
+          ],
+          color: Colors.purple),
+      child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+          child: Row(children: [
+            Icon(Icons.account_balance_wallet_rounded, color: Colors.white),
+            Padding(
+              padding: EdgeInsets.only(left: 10),
+              child: Text((title ?? ''),
+                  style: GoogleFonts.spaceGrotesk(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold)),
+            )
+          ])));
 }
