@@ -79,7 +79,7 @@ class _HomePageState extends State<HomePage> {
                       duration: const Duration(milliseconds: 150),
                       curve: Curves.easeInOut,
                       style: GoogleFonts.poppins(
-                          fontWeight: FontWeight.w700,
+                          fontWeight: FontWeight.w500,
                           color: Styles.textColor,
                           fontSize: _isBigText ? 24 : 0),
                       child: const Text('Balance')),
