@@ -29,9 +29,9 @@ class _BottomNavState extends State<BottomNav> {
   int _selectedIndex = 0;
   static final List<Widget> _widgetOptions = <Widget>[
     const HomePage(),
-    const SendPage(Constants.REEF_TOKEN_ADDRESS),
-    const SwapPage(),
-    const BuyPage(),
+    // const SendPage(Constants.REEF_TOKEN_ADDRESS),
+    // const SwapPage(),
+    // const BuyPage(),
     UserPage(),
     const SettingsPage()
   ];
@@ -69,17 +69,19 @@ class _BottomNavState extends State<BottomNav> {
                   children: <Widget>[
                     Material(
                       elevation: 3,
-                      shadowColor: Colors.black26,
+                      shadowColor: Colors.black45,
                       child: Container(
-                          color: Styles.whiteColor,
+                          // color: Styles.whiteColor,
                           padding: const EdgeInsets.symmetric(horizontal: 16),
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: AssetImage("assets/images/reef-header.png"),
+                              fit: BoxFit.cover,
+                              alignment: Alignment(-0.82, 1.0)
+                            ),
+                          ),
                           child: topBar(context)),
                     ),
-                    // Padding(
-                    //   padding: const EdgeInsets.symmetric(
-                    //       horizontal: 16, vertical: 18),
-                    //   child: _widgetOptions.elementAt(_selectedIndex),
-                    // )
                     Expanded(
                       child: Container(
                         padding: const EdgeInsets.fromLTRB(16, 18, 16, 0),
@@ -87,9 +89,6 @@ class _BottomNavState extends State<BottomNav> {
                         child: _widgetOptions.elementAt(_selectedIndex),
                       ),
                     )
-                    // Text(
-                    //   'tokens:${reefState.tokenList.tokens.length}',
-                    // ),
                   ],
                 ),
               ],
@@ -110,24 +109,26 @@ class _BottomNavState extends State<BottomNav> {
               icon: Icon(CupertinoIcons.home),
               label: 'Home',
             ),
+            // BottomNavigationBarItem(
+            //   icon: Icon(CupertinoIcons.paperplane),
+            //   label: 'Send',
+            // ),
+            // BottomNavigationBarItem(
+            //   icon: Icon(CupertinoIcons.arrow_right_arrow_left_square),
+            //   label: 'Swap',
+            // ),
+            // BottomNavigationBarItem(
+            //   icon: Icon(CupertinoIcons.money_dollar_circle),
+            //   label: 'Buy',
+            // ),
             BottomNavigationBarItem(
-              icon: Icon(CupertinoIcons.paperplane),
-              label: 'Send',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(CupertinoIcons.arrow_right_arrow_left_square),
-              label: 'Swap',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(CupertinoIcons.money_dollar_circle),
-              label: 'Buy',
-            ),
-            BottomNavigationBarItem(
-              icon: SvgIcon(
-                'assets/images/reef_icon.svg',
-                height: 20,
-              ),
-              label: 'Buy',
+              icon: Icon(
+                Icons.account_balance_wallet_outlined),
+              //  SvgIcon(
+              //   'assets/images/reef_icon.svg',
+              //   height: 20,
+              // ),
+              label: 'Accounts',
             ),
             BottomNavigationBarItem(
               icon: Icon(CupertinoIcons.gear_solid),

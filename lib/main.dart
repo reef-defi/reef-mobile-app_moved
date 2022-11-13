@@ -1,14 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:reef_mobile_app/components/SignatureContentToggle.dart';
-import 'package:reef_mobile_app/model/ReefAppState.dart';
-import 'package:reef_mobile_app/model/account/ReefSigner.dart';
-import 'package:reef_mobile_app/pages/SplashScreen.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:reef_mobile_app/components/page_layout.dart';
-import 'package:reef_mobile_app/utils/functions.dart';
-import 'package:reef_mobile_app/utils/styles.dart';
-import 'package:reef_mobile_app/pages/DAppPage.dart';
+import 'package:reef_mobile_app/pages/SplashScreen.dart';
 
 void main() async {
   runApp(

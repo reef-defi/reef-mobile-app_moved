@@ -19,19 +19,20 @@ class _SwitchNetworkState extends State<SwitchNetwork> {
             style: TextStyle(color: Styles.textLightColor, fontSize: 16)),
       ]),
       Row(children: [
-        Text("Mainnet", style: Theme.of(context).textTheme.bodyText1),
+        Text("Testnet", style: Theme.of(context).textTheme.bodyText1),
         Switch(
+          // TODO listen to currentNetwork from mobx model
           value: ReefAppState.instance.networkCtrl.currentNetwork ==
-              Network.testnet,
+              Network.mainnet,
           onChanged: (value) {
             setState(() {
-              var currentNetwork = value ? Network.testnet : Network.mainnet;
+              var currentNetwork = value ?  Network.mainnet : Network.testnet;
               ReefAppState.instance.networkCtrl.setNetwork(currentNetwork);
             });
           },
           activeColor: Styles.primaryAccentColorDark,
         ),
-        Text("Testnet", style: Theme.of(context).textTheme.bodyText1),
+        Text("Mainnet", style: Theme.of(context).textTheme.bodyText1)
       ])
     ]);
   }

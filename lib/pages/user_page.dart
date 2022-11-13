@@ -45,36 +45,6 @@ class _UserPageState extends State<UserPage> {
   Widget build(BuildContext context) {
     return SignatureContentToggle(Column(
       children: <Widget>[
-        Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-          MaterialButton(
-            onPressed: () => showAddAccountModal('Add account menu', openModal,
-                context: context),
-            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            minWidth: 0,
-            height: 36,
-            elevation: 0,
-            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-                side: const BorderSide(color: Colors.black26)),
-            child: Row(children: [
-              Icon(
-                Icons.add_circle_rounded,
-                color: Styles.textLightColor,
-                size: 22,
-              ),
-              const Gap(4),
-              Text(
-                "Add Account",
-                style: GoogleFonts.roboto(
-                    color: Styles.textLightColor,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500),
-              )
-            ]),
-          ),
-          const Gap(8)
-        ]),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 8.0),
           child: Row(
@@ -82,32 +52,49 @@ class _UserPageState extends State<UserPage> {
             children: [
               Row(
                 children: [
-                  const Image(
-                    image: AssetImage("./assets/images/reef.png"),
-                    width: 24,
-                    height: 24,
-                  ),
+                  // const Image(
+                  //   image: AssetImage("./assets/images/reef.png"),
+                  //   width: 24,
+                  //   height: 24,
+                  // ),
                   const Gap(8),
                   Text(
                     "Accounts",
                     style: GoogleFonts.spaceGrotesk(
-                        fontSize: 18,
-                        color: Styles.textColor,
-                        fontWeight: FontWeight.w500),
+                        fontWeight: FontWeight.w500,
+                        fontSize: 32,
+                        color: Colors.grey[800]),
                   ),
                 ],
               ),
               Row(
                 children: [
-                  IconButton(
-                    onPressed: () {},
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                    icon: Icon(
-                      Icons.search,
-                      color: Styles.textLightColor,
-                      size: 28,
-                    ),
+                  MaterialButton(
+                    onPressed: () => showAddAccountModal('Add account menu', openModal,
+                        context: context),
+                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    minWidth: 0,
+                    height: 36,
+                    elevation: 0,
+                    padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        side: const BorderSide(color: Colors.black26)),
+                    child: Row(children: [
+                      Icon(
+                        Icons.add_circle_rounded,
+                        color: Styles.textLightColor,
+                        size: 22,
+                      ),
+                      const Gap(4),
+                      Text(
+                        "Add Account",
+                        style: GoogleFonts.roboto(
+                            color: Styles.textLightColor,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500),
+                      )
+                    ]),
                   ),
                   const Gap(8)
                 ],
@@ -119,21 +106,19 @@ class _UserPageState extends State<UserPage> {
         Observer(builder: (_) {
           if (ReefAppState.instance.model.accounts.loadingSigners == true) {
             return Text(
-              'Loading signers...',
+              'Loading accounts...',
               style: TextStyle(fontSize: 16, color: Styles.textLightColor),
             );
           }
           if (ReefAppState.instance.model.accounts.signers.isNotEmpty) {
-            // return Text('signers loaded = ${ReefAppState.instance.model.accounts.signers.map((ReefSigner s){
-            //   return s.address + ' bal = ' + toBalanceDisplayBigInt(s.balance);
-            // }).join('/////')}');
             return Expanded(
                 child: AccountsList(
                     ReefAppState.instance.model.accounts.signers,
                     ReefAppState.instance.model.accounts.selectedAddress,
-                    ReefAppState.instance.accountCtrl.setSelectedAddress));
+                    ReefAppState.instance.accountCtrl.setSelectedAddress)
+            );
           }
-          return const Text('No signers found');
+          return const Text('No accounts present');
         }),
       ],
     ));

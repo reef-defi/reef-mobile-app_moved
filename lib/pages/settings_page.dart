@@ -18,25 +18,24 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-        padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Center(
-                child: Text(
+             Text(
               "Settings",
               style: GoogleFonts.spaceGrotesk(
                   fontWeight: FontWeight.w500,
-                  fontSize: 24,
+                  fontSize: 32,
                   color: Colors.grey[800]),
-            )),
-            const Gap(24),
+            ),
+            const Gap(32),
             const SwitchNetwork(),
             Divider(
               color: Styles.textLightColor,
               thickness: 1,
             ),
-            const Gap(12),
+            const Gap(24),
             MaterialButton(
               materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
               onPressed: () => showAuthUrlListModal(context),
@@ -54,7 +53,12 @@ class _SettingsPageState extends State<SettingsPage> {
                 ],
               ),
             ),
-            const Gap(12),
+            const Gap(24),
+            Divider(
+              color: Styles.textLightColor,
+              thickness: 1,
+            ),
+            const Gap(24),
             MaterialButton(
               materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
               onPressed: () =>
