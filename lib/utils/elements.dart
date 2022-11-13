@@ -18,15 +18,26 @@ LinearGradient textGradient() {
 class ViewBoxContainer extends StatelessWidget {
   final Color color;
   final Widget child;
+  final String imageUrl;
+
   const ViewBoxContainer(
-      {Key? key, required this.child, this.color = Styles.boxBackgroundColor})
+      {Key? key,
+      required this.child,
+      this.color = Styles.boxBackgroundColor,
+      this.imageUrl = ''})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
         width: double.infinity,
+        height: this.imageUrl!=''? 200 : null,
         decoration: BoxDecoration(
+          shape: BoxShape.rectangle,
+            image: this.imageUrl != ''
+                ? DecorationImage(
+                    image: NetworkImage(imageUrl), fit: BoxFit.cover)
+                : null,
             color: color,
             border: Border.all(
               color: const Color(0x20000000),
