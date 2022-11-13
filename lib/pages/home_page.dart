@@ -45,12 +45,12 @@ class _HomePageState extends State<HomePage>{
 
   List _viewsMap = [
     {"key": 0, "name": "Token", "active": true, "component": const TokenView()},
-    {
+    /*{
       "key": 1,
       "name": "Stakings",
       "active": false,
       "component": const StakingView()
-    },
+    },*/
     {"key": 2, "name": "NFTs", "active": false, "component": const NFTView()},
     {
       "key": 3,
