@@ -146,20 +146,8 @@ class _HomePageState extends State<HomePage>{
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
         color: Styles.primaryBackgroundColor,
-          boxShadow: [
-            BoxShadow(
-              color: HSLColor.fromAHSL(1, 256.3636363636, 0.379310344828, 0.843137254902).toColor(),
-              offset: Offset(10, 10),
-              blurRadius: 20,
-              spreadRadius: -5,
-            ),
-             BoxShadow(
-              color: HSLColor.fromAHSL(1, 256.3636363636, 0.379310344828, 1).toColor(),
-              offset: Offset(-10, -10),
-              blurRadius: 20,
-              spreadRadius: -5,
-            ),
-          ]
+          boxShadow:
+            neumorphicShadow()
       ),
       child: Padding(
         padding: const EdgeInsets.all(7.0),
