@@ -204,22 +204,22 @@ class _HomePageState extends State<HomePage>{
       child: NotificationListener(
         child:Column(
           children: [
-            Row(children: [
-              ElevatedButton(
-                child: const Text('test dApp 1'),
-                onPressed: () =>
-                    _navigateTestDApp("https://mobile-dapp-test.web.app/testnet"),
-                // https://min-dapp.web.app
-                // https://app.reef.io
-              ),
-              ElevatedButton(
-                child: const Text('test dApp 2'),
-                onPressed: () => _navigateTestDApp(
-                    "https://console.reefscan.com/#/settings/metadata"),
-              ),
-              // ElevatedButton(
-              //     child: const Text('test'), onPressed: _navigateTestPage),
-            ]),
+            // Row(children: [
+            //   ElevatedButton(
+            //     child: const Text('test dApp 1'),
+            //     onPressed: () =>
+            //         _navigateTestDApp("https://mobile-dapp-test.web.app/testnet"),
+            //     // https://min-dapp.web.app
+            //     // https://app.reef.io
+            //   ),
+            //   ElevatedButton(
+            //     child: const Text('test dApp 2'),
+            //     onPressed: () => _navigateTestDApp(
+            //         "https://console.reefscan.com/#/settings/metadata"),
+            //   ),
+            //   // ElevatedButton(
+            //   //     child: const Text('test'), onPressed: _navigateTestPage),
+            // ]),
             balanceSection(_textSize),
             navSection(),
             Expanded(
