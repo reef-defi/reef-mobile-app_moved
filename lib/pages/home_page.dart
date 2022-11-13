@@ -62,27 +62,24 @@ class _HomePageState extends State<HomePage> {
 
   Widget balanceSection(double size) {
     bool _isBigText = size > 42;
-    return AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        curve: Curves.easeInOut,
-        width: size,
-        child: FittedBox(
-          fit: BoxFit.contain,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 24.0),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeInOut,
+          width: size,
+          child: FittedBox(
+            fit: BoxFit.contain,
             child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  AnimatedDefaultTextStyle(
-                      textAlign: TextAlign.center,
-                      duration: const Duration(milliseconds: 150),
-                      curve: Curves.easeInOut,
-                      style: GoogleFonts.poppins(
-                          fontWeight: FontWeight.w500,
-                          color: Styles.textColor,
-                          fontSize: _isBigText ? 24 : 0),
-                      child: const Text('Balance')),
+                  Text('Balance',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        color: Styles.textColor,
+                        fontSize: 24,
+                      )),
                   // if(_isBigText) Text("Balance",
                   //     style: TextStyle(
                   //         fontSize: 24,
@@ -102,8 +99,8 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                 ]),
-          ),
-        ));
+          )),
+    );
   }
 
   Widget rowMember(Map member) {
@@ -247,7 +244,7 @@ class _HomePageState extends State<HomePage> {
             if (t is ScrollUpdateNotification) {
               if (t.metrics.pixels! > 120 && t.scrollDelta! > 0) {
                 setState(() {
-                  _textSize = 42.0;
+                  _textSize = 0.0;
                 });
               }
               if (t.metrics.pixels! < 120 && t.scrollDelta! < 0) {
