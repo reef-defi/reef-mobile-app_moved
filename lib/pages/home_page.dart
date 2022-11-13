@@ -51,9 +51,9 @@ class _HomePageState extends State<HomePage>{
       "active": false,
       "component": const StakingView()
     },*/
-    {"key": 2, "name": "NFTs", "active": false, "component": const NFTView()},
+    {"key": 1, "name": "NFTs", "active": false, "component": const NFTView()},
     {
-      "key": 3,
+      "key": 2,
       "name": "Activity",
       "active": false,
       "component": const ActivityView()
