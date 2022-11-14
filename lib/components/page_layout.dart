@@ -97,7 +97,7 @@ class _BottomNavState extends State<BottomNav> {
           unselectedItemColor: Colors.black38,
           items: const [
             BottomNavigationBarItem(
-              icon: Icon(CupertinoIcons.home),
+              icon: Icon(Icons.home_outlined),
               label: 'Home',
             ),
             // BottomNavigationBarItem(
@@ -121,7 +121,7 @@ class _BottomNavState extends State<BottomNav> {
               label: 'Accounts',
             ),
             BottomNavigationBarItem(
-              icon: Icon(CupertinoIcons.gear_solid),
+              icon: Icon(Icons.settings_outlined),
               label: 'Settings',
             ),
           ],

@@ -6,7 +6,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/utils/elements.dart';
 import 'package:reef_mobile_app/utils/functions.dart';
-import 'package:reef_mobile_app/utils/gradient_text.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 
 class ActivityView extends StatefulWidget {
@@ -17,38 +16,43 @@ class ActivityView extends StatefulWidget {
 }
 
 class _ActivityViewState extends State<ActivityView> {
-
   Widget activityItem(
       {required String type,
-      required double amount,
+      required BigInt? amount,
       required String tokenName,
-      required int timeStamp,
+      required DateTime timeStamp,
+      required String? iconUrl,
       isFirstElement = false,
       isLastElement = false}) {
-    final tsDate = DateTime.fromMillisecondsSinceEpoch(timeStamp);
+    final tsDate = timeStamp;
     String titleText = type.capitalize(),
         amountText = "",
-        timeStampText = "${tsDate.day}-${tsDate.month}-${tsDate.year}";
+        timeStampText =
+            "${tsDate.day}-${tsDate.month}-${tsDate.year}, ${tsDate.hour}:${tsDate.minute}";
     IconData icon = CupertinoIcons.exclamationmark_circle_fill;
     Color? bgColor = Colors.transparent;
     Color? iconColor = Colors.transparent;
-    bool isGradientText = (type == "received");
+    bool isReceived = (type == "received");
+    if (tokenName.toLowerCase() == "reef") iconUrl = "./assets/images/reef.png";
 
     switch (type) {
       case "received":
-        amountText = "+ $amount $tokenName";
+        amountText =
+            "+ ${amount != null ? toAmountDisplayBigInt(amount!, fractionDigits: 2) : 0}";
         icon = CupertinoIcons.arrow_down_left;
-        bgColor = const Color(0xFFD8F5D9);
-        iconColor = Colors.green[400];
+        bgColor = const Color(0x3335c57d);
+        iconColor = const Color(0xff35c57d);
         break;
       case "sent":
-        amountText = "- $amount $tokenName";
+        amountText =
+            "- ${amount != null ? toAmountDisplayBigInt(amount!, fractionDigits: 2) : 0}";
         icon = CupertinoIcons.arrow_up_right;
-        bgColor = const Color(0xffe5e9eb);
-        iconColor = Colors.grey[500];
+        bgColor = const Color(0x8cd8dce6);
+        iconColor = const Color(0xffb2b0c8);
     }
 
     return Container(
+      width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 16),
       // For debugging, remove later
       // decoration: BoxDecoration(
@@ -56,57 +60,64 @@ class _ActivityViewState extends State<ActivityView> {
       // ),
       child: Column(
         children: [
-          if (!isFirstElement) const Gap(8),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Row(
                 children: [
                   Container(
-                    height: 48,
-                    width: 48,
+                    height: 46,
+                    width: 46,
                     decoration: BoxDecoration(
                       color: bgColor,
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Center(child: Icon(icon, color: iconColor)),
+                    child: Center(
+                        child: Icon(
+                      icon,
+                      color: iconColor,
+                    )),
                   ),
                   const Gap(18),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        titleText,
+                        "$titleText $tokenName",
                         style: TextStyle(
-                            fontWeight: FontWeight.w700,
-                            fontSize: 17,
+                            fontWeight: FontWeight.w800,
+                            fontSize: 15,
                             color: Styles.textColor),
                       ),
-                      const Gap(2),
+                      const Gap(1),
                       Text(
                         timeStampText,
                         style: TextStyle(
-                            fontSize: 12, color: Styles.textLightColor),
+                            fontSize: 10, color: Styles.textLightColor),
                       )
                     ],
                   ),
                 ],
               ),
-              if (isGradientText)
-                GradientText(
-                  amountText,
-                  gradient: textGradient(),
-                  style: GoogleFonts.spaceGrotesk(fontWeight: FontWeight.w700),
-                )
-              else
+              Row(children: [
                 Text(
                   amountText,
                   style: GoogleFonts.spaceGrotesk(
-                      fontWeight: FontWeight.w700, color: iconColor),
-                )
+                      fontWeight: FontWeight.w700,
+                      color: isReceived ? Color(0xff35c57d) : iconColor,
+                      fontSize: 18),
+                ),
+                const SizedBox(width: 4),
+                iconUrl != null
+                    ? Image(image: AssetImage(iconUrl), width: 16, height: 16)
+                    : const Icon(
+                        CupertinoIcons.exclamationmark_circle_fill,
+                        color: Colors.black12,
+                        size: 18,
+                      ),
+              ]),
             ],
           ),
-          if (!isLastElement) const Gap(8),
         ],
       ),
     );
@@ -114,6 +125,15 @@ class _ActivityViewState extends State<ActivityView> {
 
   @override
   Widget build(BuildContext context) {
+    print(ReefAppState.instance.model.tokens.activity.map((item) => [
+          item.token,
+          item.isInbound,
+          item.extrinsic,
+          item.timestamp,
+          item.tokenNFT,
+          item.url,
+          item.token?.iconUrl ?? "",
+        ]));
     return ListView(
         physics: const BouncingScrollPhysics(),
         padding: const EdgeInsets.all(0),
@@ -122,35 +142,41 @@ class _ActivityViewState extends State<ActivityView> {
             width: double.infinity,
             child: Padding(
               padding:
-                  const EdgeInsets.symmetric(vertical: 32, horizontal: 24.0),
+                  const EdgeInsets.symmetric(vertical: 32, horizontal: 0.0),
               child: ViewBoxContainer(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  child: Observer(builder: (_) {
-                    return Column(children: ReefAppState.instance.model.tokens.activity.map((element) => Text(element.timestamp.toIso8601String())).toList());
-      /*return Column(
-                      children: _activityMap
-                          .map((item) => Column(
-                        children: [
-                          activityItem(
-                                    type: item["type"],
-                                    tokenName: item["tokenName"],
-                                    timeStamp: item["timeStamp"],
-                                    amount: item["amount"],
-                                    isLastElement:
-                                        item["key"] == _activityMap.length - 1,
-                                    isFirstElement: item["key"] == 0),
-                          if (item["key"] != _activityMap.length - 1)
-                            const Divider(
-                              color: Color(0x20000000),
-                              thickness: 0.5,
-                            ),
-                        ],
-                      ))
-                          .toList(),
-                    );*/
-                  })
-                ),
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    child: Observer(builder: (_) {
+                      // return Column(
+                      //     children: ReefAppState.instance.model.tokens.activity
+                      //         .map((element) =>
+                      //             Text(element.timestamp.toIso8601String()))
+                      //         .toList());
+                      return Column(
+                        children: ReefAppState.instance.model.tokens.activity
+                            .map((item) => Column(
+                                  children: [
+                                    activityItem(
+                                      tokenName: item.token?.name ?? "",
+                                      type:
+                                          item.isInbound ? 'received' : 'sent',
+                                      timeStamp: item.timestamp,
+                                      amount: item.token?.balance,
+                                      iconUrl: item.token?.iconUrl,
+                                    ),
+                                    if (ReefAppState.instance.model.tokens
+                                            .activity.last !=
+                                        item)
+                                      const Divider(
+                                        height: 32,
+                                        color: Color(0x20000000),
+                                        thickness: 0.5,
+                                      ),
+                                  ],
+                                ))
+                            .toList(),
+                      );
+                    })),
               ),
             ),
           )

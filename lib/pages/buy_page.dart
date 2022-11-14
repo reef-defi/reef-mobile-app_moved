@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart' as http;
 import 'package:reef_mobile_app/components/modals/alert_modal.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/StorageKey.dart';
@@ -15,7 +16,6 @@ import 'package:reef_mobile_app/model/network/NetworkCtrl.dart';
 import 'package:reef_mobile_app/model/tokens/TokenWithAmount.dart';
 import 'package:reef_mobile_app/utils/constants.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
-import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 
 import '../components/SignatureContentToggle.dart';
@@ -36,7 +36,7 @@ class _BuyPageState extends State<BuyPage> {
   @override
   void initState() {
     super.initState();
-    network = ReefAppState.instance.networkCtrl.currentNetwork;
+    network = ReefAppState.instance.networkCtrl.networkModel;
     if (network == Network.mainnet) {
       _getPairs();
     }
