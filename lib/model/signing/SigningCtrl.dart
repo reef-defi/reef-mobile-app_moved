@@ -33,7 +33,7 @@ class SigningCtrl {
       jsApi.jsPromise('window.utils.decodeMethod(`$data`, ${jsonEncode(types)})');
 
   Future<dynamic> bytesString(String bytes) =>
-      jsApi.jsPromise('utils.bytesString("$bytes")');
+      jsApi.jsPromise('window.utils.bytesString("$bytes")');
 
   confirmSignature(String sigConfirmationIdent, String address) async {
     var account = await storage.getAccount(address);
