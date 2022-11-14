@@ -369,7 +369,7 @@ class _AccountCreationContentState extends State<AccountCreationContent> {
                     padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
                   onPressed: () {
-                    if (_checkedValue || widget.account?.mnemonic != null)
+                    if (_checkedValue && widget.account?.mnemonic != null)
                       widget.next();
                   },
                   child: const Text(

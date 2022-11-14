@@ -7,13 +7,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:reef_mobile_app/components/accounts/accounts_list.dart';
 import 'package:reef_mobile_app/components/modals/account_modals.dart';
 import 'package:reef_mobile_app/components/modals/add_account_modal.dart';
-import 'package:reef_mobile_app/components/modals/auth_url_list_modal.dart';
-import 'package:reef_mobile_app/components/switch_network.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
-import 'package:reef_mobile_app/model/StorageKey.dart';
 import 'package:reef_mobile_app/model/account/AccountCtrl.dart';
-import 'package:reef_mobile_app/model/metadata/metadata.dart';
-import 'package:reef_mobile_app/components/modals/metadata_aproval_modal.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 
 import '../components/SignatureContentToggle.dart';
@@ -28,6 +23,7 @@ class UserPage extends StatefulWidget {
 }
 
 class _UserPageState extends State<UserPage> {
+  // TODO replace strings with enum
   void openModal(String modalName) {
     switch (modalName) {
       case 'addAccount':

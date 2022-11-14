@@ -19,66 +19,6 @@ class TokenView extends StatefulWidget {
 }
 
 class _TokenViewState extends State<TokenView> {
-  // Widget tokenCard(String name,
-  //     {String? iconURL,
-  //       double balance = 0.0,
-  //     double price = 0.0,
-  //     String tokenName = ""}) {
-  //   return ViewBoxContainer(
-  //       child: Padding(
-  //           padding: const EdgeInsets.symmetric(vertical: 24.0),
-  //           child: Column(
-  //             children: [
-  //               SizedBox(
-  //                   height: 48,
-  //                   width: 48,
-  //                   child: /* TODO fix svg image base64
-  //                   iconURL!=null ? CachedNetworkImage(
-  //                     imageUrl: iconURL,
-  //                     placeholder: (context, url) => Shimmer.fromColors(
-  //                       baseColor: Colors.grey[300]!,
-  //                       highlightColor: Colors.grey[350]!,
-  //                       child: Container(
-  //                         width: 48,
-  //                         height: 48,
-  //                         decoration: ShapeDecoration(
-  //                           color: Colors.grey[350]!,
-  //                           shape: const CircleBorder(),
-  //                         ),
-  //                       ),
-  //                     ),
-  //                     errorWidget: (context, url, error) => const Icon(
-  //                       CupertinoIcons.exclamationmark_circle_fill,
-  //                       color: Colors.black12,
-  //                       size: 48,
-  //                     ),
-  //                   ):*/ const SizedBox.shrink()),
-  //               const Gap(8),
-  //               Text(
-  //                 name,
-  //                 style: TextStyle(
-  //                   color: Styles.textColor,
-  //                   fontSize: 20,
-  //                   fontWeight: FontWeight.w700,
-  //                 ),
-  //               ),
-  //               const Gap(2),
-  //               Text(
-  //                 // TODO allow conversionRate to be null for no data
-  //                 "${balance != 0 ? balance : 0} ${tokenName != "" ? tokenName : name.toUpperCase()} - ${price != 0 ? price.toStringAsFixed(4) : 'No pool data'}",
-  //                 style: TextStyle(color: Styles.textLightColor, fontSize: 16),
-  //               ),
-  //               const Gap(8),
-  //               if (balance != 0)
-  //                 GradientText(
-  //                   "\$${getBalanceValue(balance, price).toStringAsFixed(2)}",
-  //                   style: GoogleFonts.spaceGrotesk(
-  //                       fontSize: 24, fontWeight: FontWeight.w700),
-  //                   gradient: textGradient(),
-  //                 ),
-  //             ],
-  //           )));
-  // }
 
   Widget tokenCard(String name,
       {String? iconURL,
@@ -93,9 +33,10 @@ class _TokenViewState extends State<TokenView> {
               children: [
                 Row(
                   children: [
+                    // icon
                     SizedBox(
-                        height: 48,
-                        width: 48,
+                        height: 58,
+                        width: 58,
                         child: iconURL != null
                             ? CachedNetworkImage(
                                 imageUrl: iconURL,
@@ -121,55 +62,72 @@ class _TokenViewState extends State<TokenView> {
                               )
                             : const SizedBox.shrink()),
                     const SizedBox(width: 15),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(name,
-                            style: GoogleFonts.poppins(
-                              color: Styles.textColor,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w700,
-                            )),
-                        Text(
-                          // TODO allow conversionRate to be null for no data
-                          "\$${price != 0 ? price.toStringAsFixed(4) : 'No pool data'}",
-                          style: GoogleFonts.poppins(
-                              fontWeight: FontWeight.w600,
-                              color: Styles.textColor,
-                              fontSize: 14),
+                    Container(
+                      child:
+                        Wrap(
+                      direction: Axis.vertical,
+                          alignment: WrapAlignment.spaceBetween,
+                          runAlignment: WrapAlignment.spaceBetween,
+                          children: [
+                            // name price
+                            Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(name,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: GoogleFonts.poppins(
+                                          color: Styles.textColor,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w700,
+                                        )),
+                                    Text(
+                                      // TODO allow conversionRate to be null for no data
+                                      "\$${price != 0 ? price.toStringAsFixed(4) : 'No pool data'}",
+                                      style: GoogleFonts.poppins(
+                                          color: Styles.textLightColor,
+                                          fontSize: 10),
+                                    )
+                                  ],
+                                ),
+                            // const Spacer(),
+                            // balance, amt
+                            Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    GradientText(
+                                        "\$${getBalanceValue(balance, price).toStringAsFixed(2)}",
+                                        gradient: textGradient(),
+                                        overflow: TextOverflow.ellipsis,
+                                        style: GoogleFonts.poppins(
+                                          color: Styles.textColor,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w900,
+                                        )),
+                                    Text(
+                                      // TODO allow conversionRate to be null for no data
+                                      price != 0
+                                          ? "${balance != 0 ? balance.toStringAsFixed(0) : 0} ${tokenName != "" ? tokenName : name.toUpperCase()}"
+                                          : 'No pool data',
+                                      overflow: TextOverflow.ellipsis,
+                                      style: GoogleFonts.poppins(
+                                        color: Styles.textColor,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    )
+                                  ],
+                                )
+                          ],
                         )
-                      ],
-                    ),
-                    const Spacer(),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        GradientText(
-                            "US\$${getBalanceValue(balance, price).toStringAsFixed(2)}",
-                            gradient: textGradient(),
-                            style: GoogleFonts.poppins(
-                              color: Styles.textColor,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w900,
-                            )),
-                        Text(
-                          // TODO allow conversionRate to be null for no data
-                          price != 0
-                              ? "${balance != 0 ? balance : 0} ${tokenName != "" ? tokenName : name.toUpperCase()}"
-                              : 'No pool data',
-                          style: GoogleFonts.poppins(
-                            color: Styles.textColor,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        )
-                      ],
-                    ),
+                      ,
+                    )
                   ],
                 ),
                 const SizedBox(height: 15),
+                // buttons
                 Row(
                   children: [
                     Expanded(
@@ -239,6 +197,7 @@ class _TokenViewState extends State<TokenView> {
     return ListView(
         physics: const BouncingScrollPhysics(),
         padding: const EdgeInsets.all(0),
+
         children: [
           SizedBox(
             // constraints: const BoxConstraints.expand(),
@@ -254,11 +213,12 @@ class _TokenViewState extends State<TokenView> {
                   const EdgeInsets.symmetric(vertical: 32, horizontal: 32.0),
               child: Observer(builder: (_) {
                 return Wrap(
-                  spacing: 24,
+                  runSpacing: 24,
                   children: ReefAppState
                       .instance.model.tokens.selectedSignerTokens
                       .map((TokenWithAmount tkn) {
                     return Column(
+
                       children: [
                         tokenCard(tkn.name,
                             tokenName: tkn.symbol,

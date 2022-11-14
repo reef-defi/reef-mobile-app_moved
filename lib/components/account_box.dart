@@ -89,7 +89,7 @@ class _AccountBoxState extends State<AccountBox> {
                   )),
             Padding(
               padding:
-                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 18.0),
+                  const EdgeInsets.symmetric(horizontal: 12.0, vertical: 12.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -120,6 +120,7 @@ class _AccountBoxState extends State<AccountBox> {
                         children: [
                           Text(
                             widget.reefSigner.name,
+                            overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
@@ -129,7 +130,7 @@ class _AccountBoxState extends State<AccountBox> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              IconButton(
+                              /*IconButton(
                                   constraints: const BoxConstraints(),
                                   padding: EdgeInsets.zero,
                                   onPressed: () {
@@ -143,7 +144,7 @@ class _AccountBoxState extends State<AccountBox> {
                                         : CupertinoIcons.eye_slash,
                                     size: 16,
                                     color: Styles.textLightColor,
-                                  )),
+                                  )),*/
                               const Image(
                                   image: AssetImage("./assets/images/reef.png"),
                                   width: 18,
@@ -168,11 +169,11 @@ class _AccountBoxState extends State<AccountBox> {
                                 style: const TextStyle(fontSize: 12),
                               ),
                               const Gap(2),
-                              const Icon(
+                              /*const Icon(
                                 Icons.copy,
                                 size: 12,
                                 color: Colors.black45,
-                              )
+                              )*/
                             ],
                           ),
                           /*const Gap(2),
@@ -219,7 +220,7 @@ class _AccountBoxState extends State<AccountBox> {
                                         borderRadius:
                                             BorderRadius.circular(12)),
                                     padding: EdgeInsets.zero,
-                                    minimumSize: const Size(95, 30),
+                                    minimumSize: const Size(82, 30),
                                     tapTargetSize:
                                         MaterialTapTargetSize.shrinkWrap,
                                   ),
@@ -228,7 +229,7 @@ class _AccountBoxState extends State<AccountBox> {
                                     style: TextStyle(
                                         color: Styles.whiteColor,
                                         fontWeight: FontWeight.w600,
-                                        fontSize: 12),
+                                        fontSize: 10),
                                   )),
                             ),
                           ],
