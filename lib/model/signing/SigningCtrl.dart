@@ -23,14 +23,14 @@ class SigningCtrl {
   }
 
   Future<dynamic> signRaw(String address, String message) =>
-      jsApi.jsPromise('signApi.signRawPromise(`$address`, `$message`);');
+      jsApi.jsPromise('window.signApi.signRawPromise(`$address`, `$message`);');
 
   Future<dynamic> signPayload(String address, Map<String, dynamic> payload) =>
       jsApi.jsPromise(
-          'signApi.signPayloadPromise(`$address`, ${jsonEncode(payload)})');
+          'window.signApi.signPayloadPromise(`$address`, ${jsonEncode(payload)})');
 
   Future<dynamic> decodeMethod(String data, dynamic types) =>
-      jsApi.jsPromise('utils.decodeMethod(`$data`, ${jsonEncode(types)})');
+      jsApi.jsPromise('window.utils.decodeMethod(`$data`, ${jsonEncode(types)})');
 
   Future<dynamic> bytesString(String bytes) =>
       jsApi.jsPromise('utils.bytesString("$bytes")');

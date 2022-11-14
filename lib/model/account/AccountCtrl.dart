@@ -12,6 +12,7 @@ import 'account_model.dart';
 class AccountCtrl {
   final AccountModel _accountModel;
 
+  // TODO check/make these props are private in other Ctrl classes
   final JsApiService _jsApi;
   final StorageService _storage;
 
@@ -34,21 +35,21 @@ class AccountCtrl {
 
   void setSelectedAddress(String address) {
     // TODO check if in signers
-    _jsApi.jsCall('appState.setCurrentAddress("$address")');
+    _jsApi.jsCall('window.appState.setCurrentAddress("$address")');
   }
 
   Future<String> generateAccount() async {
-    return await _jsApi.jsPromise('keyring.generate()');
+    return await _jsApi.jsPromise('window.keyring.generate()');
   }
 
   Future<bool> checkMnemonicValid(String mnemonic) async {
     var isValid =
-        await _jsApi.jsPromise('keyring.checkMnemonicValid("$mnemonic")');
+        await _jsApi.jsPromise('window.keyring.checkMnemonicValid("$mnemonic")');
     return isValid == 'true';
   }
 
   Future<String> accountFromMnemonic(String mnemonic) async {
-    return await _jsApi.jsPromise('keyring.accountFromMnemonic("$mnemonic")');
+    return await _jsApi.jsPromise('window.keyring.accountFromMnemonic("$mnemonic")');
   }
 
   Future saveAccount(StoredAccount account) async {
@@ -70,24 +71,24 @@ class AccountCtrl {
     var accounts = [];
     (await _storage.getAllAccounts())
         .forEach(((account) => {accounts.add(account.toJsonSkinny())}));
-    return _jsApi.jsPromise('account.updateAccounts(${jsonEncode(accounts)})');
+    return _jsApi.jsPromise('window.account.updateAccounts(${jsonEncode(accounts)})');
   }
 
   Future<dynamic> bindEvmAccount(String address) async {
-    return _jsApi.jsPromise('account.claimEvmAccount("$address")');
+    return _jsApi.jsPromise('window.account.claimEvmAccount("$address")');
   }
 
   Future<bool> isValidEvmAddress(String address) async {
-    var res = await _jsApi.jsCall('utils.isValidEvmAddress("$address")');
+    var res = await _jsApi.jsCall('window.utils.isValidEvmAddress("$address")');
     return res == 'true';
   }
 
   Stream availableSignersStream() {
-    return _jsApi.jsObservable('account.availableSigners\$');
+    return _jsApi.jsObservable('window.account.availableSigners\$');
   }
 
   void _initJsObservables(JsApiService jsApi, StorageService storage) {
-    jsApi.jsObservable('appState.currentAddress\$').listen((address) async {
+    jsApi.jsObservable('window.appState.currentAddress\$').listen((address) async {
       if (address == null || address == '') {
         return;
       }
@@ -97,7 +98,7 @@ class AccountCtrl {
     });
 
     _accountModel.setLoadingSigners(true);
-    jsApi.jsObservable('account.availableSigners\$').listen((signers) async {
+    jsApi.jsObservable('window.account.availableSigners\$').listen((signers) async {
       _accountModel.setLoadingSigners(false);
 
       var accounts = [];
@@ -134,6 +135,6 @@ class AccountCtrl {
   }
 
   void _initWasm(JsApiService _jsApi) async {
-    await _jsApi.jsPromise('keyring.initWasm()');
+    await _jsApi.jsPromise('window.keyring.initWasm()');
   }
 }

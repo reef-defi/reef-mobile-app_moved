@@ -50,9 +50,8 @@ export const initFlutterApi = async (flutterJS: FlutterJS) => {
         signApi.initApi();
         utilsApi.initApi();
         metadataApi.initApi();
-
     } catch (e) {
-        console.log("INIT ERROR=", e.message);
+        console.log("INIT FLUTTER JS API ERROR=", e.message);
     }
 };
 

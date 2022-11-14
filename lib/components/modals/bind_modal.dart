@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:reef_mobile_app/components/modal.dart';
@@ -15,6 +16,7 @@ const MIN_BALANCE = 5;
 class BindEvm extends StatefulWidget {
   final ReefSigner bindFor;
   final Function() callback;
+
   const BindEvm({Key? key, required this.bindFor, required this.callback})
       : super(key: key);
 
@@ -58,10 +60,15 @@ class _BindEvmState extends State<BindEvm> {
   }
 
   transfer() async {
-    TokenWithAmount? reefToken = ReefAppState.instance.model.tokens.tokenList
-        .firstWhere((token) => token.address == Constants.REEF_TOKEN_ADDRESS);
-    reefToken = reefToken.setAmount(BigInt.from(MIN_BALANCE * 1e18).toString());
-
+    TokenWithAmount reefToken = TokenWithAmount(
+        name: 'Reef',
+        address: Constants.REEF_TOKEN_ADDRESS,
+        iconUrl: '',
+        symbol: 'REEF',
+        balance: BigInt.zero,
+        decimals: 18,
+        amount: BigInt.from(MIN_BALANCE * 1e18),
+        price: null);
     await ReefAppState.instance.transferCtrl.transferTokens(
         transferBalanceFrom.address, widget.bindFor.address, reefToken);
   }
@@ -233,9 +240,9 @@ class _BindEvmState extends State<BindEvm> {
               },
               child: (buildAccount(transferBalanceFrom))),
           const Gap(16),
-          buildButton(() {
-            transfer();
-            Navigator.pop(context);
+    buildButton(() {
+      Navigator.pop(context);
+              transfer();
           }),
         ],
       ]

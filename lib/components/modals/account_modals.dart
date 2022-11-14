@@ -15,6 +15,7 @@ import 'package:reef_mobile_app/utils/styles.dart';
 class AccountImportContent extends StatefulWidget {
   final VoidCallback next;
   final Function(StoredAccount) callback;
+
   const AccountImportContent(
       {Key? key, required this.next, required this.callback})
       : super(key: key);
@@ -220,6 +221,7 @@ class _AccountImportContentState extends State<AccountImportContent> {
 class AccountCreationContent extends StatefulWidget {
   final VoidCallback next;
   final StoredAccount? account;
+
   const AccountCreationContent(
       {Key? key, required this.next, required this.account})
       : super(key: key);
@@ -403,6 +405,7 @@ class AccountCreationConfirmContent extends StatefulWidget {
   final StoredAccount? account;
   final Future<dynamic> Function(StoredAccount) saveAccount;
   final bool fromMnemonic;
+
   const AccountCreationConfirmContent(
       {Key? key,
       required this.prev,

@@ -13,7 +13,7 @@ class NetworkCtrl {
   NetworkModel networkModel;
 
   NetworkCtrl(this.storage, this.jsApi, this.networkModel) {
-    jsApi.jsObservable('appState.currentNetwork\$').listen((network) async {
+    jsApi.jsObservable('window.appState.currentNetwork\$').listen((network) async {
       networkModel.setSelectedNetworkSwitching(false);
       if (network != null && network['name']!=null) {
         var nName = network['name'];
@@ -25,6 +25,6 @@ class NetworkCtrl {
 
   Future<void> setNetwork(Network network) async {
     networkModel.setSelectedNetworkSwitching(true);
-    jsApi.jsCall('utils.setCurrentNetwork(`${network.name}`)');
+    jsApi.jsCall('window.utils.setCurrentNetwork(`${network.name}`)');
   }
 }
