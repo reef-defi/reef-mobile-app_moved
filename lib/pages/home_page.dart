@@ -5,7 +5,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:reef_mobile_app/components/SignatureContentToggle.dart';
 import 'package:reef_mobile_app/components/home/NFT_view.dart';
 import 'package:reef_mobile_app/components/home/activity_view.dart';
-import 'package:reef_mobile_app/components/home/staking_view.dart';
 import 'package:reef_mobile_app/components/home/token_view.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/tokens/TokenWithAmount.dart';
@@ -44,7 +43,12 @@ class _HomePageState extends State<HomePage> {
   double _textSize = 84.0;
 
   List _viewsMap = [
-    {"key": 0, "name": "Tokens", "active": true, "component": const TokenView()},
+    {
+      "key": 0,
+      "name": "Tokens",
+      "active": true,
+      "component": const TokenView()
+    },
     /*{
       "key": 1,
       "name": "Stakings",
@@ -74,32 +78,22 @@ class _HomePageState extends State<HomePage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(
-                    "Balance",
-                    style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w700,
-                        color: Styles.textColor),
-                  ),
+                  if (_isBigText)
+                    Text("Balance",
+                        style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w700,
+                            color: Styles.textColor)),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: Center(
                       child: Observer(builder: (_) {
-                        return /*GradientText(
+                        return GradientText(
                           "\$${sumTokenBalances(ReefAppState.instance.model.tokens.selectedSignerTokens.toList()).toStringAsFixed(0)}",
                           style: GoogleFonts.spaceGrotesk(
                               fontSize: 54, fontWeight: FontWeight.w700),
                           gradient: textGradient(),
-                        );*/
-                        GradientText(
-                            "\$${sumTokenBalances(ReefAppState.instance.model.tokens.selectedSignerTokens.toList()).toStringAsFixed(0)}",
-                            gradient: textGradient(),
-                            overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.poppins(
-                              color: Styles.textColor,
-                              fontSize: 58,
-                              fontWeight: FontWeight.w900,
-                            ));
+                        );
                       }),
                     ),
                   ),
@@ -158,7 +152,23 @@ class _HomePageState extends State<HomePage> {
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15),
           color: Styles.primaryBackgroundColor,
-          boxShadow: neumorphicShadow()),
+          boxShadow: [
+            BoxShadow(
+              color: HSLColor.fromAHSL(
+                      1, 256.3636363636, 0.379310344828, 0.843137254902)
+                  .toColor(),
+              offset: Offset(10, 10),
+              blurRadius: 20,
+              spreadRadius: -5,
+            ),
+            BoxShadow(
+              color: HSLColor.fromAHSL(1, 256.3636363636, 0.379310344828, 1)
+                  .toColor(),
+              offset: Offset(-10, -10),
+              blurRadius: 20,
+              spreadRadius: -5,
+            ),
+          ]),
       child: Padding(
         padding: const EdgeInsets.all(12.0),
         child: Row(
@@ -213,22 +223,22 @@ class _HomePageState extends State<HomePage> {
         child: NotificationListener(
           child: Column(
             children: [
-              // Row(children: [
-              //   ElevatedButton(
-              //     child: const Text('test dApp 1'),
-              //     onPressed: () =>
-              //         _navigateTestDApp("https://mobile-dapp-test.web.app/testnet"),
-              //     // https://min-dapp.web.app
-              //     // https://app.reef.io
-              //   ),
-              //   ElevatedButton(
-              //     child: const Text('test dApp 2'),
-              //     onPressed: () => _navigateTestDApp(
-              //         "https://console.reefscan.com/#/settings/metadata"),
-              //   ),
-              //   // ElevatedButton(
-              //   //     child: const Text('test'), onPressed: _navigateTestPage),
-              // ]),
+              /*Row(children: [
+                ElevatedButton(
+                  child: const Text('test dApp 1'),
+                  onPressed: () => _navigateTestDApp(
+                      "https://mobile-dapp-test.web.app/testnet"),
+                  // https://min-dapp.web.app
+                  // https://app.reef.io
+                ),
+                ElevatedButton(
+                  child: const Text('test dApp 2'),
+                  onPressed: () => _navigateTestDApp(
+                      "https://console.reefscan.com/#/settings/metadata"),
+                ),
+                ElevatedButton(
+                    child: const Text('test'), onPressed: _navigateTestPage),
+              ]),*/
               balanceSection(_textSize),
               navSection(),
               Expanded(
@@ -249,7 +259,7 @@ class _HomePageState extends State<HomePage> {
             if (t is ScrollUpdateNotification) {
               if (t.metrics.pixels! > 120 && t.scrollDelta! > 0) {
                 setState(() {
-                  _textSize = 0.0;
+                  _textSize = 42.0;
                 });
               }
               if (t.metrics.pixels! < 120 && t.scrollDelta! < 0) {

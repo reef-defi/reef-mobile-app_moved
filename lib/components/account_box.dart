@@ -16,12 +16,14 @@ class AccountBox extends StatefulWidget {
   final ReefSigner reefSigner;
   final bool selected;
   final VoidCallback onSelected;
+  final bool showOptions;
 
   const AccountBox(
       {Key? key,
       required this.reefSigner,
       required this.selected,
-      required this.onSelected})
+      required this.onSelected,
+      required this.showOptions})
       : super(key: key);
 
   @override
@@ -234,25 +236,26 @@ class _AccountBoxState extends State<AccountBox> {
                             ),
                           ],
                         ),
-                      PopupMenuButton<String>(
-                        icon: const Icon(
-                          Icons.more_vert,
-                          color: Colors.black45,
+                      if (widget.showOptions)
+                        PopupMenuButton<String>(
+                          icon: const Icon(
+                            Icons.more_vert,
+                            color: Colors.black45,
+                          ),
+                          enableFeedback: true,
+                          onSelected: (String choice) {
+                            choiceAction(choice, context, widget.reefSigner);
+                          },
+                          tooltip: "More Actions",
+                          itemBuilder: (BuildContext context) {
+                            return Constants.choices.map((String choice) {
+                              return PopupMenuItem<String>(
+                                value: choice,
+                                child: Text(choice),
+                              );
+                            }).toList();
+                          },
                         ),
-                        enableFeedback: true,
-                        onSelected: (String choice) {
-                          choiceAction(choice, context, widget.reefSigner);
-                        },
-                        tooltip: "More Actions",
-                        itemBuilder: (BuildContext context) {
-                          return Constants.choices.map((String choice) {
-                            return PopupMenuItem<String>(
-                              value: choice,
-                              child: Text(choice),
-                            );
-                          }).toList();
-                        },
-                      ),
                     ],
                   )
                 ],

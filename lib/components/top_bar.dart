@@ -4,8 +4,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:reef_mobile_app/utils/size_config.dart';
 
 import '../model/network/NetworkCtrl.dart';
@@ -21,9 +21,7 @@ Widget topBar(BuildContext context) {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               SvgPicture.asset(
                 'assets/images/reef-logo-light.svg',
                 semanticsLabel: "Reef Logo",
@@ -31,11 +29,10 @@ Widget topBar(BuildContext context) {
               ),
               Observer(builder: (_) {
                 //TODO put network to model
-                if(ReefAppState.instance.model.network.selectedNetworkName == Network.testnet.name) {
-                  return const Text(style: TextStyle(
-                      color: Colors.lightBlue,
-                          fontSize: 12
-                  ),
+                if (ReefAppState.instance.model.network.selectedNetworkName ==
+                    Network.testnet.name) {
+                  return const Text(
+                      style: TextStyle(color: Colors.lightBlue, fontSize: 12),
                       'testnet');
                 }
                 return const SizedBox.shrink();
@@ -45,10 +42,9 @@ Widget topBar(BuildContext context) {
             Observer(builder: (_) {
               var selAddr =
                   ReefAppState.instance.model.accounts.selectedAddress;
-              if (selAddr == null
-                  || ReefAppState.instance.model.accounts.signers == null
-                  || ReefAppState.instance.model.accounts.signers.length<1
-              ) {
+              if (selAddr == null ||
+                  ReefAppState.instance.model.accounts.signers == null ||
+                  ReefAppState.instance.model.accounts.signers.length < 1) {
                 return SizedBox.shrink();
               }
               var selSigner = ReefAppState.instance.model.accounts.signers

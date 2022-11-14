@@ -88,7 +88,8 @@ class AccountsList extends StatelessWidget {
                       selected: selectedAddress != null
                           ? selectedAddress == signer.address
                           : false,
-                      onSelected: () => selectAddress(signer.address)),
+                      onSelected: () => selectAddress(signer.address),
+                      showOptions: true),
                   const Gap(12)
                 ],
               ),

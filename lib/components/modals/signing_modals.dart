@@ -1,8 +1,18 @@
+import 'dart:convert';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:local_auth/local_auth.dart';
+import 'package:reef_mobile_app/components/account_box.dart';
 import 'package:reef_mobile_app/components/modal.dart';
+import 'package:reef_mobile_app/model/ReefAppState.dart';
+import 'package:reef_mobile_app/model/StorageKey.dart';
+import 'package:reef_mobile_app/model/account/ReefSigner.dart';
+import 'package:reef_mobile_app/model/signing/signature_request.dart';
+import 'package:reef_mobile_app/model/signing/tx_decoded_data.dart';
 import 'package:reef_mobile_app/utils/elements.dart';
+import 'package:reef_mobile_app/utils/functions.dart';
 import 'package:reef_mobile_app/utils/gradient_text.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 
@@ -32,196 +42,116 @@ List<TableRow> createTable({required keyTexts, required valueTexts}) {
   return rows;
 }
 
-class TransactionSigner extends StatefulWidget {
-  const TransactionSigner({Key? key}) : super(key: key);
+List<TableRow> createTransactionTable(TxDecodedData txData) {
+  List<String> keyTexts = [
+    txData.chainName != null ? "Chain" : "Genesis",
+    "Version",
+    "Nonce"
+  ];
+  List<String> valueTexts = [
+    txData.chainName ?? txData.genesisHash!,
+    txData.specVersion,
+    txData.nonce
+  ];
 
-  @override
-  State<TransactionSigner> createState() => _TransactionSignerState();
-}
-
-class _TransactionSignerState extends State<TransactionSigner> {
-  bool value = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 0, 24, 32.0),
-      child: Column(
-        children: [
-          //BoxContent
-          ViewBoxContainer(
-            color: Colors.white,
-            child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 24.0, horizontal: 16.0),
-              child: Row(
-                children: [
-                  Container(
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.black12,
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(64),
-                      child: const Image(
-                        image: NetworkImage(
-                            "https://source.unsplash.com/random/128x128"),
-                        height: 64,
-                        width: 64,
-                      ),
-                    ),
-                  ),
-                  const Gap(12),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Reef-Testnet",
-                        style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: Styles.textColor),
-                      ),
-                      const Gap(4),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          const Image(
-                              image: AssetImage("./assets/images/reef.png"),
-                              width: 18,
-                              height: 18),
-                          const Gap(4),
-                          GradientText(
-                            "0.00",
-                            style: GoogleFonts.spaceGrotesk(
-                                fontSize: 14, fontWeight: FontWeight.w700),
-                            gradient: textGradient(),
-                          ),
-                        ],
-                      ),
-                      const Gap(2),
-                      Row(
-                        children: const [
-                          Text("Native Address: 5F...gkgDA"),
-                          Gap(2),
-                          Icon(Icons.copy, size: 12)
-                        ],
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-          //Information Section
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16.0),
-            child: Table(
-              // border: TableBorder.all(color: Colors.black),
-              columnWidths: const {
-                0: IntrinsicColumnWidth(),
-                1: FlexColumnWidth(4),
-              },
-              children: createTable(keyTexts: [
-                "From",
-                "Genesis",
-                "Version",
-                "Nonce",
-                "Method Data",
-                "Lifetime"
-              ], valueTexts: [
-                "https://dev.sqwid.app",
-                "0x4a8f300114F6a3CEd6847f8Cb18264C2d9B82d59",
-                "8",
-                "571",
-                "0x4a8f300114F6a3CEd6847f8Cb18264C2d9B82d59",
-                "mortal, valid from 3,430,111 to 3,430,175"
-              ]),
-            ),
-          ),
-          //Signing Button Section
-          Column(
-            children: [
-              Row(
-                children: [
-                  Checkbox(
-                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    fillColor: MaterialStateProperty.all<Color>(
-                        Styles.secondaryAccentColor),
-                    value: value,
-                    onChanged: (bool? value) {
-                      setState(() {
-                        this.value = value ?? false;
-                      });
-                    },
-                  ),
-                  Flexible(
-                    child: Text(
-                      "Extend the period without password by 15 minutes",
-                      style:
-                          TextStyle(color: Styles.textLightColor, fontSize: 12),
-                    ),
-                  )
-                ],
-              ),
-              const Gap(12),
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(40)),
-                    shadowColor: const Color(0x559d6cff),
-                    elevation: 5,
-                    primary: Styles.secondaryAccentColor,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                  ),
-                  onPressed: () {},
-                  child: const Text(
-                    'Sign the transaction',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          )
-        ],
-      ),
-    );
+  if (txData.tip != null) {
+    keyTexts.add("Tip");
+    valueTexts.add(txData.tip!);
   }
+
+  if (txData.rawMethodData != null) {
+    keyTexts.add("Method data");
+    valueTexts.add(txData.rawMethodData!);
+  } else {
+    keyTexts.add("Method");
+    keyTexts.add("");
+    keyTexts.add("Info");
+    valueTexts.add(txData.methodName!);
+    valueTexts.add(txData.args!);
+    valueTexts.add(txData.info!);
+  }
+
+  return createTable(keyTexts: keyTexts, valueTexts: valueTexts);
 }
 
-class SignMessageSigner extends StatefulWidget {
-  const SignMessageSigner({Key? key}) : super(key: key);
+class SignModal extends StatefulWidget {
+  final List<TableRow> detailsTable;
+  final bool isTransaction;
+  final String signatureIdent;
+  final ReefSigner signer;
+  const SignModal(
+      this.detailsTable, this.isTransaction, this.signatureIdent, this.signer,
+      {Key? key})
+      : super(key: key);
 
   @override
-  State<SignMessageSigner> createState() => _SignMessageSignerState();
+  State<SignModal> createState() => _SignModalState();
 }
 
-class _SignMessageSignerState extends State<SignMessageSigner> {
-  bool value = false;
-  bool _isInputEmpty = true;
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+class _SignModalState extends State<SignModal> {
+  bool _wrongPassword = false;
+  bool _biometricsIsAvailable = false;
 
-  TextEditingController valueContainer = TextEditingController();
-
-  _changeState() {
-    setState(() {
-      _isInputEmpty = valueContainer.text.isEmpty;
-    });
-  }
+  final TextEditingController _passwordController = TextEditingController();
+  String password = "";
+  static final LocalAuthentication localAuth = LocalAuthentication();
 
   @override
   void initState() {
     super.initState();
-    // Start listening to changes.
-    valueContainer.addListener(_changeState);
+
+    _passwordController.addListener(() {
+      setState(() {
+        password = _passwordController.text;
+      });
+    });
+    _checkBiometricsSupport().then((value) {
+      setState(() {
+        _biometricsIsAvailable = value;
+      });
+    });
+  }
+
+  Future<bool> _checkBiometricsSupport() async {
+    final isDeviceSupported = await localAuth.isDeviceSupported();
+    final isAvailable = await localAuth.canCheckBiometrics;
+    return isAvailable && isDeviceSupported;
+  }
+
+  Future<void> authenticateWithPassword(String value) async {
+    final storedPassword =
+        await ReefAppState.instance.storage.getValue(StorageKey.password.name);
+    if (storedPassword == value) {
+      setState(() {
+        _wrongPassword = false;
+        Navigator.pop(context);
+        ReefAppState.instance.signingCtrl.confirmSignature(
+          widget.signatureIdent,
+          widget.signer.address,
+        );
+      });
+    } else {
+      setState(() {
+        _wrongPassword = true;
+      });
+    }
+  }
+
+  Future<void> authenticateWithBiometrics() async {
+    final isValid = await localAuth.authenticate(
+        localizedReason: 'Authenticate with biometrics',
+        options: const AuthenticationOptions(
+            useErrorDialogs: true, stickyAuth: true, biometricOnly: true));
+    if (isValid) {
+      setState(() {
+        _wrongPassword = false;
+        Navigator.pop(context);
+        ReefAppState.instance.signingCtrl.confirmSignature(
+          widget.signatureIdent,
+          widget.signer.address,
+        );
+      });
+    }
   }
 
   @override
@@ -229,166 +159,84 @@ class _SignMessageSignerState extends State<SignMessageSigner> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 0, 24, 32.0),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          //BoxContent
-          ViewBoxContainer(
-            color: Colors.white,
-            child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 18.0),
-              child: Row(
-                children: [
-                  Container(
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.black12,
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(64),
-                      child: const Image(
-                        image: NetworkImage(
-                            "https://source.unsplash.com/random/128x128"),
-                        height: 64,
-                        width: 64,
-                      ),
-                    ),
-                  ),
-                  const Gap(12),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Reef-Testnet",
-                        style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: Styles.textColor),
-                      ),
-                      const Gap(4),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          const Image(
-                              image: AssetImage("./assets/images/reef.png"),
-                              width: 18,
-                              height: 18),
-                          const Gap(4),
-                          GradientText(
-                            "0.00",
-                            style: GoogleFonts.spaceGrotesk(
-                                fontSize: 14, fontWeight: FontWeight.w700),
-                            gradient: textGradient(),
-                          ),
-                        ],
-                      ),
-                      const Gap(2),
-                      Row(
-                        children: const [
-                          Text("Native Address: 5F...gkgDA"),
-                          Gap(2),
-                          Icon(Icons.copy, size: 12)
-                        ],
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
+          AccountBox(
+              reefSigner: widget.signer,
+              selected: false,
+              onSelected: () => {},
+              showOptions: false),
           //Information Section
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 16.0),
             child: Table(
-              // border: TableBorder.all(color: Colors.black),
               columnWidths: const {
                 0: IntrinsicColumnWidth(),
                 1: FlexColumnWidth(4),
               },
-              children: createTable(keyTexts: [
-                "From",
-                "bytes",
-              ], valueTexts: [
-                "https://dev.sqwid.app",
-                "icx8btzr1x",
-              ]),
+              children: widget.detailsTable,
             ),
           ),
+          //Password Section
+          // TODO: Allow choosing between password and biometrics
+          if (!_biometricsIsAvailable) ...[
+            Divider(
+              color: Styles.textLightColor,
+              thickness: 1,
+            ),
+            const Gap(12),
+            Text(
+              "PASSWORD FOR REEF APP",
+              style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: Styles.textLightColor),
+            ),
+            const Gap(8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+              decoration: BoxDecoration(
+                color: Styles.whiteColor,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: const Color(0x20000000),
+                  width: 1,
+                ),
+              ),
+              child: TextField(
+                controller: _passwordController,
+                obscureText: true,
+                decoration: const InputDecoration.collapsed(hintText: ''),
+                style: const TextStyle(
+                  fontSize: 16,
+                ),
+              ),
+            ),
+            const Gap(8),
+            if (_wrongPassword)
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(
+                    CupertinoIcons.exclamationmark_triangle_fill,
+                    color: Styles.errorColor,
+                    size: 16,
+                  ),
+                  const Gap(8),
+                  Flexible(
+                    child: Text(
+                      "Password is incorrect",
+                      style: TextStyle(color: Colors.grey[600], fontSize: 13),
+                    ),
+                  ),
+                ],
+              )
+          ],
+          const Gap(16),
           //Signing Button Section
           Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      const Gap(4),
-                      Text(
-                        "PASSWORD FOR THIS ACCOUNT",
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          color: Styles.textLightColor,
-                          fontSize: 10,
-                        ),
-                      ),
-                      const Gap(4),
-                      TextFormField(
-                        controller: valueContainer,
-                        obscureText: true,
-                        enableSuggestions: false,
-                        autocorrect: false,
-                        decoration: InputDecoration(
-                          contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 2),
-                          border: const OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(4)),
-                            borderSide: BorderSide(color: Colors.grey),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(4)),
-                            borderSide: BorderSide(
-                                color: Styles.secondaryAccentColor, width: 2),
-                          ),
-                        ),
-                        validator: (String? value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Password cannot be empty';
-                          }
-                          return null;
-                        },
-                      ),
-                      const Gap(8),
-                    ],
-                  ),
-                ),
-              ),
-              Row(
-                children: [
-                  Checkbox(
-                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    fillColor: MaterialStateProperty.all<Color>(
-                        Styles.secondaryAccentColor),
-                    value: value,
-                    onChanged: (bool? value) {
-                      setState(() {
-                        this.value = value ?? false;
-                      });
-                    },
-                  ),
-                  Flexible(
-                    child: Text(
-                      "Remember my password for the next 15 minutes",
-                      style:
-                          TextStyle(color: Styles.textLightColor, fontSize: 12),
-                    ),
-                  )
-                ],
-              ),
-              const Gap(12),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -399,13 +247,21 @@ class _SignMessageSignerState extends State<SignMessageSigner> {
                         borderRadius: BorderRadius.circular(40)),
                     shadowColor: const Color(0x559d6cff),
                     elevation: 5,
-                    primary: Styles.secondaryAccentColor,
+                    backgroundColor: Styles.secondaryAccentColor,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
-                  onPressed: () {},
-                  child: const Text(
-                    'Sign the transaction',
-                    style: TextStyle(
+                  onPressed: () {
+                    if (_biometricsIsAvailable) {
+                      authenticateWithBiometrics();
+                    } else {
+                      authenticateWithPassword(password);
+                    }
+                  },
+                  child: Text(
+                    widget.isTransaction
+                        ? 'Sign the transaction'
+                        : 'Sign the message',
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w700,
                     ),
@@ -420,22 +276,74 @@ class _SignMessageSignerState extends State<SignMessageSigner> {
   }
 }
 
-List<Widget> variants = [
-  const TransactionSigner(),
-  const SignMessageSigner(),
-];
+Future<TxDecodedData> _getTxDecodedData(SignatureRequest request) async {
+  TxDecodedData txDecodedData = TxDecodedData(
+    specVersion: hexToDecimalString(request.payload.specVersion),
+    nonce: hexToDecimalString(request.payload.nonce),
+  );
 
-void showSigningModal(context, {required variant, info}) {
-  int variantIndex = 0;
-  switch (variant) {
-    // TODO replace strings with Enum
-    case "Transaction":
-      variantIndex = 0;
-      break;
-    case "Sign message":
-      variantIndex = 1;
-      break;
+  // Chain or genesis hash
+  var metadata = await ReefAppState.instance.storage
+      .getMetadata(request.payload.genesisHash);
+  if (metadata != null) {
+    txDecodedData.chainName = metadata.chain;
+  } else {
+    txDecodedData.genesisHash = request.payload.genesisHash;
   }
-  showModal(context,
-      child: variants[variantIndex], dismissible: true, headText: variant);
+
+  // Method data
+  dynamic types;
+  if (metadata != null &&
+      metadata.specVersion ==
+          int.parse(request.payload.specVersion.substring(2), radix: 16)) {
+    types = metadata.types;
+    var decodedMethod = await ReefAppState.instance.signingCtrl
+        .decodeMethod(request.payload.method, types);
+    txDecodedData.methodName = decodedMethod["methodName"];
+    var jsonEncoder = const JsonEncoder.withIndent("  ");
+    txDecodedData.args = jsonEncoder.convert(decodedMethod["args"]);
+    txDecodedData.info = decodedMethod["info"];
+  } else {
+    txDecodedData.rawMethodData = request.payload.method;
+  }
+
+  // Tip
+  if (request.payload.tip != null) {
+    txDecodedData.tip = hexToDecimalString(request.payload.tip);
+  }
+
+  // Lifetime
+  // TODO: era should be an object, instead of a string
+
+  return txDecodedData;
+}
+
+void showSigningModal(context, SignatureRequest signatureRequest) async {
+  var signer = ReefAppState.instance.model.accounts.signers.firstWhere(
+      (sig) => sig.address == signatureRequest.payload.address,
+      orElse: () => throw Exception("Signer not found"));
+
+  var signatureIdent = signatureRequest.signatureIdent;
+
+  var type = signatureRequest.payload.type;
+  if (type == "bytes") {
+    var bytes = await ReefAppState.instance.signingCtrl
+        .bytesString(signatureRequest.payload.data);
+    List<TableRow> detailsTable = createTable(keyTexts: [
+      "bytes",
+    ], valueTexts: [
+      bytes,
+    ]);
+    showModal(context,
+        child: SignModal(detailsTable, false, signatureIdent, signer),
+        dismissible: true,
+        headText: "Sign Message");
+  } else {
+    var txDecodedData = await _getTxDecodedData(signatureRequest);
+    List<TableRow> detailsTable = createTransactionTable(txDecodedData);
+    showModal(context,
+        child: SignModal(detailsTable, true, signatureIdent, signer),
+        dismissible: true,
+        headText: "Sign Transaction");
+  }
 }
