@@ -223,7 +223,7 @@ class _HomePageState extends State<HomePage> {
         child: NotificationListener(
           child: Column(
             children: [
-              Row(children: [
+              /*Row(children: [
                 ElevatedButton(
                   child: const Text('test dApp 1'),
                   onPressed: () => _navigateTestDApp(
@@ -238,7 +238,7 @@ class _HomePageState extends State<HomePage> {
                 ),
                 ElevatedButton(
                     child: const Text('test'), onPressed: _navigateTestPage),
-              ]),
+              ]),*/
               balanceSection(_textSize),
               navSection(),
               Expanded(
