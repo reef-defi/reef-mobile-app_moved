@@ -3,6 +3,8 @@ import 'package:reef_mobile_app/components/modals/metadata_aproval_modal.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/StorageKey.dart';
 import 'package:reef_mobile_app/model/metadata/metadata.dart';
+import 'package:reef_mobile_app/model/tokens/TokenWithAmount.dart';
+import 'package:reef_mobile_app/utils/constants.dart';
 
 import '../components/SignatureContentToggle.dart';
 
@@ -74,6 +76,22 @@ class _TestPageState extends State<TestPage> {
     print("SGN PAYLOAD TEST=$signTestRes");
   }
 
+  _signPayloadTransfer() async {
+    var signerAddress = await ReefAppState.instance.storage
+        .getValue(StorageKey.selected_address.name);
+    TokenWithAmount tokenToTranfer = TokenWithAmount(
+        name: 'REEF',
+        address: Constants.REEF_TOKEN_ADDRESS,
+        iconUrl: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6951.png',
+        symbol: 'REEF',
+        balance: BigInt.parse('1542087625938626180855'),
+        decimals: 18,
+        amount: BigInt.zero,
+        price: 0.0841);
+    await ReefAppState.instance.transferCtrl.transferTokens(signerAddress,
+        "5FX42URyoa9mfFTwoLiWrprxvgCsaA81AssRLw2dDj4HizST", tokenToTranfer);
+  }
+
   @override
   Widget build(BuildContext context) {
     return SignatureContentToggle(Padding(
@@ -117,6 +135,14 @@ class _TestPageState extends State<TestPage> {
               onPressed: () {
                 _signPayload(
                     ReefAppState.instance.model.accounts.selectedAddress);
+              },
+            ),
+          ]),
+          Row(children: [
+            ElevatedButton(
+              child: const Text('sign payload transfer'),
+              onPressed: () {
+                _signPayloadTransfer();
               },
             ),
           ]),

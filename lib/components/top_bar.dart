@@ -19,22 +19,6 @@ Widget topBar(BuildContext context) {
     if (kDebugMode) {
       print("Notification icon clicked");
       HapticFeedback.selectionClick();
-      // showSigningModal(context, variant: "Sign message");
-
-      var signerAddress = await ReefAppState.instance.storage
-          .getValue(StorageKey.selected_address.name);
-      TokenWithAmount tokenToTranfer = TokenWithAmount(
-          name: 'REEF',
-          address: Constants.REEF_TOKEN_ADDRESS,
-          iconUrl:
-              'https://s2.coinmarketcap.com/static/img/coins/64x64/6951.png',
-          symbol: 'REEF',
-          balance: BigInt.parse('1542087625938626180855'),
-          decimals: 18,
-          amount: BigInt.zero,
-          price: 0.0841);
-      await ReefAppState.instance.transferCtrl.transferTokens(signerAddress,
-          "5FX42URyoa9mfFTwoLiWrprxvgCsaA81AssRLw2dDj4HizST", tokenToTranfer);
     }
   }
 
