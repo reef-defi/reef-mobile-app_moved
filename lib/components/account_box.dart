@@ -89,7 +89,7 @@ class _AccountBoxState extends State<AccountBox> {
                   )),
             Padding(
               padding:
-                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 18.0),
+                  const EdgeInsets.symmetric(horizontal: 12.0, vertical: 12.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -219,7 +219,7 @@ class _AccountBoxState extends State<AccountBox> {
                                         borderRadius:
                                             BorderRadius.circular(12)),
                                     padding: EdgeInsets.zero,
-                                    minimumSize: const Size(95, 30),
+                                    minimumSize: const Size(82, 30),
                                     tapTargetSize:
                                         MaterialTapTargetSize.shrinkWrap,
                                   ),
@@ -228,7 +228,7 @@ class _AccountBoxState extends State<AccountBox> {
                                     style: TextStyle(
                                         color: Styles.whiteColor,
                                         fontWeight: FontWeight.w600,
-                                        fontSize: 12),
+                                        fontSize: 10),
                                   )),
                             ),
                           ],
