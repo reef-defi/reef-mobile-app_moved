@@ -79,3 +79,7 @@ String stripUrl(String? url) {
   }
   return '';
 }
+
+String hexToDecimalString(String hex) {
+  return BigInt.parse(hex.substring(2), radix: 16).toString();
+}

@@ -232,8 +232,8 @@ class _HomePageState extends State<HomePage> {
                   onPressed: () => _navigateTestDApp(
                       "https://console.reefscan.com/#/settings/metadata"),
                 ),
-                // ElevatedButton(
-                //     child: const Text('test'), onPressed: _navigateTestPage),
+                ElevatedButton(
+                    child: const Text('test'), onPressed: _navigateTestPage),
               ]),
               balanceSection(_textSize),
               navSection(),

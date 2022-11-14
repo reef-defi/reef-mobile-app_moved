@@ -9,6 +9,7 @@ import type { Call } from "@polkadot/types/interfaces";
 import { Provider } from "@reef-defi/evm-provider";
 import { getSpecTypes } from "@polkadot/types-known";
 import { base64Decode, base64Encode } from '@reef-defi/util-crypto';
+import { isAscii, u8aToString, u8aUnwrapBytes } from '@reef-defi/util';
 
 export const initApi = () => {
     (window as any).utils = {
@@ -64,9 +65,8 @@ export const initApi = () => {
                     const info = method?.meta ? method.meta.docs.map((d) => d.toString().trim()).join(' ') : '';
                     const methodParams = method?.meta ? `(${method.meta.args.map(({ name }) => name).join(', ')})` : '';
                     const methodName = method ? `${method.section}.${method.method}${methodParams}` : '';
-                    const argsString = args ? JSON.stringify(args) : '';
         
-                    return { methodName, argsString, info };
+                    return { methodName, args, info };
                 }),
                 take(1)
             ));
@@ -75,5 +75,8 @@ export const initApi = () => {
             const network: Network = availableNetworks[networkName] || availableNetworks.mainnet;
             appState.setCurrentNetwork(network);
         },
+        bytesString: (bytes: string) => {
+            return isAscii(bytes) ? u8aToString(u8aUnwrapBytes(bytes)) : bytes;
+        }
     }
 }
