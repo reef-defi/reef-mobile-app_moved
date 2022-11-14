@@ -137,10 +137,10 @@ class _TokenViewState extends State<TokenView> {
                         ),
                         Text(
                           // TODO allow conversionRate to be null for no data
-                          "\$${price != 0 ? price.toStringAsFixed(4) : 'No pool data'}",
+                          price != 0 ? '\$${price.toStringAsFixed(4)}' : 'No pool data',
                           style: GoogleFonts.poppins(
-                              fontWeight: FontWeight.w600,
-                              color: Styles.textColor,
+                              fontWeight: FontWeight.normal,
+                              color: Styles.textLightColor,
                               fontSize: 14),
                         )
                       ],
@@ -151,7 +151,7 @@ class _TokenViewState extends State<TokenView> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         GradientText(
-                            "US\$${getBalanceValue(balance, price).toStringAsFixed(2)}",
+                            "\$${getBalanceValue(balance, price).toStringAsFixed(2)}",
                             gradient: textGradient(),
                             style: GoogleFonts.poppins(
                               color: Styles.textColor,
@@ -161,7 +161,7 @@ class _TokenViewState extends State<TokenView> {
                         Text(
                           // TODO allow conversionRate to be null for no data
                           price != 0
-                              ? "${balance != 0 ? balance.toStringAsFixed(4) : 0} ${tokenName != "" ? tokenName : name.toUpperCase()}"
+                              ? "${balance != 0 ? balance.toStringAsFixed(0) : 0} ${tokenName != "" ? tokenName : name.toUpperCase()}"
                               : 'No pool data',
                           style: GoogleFonts.poppins(
                             color: Styles.textColor,
