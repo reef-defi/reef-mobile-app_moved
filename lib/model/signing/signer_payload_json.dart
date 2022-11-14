@@ -6,10 +6,18 @@ class SignerPayloadJSON = _SignerPayloadJSON with _$SignerPayloadJSON;
 
 abstract class _SignerPayloadJSON with Store {
   _SignerPayloadJSON(
-    this.address, this.blockHash, this.blockNumber, this.era, this.genesisHash, 
-    this.method, this.nonce, this.specVersion, this.tip, this.transactionVersion, 
-    this.signedExtensions, this.version
-  );
+      this.address,
+      this.blockHash,
+      this.blockNumber,
+      this.era,
+      this.genesisHash,
+      this.method,
+      this.nonce,
+      this.specVersion,
+      this.tip,
+      this.transactionVersion,
+      this.signedExtensions,
+      this.version);
 
   @observable
   String address = '';
@@ -46,4 +54,6 @@ abstract class _SignerPayloadJSON with Store {
 
   @observable
   int version = 0;
-} 
+
+  String type = "transaction";
+}

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -68,6 +69,13 @@ class _SplashAppState extends State<SplashApp> {
         password = _passwordController.text;
       });
     });
+    if (kDebugMode) {
+      setState(() {
+        _requiresAuth = false;
+        _isAuthenticated = true;
+      });
+      return;
+    }
     _checkRequiresAuth().then((value) {
       setState(() {
         _requiresAuth = value;
