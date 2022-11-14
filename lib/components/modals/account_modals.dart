@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:reef_mobile_app/components/modal.dart';
@@ -10,7 +11,6 @@ import 'package:reef_mobile_app/service/StorageService.dart';
 import 'package:reef_mobile_app/utils/elements.dart';
 import 'package:reef_mobile_app/utils/functions.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
-import 'package:flutter/services.dart';
 
 class AccountImportContent extends StatefulWidget {
   final VoidCallback next;
@@ -354,20 +354,23 @@ class _AccountCreationContentState extends State<AccountCreationContent> {
                 width: double.infinity,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    splashFactory: !_checkedValue
-                        ? NoSplash.splashFactory
-                        : InkSplash.splashFactory,
+                    splashFactory:
+                        (!_checkedValue || widget.account?.mnemonic == null)
+                            ? NoSplash.splashFactory
+                            : InkSplash.splashFactory,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(40)),
                     shadowColor: const Color(0x559d6cff),
                     elevation: 5,
-                    backgroundColor: !_checkedValue
-                        ? const Color(0xff9d6cff)
-                        : Styles.secondaryAccentColor,
+                    backgroundColor:
+                        (!_checkedValue || widget.account?.mnemonic == null)
+                            ? const Color(0xff9d6cff)
+                            : Styles.secondaryAccentColor,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
                   onPressed: () {
-                    if (_checkedValue) widget.next();
+                    if (_checkedValue || widget.account?.mnemonic != null)
+                      widget.next();
                   },
                   child: const Text(
                     'Next Step',
