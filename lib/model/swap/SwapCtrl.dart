@@ -23,18 +23,18 @@ class SwapCtrl {
       'amount': toAmountDisplayBigInt(token2.amount, decimals: token2.decimals, fractionDigits: token2.decimals),
     };
     return jsApi.jsPromise(
-        'swap.execute("$signerAddress", ${jsonEncode(mappedToken1)}, ${jsonEncode(mappedToken2)}, ${jsonEncode(settings.toJson())})');
+        'window.swap.execute("$signerAddress", ${jsonEncode(mappedToken1)}, ${jsonEncode(mappedToken2)}, ${jsonEncode(settings.toJson())})');
   }
 
   Future<dynamic> getPoolReserves(
       String token1Address, String token2Address) async {
     return jsApi
-        .jsPromise('swap.getPoolReserves("$token1Address", "$token2Address")');
+        .jsPromise('window.swap.getPoolReserves("$token1Address", "$token2Address")');
   }
 
   dynamic getSwapAmount(String tokenAmount, bool buy,
       TokenWithAmount token1Reserve, TokenWithAmount token2Reserve) {
     return jsApi.jsCall(
-        'swap.getSwapAmount($tokenAmount, $buy, ${jsonEncode(token1Reserve.toJsonSkinny())}, ${jsonEncode(token2Reserve.toJsonSkinny())})');
+        'window.swap.getSwapAmount($tokenAmount, $buy, ${jsonEncode(token1Reserve.toJsonSkinny())}, ${jsonEncode(token2Reserve.toJsonSkinny())})');
   }
 }

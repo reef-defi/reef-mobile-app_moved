@@ -1,3 +1,4 @@
+import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/tokens/TokenWithAmount.dart';
 import 'package:reef_mobile_app/service/JsApiService.dart';
 
@@ -9,7 +10,7 @@ class TransferCtrl {
   Future<dynamic> transferTokens(
       String fromAddress, String toAddress, TokenWithAmount token) async {
     return jsApi.jsPromise(
-        'transfer.send("$fromAddress", "$toAddress", "${token.amount.toString()}", ${token.decimals}, "${token.address}")');
+        'window.transfer.send("$fromAddress", "$toAddress", "${token.amount.toString()}", ${token.decimals}, "${token.address}")');
   }
 
   Future<dynamic> testTransferTokens(String from) async {

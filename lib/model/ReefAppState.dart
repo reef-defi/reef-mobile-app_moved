@@ -51,7 +51,7 @@ class ReefAppState {
   _initReefState(JsApiService jsApiService, Network currentNetwork) async {
     var accounts = await accountCtrl.getAccountsList();
     await jsApiService.jsPromise(
-        'jsApi.initReefState("${currentNetwork.name}", ${jsonEncode(accounts)})');
+        'window.jsApi.initReefState("${currentNetwork.name}", ${jsonEncode(accounts)})');
   }
 
   _initReefObservables(JsApiService reefAppJsApiService) async {

@@ -7,5 +7,5 @@ class MetadataCtrl {
 
   MetadataCtrl(this.jsApi, this.storage);
 
-  Future<dynamic> getMetadata() => jsApi.jsPromise('metadata.getMetadata();');
+  Future<dynamic> getMetadata() => jsApi.jsPromise('window.metadata.getMetadata();');
 }
