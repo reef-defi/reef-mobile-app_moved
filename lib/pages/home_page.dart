@@ -251,7 +251,7 @@ class _HomePageState extends State<HomePage> {
                     onHorizontalDragEnd: (DragEndDetails details) =>
                         _onHorizontalDrag(details),
                     child: ClipRRect(
-                        borderRadius: BorderRadius.circular(4),
+                        borderRadius: BorderRadius.circular(8),
                         child: _viewsMap
                             .where((option) => option["active"])
                             .toList()[0]["component"])),
