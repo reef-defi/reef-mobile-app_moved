@@ -40,7 +40,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  double _textSize = 84.0;
+  double _textSize = 120.0;
   bool _isScrolling = false;
 
   List _viewsMap = [
@@ -81,21 +81,21 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   Text("Balance",
                       style: TextStyle(
-                          fontSize: 24,
+                          fontSize: 38,
                           fontWeight: FontWeight.w700,
                           color: Styles.textColor)),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: Center(
-                      child: Observer(builder: (_) {
-                        return GradientText(
-                          "\$${sumTokenBalances(ReefAppState.instance.model.tokens.selectedSignerTokens.toList()).toStringAsFixed(0)}",
-                          style: GoogleFonts.spaceGrotesk(
-                              fontSize: 54, fontWeight: FontWeight.w700),
-                          gradient: textGradient(),
-                        );
-                      }),
-                    ),
+                  Center(
+                    child: Observer(builder: (_) {
+                      return GradientText(
+                        "\$${sumTokenBalances(ReefAppState.instance.model.tokens.selectedSignerTokens.toList()).toStringAsFixed(0)}",
+                        gradient: textGradient(),
+                        style: GoogleFonts.poppins(
+                            color: Styles.textColor,
+                            fontSize: 68,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 3),
+                      );
+                    }),
                   ),
                 ]),
           ),
@@ -280,7 +280,7 @@ class _HomePageState extends State<HomePage> {
               }
               if (t.metrics.pixels! < 196 && t.scrollDelta! < 0) {
                 setState(() {
-                  _textSize = 84.0;
+                  _textSize = 120.0;
                 });
               }
               // print("scroll delta:");
