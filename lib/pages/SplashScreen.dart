@@ -96,10 +96,11 @@ class _SplashAppState extends State<SplashApp> {
       title: 'Reef Chain App',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-          primarySwatch: Colors.blue,
-          textTheme: GoogleFonts.poppinsTextTheme(
-            Theme.of(context).textTheme,
-          )),
+        primarySwatch: Colors.blue,
+        textTheme: GoogleFonts.poppinsTextTheme(
+          Theme.of(context).textTheme,
+        )
+      ),
       home: _buildBody(),
       navigatorKey: navigatorKey,
     );
