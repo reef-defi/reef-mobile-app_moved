@@ -41,6 +41,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   double _textSize = 84.0;
+  bool _isScrolling = false;
 
   List _viewsMap = [
     {
@@ -78,12 +79,11 @@ class _HomePageState extends State<HomePage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  if (_isBigText)
-                    Text("Balance",
-                        style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.w700,
-                            color: Styles.textColor)),
+                  Text("Balance",
+                      style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w700,
+                          color: Styles.textColor)),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: Center(
@@ -241,15 +241,20 @@ class _HomePageState extends State<HomePage> {
               ]),*/
               balanceSection(_textSize),
               navSection(),
+              AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  height: _isScrolling ? 16 : 0),
               Expanded(
                 // height: ((size.height + 64) / 2),
                 // width: double.infinity,
                 child: GestureDetector(
                     onHorizontalDragEnd: (DragEndDetails details) =>
                         _onHorizontalDrag(details),
-                    child: _viewsMap
-                        .where((option) => option["active"])
-                        .toList()[0]["component"]),
+                    child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: _viewsMap
+                            .where((option) => option["active"])
+                            .toList()[0]["component"])),
               ),
               // TODO: ADD ALERT SYSTEM FOR ERRORS HERE
               // test()
@@ -257,12 +262,23 @@ class _HomePageState extends State<HomePage> {
           ),
           onNotification: (t) {
             if (t is ScrollUpdateNotification) {
-              if (t.metrics.pixels! > 120 && t.scrollDelta! > 0) {
+              if (t.metrics.pixels != 0) {
                 setState(() {
-                  _textSize = 42.0;
+                  print("yes");
+                  _isScrolling = true;
+                });
+              } else {
+                setState(() {
+                  print("no");
+                  _isScrolling = false;
                 });
               }
-              if (t.metrics.pixels! < 120 && t.scrollDelta! < 0) {
+              if (t.metrics.pixels! > 196 && t.scrollDelta! > 0) {
+                setState(() {
+                  _textSize = 0.0;
+                });
+              }
+              if (t.metrics.pixels! < 196 && t.scrollDelta! < 0) {
                 setState(() {
                   _textSize = 84.0;
                 });

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -122,7 +123,6 @@ class _AccountBoxState extends State<AccountBox> {
                         children: [
                           Text(
                             widget.reefSigner.name,
-                            overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
@@ -171,11 +171,6 @@ class _AccountBoxState extends State<AccountBox> {
                                 style: const TextStyle(fontSize: 12),
                               ),
                               const Gap(2),
-                              /*const Icon(
-                                Icons.copy,
-                                size: 12,
-                                color: Colors.black45,
-                              )*/
                             ],
                           ),
                           /*const Gap(2),
@@ -270,10 +265,9 @@ class _AccountBoxState extends State<AccountBox> {
 
 class Constants {
   static const String delete = 'Delete';
+  static const String copyNativeAddress = "Copy Address";
 
-  static const List<String> choices = <String>[
-    delete,
-  ];
+  static const List<String> choices = <String>[delete, copyNativeAddress];
 }
 
 showAlertDialog(BuildContext context, ReefSigner signer) {
@@ -315,5 +309,10 @@ showAlertDialog(BuildContext context, ReefSigner signer) {
 void choiceAction(String choice, BuildContext context, ReefSigner signer) {
   if (choice == Constants.delete) {
     showAlertDialog(context, signer);
+  } else if (choice == Constants.copyNativeAddress) {
+    Clipboard.setData(ClipboardData(text: signer.address)).then((_) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Native Address copied to clipboard")));
+    });
   }
 }

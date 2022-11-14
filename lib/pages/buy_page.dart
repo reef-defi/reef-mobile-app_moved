@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart' as http;
 import 'package:reef_mobile_app/components/modals/alert_modal.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/StorageKey.dart';
@@ -15,7 +16,6 @@ import 'package:reef_mobile_app/model/network/NetworkCtrl.dart';
 import 'package:reef_mobile_app/model/tokens/TokenWithAmount.dart';
 import 'package:reef_mobile_app/utils/constants.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
-import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 
 import '../components/SignatureContentToggle.dart';
@@ -36,13 +36,13 @@ class _BuyPageState extends State<BuyPage> {
   @override
   void initState() {
     super.initState();
-    network = ReefAppState.instance.networkCtrl.currentNetwork;
-    if (network == Network.mainnet) {
+    network = ReefAppState.instance.model.network.selectedNetworkName;
+    if (network == Network.mainnet.name) {
       _getPairs();
     }
   }
 
-  dynamic network;
+  late String? network;
   String baseUrl = Constants.BINANCE_CONNECT_PROXY_URL;
   BcPair selectedPair = BcPair(cryptoCurrency: '', fiatCurrency: '');
   num fiatAmount = 0;
@@ -252,14 +252,13 @@ class _BuyPageState extends State<BuyPage> {
 
   @override
   Widget build(BuildContext context) {
-    switch (network) {
-      case Network.mainnet:
-        return buildBuy(context);
-      case Network.testnet:
-        return buildTestnetReef(context);
-      default:
-        return const CircularProgressIndicator();
+    if (network==Network.mainnet.name) {
+      return buildBuy(context);
     }
+    if(network==Network.testnet.name){
+        return buildTestnetReef(context);
+    }
+    return const CircularProgressIndicator();
   }
 
   Widget buildBuy(BuildContext context) {
