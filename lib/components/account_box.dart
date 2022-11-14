@@ -132,21 +132,21 @@ class _AccountBoxState extends State<AccountBox> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              // IconButton(
-                              //     constraints: const BoxConstraints(),
-                              //     padding: EdgeInsets.zero,
-                              //     onPressed: () {
-                              //       setState(() {
-                              //         showBalance = !showBalance;
-                              //       });
-                              //     },
-                              //     icon: Icon(
-                              //       showBalance
-                              //           ? CupertinoIcons.eye
-                              //           : CupertinoIcons.eye_slash,
-                              //       size: 16,
-                              //       color: Styles.textLightColor,
-                              //     )),
+                              /*IconButton(
+                                  constraints: const BoxConstraints(),
+                                  padding: EdgeInsets.zero,
+                                  onPressed: () {
+                                    setState(() {
+                                      showBalance = !showBalance;
+                                    });
+                                  },
+                                  icon: Icon(
+                                    showBalance
+                                        ? CupertinoIcons.eye
+                                        : CupertinoIcons.eye_slash,
+                                    size: 16,
+                                    color: Styles.textLightColor,
+                                  )),*/
                               const Image(
                                   image: AssetImage("./assets/images/reef.png"),
                                   width: 18,
@@ -168,7 +168,7 @@ class _AccountBoxState extends State<AccountBox> {
                             children: [
                               Text(
                                 "Native: ${widget.reefSigner.address.shorten()}",
-                                style: const TextStyle(fontSize: 10),
+                                style: const TextStyle(fontSize: 12),
                               ),
                               const Gap(2),
                             ],

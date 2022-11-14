@@ -36,13 +36,13 @@ class _BuyPageState extends State<BuyPage> {
   @override
   void initState() {
     super.initState();
-    network = ReefAppState.instance.networkCtrl.networkModel;
-    if (network == Network.mainnet) {
+    network = ReefAppState.instance.model.network.selectedNetworkName;
+    if (network == Network.mainnet.name) {
       _getPairs();
     }
   }
 
-  dynamic network;
+  late String? network;
   String baseUrl = Constants.BINANCE_CONNECT_PROXY_URL;
   BcPair selectedPair = BcPair(cryptoCurrency: '', fiatCurrency: '');
   num fiatAmount = 0;
@@ -252,14 +252,13 @@ class _BuyPageState extends State<BuyPage> {
 
   @override
   Widget build(BuildContext context) {
-    switch (network) {
-      case Network.mainnet:
-        return buildBuy(context);
-      case Network.testnet:
-        return buildTestnetReef(context);
-      default:
-        return const CircularProgressIndicator();
+    if (network==Network.mainnet.name) {
+      return buildBuy(context);
     }
+    if(network==Network.testnet.name){
+        return buildTestnetReef(context);
+    }
+    return const CircularProgressIndicator();
   }
 
   Widget buildBuy(BuildContext context) {

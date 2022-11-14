@@ -55,9 +55,9 @@ class _HomePageState extends State<HomePage> {
       "active": false,
       "component": const StakingView()
     },*/
-    {"key": 2, "name": "NFTs", "active": false, "component": const NFTView()},
+    {"key": 1, "name": "NFTs", "active": false, "component": const NFTView()},
     {
-      "key": 3,
+      "key": 2,
       "name": "Activity",
       "active": false,
       "component": const ActivityView()
@@ -170,9 +170,9 @@ class _HomePageState extends State<HomePage> {
             ),
           ]),
       child: Padding(
-        padding: const EdgeInsets.all(7.0),
+        padding: const EdgeInsets.all(12.0),
         child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: _viewsMap.map<Widget>((e) => rowMember(e)).toList()),
       ),
     );
