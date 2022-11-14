@@ -7,12 +7,14 @@ class GradientText extends StatelessWidget {
     required this.gradient,
     this.textAlign = TextAlign.left,
     this.style,
+        this.overflow,
   });
 
   final String text;
   final TextAlign textAlign;
   final TextStyle? style;
   final Gradient gradient;
+  final TextOverflow? overflow;
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +27,7 @@ class GradientText extends StatelessWidget {
         text,
         style: style,
         textAlign: textAlign,
+        overflow: overflow,
       ),
     );
   }
