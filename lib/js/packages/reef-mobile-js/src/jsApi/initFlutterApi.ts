@@ -27,7 +27,7 @@ export const initFlutterApi = async (flutterJS: FlutterJS) => {
                         return await buildAccountWithMeta(account.name, account.address);
                     }
                 ));
-                console.log("init reef accs len=",accountsWithMeta.length);
+                console.log("INIT REEF ACCOUNTS len=",accountsWithMeta.length);
                 const destroyFn = await appState.initReefState({
                     network: availableNetworks[selNetwork],
                     jsonAccounts: {accounts: accountsWithMeta, injectedSigner: signingKey}
@@ -50,6 +50,7 @@ export const initFlutterApi = async (flutterJS: FlutterJS) => {
         signApi.initApi();
         utilsApi.initApi();
         metadataApi.initApi();
+
     } catch (e) {
         console.log("INIT ERROR=", e.message);
     }

@@ -26,7 +26,8 @@ class SignatureContentToggle extends StatelessObserverWidget {
   @override
   Widget build(BuildContext context) {
     return Observer(builder: (_) {
-      var requests = ReefAppState.instance.signingCtrl.signatureRequests.list;
+      // var requests = ReefAppState.instance.signingCtrl.signatureRequests.list;
+      var requests = ReefAppState.instance.model.signatureRequests.list;
       var signatureRequest = requests.isNotEmpty ? requests.first : null;
       var displayIdx = signatureRequest != null ? 0 : 1;
       displayIdx = 1; // TODO remove this line

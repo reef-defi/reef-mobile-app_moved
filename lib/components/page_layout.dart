@@ -1,20 +1,11 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:reef_mobile_app/components/top_bar.dart';
-import 'package:reef_mobile_app/model/ReefAppState.dart';
-import 'package:reef_mobile_app/pages/buy_page.dart';
 import 'package:reef_mobile_app/pages/home_page.dart';
-import 'package:reef_mobile_app/pages/send_page.dart';
 import 'package:reef_mobile_app/pages/settings_page.dart';
-import 'package:reef_mobile_app/pages/swap_page.dart';
 import 'package:reef_mobile_app/pages/user_page.dart';
-import 'package:reef_mobile_app/utils/constants.dart';
-import 'package:reef_mobile_app/utils/functions.dart';
 import "package:reef_mobile_app/utils/styles.dart";
-import 'package:reef_mobile_app/utils/svg_icon.dart';
 
 import 'SignatureContentToggle.dart';
 
@@ -29,9 +20,9 @@ class _BottomNavState extends State<BottomNav> {
   int _selectedIndex = 0;
   static final List<Widget> _widgetOptions = <Widget>[
     const HomePage(),
-    const SendPage(Constants.REEF_TOKEN_ADDRESS),
-    const SwapPage(),
-    const BuyPage(),
+    // const SendPage(Constants.REEF_TOKEN_ADDRESS),
+    // const SwapPage(),
+    // const BuyPage(),
     UserPage(),
     const SettingsPage()
   ];
@@ -52,7 +43,7 @@ class _BottomNavState extends State<BottomNav> {
             child: AnnotatedRegion<SystemUiOverlayStyle>(
           value: const SystemUiOverlayStyle(
             statusBarColor: Colors.transparent,
-            statusBarIconBrightness: Brightness.dark,
+            statusBarIconBrightness: Brightness.light,
           ),
           child: Material(
             color: Colors.white,
@@ -69,17 +60,19 @@ class _BottomNavState extends State<BottomNav> {
                   children: <Widget>[
                     Material(
                       elevation: 3,
-                      shadowColor: Colors.black26,
+                      shadowColor: Colors.black45,
                       child: Container(
-                          color: Styles.whiteColor,
+                          // color: Styles.whiteColor,
                           padding: const EdgeInsets.symmetric(horizontal: 16),
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                                image:
+                                    AssetImage("assets/images/reef-header.png"),
+                                fit: BoxFit.cover,
+                                alignment: Alignment(-0.82, 1.0)),
+                          ),
                           child: topBar(context)),
                     ),
-                    // Padding(
-                    //   padding: const EdgeInsets.symmetric(
-                    //       horizontal: 16, vertical: 18),
-                    //   child: _widgetOptions.elementAt(_selectedIndex),
-                    // )
                     Expanded(
                       child: Container(
                         padding: const EdgeInsets.fromLTRB(16, 18, 16, 0),
@@ -87,9 +80,6 @@ class _BottomNavState extends State<BottomNav> {
                         child: _widgetOptions.elementAt(_selectedIndex),
                       ),
                     )
-                    // Text(
-                    //   'tokens:${reefState.tokenList.tokens.length}',
-                    // ),
                   ],
                 ),
               ],
@@ -110,24 +100,25 @@ class _BottomNavState extends State<BottomNav> {
               icon: Icon(CupertinoIcons.home),
               label: 'Home',
             ),
+            // BottomNavigationBarItem(
+            //   icon: Icon(CupertinoIcons.paperplane),
+            //   label: 'Send',
+            // ),
+            // BottomNavigationBarItem(
+            //   icon: Icon(CupertinoIcons.arrow_right_arrow_left_square),
+            //   label: 'Swap',
+            // ),
+            // BottomNavigationBarItem(
+            //   icon: Icon(CupertinoIcons.money_dollar_circle),
+            //   label: 'Buy',
+            // ),
             BottomNavigationBarItem(
-              icon: Icon(CupertinoIcons.paperplane),
-              label: 'Send',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(CupertinoIcons.arrow_right_arrow_left_square),
-              label: 'Swap',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(CupertinoIcons.money_dollar_circle),
-              label: 'Buy',
-            ),
-            BottomNavigationBarItem(
-              icon: SvgIcon(
-                'assets/images/reef_icon.svg',
-                height: 20,
-              ),
-              label: 'Buy',
+              icon: Icon(Icons.account_balance_wallet_outlined),
+              //  SvgIcon(
+              //   'assets/images/reef_icon.svg',
+              //   height: 20,
+              // ),
+              label: 'Accounts',
             ),
             BottomNavigationBarItem(
               icon: Icon(CupertinoIcons.gear_solid),

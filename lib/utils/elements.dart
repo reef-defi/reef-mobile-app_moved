@@ -15,29 +15,51 @@ LinearGradient textGradient() {
   );
 }
 
+List<BoxShadow>? neumorphicShadow(){
+  return [BoxShadow(
+    color: HSLColor.fromAHSL(1, 256.3636363636, 0.379310344828, 0.843137254902).toColor(),
+    offset: Offset(10, 10),
+    blurRadius: 20,
+    spreadRadius: -5,
+  ),
+  BoxShadow(
+  color: HSLColor.fromAHSL(1, 256.3636363636, 0.379310344828, 1).toColor(),
+  offset: Offset(-10, -10),
+  blurRadius: 20,
+  spreadRadius: -5,
+  )];
+}
+
 class ViewBoxContainer extends StatelessWidget {
   final Color color;
   final Widget child;
+  final String imageUrl;
+
   const ViewBoxContainer(
-      {Key? key, required this.child, this.color = Styles.boxBackgroundColor})
+      {Key? key,
+      required this.child,
+      this.color = Styles.boxBackgroundColor,
+      this.imageUrl = ''})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
         width: double.infinity,
+        height: this.imageUrl!=''? 200 : null,
         decoration: BoxDecoration(
+          shape: BoxShape.rectangle,
+            image: this.imageUrl != ''
+                ? DecorationImage(
+                    image: NetworkImage(imageUrl), fit: BoxFit.cover)
+                : null,
             color: color,
-            border: Border.all(
-              color: const Color(0x20000000),
-              width: 1,
-            ),
-            boxShadow: const [
-              BoxShadow(
-                color: Color(0x16000000),
-                blurRadius: 24,
-              )
-            ],
+            boxShadow: const[
+              const BoxShadow(
+                color: Color(0x12000000),
+                offset: Offset(0, 3),
+                blurRadius: 30,
+              )],
             borderRadius: BorderRadius.circular(15)),
         child: child);
   }

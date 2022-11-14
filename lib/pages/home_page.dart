@@ -5,7 +5,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:reef_mobile_app/components/SignatureContentToggle.dart';
 import 'package:reef_mobile_app/components/home/NFT_view.dart';
 import 'package:reef_mobile_app/components/home/activity_view.dart';
-import 'package:reef_mobile_app/components/home/staking_view.dart';
 import 'package:reef_mobile_app/components/home/token_view.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/tokens/TokenWithAmount.dart';
@@ -44,16 +43,21 @@ class _HomePageState extends State<HomePage> {
   double _textSize = 84.0;
 
   List _viewsMap = [
-    {"key": 0, "name": "Token", "active": true, "component": const TokenView()},
     {
+      "key": 0,
+      "name": "Tokens",
+      "active": true,
+      "component": const TokenView()
+    },
+    /*{
       "key": 1,
       "name": "Stakings",
       "active": false,
       "component": const StakingView()
-    },
-    {"key": 2, "name": "NFTs", "active": false, "component": const NFTView()},
+    },*/
+    {"key": 1, "name": "NFTs", "active": false, "component": const NFTView()},
     {
-      "key": 3,
+      "key": 2,
       "name": "Activity",
       "active": false,
       "component": const ActivityView()
@@ -166,9 +170,9 @@ class _HomePageState extends State<HomePage> {
             ),
           ]),
       child: Padding(
-        padding: const EdgeInsets.all(7.0),
+        padding: const EdgeInsets.all(12.0),
         child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: _viewsMap.map<Widget>((e) => rowMember(e)).toList()),
       ),
     );

@@ -86,8 +86,8 @@ class AccountCtrl {
     return _jsApi.jsObservable('account.availableSigners\$');
   }
 
-  void _initJsObservables(JsApiService _jsApi, StorageService storage) {
-    _jsApi.jsObservable('appState.currentAddress\$').listen((address) async {
+  void _initJsObservables(JsApiService jsApi, StorageService storage) {
+    jsApi.jsObservable('appState.currentAddress\$').listen((address) async {
       if (address == null || address == '') {
         return;
       }
@@ -97,7 +97,7 @@ class AccountCtrl {
     });
 
     _accountModel.setLoadingSigners(true);
-    _jsApi.jsObservable('account.availableSigners\$').listen((signers) async {
+    jsApi.jsObservable('account.availableSigners\$').listen((signers) async {
       _accountModel.setLoadingSigners(false);
 
       var accounts = [];
