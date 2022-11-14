@@ -146,37 +146,51 @@ class _ActivityViewState extends State<ActivityView> {
               child: ViewBoxContainer(
                 child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 16),
-                    child: Observer(builder: (_) {
-                      // return Column(
-                      //     children: ReefAppState.instance.model.tokens.activity
-                      //         .map((element) =>
-                      //             Text(element.timestamp.toIso8601String()))
-                      //         .toList());
-                      return Column(
-                        children: ReefAppState.instance.model.tokens.activity
-                            .map((item) => Column(
-                                  children: [
-                                    activityItem(
-                                      tokenName: item.token?.name ?? "",
-                                      type:
-                                          item.isInbound ? 'received' : 'sent',
-                                      timeStamp: item.timestamp,
-                                      amount: item.token?.balance,
-                                      iconUrl: item.token?.iconUrl,
-                                    ),
-                                    if (ReefAppState.instance.model.tokens
-                                            .activity.last !=
-                                        item)
-                                      const Divider(
-                                        height: 32,
-                                        color: Color(0x20000000),
-                                        thickness: 0.5,
-                                      ),
-                                  ],
-                                ))
-                            .toList(),
-                      );
-                    })),
+                    child: ReefAppState
+                            .instance.model.tokens.activity.isNotEmpty
+                        ? Observer(builder: (_) {
+                            // return Column(
+                            //     children: ReefAppState.instance.model.tokens.activity
+                            //         .map((element) =>
+                            //             Text(element.timestamp.toIso8601String()))
+                            //         .toList());
+                            return Column(
+                              children: ReefAppState
+                                  .instance.model.tokens.activity
+                                  .map((item) => Column(
+                                        children: [
+                                          activityItem(
+                                            tokenName: item.token?.name ?? "",
+                                            type: item.isInbound
+                                                ? 'received'
+                                                : 'sent',
+                                            timeStamp: item.timestamp,
+                                            amount: item.token?.balance,
+                                            iconUrl: item.token?.iconUrl,
+                                          ),
+                                          if (ReefAppState.instance.model.tokens
+                                                  .activity.last !=
+                                              item)
+                                            const Divider(
+                                              height: 32,
+                                              color: Color(0x20000000),
+                                              thickness: 0.5,
+                                            ),
+                                        ],
+                                      ))
+                                  .toList(),
+                            );
+                          })
+                        : Center(
+                            child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8.0),
+                            child: Text(
+                              "No activity yet",
+                              style: TextStyle(
+                                  color: Styles.textLightColor,
+                                  fontWeight: FontWeight.w500),
+                            ),
+                          ))),
               ),
             ),
           )
