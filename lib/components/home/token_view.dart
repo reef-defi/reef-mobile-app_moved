@@ -157,7 +157,7 @@ class _TokenViewState extends State<TokenView> {
                         Text(
                           // TODO allow conversionRate to be null for no data
                           price != 0
-                              ? "${balance != 0 ? balance : 0} ${tokenName != "" ? tokenName : name.toUpperCase()}"
+                              ? "${balance != 0 ? balance.toStringAsFixed(4) : 0} ${tokenName != "" ? tokenName : name.toUpperCase()}"
                               : 'No pool data',
                           style: GoogleFonts.poppins(
                             color: Styles.textColor,
