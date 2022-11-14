@@ -8,6 +8,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/utils/size_config.dart';
 
+import '../model/network/NetworkCtrl.dart';
+
 Widget topBar(BuildContext context) {
   SizeConfig.init(context);
 
@@ -19,11 +21,27 @@ Widget topBar(BuildContext context) {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            SvgPicture.asset(
-              'assets/images/reef-logo-light.svg',
-              semanticsLabel: "Reef Logo",
-              height: 46,
-            ),
+            Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+              SvgPicture.asset(
+                'assets/images/reef-logo-light.svg',
+                semanticsLabel: "Reef Logo",
+                height: 46,
+              ),
+              Observer(builder: (_) {
+                //TODO put network to model
+                if(ReefAppState.instance.model.network.selectedNetworkName == Network.testnet.name) {
+                  return const Text(style: TextStyle(
+                      color: Colors.lightBlue,
+                          fontSize: 12
+                  ),
+                      'testnet');
+                }
+                return const SizedBox.shrink();
+              })
+            ]),
+
             Observer(builder: (_) {
               var selAddr =
                   ReefAppState.instance.model.accounts.selectedAddress;

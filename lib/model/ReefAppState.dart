@@ -40,12 +40,11 @@ class ReefAppState {
     transferCtrl = TransferCtrl(jsApi);
     swapCtrl = SwapCtrl(jsApi);
     metadataCtrl = MetadataCtrl(jsApi, storage);
-    // TODO change default network to mainnet
     Network currentNetwork =
-        await storage.getValue(StorageKey.network.name) == Network.mainnet.name
-            ? Network.mainnet
-            : Network.testnet;
-    networkCtrl = NetworkCtrl(storage, jsApi, currentNetwork);
+        await storage.getValue(StorageKey.network.name) == Network.testnet.name
+            ? Network.testnet
+            : Network.mainnet;
+    networkCtrl = NetworkCtrl(storage, jsApi, model.network);
     await _initReefState(jsApi, currentNetwork);
   }
 
