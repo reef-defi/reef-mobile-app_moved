@@ -154,7 +154,7 @@ class _TokenViewState extends State<TokenView> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         GradientText(
-                            "\$${getBalanceValue(balance, price).toStringAsFixed(2)}",
+                            price!=0?"\$${getBalanceValue(balance, price).toStringAsFixed(2)}":"NA",
                             gradient: textGradient(),
                             style: GoogleFonts.poppins(
                               color: Styles.textColor,
@@ -162,10 +162,7 @@ class _TokenViewState extends State<TokenView> {
                               fontWeight: FontWeight.w900,
                             )),
                         Text(
-                          // TODO allow conversionRate to be null for no data
-                          price != 0
-                              ? "${balance != 0 ? balance.toStringAsFixed(0) : 0} ${tokenName != "" ? tokenName : name.toUpperCase()}"
-                              : 'No pool data',
+                          "${balance != 0 ? balance.toStringAsFixed(0) : 0} ${tokenName != "" ? tokenName : name.toUpperCase()}",
                           style: GoogleFonts.poppins(
                             color: Styles.textColor,
                             fontSize: 14,
@@ -178,8 +175,9 @@ class _TokenViewState extends State<TokenView> {
                 ),
                 const SizedBox(height: 15),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Expanded(
+                    /*Expanded(
                         child: ElevatedButton.icon(
                       icon: const Icon(
                         CupertinoIcons.repeat,
@@ -201,9 +199,9 @@ class _TokenViewState extends State<TokenView> {
                         ReefAppState.instance.navigation
                             .navigate(NavigationPage.swap);
                       },
-                    )),
+                    )),*/
                     const SizedBox(width: 15),
-                    Expanded(
+                    Container(
                         child: Container(
                       decoration: BoxDecoration(
                           boxShadow: const [
