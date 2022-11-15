@@ -11,7 +11,7 @@ class TokenCtrl {
   final JsApiService jsApi;
 
   TokenCtrl(this.jsApi, TokenModel tokenModel) {
-    jsApi.jsObservable('appState.tokenPrices\$').listen((tokens) {
+    jsApi.jsObservable('window.appState.tokenPrices\$').listen((tokens) {
       if (tokens == null) {
         return;
       }
@@ -20,7 +20,7 @@ class TokenCtrl {
       tokenModel.setSelectedSignerTokens(tknList);
     });
 
-    jsApi.jsObservable('appState.selectedSignerNFTs\$').listen((tokens) {
+    jsApi.jsObservable('window.appState.selectedSignerNFTs\$').listen((tokens) {
       if (tokens == null) {
         return;
       }
@@ -29,14 +29,14 @@ class TokenCtrl {
       tokenModel.setSelectedSignerNFTs(tknList);
     });
 
-    jsApi.jsObservable('appState.reefPrice\$').listen((value) {
+    jsApi.jsObservable('window.appState.reefPrice\$').listen((value) {
       if (value == null) {
         return;
       }
       tokenModel.setReefPrice(value);
     });
 
-    jsApi.jsObservable('appState.transferHistory\$').listen((items) {
+    jsApi.jsObservable('window.appState.transferHistory\$').listen((items) {
       if (items == null) {
         return;
       }
@@ -47,6 +47,6 @@ class TokenCtrl {
   }
 
   Future<dynamic> findToken(String address) async {
-    return jsApi.jsPromise('utils.findToken("$address")');
+    return jsApi.jsPromise('window.utils.findToken("$address")');
   }
 }

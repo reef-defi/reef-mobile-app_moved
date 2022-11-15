@@ -48,7 +48,6 @@ class _NFTViewState extends State<NFTView> {
                             fontWeight: FontWeight.w700,
                             overflow: TextOverflow.ellipsis),
                       ),
-
                       const Gap(12),
                     ]))
               ],
@@ -97,25 +96,40 @@ class _NFTViewState extends State<NFTView> {
         children: [
           SizedBox(
             width: double.infinity,
-            child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 32, horizontal: 48.0),
-              child: Observer(builder: (_) {
-                return Wrap(
-                  runSpacing: 24,
-                  children: ReefAppState
-                      .instance.model.tokens.selectedSignerNFTs
-                      .map((TokenNFT tkn) {
-                    return Column(
-                      children: [
-                        nftCard(tkn.name, tkn.iconUrl ?? '',
-                            tkn.balance.toInt() ?? 0),
-                      ],
-                    );
-                  }).toList(),
-                );
-              }),
-            ),
+            child:
+                ReefAppState.instance.model.tokens.selectedSignerNFTs.isNotEmpty
+                    ? Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 32, horizontal: 48.0),
+                        child: Observer(builder: (_) {
+                          return Wrap(
+                            runSpacing: 24,
+                            children: ReefAppState
+                                .instance.model.tokens.selectedSignerNFTs
+                                .map((TokenNFT tkn) {
+                              return Column(
+                                children: [
+                                  nftCard(tkn.name, tkn.iconUrl ?? '',
+                                      tkn.balance.toInt() ?? 0),
+                                ],
+                              );
+                            }).toList(),
+                          );
+                        }))
+                    : Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 32),
+                        child: ViewBoxContainer(
+                            child: Center(
+                                child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 24.0),
+                          child: Text(
+                            "No NFTs on this account",
+                            style: TextStyle(
+                                color: Styles.textLightColor,
+                                fontWeight: FontWeight.w500),
+                          ),
+                        ))),
+                      ),
           )
         ]);
   }

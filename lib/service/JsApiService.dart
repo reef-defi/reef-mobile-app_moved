@@ -33,6 +33,7 @@ class JsApiService {
   late Widget _wdg;
 
   get widget {
+    print('JS API SERVICE GET WIDGET $flutterJsFilePath');
     return WebViewFlutterJS(
       hidden: hiddenWidget,
       controller: controllerInit,
@@ -45,6 +46,7 @@ class JsApiService {
 
   JsApiService._(bool this.hiddenWidget, String this.flutterJsFilePath,
       {String? url, String? html}) {
+    print('JS API SERVICE CREATE $flutterJsFilePath');
     _renderWithFlutterJS(flutterJsFilePath, html, url);
   }
 

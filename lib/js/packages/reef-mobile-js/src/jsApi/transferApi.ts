@@ -33,6 +33,7 @@ const getSignerEvmAddress = async (address: string, provider: Provider): Promise
 export const initApi = (flutterJS: FlutterJS) => {
     (window as any).transfer = {
         send: async (from: string, to: string, tokenAmount: string, tokenDecimals: number, tokenAddress: string) => {
+        console.log('making transfer tx')
             return firstValueFrom(appState.signers$.pipe(
                 take(1),
                 map((signers: ReefSigner[]) => {
@@ -40,7 +41,7 @@ export const initApi = (flutterJS: FlutterJS) => {
                 }),
                 switchMap(async (signer: ReefSigner | undefined) => {
                     if (!signer) {
-                        console.log("transfer.send() - NO SIGNER FOUND",);
+                        console.log(" transfer.send() - NO SIGNER FOUND",);
                         return false
                     }
                     const STORAGE_LIMIT = 2000;
