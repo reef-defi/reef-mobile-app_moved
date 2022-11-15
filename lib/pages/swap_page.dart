@@ -28,7 +28,7 @@ class _SwapPageState extends State<SwapPage> {
   var tokens = ReefAppState.instance.model.tokens.selectedSignerTokens;
 
   TokenWithAmount? selectedTopToken = ReefAppState
-      .instance.model.tokens.tokenList
+      .instance.model.tokens.selectedSignerTokens
       .firstWhere((token) => token.address == Constants.REEF_TOKEN_ADDRESS);
 
   TokenWithAmount? selectedBottomToken;

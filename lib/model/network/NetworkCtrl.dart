@@ -13,9 +13,11 @@ class NetworkCtrl {
   NetworkModel networkModel;
 
   NetworkCtrl(this.storage, this.jsApi, this.networkModel) {
-    jsApi.jsObservable('window.appState.currentNetwork\$').listen((network) async {
+    jsApi
+        .jsObservable('window.appState.currentNetwork\$')
+        .listen((network) async {
       networkModel.setSelectedNetworkSwitching(false);
-      if (network != null && network['name']!=null) {
+      if (network != null && network['name'] != null) {
         var nName = network['name'];
         await storage.setValue(StorageKey.network.name, nName);
         networkModel.setSelectedNetworkName(nName);
