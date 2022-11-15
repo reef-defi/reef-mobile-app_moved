@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:reef_mobile_app/model/StorageKey.dart';
 import 'package:reef_mobile_app/model/ViewModel.dart';
 import 'package:reef_mobile_app/model/metadata/MetadataCtrl.dart';
+import 'package:reef_mobile_app/model/navigation/navigation_model.dart';
 import 'package:reef_mobile_app/model/network/NetworkCtrl.dart';
 import 'package:reef_mobile_app/model/signing/SigningCtrl.dart';
 import 'package:reef_mobile_app/model/swap/SwapCtrl.dart';
@@ -26,6 +27,7 @@ class ReefAppState {
   late SwapCtrl swapCtrl;
   late MetadataCtrl metadataCtrl;
   late NetworkCtrl networkCtrl;
+  late NavigationModel navigation;
 
   ReefAppState._();
 
@@ -46,6 +48,7 @@ class ReefAppState {
             : Network.mainnet;
     networkCtrl = NetworkCtrl(storage, jsApi, model.network);
     await _initReefState(jsApi, currentNetwork);
+    navigation = NavigationModel();
   }
 
   _initReefState(JsApiService jsApiService, Network currentNetwork) async {

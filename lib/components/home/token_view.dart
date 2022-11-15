@@ -4,6 +4,7 @@ import "package:flutter/material.dart";
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
+import 'package:reef_mobile_app/model/navigation/navigation_model.dart';
 import 'package:reef_mobile_app/model/tokens/TokenWithAmount.dart';
 import 'package:reef_mobile_app/utils/elements.dart';
 import 'package:reef_mobile_app/utils/functions.dart';
@@ -137,7 +138,9 @@ class _TokenViewState extends State<TokenView> {
                         ),
                         Text(
                           // TODO allow conversionRate to be null for no data
-                          price != 0 ? '\$${price.toStringAsFixed(4)}' : 'No pool data',
+                          price != 0
+                              ? '\$${price.toStringAsFixed(4)}'
+                              : 'No pool data',
                           style: GoogleFonts.poppins(
                               fontWeight: FontWeight.normal,
                               color: Styles.textLightColor,
@@ -194,7 +197,10 @@ class _TokenViewState extends State<TokenView> {
                             color: Color(0xffa93185),
                             fontWeight: FontWeight.w700),
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+                        ReefAppState.instance.navigation
+                            .navigate(NavigationPage.swap);
+                      },
                     )),
                     const SizedBox(width: 15),
                     Expanded(
@@ -229,7 +235,10 @@ class _TokenViewState extends State<TokenView> {
                           style: TextStyle(
                               color: Colors.white, fontWeight: FontWeight.w700),
                         ),
-                        onPressed: () {},
+                        onPressed: () {
+                          ReefAppState.instance.navigation
+                              .navigate(NavigationPage.send);
+                        },
                       ),
                     )),
                   ],

@@ -1,10 +1,16 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:reef_mobile_app/components/top_bar.dart';
+import 'package:reef_mobile_app/model/ReefAppState.dart';
+import 'package:reef_mobile_app/model/navigation/navigation_model.dart';
+import 'package:reef_mobile_app/pages/buy_page.dart';
 import 'package:reef_mobile_app/pages/home_page.dart';
+import 'package:reef_mobile_app/pages/send_page.dart';
 import 'package:reef_mobile_app/pages/settings_page.dart';
+import 'package:reef_mobile_app/pages/swap_page.dart';
 import 'package:reef_mobile_app/pages/user_page.dart';
+import 'package:reef_mobile_app/utils/constants.dart';
 import "package:reef_mobile_app/utils/styles.dart";
 
 import 'SignatureContentToggle.dart';
@@ -17,22 +23,60 @@ class BottomNav extends StatefulWidget {
 }
 
 class _BottomNavState extends State<BottomNav> {
-  int _selectedIndex = 0;
-  static final List<Widget> _widgetOptions = <Widget>[
-    const HomePage(),
-    // const SendPage(Constants.REEF_TOKEN_ADDRESS),
-    // const SwapPage(),
-    // const BuyPage(),
-    UserPage(),
-    const SettingsPage()
-  ];
+  Widget _getWidget(NavigationPage page) {
+    switch (page) {
+      case NavigationPage.home:
+        return const HomePage();
+      case NavigationPage.user:
+        return UserPage();
+      // case NavigationPage.buy:
+      //   return const BuyPage();
+      case NavigationPage.settings:
+        return const SettingsPage();
+      case NavigationPage.swap:
+        return const SwapPage();
+      case NavigationPage.send:
+        return const SendPage(Constants.REEF_TOKEN_ADDRESS);
+      default:
+        return const HomePage();
+    }
+  }
 
   void _onItemTapped(int index) {
     HapticFeedback.selectionClick();
-    setState(() {
-      _selectedIndex = index;
-    });
+    ReefAppState.instance.navigation.navigate(NavigationPage.values[index]);
   }
+
+  List<BottomNavigationBarItem> bottomNavigationBarItems = const [
+    BottomNavigationBarItem(
+      icon: Icon(Icons.home_outlined),
+      label: 'Home',
+    ),
+    // BottomNavigationBarItem(
+    //   icon: Icon(CupertinoIcons.paperplane),
+    //   label: 'Send',
+    // ),
+    // BottomNavigationBarItem(
+    //   icon: Icon(CupertinoIcons.arrow_right_arrow_left_square),
+    //   label: 'Swap',
+    // ),
+    // BottomNavigationBarItem(
+    //   icon: Icon(CupertinoIcons.money_dollar_circle),
+    //   label: 'Buy',
+    // ),
+    BottomNavigationBarItem(
+      icon: Icon(Icons.account_balance_wallet_outlined),
+      //  SvgIcon(
+      //   'assets/images/reef_icon.svg',
+      //   height: 20,
+      // ),
+      label: 'Accounts',
+    ),
+    BottomNavigationBarItem(
+      icon: Icon(Icons.settings_outlined),
+      label: 'Settings',
+    ),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +108,7 @@ class _BottomNavState extends State<BottomNav> {
                       child: Container(
                           // color: Styles.whiteColor,
                           padding: const EdgeInsets.symmetric(horizontal: 16),
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                             image: DecorationImage(
                                 image:
                                     AssetImage("assets/images/reef-header.png"),
@@ -77,7 +121,9 @@ class _BottomNavState extends State<BottomNav> {
                       child: Container(
                         padding: const EdgeInsets.fromLTRB(16, 18, 16, 0),
                         width: double.infinity,
-                        child: _widgetOptions.elementAt(_selectedIndex),
+                        child: Observer(
+                            builder: (_) => _getWidget(
+                                ReefAppState.instance.navigation.currentPage)),
                       ),
                     )
                   ],
@@ -86,48 +132,28 @@ class _BottomNavState extends State<BottomNav> {
             ),
           ),
         )),
-        bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: Styles.whiteColor,
-          showSelectedLabels: false,
-          showUnselectedLabels: false,
-          selectedLabelStyle:
-              TextStyle(fontSize: 20, color: Styles.primaryColor),
-          type: BottomNavigationBarType.fixed,
-          selectedItemColor: Styles.purpleColor,
-          unselectedItemColor: Colors.black38,
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home_outlined),
-              label: 'Home',
-            ),
-            // BottomNavigationBarItem(
-            //   icon: Icon(CupertinoIcons.paperplane),
-            //   label: 'Send',
-            // ),
-            // BottomNavigationBarItem(
-            //   icon: Icon(CupertinoIcons.arrow_right_arrow_left_square),
-            //   label: 'Swap',
-            // ),
-            // BottomNavigationBarItem(
-            //   icon: Icon(CupertinoIcons.money_dollar_circle),
-            //   label: 'Buy',
-            // ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.account_balance_wallet_outlined),
-              //  SvgIcon(
-              //   'assets/images/reef_icon.svg',
-              //   height: 20,
-              // ),
-              label: 'Accounts',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.settings_outlined),
-              label: 'Settings',
-            ),
-          ],
-          currentIndex: _selectedIndex,
-          onTap: _onItemTapped,
-        ),
+        bottomNavigationBar: Observer(
+            builder: (_) => BottomNavigationBar(
+                  backgroundColor: Styles.whiteColor,
+                  showSelectedLabels: false,
+                  showUnselectedLabels: false,
+                  selectedLabelStyle:
+                      TextStyle(fontSize: 20, color: Styles.primaryColor),
+                  type: BottomNavigationBarType.fixed,
+                  selectedItemColor:
+                      ReefAppState.instance.navigation.currentPage.index <
+                              bottomNavigationBarItems.length
+                          ? Styles.purpleColor
+                          : Colors.black38,
+                  unselectedItemColor: Colors.black38,
+                  items: bottomNavigationBarItems,
+                  currentIndex:
+                      ReefAppState.instance.navigation.currentPage.index <
+                              bottomNavigationBarItems.length
+                          ? ReefAppState.instance.navigation.currentPage.index
+                          : 0,
+                  onTap: _onItemTapped,
+                )),
       ),
     ));
   }
