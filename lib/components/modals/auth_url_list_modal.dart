@@ -22,10 +22,49 @@ class _AuthUrlListState extends State<AuthUrlList> {
         }));
   }
 
+  showAlertDialog(BuildContext context, AuthUrl authUrl) {
+    // set up the buttons
+    Widget cancelButton = TextButton(
+      child: const Text("Cancel"),
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
+    );
+    Widget continueButton = TextButton(
+      child: const Text("Yes"),
+      onPressed: () {
+        authUrl.delete();
+        setState(() {
+          authUrls.remove(authUrl);
+        });
+        Navigator.of(context).pop();
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: const Text("Delete Website"),
+      content: Text(
+          "Are you sure you want to delete the Website with URL ${authUrl.url}?"),
+      actions: [
+        cancelButton,
+        continueButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 0, 24, 32.0),
+      padding: const EdgeInsets.fromLTRB(24, 0, 12, 32.0),
       child: Column(
         children: [
           if (authUrls.isEmpty)
@@ -38,29 +77,26 @@ class _AuthUrlListState extends State<AuthUrlList> {
                 children: [
                   Text(authUrl.url),
                   const Spacer(),
-                  Switch(
-                    value: authUrl.isAllowed,
-                    onChanged: (value) {
-                      setState(() {
-                        authUrl.isAllowed = value;
-                        ReefAppState.instance.storage.saveAuthUrl(authUrl);
-                      });
-                    },
-                    activeColor: Styles.primaryAccentColorDark,
-                  )
+                  Row(children: [
+                    Switch(
+                      value: authUrl.isAllowed,
+                      onChanged: (value) {
+                        setState(() {
+                          authUrl.isAllowed = value;
+                          ReefAppState.instance.storage.saveAuthUrl(authUrl);
+                        });
+                      },
+                      activeColor: Styles.primaryAccentColorDark,
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.delete,
+                          size: 24, color: Styles.primaryAccentColor),
+                      onPressed: () => showAlertDialog(context, authUrl),
+                    )
+                  ])
                 ],
               );
             }).toList(),
-            // ElevatedButton(
-            //     onPressed: () {
-            //       for (var authUrl in authUrls) {
-            //         authUrl.delete();
-            //       }
-            //       setState(() {
-            //         authUrls = [];
-            //       });
-            //     },
-            //     child: const Text('Delete all'))
           ],
         ],
       ),
