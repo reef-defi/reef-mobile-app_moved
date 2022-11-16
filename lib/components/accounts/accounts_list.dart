@@ -1,6 +1,5 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:gap/gap.dart';
 import 'package:reef_mobile_app/model/account/ReefSigner.dart';
 
@@ -54,7 +53,7 @@ class AccountsList extends StatelessWidget {
                             padding: const EdgeInsets.all(2),
                             shape: const CircleBorder(),
                             elevation: 0,
-                            child: Icon(
+                            child: const Icon(
                               Icons.add,
                               color: Styles.primaryBackgroundColor,
                               size: 15,
