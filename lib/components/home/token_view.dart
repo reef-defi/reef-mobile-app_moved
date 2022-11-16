@@ -19,7 +19,7 @@ class TokenView extends StatefulWidget {
 }
 
 class _TokenViewState extends State<TokenView> {
-  Widget tokenCard(String name,
+  Widget tokenCard(String name, String address,
       {String? iconURL,
       double balance = 0.0,
       double price = 0.0,
@@ -141,7 +141,7 @@ class _TokenViewState extends State<TokenView> {
                         style: ElevatedButton.styleFrom(
                             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                             backgroundColor: Colors.transparent,
-                            shape: StadiumBorder(),
+                            shape: const StadiumBorder(),
                             elevation: 0),
                         label: const Text(
                           'Send',
@@ -150,7 +150,7 @@ class _TokenViewState extends State<TokenView> {
                         ),
                         onPressed: () {
                           ReefAppState.instance.navigation
-                              .navigate(NavigationPage.send);
+                              .navigate(NavigationPage.send, data: address);
                         },
                       ),
                     )),
@@ -185,12 +185,12 @@ class _TokenViewState extends State<TokenView> {
                       .map((TokenWithAmount tkn) {
                     return Column(
                       children: [
-                        tokenCard(tkn.name,
+                        tokenCard(tkn.name, tkn.address,
                             tokenName: tkn.symbol,
                             iconURL: tkn.iconUrl,
                             price: tkn.price?.toDouble() ?? 0,
                             balance: decimalsToDouble(tkn.balance)),
-                        SizedBox(height: 12),
+                        const SizedBox(height: 12),
                       ],
                     );
                   }).toList(),
