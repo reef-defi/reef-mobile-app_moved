@@ -190,7 +190,7 @@ class _AccountBoxState extends State<AccountBox> {
                       ),
                     ],
                   ),
-                  Row(
+                  if (widget.showOptions) Row(
                     children: [
                       if (!widget.reefSigner.isEvmClaimed)
                         Row(
@@ -230,7 +230,6 @@ class _AccountBoxState extends State<AccountBox> {
                             ),
                           ],
                         ),
-                      if (widget.showOptions)
                         PopupMenuButton<String>(
                           icon: const Icon(
                             Icons.more_vert,
