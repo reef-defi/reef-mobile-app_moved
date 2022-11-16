@@ -1,21 +1,16 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:mobx/mobx.dart';
 import 'package:reef_mobile_app/components/modals/token_selection_modals.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/StorageKey.dart';
-import 'package:reef_mobile_app/model/tokens/Token.dart';
 import 'package:reef_mobile_app/model/tokens/TokenWithAmount.dart';
 import 'package:reef_mobile_app/utils/functions.dart';
-import 'package:reef_mobile_app/utils/constants.dart';
-import 'package:reef_mobile_app/utils/functions.dart';
+import 'package:reef_mobile_app/utils/icon_url.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
-import 'package:shimmer/shimmer.dart';
 
 import '../components/SignatureContentToggle.dart';
 
@@ -27,7 +22,6 @@ class SendPage extends StatefulWidget {
 
   @override
   State<SendPage> createState() => _SendPageState();
-
 }
 
 class _SendPageState extends State<SendPage> {
@@ -46,20 +40,17 @@ class _SendPageState extends State<SendPage> {
     });
   }
 
-
   void _changeSelectedToken(String tokenAddr) {
     setState(() {
-      selectedTokenAddress= tokenAddr;
+      selectedTokenAddress = tokenAddr;
     });
   }
+
   void _onConfirmSend(TokenWithAmount sendToken) async {
-    if (address.isEmpty ||
-        amount.isEmpty ||
-        sendToken.balance <= BigInt.zero) {
+    if (address.isEmpty || amount.isEmpty || sendToken.balance <= BigInt.zero) {
       return;
     }
-    var signerAddress = await ReefAppState
-        .instance.storage
+    var signerAddress = await ReefAppState.instance.storage
         .getValue(StorageKey.selected_address.name);
     TokenWithAmount tokenToTranfer = TokenWithAmount(
         name: sendToken.name,
@@ -68,20 +59,18 @@ class _SendPageState extends State<SendPage> {
         symbol: sendToken.name,
         balance: sendToken.balance,
         decimals: sendToken.decimals,
-        amount: BigInt.parse(toStringWithoutDecimals(
-            amount, sendToken.decimals)),
+        amount:
+            BigInt.parse(toStringWithoutDecimals(amount, sendToken.decimals)),
         price: 0);
     var res = await ReefAppState.instance.transferCtrl
-        .transferTokens(
-        signerAddress, address, tokenToTranfer);
+        .transferTokens(signerAddress, address, tokenToTranfer);
     amountController.clear();
     valueController.clear();
   }
 
   @override
   Widget build(BuildContext context) {
-    return
-      SignatureContentToggle(Padding(
+    return SignatureContentToggle(Padding(
       padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24),
       child: Column(
         children: [
@@ -97,10 +86,12 @@ class _SendPageState extends State<SendPage> {
               clipBehavior: Clip.none,
               alignment: Alignment.center,
               children: [
-                Observer(builder: (_){
-                  var tokens = ReefAppState.instance.model.tokens.selectedSignerTokens;
-                  var selectedToken = tokens.firstWhere((tkn) => tkn.address==selectedTokenAddress);
-                  if(selectedToken==null && !tokens.isEmpty){
+                Observer(builder: (_) {
+                  var tokens =
+                      ReefAppState.instance.model.tokens.selectedSignerTokens;
+                  var selectedToken = tokens
+                      .firstWhere((tkn) => tkn.address == selectedTokenAddress);
+                  if (selectedToken == null && !tokens.isEmpty) {
                     selectedToken = tokens[0];
                   }
                   return Column(
@@ -134,7 +125,7 @@ class _SendPageState extends State<SendPage> {
                                           bottomLeft: Radius.circular(10),
                                           topLeft: Radius.circular(10)),
                                       borderSide:
-                                      BorderSide(color: Color(0xffd1d2d8)),
+                                          BorderSide(color: Color(0xffd1d2d8)),
                                     ),
                                     border: const OutlineInputBorder(
                                       borderRadius: BorderRadius.only(
@@ -150,8 +141,8 @@ class _SendPageState extends State<SendPage> {
                                           width: 2),
                                     ),
                                     hintText: 'Send to address',
-                                    hintStyle:
-                                    TextStyle(color: Styles.textLightColor)),
+                                    hintStyle: TextStyle(
+                                        color: Styles.textLightColor)),
                                 validator: (String? value) {
                                   if (value == null || value.isEmpty) {
                                     return 'Address cannot be empty';
@@ -199,10 +190,11 @@ class _SendPageState extends State<SendPage> {
                                 MaterialButton(
                                   onPressed: () {
                                     showTokenSelectionModal(context,
-                                        callback: (tkn)=>_changeSelectedToken(tkn.address));
+                                        callback: (tkn) =>
+                                            _changeSelectedToken(tkn.address));
                                   },
                                   materialTapTargetSize:
-                                  MaterialTapTargetSize.shrinkWrap,
+                                      MaterialTapTargetSize.shrinkWrap,
                                   minWidth: 0,
                                   height: 36,
                                   elevation: 0,
@@ -214,41 +206,15 @@ class _SendPageState extends State<SendPage> {
                                           color: Colors.black26)),
                                   child: Row(
                                     children: [
-                                      /* TODO fix svg image base64
-                                          if (selectedToken.iconUrl!=null)
-                                        CachedNetworkImage(
-                                          imageUrl: selectedToken.iconUrl!,
-                                          width: 24,
-                                          height: 24,
-                                          placeholder: (context, url) =>
-                                              Shimmer.fromColors(
-                                                baseColor: Colors.grey[300]!,
-                                                highlightColor: Colors.grey[350]!,
-                                                child: Container(
-                                                  width: 24,
-                                                  height: 24,
-                                                  decoration: ShapeDecoration(
-                                                    color: Colors.grey[350]!,
-                                                    shape: const CircleBorder(),
-                                                  ),
-                                                ),
-                                              ),
-                                          errorWidget: (context, url, error) =>
-                                          const Icon(
-                                            CupertinoIcons
-                                                .exclamationmark_circle_fill,
-                                            color: Colors.black12,
-                                            size: 24,
-                                          ),
-                                        )
-                                      else*/
-                                        Icon(CupertinoIcons.question_circle,
-                                            color: Colors.grey[600]!, size: 24),
+                                      IconFromUrl(selectedToken.iconUrl),
                                       const Gap(4),
-                                      Text(selectedToken!=null? selectedToken.name : 'Select'),
+                                      Text(selectedToken != null
+                                          ? selectedToken.name
+                                          : 'Select'),
                                       const Gap(4),
                                       Icon(CupertinoIcons.chevron_down,
-                                          size: 16, color: Styles.textLightColor)
+                                          size: 16,
+                                          color: Styles.textLightColor)
                                     ],
                                   ),
                                 ),
@@ -269,10 +235,10 @@ class _SendPageState extends State<SendPage> {
                                     },
                                     decoration: InputDecoration(
                                         constraints:
-                                        const BoxConstraints(maxHeight: 32),
+                                            const BoxConstraints(maxHeight: 32),
                                         contentPadding:
-                                        const EdgeInsets.symmetric(
-                                            horizontal: 12, vertical: 8),
+                                            const EdgeInsets.symmetric(
+                                                horizontal: 12, vertical: 8),
                                         enabledBorder: const OutlineInputBorder(
                                           borderSide: BorderSide(
                                               color: Colors.transparent),
@@ -314,7 +280,7 @@ class _SendPageState extends State<SendPage> {
                                           padding: EdgeInsets.zero,
                                           minimumSize: const Size(30, 10),
                                           tapTargetSize:
-                                          MaterialTapTargetSize.shrinkWrap),
+                                              MaterialTapTargetSize.shrinkWrap),
                                       child: Text(
                                         "(Max)",
                                         style: TextStyle(
@@ -341,13 +307,13 @@ class _SendPageState extends State<SendPage> {
                                 : Styles.secondaryAccentColor,
                             padding: const EdgeInsets.symmetric(vertical: 16),
                           ),
-                          onPressed: ()=>_onConfirmSend(selectedToken),
+                          onPressed: () => _onConfirmSend(selectedToken),
                           child: Text(
                             address.isEmpty
                                 ? 'Missing destination address'
                                 : amount.isEmpty
-                                ? "Insert amount"
-                                : "Confirm Send",
+                                    ? "Insert amount"
+                                    : "Confirm Send",
                             style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w700,

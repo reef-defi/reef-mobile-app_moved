@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 double getBalanceValue(double balance, price) {
   if (price == null || price == null) {
     return 0.0;
