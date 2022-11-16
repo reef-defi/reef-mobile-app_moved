@@ -137,4 +137,8 @@ class AccountCtrl {
   void _initWasm(JsApiService _jsApi) async {
     await _jsApi.jsPromise('window.keyring.initWasm()');
   }
+
+  toEvmAddressAlertString(String evmAddress) async {
+    return await _jsApi.jsCall('window.account.toEvmAddressAlert("$evmAddress")');
+  }
 }

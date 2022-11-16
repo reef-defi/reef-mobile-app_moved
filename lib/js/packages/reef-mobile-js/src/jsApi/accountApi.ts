@@ -59,6 +59,11 @@ export const innitApi = () => {
                 }),
                 take(1)
             ));
+        },
+        toEvmAddressAlert: (evmAddress: string)=>{
+        console.log('aaa',evmAddress);
+
+        return evmAddress;
         }
     };
 }
