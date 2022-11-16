@@ -264,9 +264,9 @@ class _AccountBoxState extends State<AccountBox> {
 class Constants {
   static const String delete = 'Delete';
   static const String copyNativeAddress = "Copy Address";
-  static const String copyEvmAddress = "Copy EVM Address";
+  static const String copyEvmAddress = "Copy Reef EVM Address";
 
-  static const List<String> choices = <String>[delete, copyNativeAddress, Constants.copyEvmAddress];
+  static const List<String> choices = <String>[delete, copyNativeAddress, copyEvmAddress];
 }
 
 showAlertDialog(BuildContext context, ReefSigner signer) {
@@ -314,7 +314,7 @@ void choiceAction(String choice, BuildContext context, ReefSigner signer) async 
           const SnackBar(content: Text("Native Address copied to clipboard")));
     });
   } else if (choice == Constants.copyEvmAddress) {
-    Clipboard.setData(ClipboardData(text: await ReefAppState.instance.accountCtrl.toEvmAddressAlertString(signer.evmAddress))).then((_) {
+    Clipboard.setData(ClipboardData(text: await ReefAppState.instance.accountCtrl.toReefEVMAddressWithNotificationString(signer.evmAddress))).then((_) {
       ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("EVM Address copied to clipboard.\nUse it ONLY on Reef Chain!")));
     });

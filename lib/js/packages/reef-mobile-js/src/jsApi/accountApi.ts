@@ -1,4 +1,4 @@
-import {appState, ReefSigner} from '@reef-defi/react-lib';
+import {appState, ReefSigner, utils} from '@reef-defi/react-lib';
 import {map, switchMap, take} from "rxjs/operators";
 import { Account, buildAccountWithMeta } from "./initFlutterApi";
 import type {InjectedAccountWithMeta} from "@reef-defi/extension-inject/types";
@@ -53,17 +53,15 @@ export const innitApi = () => {
                         console.log("account binded:", signer.address, signer.isEvmClaimed, signer.evmAddress);
                         return true;
                     } catch (e) {
-                        console.log('account.claimEvmAccount() - ', e);
+                        console.log(' account.claimEvmAccount() - ', e);
                         return null;
                     }
                 }),
                 take(1)
             ));
         },
-        toEvmAddressAlert: (evmAddress: string)=>{
-        console.log('aaa',evmAddress);
-
-        return evmAddress;
+        toReefEVMAddressWithNotification: (evmAddress: string)=>{
+            return utils.toReefEVMAddressWithNotification(evmAddress);
         }
     };
 }
