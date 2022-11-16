@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:reef_mobile_app/components/modals/select_account_modal.dart';
 import 'package:reef_mobile_app/components/modals/token_selection_modals.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/StorageKey.dart';
@@ -13,8 +14,6 @@ import 'package:reef_mobile_app/utils/icon_url.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 
 import '../components/SignatureContentToggle.dart';
-
-//TODO: Complete the second box and add modal and button
 
 class SendPage extends StatefulWidget {
   final String preselected;
@@ -62,7 +61,7 @@ class _SendPageState extends State<SendPage> {
         amount:
             BigInt.parse(toStringWithoutDecimals(amount, sendToken.decimals)),
         price: 0);
-    var res = await ReefAppState.instance.transferCtrl
+    await ReefAppState.instance.transferCtrl
         .transferTokens(signerAddress, address, tokenToTranfer);
     amountController.clear();
     valueController.clear();
@@ -114,7 +113,6 @@ class _SendPageState extends State<SendPage> {
                                     //you can access nameController in its scope to get
                                     // the value of text entered as shown below
                                     address = valueController.text;
-                                    // address = '0xC62B6cB2190981F83686E7751449a20D1B82C5Fc';
                                   });
                                 },
                                 decoration: InputDecoration(
@@ -162,7 +160,17 @@ class _SendPageState extends State<SendPage> {
                                       bottomRight: Radius.circular(10),
                                       topRight: Radius.circular(10)),
                                 ),
-                                onPressed: () {},
+                                onPressed: () {
+                                  showSelectAccountModal(
+                                    "Select account",
+                                    (selectedAddress) {
+                                      setState(() {
+                                        address = selectedAddress;
+                                        valueController.text = selectedAddress;
+                                      });
+                                    },
+                                  );
+                                },
                                 color: Styles.buttonColor,
                                 child: const Icon(
                                   CupertinoIcons.chevron_down,
@@ -302,7 +310,7 @@ class _SendPageState extends State<SendPage> {
                                 borderRadius: BorderRadius.circular(40)),
                             shadowColor: const Color(0x559d6cff),
                             elevation: 5,
-                            primary: (address.isEmpty || amount.isEmpty)
+                            backgroundColor: (address.isEmpty || amount.isEmpty)
                                 ? const Color(0xff9d6cff)
                                 : Styles.secondaryAccentColor,
                             padding: const EdgeInsets.symmetric(vertical: 16),
