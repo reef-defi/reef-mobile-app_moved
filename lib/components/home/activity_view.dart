@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/utils/elements.dart';
 import 'package:reef_mobile_app/utils/functions.dart';
+import 'package:reef_mobile_app/utils/icon_url.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 
 class ActivityView extends StatefulWidget {
@@ -33,7 +34,6 @@ class _ActivityViewState extends State<ActivityView> {
     Color? bgColor = Colors.transparent;
     Color? iconColor = Colors.transparent;
     bool isReceived = (type == "received");
-    if (tokenName.toLowerCase() == "reef") iconUrl = "./assets/images/reef.png";
 
     switch (type) {
       case "received":
@@ -108,13 +108,10 @@ class _ActivityViewState extends State<ActivityView> {
                       fontSize: 18),
                 ),
                 const SizedBox(width: 4),
-                iconUrl != null
-                    ? Image(image: AssetImage(iconUrl), width: 16, height: 16)
-                    : const Icon(
-                        CupertinoIcons.exclamationmark_circle_fill,
-                        color: Colors.black12,
-                        size: 18,
-                      ),
+                IconFromUrl(
+                  iconUrl,
+                  size: 18,
+                )
               ]),
             ],
           ),

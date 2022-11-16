@@ -11,6 +11,7 @@ import 'package:reef_mobile_app/model/swap/swap_settings.dart';
 import 'package:reef_mobile_app/model/tokens/TokenWithAmount.dart';
 import 'package:reef_mobile_app/utils/constants.dart';
 import 'package:reef_mobile_app/utils/functions.dart';
+import 'package:reef_mobile_app/utils/icon_url.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -266,40 +267,9 @@ class _SwapPageState extends State<SwapPage> {
                                 child: Row(
                                   children: [
                                     if (selectedTopToken == null)
-                                      Text("Select token")
-                                    /*  TODO fix svg image base64
-                                         else if (selectedTopToken!.iconUrl !=
-                                            null &&
-                                        selectedTopToken!.iconUrl!.isNotEmpty)
-                                      CachedNetworkImage(
-                                        imageUrl: selectedTopToken!.iconUrl!,
-                                        width: 24,
-                                        height: 24,
-                                        placeholder: (context, url) =>
-                                            Shimmer.fromColors(
-                                          baseColor: Colors.grey[300]!,
-                                          highlightColor: Colors.grey[350]!,
-                                          child: Container(
-                                            width: 24,
-                                            height: 24,
-                                            decoration: ShapeDecoration(
-                                              color: Colors.grey[350]!,
-                                              shape: const CircleBorder(),
-                                            ),
-                                          ),
-                                        ),
-                                        errorWidget: (context, url, error) =>
-                                            const Icon(
-                                          CupertinoIcons
-                                              .exclamationmark_circle_fill,
-                                          color: Colors.black12,
-                                          size: 24,
-                                        ),
-                                      )*/
-                                    else
-                                      Icon(CupertinoIcons.question_circle,
-                                          color: Colors.grey[600]!, size: 24),
-                                    if (selectedTopToken != null) ...[
+                                      const Text("Select token")
+                                    else ...[
+                                      IconFromUrl(selectedTopToken!.iconUrl),
                                       const Gap(4),
                                       Text(selectedTopToken!.symbol),
                                     ],
@@ -421,41 +391,9 @@ class _SwapPageState extends State<SwapPage> {
                                 child: Row(
                                   children: [
                                     if (selectedBottomToken == null)
-                                      Text("Select token")
-                                    /* TODO fix svg image base64
-                                        else if (selectedBottomToken!.iconUrl !=
-                                            null &&
-                                        selectedBottomToken!
-                                            .iconUrl!.isNotEmpty)
-                                      CachedNetworkImage(
-                                        imageUrl: selectedBottomToken!.iconUrl!,
-                                        width: 24,
-                                        height: 24,
-                                        placeholder: (context, url) =>
-                                            Shimmer.fromColors(
-                                          baseColor: Colors.grey[300]!,
-                                          highlightColor: Colors.grey[350]!,
-                                          child: Container(
-                                            width: 24,
-                                            height: 24,
-                                            decoration: ShapeDecoration(
-                                              color: Colors.grey[350]!,
-                                              shape: const CircleBorder(),
-                                            ),
-                                          ),
-                                        ),
-                                        errorWidget: (context, url, error) =>
-                                            const Icon(
-                                          CupertinoIcons
-                                              .exclamationmark_circle_fill,
-                                          color: Colors.black12,
-                                          size: 24,
-                                        ),
-                                      )*/
-                                    else
-                                      Icon(CupertinoIcons.question_circle,
-                                          color: Colors.grey[600]!, size: 24),
-                                    if (selectedBottomToken != null) ...[
+                                      const Text("Select token")
+                                    else ...[
+                                      IconFromUrl(selectedBottomToken!.iconUrl),
                                       const Gap(4),
                                       Text(selectedBottomToken!.symbol),
                                     ],

@@ -11,6 +11,7 @@ import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/utils/constants.dart';
 import 'package:reef_mobile_app/utils/elements.dart';
 import 'package:reef_mobile_app/utils/functions.dart';
+import 'package:reef_mobile_app/utils/icon_url.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -160,38 +161,7 @@ class TokenSelectionState extends State<TokenSelection> {
                                           MainAxisAlignment.spaceBetween,
                                       children: [
                                         Row(children: [
-                                          if (e.iconUrl != null)
-                                            CachedNetworkImage(
-                                              imageUrl: e.iconUrl!,
-                                              height: 24,
-                                              width: 24,
-                                              placeholder: (context, url) =>
-                                                  Shimmer.fromColors(
-                                                baseColor: Colors.grey[300]!,
-                                                highlightColor:
-                                                    Colors.grey[350]!,
-                                                child: Container(
-                                                  width: 24,
-                                                  height: 24,
-                                                  decoration: ShapeDecoration(
-                                                    color: Colors.grey[350]!,
-                                                    shape: const CircleBorder(),
-                                                  ),
-                                                ),
-                                              ),
-                                              errorWidget:
-                                                  (context, url, error) =>
-                                                      const Icon(
-                                                CupertinoIcons
-                                                    .exclamationmark_circle_fill,
-                                                color: Colors.black12,
-                                                size: 24,
-                                              ),
-                                            )
-                                          else
-                                            Icon(CupertinoIcons.question_circle,
-                                                color: Colors.grey[600]!,
-                                                size: 24),
+                                          IconFromUrl(e.iconUrl),
                                           const Gap(12),
                                           Column(
                                             crossAxisAlignment:

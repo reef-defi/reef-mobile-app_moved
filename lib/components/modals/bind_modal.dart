@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:reef_mobile_app/components/modal.dart';
@@ -240,9 +239,9 @@ class _BindEvmState extends State<BindEvm> {
               },
               child: (buildAccount(transferBalanceFrom))),
           const Gap(16),
-    buildButton(() {
-      Navigator.pop(context);
-              transfer();
+          buildButton(() {
+            Navigator.pop(context);
+            transfer();
           }),
         ],
       ]
