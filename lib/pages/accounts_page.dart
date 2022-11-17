@@ -13,16 +13,16 @@ import 'package:reef_mobile_app/utils/styles.dart';
 
 import '../components/SignatureContentToggle.dart';
 
-class UserPage extends StatefulWidget {
-  UserPage({Key? key}) : super(key: key);
+class AccountsPage extends StatefulWidget {
+  AccountsPage({Key? key}) : super(key: key);
   final ReefAppState reefState = ReefAppState.instance;
   final AccountCtrl accountCtrl = ReefAppState.instance.accountCtrl;
 
   @override
-  State<UserPage> createState() => _UserPageState();
+  State<AccountsPage> createState() => _AccountsPageState();
 }
 
-class _UserPageState extends State<UserPage> {
+class _AccountsPageState extends State<AccountsPage> {
   // TODO replace strings with enum
   void openModal(String modalName) {
     switch (modalName) {

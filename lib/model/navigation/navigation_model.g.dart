@@ -29,11 +29,11 @@ mixin _$NavigationModel on _NavigationModel, Store {
       ActionController(name: '_NavigationModel', context: context);
 
   @override
-  void navigate(NavigationPage page) {
+  void navigate(NavigationPage page, {dynamic data}) {
     final _$actionInfo = _$_NavigationModelActionController.startAction(
         name: '_NavigationModel.navigate');
     try {
-      return super.navigate(page);
+      return super.navigate(page, data: data);
     } finally {
       _$_NavigationModelActionController.endAction(_$actionInfo);
     }

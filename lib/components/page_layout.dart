@@ -9,7 +9,7 @@ import 'package:reef_mobile_app/pages/home_page.dart';
 import 'package:reef_mobile_app/pages/send_page.dart';
 import 'package:reef_mobile_app/pages/settings_page.dart';
 import 'package:reef_mobile_app/pages/swap_page.dart';
-import 'package:reef_mobile_app/pages/user_page.dart';
+import 'package:reef_mobile_app/pages/accounts_page.dart';
 import 'package:reef_mobile_app/utils/constants.dart';
 import "package:reef_mobile_app/utils/styles.dart";
 
@@ -27,16 +27,16 @@ class _BottomNavState extends State<BottomNav> {
     switch (page) {
       case NavigationPage.home:
         return const HomePage();
-      case NavigationPage.user:
-        return UserPage();
-      // case NavigationPage.buy:
-      //   return const BuyPage();
+      case NavigationPage.accounts:
+        return AccountsPage();
+    // case NavigationPage.buy:
+    //   return const BuyPage();
       case NavigationPage.settings:
         return const SettingsPage();
       case NavigationPage.swap:
         return const SwapPage();
       case NavigationPage.send:
-        return const SendPage(Constants.REEF_TOKEN_ADDRESS);
+        return SendPage(ReefAppState.instance.navigation.data);
       default:
         return const HomePage();
     }
@@ -85,73 +85,79 @@ class _BottomNavState extends State<BottomNav> {
       child: Scaffold(
         body: Center(
             child: AnnotatedRegion<SystemUiOverlayStyle>(
-          value: const SystemUiOverlayStyle(
-            statusBarColor: Colors.transparent,
-            statusBarIconBrightness: Brightness.light,
-          ),
-          child: Material(
-            color: Colors.white,
-            elevation: 0,
-            child: Stack(
-              children: [
-                Container(
-                  width: double.infinity,
-                  color: Styles.primaryBackgroundColor,
-                ),
-                Column(
-                  // physics: const NeverScrollableScrollPhysics(),
-                  // padding: const EdgeInsets.symmetric(vertical: 0),
-                  children: <Widget>[
-                    Material(
-                      elevation: 3,
-                      shadowColor: Colors.black45,
-                      child: Container(
-                          // color: Styles.whiteColor,
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          decoration: const BoxDecoration(
-                            image: DecorationImage(
-                                image:
-                                    AssetImage("assets/images/reef-header.png"),
-                                fit: BoxFit.cover,
-                                alignment: Alignment(-0.82, 1.0)),
-                          ),
-                          child: topBar(context)),
+              value: const SystemUiOverlayStyle(
+                statusBarColor: Colors.transparent,
+                statusBarIconBrightness: Brightness.light,
+              ),
+              child: Material(
+                color: Colors.white,
+                elevation: 0,
+                child: Stack(
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      color: Styles.primaryBackgroundColor,
                     ),
-                    Expanded(
-                      child: Container(
-                        padding: const EdgeInsets.fromLTRB(16, 18, 16, 0),
-                        width: double.infinity,
-                        child: Observer(
-                            builder: (_) => _getWidget(
-                                ReefAppState.instance.navigation.currentPage)),
-                      ),
-                    )
+                    Column(
+                      // physics: const NeverScrollableScrollPhysics(),
+                      // padding: const EdgeInsets.symmetric(vertical: 0),
+                      children: <Widget>[
+                        Material(
+                          elevation: 3,
+                          shadowColor: Colors.black45,
+                          child: Container(
+                            // color: Styles.whiteColor,
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16),
+                              decoration: const BoxDecoration(
+                                image: DecorationImage(
+                                    image:
+                                    AssetImage("assets/images/reef-header.png"),
+                                    fit: BoxFit.cover,
+                                    alignment: Alignment(-0.82, 1.0)),
+                              ),
+                              child: topBar(context)),
+                        ),
+                        Expanded(
+                          child: Container(
+                            padding: const EdgeInsets.fromLTRB(16, 18, 16, 0),
+                            width: double.infinity,
+                            child: Observer(
+                                builder: (_) {
+                                  print('DISPLAY PAGE =${ReefAppState.instance
+                                      .navigation.currentPage}');
+                                  return _getWidget(ReefAppState
+                                      .instance.navigation.currentPage);
+                                }),
+                          ),
+                        )
+                      ],
+                    ),
                   ],
                 ),
-              ],
-            ),
-          ),
-        )),
+              ),
+            )),
         bottomNavigationBar: Observer(
-            builder: (_) => BottomNavigationBar(
+            builder: (_) =>
+                BottomNavigationBar(
                   backgroundColor: Styles.whiteColor,
                   showSelectedLabels: false,
                   showUnselectedLabels: false,
                   selectedLabelStyle:
-                      TextStyle(fontSize: 20, color: Styles.primaryColor),
+                  TextStyle(fontSize: 20, color: Styles.primaryColor),
                   type: BottomNavigationBarType.fixed,
                   selectedItemColor:
-                      ReefAppState.instance.navigation.currentPage.index <
-                              bottomNavigationBarItems.length
-                          ? Styles.purpleColor
-                          : Colors.black38,
+                  ReefAppState.instance.navigation.currentPage.index <
+                      bottomNavigationBarItems.length
+                      ? Styles.purpleColor
+                      : Colors.black38,
                   unselectedItemColor: Colors.black38,
                   items: bottomNavigationBarItems,
                   currentIndex:
-                      ReefAppState.instance.navigation.currentPage.index <
-                              bottomNavigationBarItems.length
-                          ? ReefAppState.instance.navigation.currentPage.index
-                          : 0,
+                  ReefAppState.instance.navigation.currentPage.index <
+                      bottomNavigationBarItems.length
+                      ? ReefAppState.instance.navigation.currentPage.index
+                      : 0,
                   onTap: _onItemTapped,
                 )),
       ),

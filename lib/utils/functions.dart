@@ -20,7 +20,7 @@ extension ShortenExtension on String {
 }
 
 String toAmountDisplayBigInt(BigInt decimalsVal,
-    {int decimals = 18, int fractionDigits = 4}) {
+    {int decimals = 18, int fractionDigits = 0}) {
   BigInt divisor = BigInt.from(10).pow(decimals);
   String intPart = (decimalsVal ~/ BigInt.from(10).pow(decimals)).toString();
   if (fractionDigits == 0) return intPart;
