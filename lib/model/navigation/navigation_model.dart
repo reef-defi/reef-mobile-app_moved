@@ -11,8 +11,11 @@ abstract class _NavigationModel with Store {
   @observable
   NavigationPage currentPage = NavigationPage.home;
 
+  dynamic data;
+
   @action
-  void navigate(NavigationPage page) {
+  void navigate(NavigationPage page, {dynamic data}) {
     currentPage = page;
+    this.data = data;
   }
 }

@@ -36,7 +36,7 @@ class _BottomNavState extends State<BottomNav> {
       case NavigationPage.swap:
         return const SwapPage();
       case NavigationPage.send:
-        return const SendPage(Constants.REEF_TOKEN_ADDRESS);
+        return SendPage(ReefAppState.instance.navigation.data);
       default:
         return const HomePage();
     }
