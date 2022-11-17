@@ -45,10 +45,10 @@ class _TestPageState extends State<TestPage> {
 
   _signPayload(address) async {
     // Sqwid auction transaction
-    const payload = {
-      "specVersion": "0x00000008",
+    var payload = {
+      "specVersion": "0x0000000a",
       "transactionVersion": "0x00000002",
-      "address": "5EnY9eFwEDcEJ62dJWrTXhTucJ4pzGym4WZ2xcDKiT3eJecP",
+      "address": address,
       "blockHash":
           "0xb4c87dc6df4fcf1b5b517e0f44510959770483df63cb24cee56e7826f5340264",
       "blockNumber": "0x003670cd",
