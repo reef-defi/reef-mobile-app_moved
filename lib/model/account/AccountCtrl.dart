@@ -137,4 +137,8 @@ class AccountCtrl {
   void _initWasm(JsApiService _jsApi) async {
     await _jsApi.jsPromise('window.keyring.initWasm()');
   }
+
+  toReefEVMAddressWithNotificationString(String evmAddress) async {
+    return await _jsApi.jsCall('window.account.toReefEVMAddressWithNotification("$evmAddress")');
+  }
 }
