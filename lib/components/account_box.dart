@@ -9,7 +9,6 @@ import 'package:reef_mobile_app/model/account/ReefSigner.dart';
 import 'package:reef_mobile_app/utils/functions.dart';
 
 import '../utils/elements.dart';
-import '../utils/gradient_text.dart';
 import '../utils/styles.dart';
 
 class AccountBox extends StatefulWidget {
@@ -33,17 +32,6 @@ class AccountBox extends StatefulWidget {
 class _AccountBoxState extends State<AccountBox> {
   bool showBalance = true;
 
-  String dropdownvalue = 'Item 1';
-
-  // List of items in our dropdown menu
-  var items = [
-    'Item 1',
-    'Item 2',
-    'Item 3',
-    'Item 4',
-    'Item 5',
-  ];
-
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -52,7 +40,7 @@ class _AccountBoxState extends State<AccountBox> {
         width: double.infinity,
         decoration: BoxDecoration(
             color: widget.selected
-                ? const Color(0x25bf37a7)
+                ? Styles.primaryAccentColor.withAlpha(22)
                 : Styles.boxBackgroundColor,
             border: Border.all(
               color: widget.selected
@@ -60,12 +48,6 @@ class _AccountBoxState extends State<AccountBox> {
                   : Colors.grey[100]!,
               width: 2,
             ),
-            boxShadow: const [
-              BoxShadow(
-                color: Color(0x16000000),
-                blurRadius: 24,
-              )
-            ],
             borderRadius: BorderRadius.circular(15)),
         child: Stack(
           children: [
@@ -91,7 +73,7 @@ class _AccountBoxState extends State<AccountBox> {
                   )),
             Padding(
               padding:
-                  const EdgeInsets.symmetric(horizontal: 8, vertical: 16.0),
+                  const EdgeInsets.symmetric(horizontal: 8, vertical: 24.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -116,200 +98,14 @@ class _AccountBoxState extends State<AccountBox> {
                       ),
                     ),
                   ]),
-                  buildCentralColumn(widget.reefSigner),
-
-                  /* main content
-                        Row(
-                          children: [
-
-
-                            const Gap(120),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  widget.reefSigner.name,
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                      color: Styles.textColor),
-                                ),
-                                const Gap(4),
-                                // balance
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    */
-                  /*IconButton(
-                                  constraints: const BoxConstraints(),
-                                  padding: EdgeInsets.zero,
-                                  onPressed: () {
-                                    setState(() {
-                                      showBalance = !showBalance;
-                                    });
-                                  },
-                                  icon: Icon(
-                                    showBalance
-                                        ? CupertinoIcons.eye
-                                        : CupertinoIcons.eye_slash,
-                                    size: 16,
-                                    color: Styles.textLightColor,
-                                  )),*/
-                  /*
-                                    const Image(
-                                        image: AssetImage("./assets/images/reef.png"),
-                                        width: 18,
-                                        height: 18),
-                                    const Gap(4),
-                                    GradientText(
-                                      showBalance
-                                          ? toAmountDisplayBigInt(
-                                          widget.reefSigner.balance)
-                                          : "--",
-                                      style: GoogleFonts.spaceGrotesk(
-                                          fontSize: 24, fontWeight: FontWeight.w800),
-                                      gradient: textGradient(),
-                                    ),
-                                  ],
-                                ),
-                                const Gap(2),
-
-                                Row(
-                                    children:
-                                    [Expanded(child: Container(color: Colors.purple, child: Text('hello'),))]
-                                  */
-                  /*Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                              Text.rich(
-                                TextSpan(
-                                  text: "Address:",
-                                  style: const TextStyle(fontSize: 10),
-                                  children: <TextSpan>[
-                                    TextSpan(
-                                        text:
-                                            " ${widget.reefSigner.address.shorten()} ",
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold)),
-                                    if (widget.reefSigner.isEvmClaimed) ...[
-                                      TextSpan(
-                                        text: "EVM:",
-                                        style: const TextStyle(fontSize: 10),
-                                      ),
-                                      TextSpan(
-                                        text:
-                                            " ${widget.reefSigner.evmAddress.shorten()}",
-                                        style: const TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ]
-                                  ],
-                                ),
-                              ),
-                              if (!widget.reefSigner.isEvmClaimed)
-                                DecoratedBox(
-                                  decoration: BoxDecoration(
-                                      color: Colors.black87,
-                                      gradient: textGradient(),
-                                      borderRadius: BorderRadius.circular(12)),
-                                  child: TextButton(
-                                      onPressed: () {
-                                        showBindEvmModal(context,
-                                            bindFor: widget.reefSigner,
-                                            callback: () => {
-                                                  setState(() {
-                                                    print("callback");
-                                                  })
-                                                });
-                                      },
-                                      style: TextButton.styleFrom(
-                                        backgroundColor: Colors.black12,
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(12)),
-                                        padding: EdgeInsets.zero,
-                                        minimumSize: const Size(82, 30),
-                                        tapTargetSize:
-                                            MaterialTapTargetSize.shrinkWrap,
-                                      ),
-                                      child: Text(
-                                        "Connect EVM",
-                                        style: TextStyle(
-                                            color: Styles.whiteColor,
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 10),
-                                      )),
-                                ),
-                            ],
-                          )*/
-                  /*
-                                ),
-
-                                */ /*const Gap(2),
-                          widget.reefSigner.isEvmClaimed==true ? Row(
-                            children: [
-                              Text(
-                                  "EVM: ${widget.reefSigner.evmAddress.toString().shorten()}",
-                                  style: const TextStyle(fontSize: 12)),
-                              const Gap(2),
-                              const Icon(
-                                Icons.copy,
-                                size: 12,
-                                color: Colors.black45,
-                              )
-                            ],
-                          ):const SizedBox.shrink(),*/ /*
-                              ],
-                            ),
-                          ],
-                        )*/
-
-                  /*Column(children:[
-                        Container(color: Colors.purple, child: Text('hh'),)
-                        ]),*/
+                  Expanded(
+                      child: Padding(
+                    padding: EdgeInsets.only(left: 10),
+                    child: buildCentralColumn(widget.reefSigner),
+                  )),
                   if (widget.showOptions)
                     Column(
                       children: [
-                        /*if (!widget.reefSigner.isEvmClaimed)
-                          Row(
-                            children: [
-                              DecoratedBox(
-                                decoration: BoxDecoration(
-                                    color: Colors.black87,
-                                    gradient: textGradient(),
-                                    borderRadius: BorderRadius.circular(12)),
-                                child: TextButton(
-                                    onPressed: () {
-                                      showBindEvmModal(context,
-                                          bindFor: widget.reefSigner,
-                                          callback: () => {
-                                                setState(() {
-                                                  print("callback");
-                                                })
-                                              });
-                                    },
-                                    style: TextButton.styleFrom(
-                                      backgroundColor: Colors.black12,
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(12)),
-                                      padding: EdgeInsets.zero,
-                                      minimumSize: const Size(82, 30),
-                                      tapTargetSize:
-                                          MaterialTapTargetSize.shrinkWrap,
-                                    ),
-                                    child: Text(
-                                      "Connect EVM",
-                                      style: TextStyle(
-                                          color: Styles.whiteColor,
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 10),
-                                    )),
-                              ),
-                            ],
-                          ),*/
                         PopupMenuButton<String>(
                           icon: const Icon(
                             Icons.more_vert,
@@ -334,195 +130,110 @@ class _AccountBoxState extends State<AccountBox> {
                 ],
               ),
             ),
-
-            /*Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 8, vertical: 16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(children: [Container(
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.black12,
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(64),
-                      child: widget.reefSigner.iconSVG != null
-                          ? SvgPicture.string(
-                        widget.reefSigner.iconSVG!,
-                        height: 64,
-                        width: 64,
-                      )
-                          : const SizedBox(
-                        width: 64,
-                        height: 64,
-                      ),
-                    ),
-                  ),]),
-                  Column(children:[
-                        Container(color: Colors.purple, child: Text('hh'),)
-                        ]),
-                  if (widget.showOptions)
-                    Column(
-                      children: [
-                        */
-            /*if (!widget.reefSigner.isEvmClaimed)
-                          Row(
-                            children: [
-                              DecoratedBox(
-                                decoration: BoxDecoration(
-                                    color: Colors.black87,
-                                    gradient: textGradient(),
-                                    borderRadius: BorderRadius.circular(12)),
-                                child: TextButton(
-                                    onPressed: () {
-                                      showBindEvmModal(context,
-                                          bindFor: widget.reefSigner,
-                                          callback: () => {
-                                                setState(() {
-                                                  print("callback");
-                                                })
-                                              });
-                                    },
-                                    style: TextButton.styleFrom(
-                                      backgroundColor: Colors.black12,
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(12)),
-                                      padding: EdgeInsets.zero,
-                                      minimumSize: const Size(82, 30),
-                                      tapTargetSize:
-                                          MaterialTapTargetSize.shrinkWrap,
-                                    ),
-                                    child: Text(
-                                      "Connect EVM",
-                                      style: TextStyle(
-                                          color: Styles.whiteColor,
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 10),
-                                    )),
-                              ),
-                            ],
-                          ),*/
           ],
         ),
       ),
     );
   }
 
-  Expanded buildCentralColumn(ReefSigner reefSigner) {
-    return Expanded(
-        child: Padding(
-            padding: EdgeInsets.only(left: 10),
-            child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children:[
-                Text(reefSigner.name,
-                overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.poppins(
-                  color: Styles.textColor,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                )),
-              Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Row(children: [
-                    const Image(
-                        image: AssetImage("./assets/images/reef.png"),
-                        width: 18,
-                        height: 18),
-                      Gap(4),
-                      Text(
-
-                            '${toAmountDisplayBigInt(reefSigner.balance)} REEF',
-                          style: GoogleFonts.poppins(
-                            color: Styles.textColor,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                          ),
-                      )
-                    ])
+  Widget buildCentralColumn(ReefSigner reefSigner) {
+    return Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Flexible(
+              child: Text(reefSigner.name,
+                  style: GoogleFonts.poppins(
+                    color: Styles.textColor,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                  ))),
+          Row(children: [
+            const Image(
+                image: AssetImage("./assets/images/reef.png"),
+                width: 18,
+                height: 18),
+            Gap(4),
+            Text(
+              '${toAmountDisplayBigInt(reefSigner.balance)} REEF',
+              style: GoogleFonts.poppins(
+                color: Styles.textColor,
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
+            )
+          ])
+        ],
+      ),
+      Gap(6),
+      Container(color: Colors.purple.withAlpha(44), height: 1),
+      Gap(6),
+      Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Text.rich(
+              TextSpan(
+                text: "Address:",
+                style: const TextStyle(fontSize: 10),
+                children: <TextSpan>[
+                  TextSpan(
+                      text: " ${widget.reefSigner.address.shorten()} ",
+                      style:
+                          TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                ],
+              ),
+            ),
+            if (widget.reefSigner.isEvmClaimed)
+              Text.rich(
+                TextSpan(
+                  text: "EVM:",
+                  style: const TextStyle(fontSize: 10),
+                  children: <TextSpan>[
+                    TextSpan(
+                      text: " ${widget.reefSigner.evmAddress.shorten()}",
+                      style: const TextStyle(
+                          fontSize: 14, fontWeight: FontWeight.bold),
+                    ),
                   ],
                 ),
-                Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text.rich(
-                        TextSpan(
-                          text: "Address:",
-                          style: const TextStyle(fontSize: 10),
-                          children: <TextSpan>[
-                            TextSpan(
-                                text:
-                                " ${widget.reefSigner.address.shorten()} ",
-                                style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold)),
-                          ],
-                        ),
-                      ),
-                      if (widget.reefSigner.isEvmClaimed)Text.rich(
-                        TextSpan(
-                          text: "EVM:",
-                          style: const TextStyle(fontSize: 10),
-                          children: <TextSpan>[
-                            TextSpan(
-                              text:
-                              " ${widget.reefSigner.evmAddress.shorten()}",
-                              style: const TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
-                      ),
-                      if (!widget.reefSigner.isEvmClaimed)
-                        DecoratedBox(
-                          decoration: BoxDecoration(
-                              color: Colors.black87,
-                              gradient: textGradient(),
-                              borderRadius: BorderRadius.circular(12)),
-                          child: TextButton(
-                              onPressed: () {
-                                showBindEvmModal(context,
-                                    bindFor: widget.reefSigner,
-                                    callback: () => {
-                                      setState(() {
-                                        print("callback");
-                                      })
-                                    });
-                              },
-                              style: TextButton.styleFrom(
-                                backgroundColor: Colors.black12,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius:
-                                    BorderRadius.circular(12)),
-                                padding: EdgeInsets.zero,
-                                minimumSize: const Size(82, 30),
-                                tapTargetSize:
-                                MaterialTapTargetSize.shrinkWrap,
-                              ),
-                              child: Text(
-                                "Connect EVM",
-                                style: TextStyle(
-                                    color: Styles.whiteColor,
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 10),
-                              )),
-                        ),
-                    ]
-                ),
-            ]
-            )])
-    )
-    );
+              ),
+            if (!widget.reefSigner.isEvmClaimed)
+              DecoratedBox(
+                decoration: BoxDecoration(
+                    color: Colors.black87,
+                    gradient: textGradient(),
+                    borderRadius: BorderRadius.circular(12)),
+                child: TextButton(
+                    onPressed: () {
+                      showBindEvmModal(context,
+                          bindFor: widget.reefSigner,
+                          callback: () => {
+                                setState(() {
+                                  print("callback");
+                                })
+                              });
+                    },
+                    style: TextButton.styleFrom(
+                      backgroundColor: Colors.black12,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                      padding: EdgeInsets.zero,
+                      minimumSize: const Size(82, 30),
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                    child: Text(
+                      "Connect EVM",
+                      style: TextStyle(
+                          color: Styles.whiteColor,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 10),
+                    )),
+              ),
+          ]),
+    ]);
   }
 }
 
@@ -532,9 +243,9 @@ class Constants {
   static const String copyEvmAddress = "Copy Reef EVM Address";
 
   static const List<String> choices = <String>[
-    delete,
     copyNativeAddress,
-    copyEvmAddress
+    copyEvmAddress,
+    delete,
   ];
 }
 
