@@ -43,12 +43,16 @@ Widget topBar(BuildContext context) {
               if (selAddr == null ||
                   ReefAppState.instance.model.accounts.signers == null ||
                   ReefAppState.instance.model.accounts.signers.length < 1) {
-                return SizedBox.shrink();
+                return const SizedBox.shrink();
               }
-              var selSigner = ReefAppState.instance.model.accounts.signers
-                  .firstWhere((element) => element.address == selAddr);
 
-              return accountBar(context, selSigner.name);
+              try {
+                var selSigner = ReefAppState.instance.model.accounts.signers
+                    .firstWhere((element) => element.address == selAddr);
+                return accountBar(context, selSigner.name);
+              } catch (e) {
+                return const SizedBox.shrink();
+              }
             })
 
             // Text('Hi $username',

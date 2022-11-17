@@ -6,6 +6,7 @@ import 'package:reef_mobile_app/model/account/ReefSigner.dart';
 import 'package:reef_mobile_app/model/account/stored_account.dart';
 import 'package:reef_mobile_app/service/JsApiService.dart';
 import 'package:reef_mobile_app/service/StorageService.dart';
+import 'package:reef_mobile_app/utils/constants.dart';
 
 import 'account_model.dart';
 
@@ -43,13 +44,14 @@ class AccountCtrl {
   }
 
   Future<bool> checkMnemonicValid(String mnemonic) async {
-    var isValid =
-        await _jsApi.jsPromise('window.keyring.checkMnemonicValid("$mnemonic")');
+    var isValid = await _jsApi
+        .jsPromise('window.keyring.checkMnemonicValid("$mnemonic")');
     return isValid == 'true';
   }
 
   Future<String> accountFromMnemonic(String mnemonic) async {
-    return await _jsApi.jsPromise('window.keyring.accountFromMnemonic("$mnemonic")');
+    return await _jsApi
+        .jsPromise('window.keyring.accountFromMnemonic("$mnemonic")');
   }
 
   Future saveAccount(StoredAccount account) async {
@@ -63,7 +65,16 @@ class AccountCtrl {
     if (account != null) {
       await account.delete();
     }
-    //TODO if selected select index 0
+    if (address == _accountModel.selectedAddress) {
+      await _storage.getAllAccounts().then((accounts) {
+        if (accounts.isNotEmpty) {
+          setSelectedAddress(accounts[0].address);
+        } else {
+          setSelectedAddress(Constants.ZERO_ADDRESS);
+        }
+      });
+      _accountModel.selectedAddress = null;
+    }
     await updateAccounts();
   }
 
@@ -71,7 +82,8 @@ class AccountCtrl {
     var accounts = [];
     (await _storage.getAllAccounts())
         .forEach(((account) => {accounts.add(account.toJsonSkinny())}));
-    return _jsApi.jsPromise('window.account.updateAccounts(${jsonEncode(accounts)})');
+    return _jsApi
+        .jsPromise('window.account.updateAccounts(${jsonEncode(accounts)})');
   }
 
   Future<dynamic> bindEvmAccount(String address) async {
@@ -88,7 +100,9 @@ class AccountCtrl {
   }
 
   void _initJsObservables(JsApiService jsApi, StorageService storage) {
-    jsApi.jsObservable('window.appState.currentAddress\$').listen((address) async {
+    jsApi
+        .jsObservable('window.appState.currentAddress\$')
+        .listen((address) async {
       if (address == null || address == '') {
         return;
       }
@@ -98,7 +112,9 @@ class AccountCtrl {
     });
 
     _accountModel.setLoadingSigners(true);
-    jsApi.jsObservable('window.account.availableSigners\$').listen((signers) async {
+    jsApi
+        .jsObservable('window.account.availableSigners\$')
+        .listen((signers) async {
       _accountModel.setLoadingSigners(false);
 
       var accounts = [];
