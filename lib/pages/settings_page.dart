@@ -31,7 +31,7 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
             const Gap(32),
             const SwitchNetwork(),
-            Divider(
+    /*Divider(
               color: Styles.textLightColor,
               thickness: 1,
             ),
@@ -52,7 +52,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       style: Theme.of(context).textTheme.bodyText1),
                 ],
               ),
-            ),
+            ),*/
             const Gap(24),
             Divider(
               color: Styles.textLightColor,
