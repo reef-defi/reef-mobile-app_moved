@@ -282,7 +282,7 @@ class _SendPageState extends State<SendPage> {
                                         color: Styles.textLightColor,
                                         fontSize: 12),
                                   ),
-                                  TextButton(
+                                  /*TextButton(
                                       onPressed: () {},
                                       style: TextButton.styleFrom(
                                           padding: EdgeInsets.zero,
@@ -294,7 +294,7 @@ class _SendPageState extends State<SendPage> {
                                         style: TextStyle(
                                             color: Styles.blueColor,
                                             fontSize: 12),
-                                      ))
+                                      ))*/
                                 ],
                               ),
                             )
