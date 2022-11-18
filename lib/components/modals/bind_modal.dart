@@ -14,10 +14,8 @@ const MIN_BALANCE = 5;
 
 class BindEvm extends StatefulWidget {
   final ReefSigner bindFor;
-  final Function() callback;
 
-  const BindEvm({Key? key, required this.bindFor, required this.callback})
-      : super(key: key);
+  const BindEvm({Key? key, required this.bindFor}) : super(key: key);
 
   @override
   State<BindEvm> createState() => _BindEvmState();
@@ -212,7 +210,7 @@ class _BindEvmState extends State<BindEvm> {
           Navigator.pop(context);
         })
       ] else ...[
-        // Unsufficient balance
+        // Insufficient balance
         if (transferBalanceFrom == null) ...[
           // No other accounts with enough balance
           const Text(
@@ -267,13 +265,9 @@ class _BindEvmState extends State<BindEvm> {
   }
 }
 
-void showBindEvmModal(BuildContext context,
-    {required bindFor, required callback}) {
+void showBindEvmModal(BuildContext context, {required bindFor}) {
   showModal(context,
-      child: BindEvm(
-        bindFor: bindFor,
-        callback: callback,
-      ),
+      child: BindEvm(bindFor: bindFor),
       dismissible: true,
       headText: "Connect EVM");
 }

@@ -137,9 +137,7 @@ class _AccountBoxState extends State<AccountBox> {
   }
 
   Widget buildCentralColumn(ReefSigner reefSigner) {
-    return Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
+    return Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -200,7 +198,7 @@ class _AccountBoxState extends State<AccountBox> {
                   ],
                 ),
               ),
-            if (!widget.reefSigner.isEvmClaimed)
+            if (widget.showOptions && !widget.reefSigner.isEvmClaimed)
               DecoratedBox(
                 decoration: BoxDecoration(
                     color: Colors.black87,
@@ -208,13 +206,7 @@ class _AccountBoxState extends State<AccountBox> {
                     borderRadius: BorderRadius.circular(12)),
                 child: TextButton(
                     onPressed: () {
-                      showBindEvmModal(context,
-                          bindFor: widget.reefSigner,
-                          callback: () => {
-                                setState(() {
-                                  print("callback");
-                                })
-                              });
+                      showBindEvmModal(context, bindFor: widget.reefSigner);
                     },
                     style: TextButton.styleFrom(
                       backgroundColor: Colors.black12,

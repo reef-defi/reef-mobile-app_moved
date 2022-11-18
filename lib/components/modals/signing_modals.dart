@@ -6,6 +6,7 @@ import 'package:gap/gap.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:reef_mobile_app/components/account_box.dart';
 import 'package:reef_mobile_app/components/modal.dart';
+import 'package:reef_mobile_app/components/modals/bind_modal.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/StorageKey.dart';
 import 'package:reef_mobile_app/model/account/ReefSigner.dart';
@@ -72,6 +73,65 @@ List<TableRow> createTransactionTable(TxDecodedData txData) {
   }
 
   return createTable(keyTexts: keyTexts, valueTexts: valueTexts);
+}
+
+class EvmNotClaimedModal extends StatefulWidget {
+  final ReefSigner signer;
+
+  const EvmNotClaimedModal(this.signer, {Key? key}) : super(key: key);
+
+  @override
+  State<EvmNotClaimedModal> createState() => _EvmNotClaimedModalState();
+}
+
+class _EvmNotClaimedModalState extends State<EvmNotClaimedModal> {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+        padding: const EdgeInsets.fromLTRB(24, 0, 24, 32.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            AccountBox(
+                reefSigner: widget.signer,
+                selected: false,
+                onSelected: () {},
+                showOptions: false),
+            const Gap(16),
+            Column(
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(40)),
+                      shadowColor: const Color(0x559d6cff),
+                      elevation: 5,
+                      backgroundColor: Styles.secondaryAccentColor,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      showBindEvmModal(context, bindFor: widget.signer);
+                    },
+                    child: const Text(
+                      'Claim EVM account',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            )
+          ],
+        ));
+  }
 }
 
 class SignModal extends StatefulWidget {
@@ -340,10 +400,19 @@ void showSigningModal(context, SignatureRequest signatureRequest) async {
         headText: "Sign Message");
   } else {
     var txDecodedData = await _getTxDecodedData(signatureRequest);
-    List<TableRow> detailsTable = createTransactionTable(txDecodedData);
-    showModal(context,
-        child: SignModal(detailsTable, true, signatureIdent, signer),
-        dismissible: true,
-        headText: "Sign Transaction");
+    if (txDecodedData.methodName != null &&
+        txDecodedData.methodName!.startsWith("evm.") &&
+        !signer.isEvmClaimed) {
+      showModal(context,
+          child: EvmNotClaimedModal(signer),
+          dismissible: true,
+          headText: "EVM account not claimed");
+    } else {
+      List<TableRow> detailsTable = createTransactionTable(txDecodedData);
+      showModal(context,
+          child: SignModal(detailsTable, true, signatureIdent, signer),
+          dismissible: true,
+          headText: "Sign Transaction");
+    }
   }
 }

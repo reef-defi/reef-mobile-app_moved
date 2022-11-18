@@ -4,8 +4,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:reef_mobile_app/components/modal.dart';
+import 'package:reef_mobile_app/components/modals/bind_modal.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/StorageKey.dart';
+import 'package:reef_mobile_app/model/account/ReefSigner.dart';
 import 'package:reef_mobile_app/model/account/stored_account.dart';
 import 'package:reef_mobile_app/service/StorageService.dart';
 import 'package:reef_mobile_app/utils/elements.dart';
@@ -675,7 +677,20 @@ class _AccountCreationConfirmContentState
                             ReefAppState.instance.storage
                                 .setValue(StorageKey.password.name, password);
                           }
+
                           Navigator.of(context).pop();
+
+                          if (!widget.fromMnemonic) {
+                            ReefSigner signer = ReefSigner(
+                              address: widget.account!.address,
+                              name: name,
+                              balance: BigInt.zero,
+                              evmAddress: "",
+                              isEvmClaimed: false,
+                              iconSVG: widget.account!.svg,
+                            );
+                            showBindEvmModal(context, bindFor: signer);
+                          }
                         }
                       }
                     },
