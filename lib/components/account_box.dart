@@ -96,44 +96,16 @@ class _AccountBoxState extends State<AccountBox> {
                                 height: 64,
                               ),
                       ),
-                    )
+                    ),
                   ]),
+                  Expanded(
+                      child: Padding(
+                    padding: EdgeInsets.only(left: 10),
+                    child: buildCentralColumn(widget.reefSigner),
+                  )),
                   if (widget.showOptions)
-                    Row(
+                    Column(
                       children: [
-                        if (!widget.reefSigner.isEvmClaimed)
-                          Row(
-                            children: [
-                              DecoratedBox(
-                                decoration: BoxDecoration(
-                                    color: Colors.black87,
-                                    gradient: textGradient(),
-                                    borderRadius: BorderRadius.circular(12)),
-                                child: TextButton(
-                                    onPressed: () {
-                                      showBindEvmModal(context,
-                                          bindFor: widget.reefSigner);
-                                    },
-                                    style: TextButton.styleFrom(
-                                      backgroundColor: Colors.black12,
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(12)),
-                                      padding: EdgeInsets.zero,
-                                      minimumSize: const Size(82, 30),
-                                      tapTargetSize:
-                                          MaterialTapTargetSize.shrinkWrap,
-                                    ),
-                                    child: Text(
-                                      "Connect EVM",
-                                      style: TextStyle(
-                                          color: Styles.whiteColor,
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 10),
-                                    )),
-                              ),
-                            ],
-                          ),
                         PopupMenuButton<String>(
                           icon: const Icon(
                             Icons.more_vert,
@@ -226,7 +198,7 @@ class _AccountBoxState extends State<AccountBox> {
                   ],
                 ),
               ),
-            if (!widget.reefSigner.isEvmClaimed)
+            if (widget.showOptions && !widget.reefSigner.isEvmClaimed)
               DecoratedBox(
                 decoration: BoxDecoration(
                     color: Colors.black87,
