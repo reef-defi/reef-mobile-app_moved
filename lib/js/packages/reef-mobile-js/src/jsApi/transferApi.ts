@@ -1,17 +1,17 @@
-import {FlutterJS} from "flutter-js-bridge/src/FlutterJS";
-import {appState, ReefSigner } from '@reef-defi/react-lib';
-import {map, switchMap, take} from "rxjs/operators";
+import {reefState, ReefAccount, network, tokenUtil, getAccountSigner} from '@reef-chain/util-lib';
+import {combineLatest, map, switchMap, take} from "rxjs/operators";
 import {Contract} from "ethers";
-import { Provider } from "@reef-defi/evm-provider";
+import { Provider , Signer as EvmSigner} from "@reef-defi/evm-provider";
 import { ERC20 } from "./abi/ERC20";
-import { firstValueFrom } from "rxjs";
-import { REEF_ADDRESS } from "./utils/commonUtils";
+import { firstValueFrom, of } from "rxjs";
+import {findSigner} from "./signApi";
+import Signer from "@reef-defi/extension-base/page/Signer";
 
-const nativeTransfer = async (amount: string, destinationAddress: string, provider: Provider, signer: ReefSigner): Promise<void> => {
+const nativeTransfer = async (amount: string, destinationAddress: string, provider: Provider, signer: ReefAccount, signingKey: Signer): Promise<void> => {
     try {
         await provider.api.tx.balances
             .transfer(destinationAddress, amount)
-            .signAndSend(signer.address, { signer: signer.signer.signingKey });
+            .signAndSend(signer.address, { signer: signingKey });
     } catch (e) {
         console.log(e);
     }
@@ -30,28 +30,31 @@ const getSignerEvmAddress = async (address: string, provider: Provider): Promise
     return addr;
 };
 
-export const initApi = (flutterJS: FlutterJS) => {
+export const initApi = (signingKey: Signer) => {
     (window as any).transfer = {
         send: async (from: string, to: string, tokenAmount: string, tokenDecimals: number, tokenAddress: string) => {
         console.log('making transfer tx')
-            return firstValueFrom(appState.signers$.pipe(
+            return firstValueFrom(reefState.accounts$.pipe(
+                combineLatest([of(from)]),
                 take(1),
-                map((signers: ReefSigner[]) => {
-                    return signers.find((s)=>s.address===from);
-                }),
-                switchMap(async (signer: ReefSigner | undefined) => {
+                map(([sgnrs, addr]: [ReefAccount[], string]) => findSigner(sgnrs, addr)),
+                combineLatest([reefState.currentProvider$]),
+                switchMap(async ([signer, provider]: [ReefAccount | undefined, Provider]) => {
                     if (!signer) {
                         console.log(" transfer.send() - NO SIGNER FOUND",);
                         return false
                     }
                     const STORAGE_LIMIT = 2000;
-                    const { provider } = signer.signer;
-                    const tokenContract = new Contract(tokenAddress, ERC20, signer.signer);
+                    const evmSigner = await getAccountSigner(signer.address, provider, signingKey);
+                    if (!evmSigner) {
+                        throw new Error('Signer not created');
+                    }
+                    const tokenContract = new Contract(tokenAddress, ERC20, evmSigner as EvmSigner);
                     try {
-                        if (tokenAddress === REEF_ADDRESS && to.length === 48) {
+                        if (tokenAddress === tokenUtil.REEF_ADDRESS && to.length === 48) {
                             console.log ('transfering native REEF');
                             console.log (tokenAmount);
-                            await nativeTransfer(tokenAmount, to, provider, signer);
+                            await nativeTransfer(tokenAmount, to, provider, signer, signingKey);
                             console.log ('transfer success');
                             return true;
                         } else {

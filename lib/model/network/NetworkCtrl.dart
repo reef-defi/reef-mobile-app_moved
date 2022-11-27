@@ -14,7 +14,7 @@ class NetworkCtrl {
 
   NetworkCtrl(this.storage, this.jsApi, this.networkModel) {
     jsApi
-        .jsObservable('window.appState.currentNetwork\$')
+        .jsObservable('window.reefState.currentNetwork\$')
         .listen((network) async {
       networkModel.setSelectedNetworkSwitching(false);
       if (network != null && network['name'] != null) {

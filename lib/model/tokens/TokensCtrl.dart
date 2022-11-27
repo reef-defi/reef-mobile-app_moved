@@ -11,7 +11,7 @@ class TokenCtrl {
   final JsApiService jsApi;
 
   TokenCtrl(this.jsApi, TokenModel tokenModel) {
-    jsApi.jsObservable('window.appState.tokenPrices\$').listen((tokens) {
+    jsApi.jsObservable('window.reefState.currentTokenPrices\$').listen((tokens) {
       if (tokens == null) {
         return;
       }
@@ -20,7 +20,7 @@ class TokenCtrl {
       tokenModel.setSelectedSignerTokens(tknList);
     });
 
-    jsApi.jsObservable('window.appState.selectedSignerNFTs\$').listen((tokens) {
+    jsApi.jsObservable('window.reefState.currentNFTs\$').listen((tokens) {
       if (tokens == null) {
         return;
       }
@@ -28,15 +28,14 @@ class TokenCtrl {
           List.from(tokens.map((t) => TokenNFT.fromJSON(t)));
       tokenModel.setSelectedSignerNFTs(tknList);
     });
-
-    jsApi.jsObservable('window.appState.reefPrice\$').listen((value) {
+    jsApi.jsObservable('window.tokenUtil.reefPrice\$').listen((value) {
       if (value == null) {
         return;
       }
       tokenModel.setReefPrice(value);
     });
 
-    jsApi.jsObservable('window.appState.transferHistory\$').listen((items) {
+    jsApi.jsObservable('window.reefState.currentTransactionHistory\$').listen((items) {
       if (items == null) {
         return;
       }

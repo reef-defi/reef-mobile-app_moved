@@ -1,4 +1,4 @@
-import { appState } from '@reef-defi/react-lib';
+import { reefState, tokenUtil, network } from '@reef-chain/util-lib';
 import { map, take } from "rxjs/operators";
 import { firstValueFrom } from "rxjs";
 import { ethers } from 'ethers';
@@ -6,16 +6,13 @@ import { Provider } from "@reef-defi/evm-provider";
 import { base64Encode } from "@polkadot/util-crypto";
 import { getSpecTypes } from "@polkadot/types-known";
 
-const DEFAULT_SS58 = 42;
-const TOKEN_DECIMALS = 18;
-const TOKEN_SYMBOL = "REEF";
 const COLOR = "#681cff";
 const CHAIN_TYPE = "substrate";
 
 export const initApi = () => {
     (window as any).metadata = {
         getMetadata: async () => {
-            return firstValueFrom(appState.currentProvider$.pipe(
+            return firstValueFrom(reefState.currentProvider$.pipe(
                     take(1),
                     map(async (provider: Provider) => {
                         const api = provider.api;
@@ -29,9 +26,9 @@ export const initApi = () => {
                             icon: CHAIN_TYPE,
                             metaCalls: base64Encode(api.runtimeMetadata.asCallsOnly.toU8a()),
                             specVersion: parseInt(api.runtimeVersion.specVersion.toString()),
-                            ss58Format: DEFAULT_SS58,
-                            tokenDecimals: TOKEN_DECIMALS,
-                            tokenSymbol: TOKEN_SYMBOL,
+                            ss58Format: network.SS58_REEF,
+                            tokenDecimals: tokenUtil.REEF_TOKEN.decimals,
+                            tokenSymbol: tokenUtil.REEF_TOKEN.symbol,
                             types: getSpecTypes(api.registry, systemChain, api.runtimeVersion.specName, api.runtimeVersion.specVersion ) as unknown as Record<string, string>
                         };
                     }),

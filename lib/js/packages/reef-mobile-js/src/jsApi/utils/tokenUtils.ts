@@ -2,9 +2,9 @@ import { Contract } from "ethers";
 import { Signer as EvmProviderSigner, Provider} from "@reef-defi/evm-provider";
 import { ERC20 } from "../abi/ERC20";
 import { gql } from '@apollo/client';
-import { reefTokenWithAmount, Token, TokenWithAmount } from "@reef-defi/react-lib";
-import { DataProgress, DataWithProgress, isDataSet } from "./commonUtils";
+import { tokenUtil } from "@reef-chain/util-lib";
 import { getPoolReserves } from "./poolUtils";
+import {reefTokenWithAmount} from "../../../../../../../../reef-util-lib/lib/token";
 
 export const getREEF20Contract = async (address: string, signerOrProvider: EvmProviderSigner): Promise<Contract> => {
     try {
@@ -47,7 +47,7 @@ export const fetchTokenData = (
     .then((verContracts: any) => {
         const vContract = verContracts.data.verified_contract[0];
         if (!vContract) return null;
-        
+
         const token: Token = {
           address: vContract.address,
           iconUrl: vContract.contract_data.token_icon_url,
@@ -79,26 +79,25 @@ const toTokenWithPrice = async (token: Token, reefPrice: number, provider: Provi
 
 const calculateTokenPrice = async (
   tokenAddress: string,
-  reefPrice: DataWithProgress<number>,
+  reefPrice: number,
   provider: Provider,
   factoryAddress: string,
-  ): Promise<DataWithProgress<number>> => {
-  if (!isDataSet(reefPrice)) {
+  ): Promise<number|null> => {
+  if (!reefPrice) {
       return reefPrice;
   }
-  const { address: reefAddress } = reefTokenWithAmount();
   let ratio: number;
-  if (tokenAddress !== reefAddress.toLowerCase()) {
-      const reserves = await getPoolReserves(reefAddress, tokenAddress, provider, factoryAddress);
+  if (tokenAddress !== tokenUtil.REEF_ADDRESS.toLowerCase()) {
+      const reserves = await getPoolReserves(tokenUtil.REEF_ADDRESS, tokenAddress, provider, factoryAddress);
       if (reserves) {
         ratio = reserves.reserve1 / reserves.reserve2;
         return ratio * (reefPrice as number);
       }
-      return DataProgress.NO_DATA;
+      return null;
   }
-  return reefPrice || DataProgress.NO_DATA;
+  return reefPrice;
 };
 
 
-    
-    
+
+

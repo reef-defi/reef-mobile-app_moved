@@ -3128,6 +3128,23 @@
     graphql "^16.6.0"
     subscriptions-transport-ws "^0.11.0"
 
+"@reef-chain/util-lib@^0.2.2":
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/@reef-chain/util-lib/-/util-lib-0.2.2.tgz#03069c2350051262fb7a9ccea8bde1a48966eb46"
+  integrity sha512-TKRLwRZpmrQlW30l9eAS7K7DAs5uZCxs/o0fisPNhbbP6HRBvWq1VD6OiLnJR1rKmbCaHRpsSv9oY62r11dR2A==
+  dependencies:
+    "@apollo/client" "^3.6.9"
+    "@polkadot/extension-inject" "^0.44.6"
+    "@reef-defi/evm-provider" "^1.0.9"
+    "@reef-defi/extension-base" "^1.0.10"
+    "@reef-defi/extension-dapp" "^1.0.10"
+    "@reef-defi/extension-inject" "^1.0.10"
+    axios "^0.27.2"
+    bignumber.js "^9.1.0"
+    crypto-browserify "^3.12.0"
+    graphql "^16.6.0"
+    subscriptions-transport-ws "^0.11.0"
+
 "@reef-defi/api-derive@^1.0.4", "@reef-defi/api-derive@^1.1.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@reef-defi/api-derive/-/api-derive-1.1.0.tgz#db7baedd53c8e7d065649d1f978763190966e344"
@@ -3171,7 +3188,7 @@
     blakejs "~1.1.0"
     ethers "~5.5.0"
 
-"@reef-defi/extension-base@^1.0.10", "@reef-defi/extension-base@^1.0.14", "@reef-defi/extension-base@^1.0.15", "@reef-defi/extension-base@^1.0.15m y":
+"@reef-defi/extension-base@^1.0.10", "@reef-defi/extension-base@^1.0.14", "@reef-defi/extension-base@^1.0.15":
   version "1.0.15"
   resolved "https://registry.yarnpkg.com/@reef-defi/extension-base/-/extension-base-1.0.15.tgz#1b4f07c70a629642ff0e8b2cedd783a94f9b4ab7"
   integrity sha512-G6x2MouyZa/lLlWISAJwBSzVJMJhXfz6IQ2RKSqePFsTq8NqULf3/zFcP2td4qqd2xecN4jn50hI7A4OGeL+sg==

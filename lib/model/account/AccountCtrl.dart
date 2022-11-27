@@ -36,7 +36,7 @@ class AccountCtrl {
 
   void setSelectedAddress(String address) {
     // TODO check if in signers
-    _jsApi.jsCall('window.appState.setCurrentAddress("$address")');
+    _jsApi.jsCall('window.reefState.setCurrentAddress("$address")');
   }
 
   Future<String> generateAccount() async {
@@ -101,7 +101,7 @@ class AccountCtrl {
 
   void _initJsObservables(JsApiService jsApi, StorageService storage) {
     jsApi
-        .jsObservable('window.appState.currentAddress\$')
+        .jsObservable('window.reefState.currentAddress\$')
         .listen((address) async {
       if (address == null || address == '') {
         return;
