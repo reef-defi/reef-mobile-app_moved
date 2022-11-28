@@ -119,7 +119,8 @@ class AccountCtrl {
       ParseListFn<FeedbackDataModel<ReefAccount>> parsableListFn = getParsableListFn(ReefAccount.fromJson);
       var accsListFdm = FeedbackDataModel.fromJsonList(accs, parsableListFn);
 
-      print('GETTING ACCOUNTS ${accsListFdm.hasStatus(StatusCode.completeData)} ${accsListFdm.statusList[0].message} len =${accsListFdm.data.length}');
+      // print('GETTING ACCOUNTS ${accsListFdm.hasStatus(StatusCode.completeData)} ${accsListFdm.statusList[0].message} len =${accsListFdm.data.length}');
+      print('GETTING ACCOUNTS ${accs}');
       accsListFdm.data.forEach((element) {
         if(element.data.isEvmClaimed){
           print('acc evm=${element.data.evmAddress} is=${element.data.isEvmClaimed}');
