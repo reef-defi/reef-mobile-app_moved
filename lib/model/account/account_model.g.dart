@@ -29,15 +29,32 @@ mixin _$AccountModel on _AccountModel, Store {
       Atom(name: '_AccountModel.signers', context: context);
 
   @override
-  ObservableList<ReefSigner> get signers {
+  ObservableList<ReefAccount> get signers {
     _$signersAtom.reportRead();
     return super.signers;
   }
 
   @override
-  set signers(ObservableList<ReefSigner> value) {
+  set signers(ObservableList<ReefAccount> value) {
     _$signersAtom.reportWrite(value, super.signers, () {
       super.signers = value;
+    });
+  }
+
+  late final _$accountsFDMAtom =
+      Atom(name: '_AccountModel.accountsFDM', context: context);
+
+  @override
+  FeedbackDataModel<List<FeedbackDataModel<ReefAccount>>> get accountsFDM {
+    _$accountsFDMAtom.reportRead();
+    return super.accountsFDM;
+  }
+
+  @override
+  set accountsFDM(
+      FeedbackDataModel<List<FeedbackDataModel<ReefAccount>>> value) {
+    _$accountsFDMAtom.reportWrite(value, super.accountsFDM, () {
+      super.accountsFDM = value;
     });
   }
 
@@ -83,7 +100,7 @@ mixin _$AccountModel on _AccountModel, Store {
   }
 
   @override
-  void setSigners(List<ReefSigner> signers) {
+  void setSigners(List<ReefAccount> signers) {
     final _$actionInfo = _$_AccountModelActionController.startAction(
         name: '_AccountModel.setSigners');
     try {
@@ -94,10 +111,23 @@ mixin _$AccountModel on _AccountModel, Store {
   }
 
   @override
+  void setAccountsFDM(
+      FeedbackDataModel<List<FeedbackDataModel<ReefAccount>>> accounts) {
+    final _$actionInfo = _$_AccountModelActionController.startAction(
+        name: '_AccountModel.setAccountsFDM');
+    try {
+      return super.setAccountsFDM(accounts);
+    } finally {
+      _$_AccountModelActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     return '''
 selectedAddress: ${selectedAddress},
 signers: ${signers},
+accountsFDM: ${accountsFDM},
 loadingSigners: ${loadingSigners}
     ''';
   }

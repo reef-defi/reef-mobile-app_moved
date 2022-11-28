@@ -18,9 +18,8 @@ export const buildAccountWithMeta = async (name: string, address: string): Promi
 
 export const innitApi = () => {
 
-    // return account.selectedSigner$ without big signer object from ReefSigner
     (window as any).account = {
-        selectedSigner$: reefState.selectedAccount$.pipe(
+        /*selectedSigner$: reefState.selectedAccount$.pipe(
             map(sig =>sig? ({
                 address: sig.address,
                 name: sig.name,
@@ -28,7 +27,7 @@ export const innitApi = () => {
                 isEvmClaimed: sig.isEvmClaimed
             }):null),
         ),
-        availableSigners$: reefState.accounts$/*.pipe(
+        availableSigners$: reefState.accounts$*//*.pipe(
             map((signers: ReefAccount[]) =>
                 signers.map(sig => ({
                     address: sig.address,
@@ -38,7 +37,7 @@ export const innitApi = () => {
                     isEvmClaimed: sig.isEvmClaimed
                 })
             )),
-        )*/,
+        ),*/
         updateAccounts: async (accounts: AddressName[]) => {
             let accountsWithMeta: InjectedAccountWithMeta[] = await Promise.all(
                 accounts.map(async (account: AddressName) => {

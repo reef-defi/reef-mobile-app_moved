@@ -7,7 +7,7 @@ import 'package:reef_mobile_app/components/modal.dart';
 import 'package:reef_mobile_app/components/modals/bind_modal.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/StorageKey.dart';
-import 'package:reef_mobile_app/model/account/ReefSigner.dart';
+import 'package:reef_mobile_app/model/account/ReefAccount.dart';
 import 'package:reef_mobile_app/model/account/stored_account.dart';
 import 'package:reef_mobile_app/service/StorageService.dart';
 import 'package:reef_mobile_app/utils/elements.dart';
@@ -85,7 +85,7 @@ class _AccountImportContentState extends State<AccountImportContent> {
         await ReefAppState.instance.accountCtrl.accountFromMnemonic(mnemonic);
     var importedAccount = StoredAccount.fromString(response);
     var stored = await ReefAppState.instance.accountCtrl
-        .getAccount(importedAccount.address);
+        .getStorageAccount(importedAccount.address);
     if (stored != null) {
       errorDuplicated = true;
       setState(() {
@@ -681,7 +681,7 @@ class _AccountCreationConfirmContentState
                           Navigator.of(context).pop();
 
                           if (!widget.fromMnemonic) {
-                            ReefSigner signer = ReefSigner(
+                            ReefAccount signer = ReefAccount(
                               address: widget.account!.address,
                               name: name,
                               balance: BigInt.zero,

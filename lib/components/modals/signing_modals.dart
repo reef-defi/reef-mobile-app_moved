@@ -9,7 +9,7 @@ import 'package:reef_mobile_app/components/modal.dart';
 import 'package:reef_mobile_app/components/modals/bind_modal.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/StorageKey.dart';
-import 'package:reef_mobile_app/model/account/ReefSigner.dart';
+import 'package:reef_mobile_app/model/account/ReefAccount.dart';
 import 'package:reef_mobile_app/model/signing/signature_request.dart';
 import 'package:reef_mobile_app/model/signing/tx_decoded_data.dart';
 import 'package:reef_mobile_app/utils/elements.dart';
@@ -76,7 +76,7 @@ List<TableRow> createTransactionTable(TxDecodedData txData) {
 }
 
 class EvmNotClaimedModal extends StatefulWidget {
-  final ReefSigner signer;
+  final ReefAccount signer;
 
   const EvmNotClaimedModal(this.signer, {Key? key}) : super(key: key);
 
@@ -93,7 +93,7 @@ class _EvmNotClaimedModalState extends State<EvmNotClaimedModal> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             AccountBox(
-                reefSigner: widget.signer,
+                reefAccount: widget.signer,
                 selected: false,
                 onSelected: () {},
                 showOptions: false),
@@ -138,7 +138,7 @@ class SignModal extends StatefulWidget {
   final List<TableRow> detailsTable;
   final bool isTransaction;
   final String signatureIdent;
-  final ReefSigner signer;
+  final ReefAccount signer;
   const SignModal(
       this.detailsTable, this.isTransaction, this.signatureIdent, this.signer,
       {Key? key})
@@ -222,7 +222,7 @@ class _SignModalState extends State<SignModal> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           AccountBox(
-              reefSigner: widget.signer,
+              reefAccount: widget.signer,
               selected: false,
               onSelected: () => {},
               showOptions: false),

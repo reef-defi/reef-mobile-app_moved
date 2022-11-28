@@ -5,21 +5,21 @@ import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:reef_mobile_app/components/modals/bind_modal.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
-import 'package:reef_mobile_app/model/account/ReefSigner.dart';
+import 'package:reef_mobile_app/model/account/ReefAccount.dart';
 import 'package:reef_mobile_app/utils/functions.dart';
 
 import '../utils/elements.dart';
 import '../utils/styles.dart';
 
 class AccountBox extends StatefulWidget {
-  final ReefSigner reefSigner;
+  final ReefAccount reefAccount;
   final bool selected;
   final VoidCallback onSelected;
   final bool showOptions;
 
   const AccountBox(
       {Key? key,
-      required this.reefSigner,
+      required this.reefAccount,
       required this.selected,
       required this.onSelected,
       required this.showOptions})
@@ -85,9 +85,9 @@ class _AccountBoxState extends State<AccountBox> {
                       ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(64),
-                        child: widget.reefSigner.iconSVG != null
+                        child: widget.reefAccount.iconSVG != null
                             ? SvgPicture.string(
-                                widget.reefSigner.iconSVG!,
+                                widget.reefAccount.iconSVG!,
                                 height: 64,
                                 width: 64,
                               )
@@ -101,7 +101,7 @@ class _AccountBoxState extends State<AccountBox> {
                   Expanded(
                       child: Padding(
                     padding: EdgeInsets.only(left: 10),
-                    child: buildCentralColumn(widget.reefSigner),
+                    child: buildCentralColumn(widget.reefAccount),
                   )),
                   if (widget.showOptions)
                     Column(
@@ -113,7 +113,7 @@ class _AccountBoxState extends State<AccountBox> {
                           ),
                           enableFeedback: true,
                           onSelected: (String choice) {
-                            choiceAction(choice, context, widget.reefSigner);
+                            choiceAction(choice, context, widget.reefAccount);
                           },
                           tooltip: "More Actions",
                           itemBuilder: (BuildContext context) {
@@ -136,7 +136,7 @@ class _AccountBoxState extends State<AccountBox> {
     );
   }
 
-  Widget buildCentralColumn(ReefSigner reefSigner) {
+  Widget buildCentralColumn(ReefAccount reefSigner) {
     return Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -178,27 +178,27 @@ class _AccountBoxState extends State<AccountBox> {
                 style: const TextStyle(fontSize: 10),
                 children: <TextSpan>[
                   TextSpan(
-                      text: " ${widget.reefSigner.address.shorten()} ",
+                      text: " ${widget.reefAccount.address?.shorten()} ",
                       style:
                           TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
                 ],
               ),
             ),
-            if (widget.reefSigner.isEvmClaimed)
+            if (widget.reefAccount.isEvmClaimed)
               Text.rich(
                 TextSpan(
                   text: "EVM:",
                   style: const TextStyle(fontSize: 10),
                   children: <TextSpan>[
                     TextSpan(
-                      text: " ${widget.reefSigner.evmAddress.shorten()}",
+                      text: " ${widget.reefAccount.evmAddress?.shorten()}",
                       style: const TextStyle(
                           fontSize: 14, fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
               ),
-            if (widget.showOptions && !widget.reefSigner.isEvmClaimed)
+            if (widget.showOptions && !widget.reefAccount.isEvmClaimed)
               DecoratedBox(
                 decoration: BoxDecoration(
                     color: Colors.black87,
@@ -206,7 +206,7 @@ class _AccountBoxState extends State<AccountBox> {
                     borderRadius: BorderRadius.circular(12)),
                 child: TextButton(
                     onPressed: () {
-                      showBindEvmModal(context, bindFor: widget.reefSigner);
+                      showBindEvmModal(context, bindFor: widget.reefAccount);
                     },
                     style: TextButton.styleFrom(
                       backgroundColor: Colors.black12,
@@ -241,7 +241,7 @@ class Constants {
   ];
 }
 
-showAlertDialog(BuildContext context, ReefSigner signer) {
+showAlertDialog(BuildContext context, ReefAccount signer) {
   // set up the buttons
   Widget cancelButton = TextButton(
     child: const Text("Cancel"),
@@ -261,7 +261,7 @@ showAlertDialog(BuildContext context, ReefSigner signer) {
   AlertDialog alert = AlertDialog(
     title: const Text("Delete Account"),
     content: Text(
-        "You will delete account with name ${signer.name} ${signer.address.shorten()}. Continue?"),
+        "You will delete account with name ${signer.name} ${signer.address?.shorten()}. Continue?"),
     actions: [
       cancelButton,
       continueButton,
@@ -278,7 +278,7 @@ showAlertDialog(BuildContext context, ReefSigner signer) {
 }
 
 void choiceAction(
-    String choice, BuildContext context, ReefSigner signer) async {
+    String choice, BuildContext context, ReefAccount signer) async {
   if (choice == Constants.delete) {
     showAlertDialog(context, signer);
   } else if (choice == Constants.copyNativeAddress) {

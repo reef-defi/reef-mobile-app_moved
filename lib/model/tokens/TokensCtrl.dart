@@ -1,3 +1,4 @@
+import 'package:reef_mobile_app/model/feedback-data-model/FeedbackDataModel.dart';
 import 'package:reef_mobile_app/model/tokens/Token.dart';
 import 'package:reef_mobile_app/model/tokens/TokenActivity.dart';
 import 'package:reef_mobile_app/model/tokens/TokenNFT.dart';
@@ -12,15 +13,21 @@ class TokenCtrl {
 
   TokenCtrl(this.jsApi, TokenModel tokenModel) {
     jsApi.jsObservable('window.reefState.currentTokenPrices\$').listen((tokens) {
+      print('TODOOOOO');
+      return;
       if (tokens == null) {
         return;
       }
+      print('TODO !!! TokensCtrl init $tokens');
+      return;
       List<TokenWithAmount> tknList =
           List.from(tokens.map((t) => TokenWithAmount.fromJSON(t)));
       tokenModel.setSelectedSignerTokens(tknList);
     });
 
     jsApi.jsObservable('window.reefState.currentNFTs\$').listen((tokens) {
+      print('TODOOOOO');
+      return;
       if (tokens == null) {
         return;
       }
@@ -28,14 +35,18 @@ class TokenCtrl {
           List.from(tokens.map((t) => TokenNFT.fromJSON(t)));
       tokenModel.setSelectedSignerNFTs(tknList);
     });
+
     jsApi.jsObservable('window.tokenUtil.reefPrice\$').listen((value) {
-      if (value == null) {
-        return;
+      var fdm = FeedbackDataModel.fromJson(value, (v)=>v);
+      if(fdm!=null && fdm.hasStatus(StatusCode.completeData)){
+        print('TODOOOOOO');
+        // tokenModel.setReefPrice(fdm.data+.0);
       }
-      tokenModel.setReefPrice(value);
     });
 
     jsApi.jsObservable('window.reefState.currentTransactionHistory\$').listen((items) {
+      print('TODOOOOO');
+      return;
       if (items == null) {
         return;
       }

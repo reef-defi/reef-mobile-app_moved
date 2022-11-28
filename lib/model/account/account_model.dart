@@ -1,7 +1,8 @@
 import 'package:mobx/mobx.dart';
+import 'package:reef_mobile_app/model/feedback-data-model/FeedbackDataModel.dart';
 
 import '../StorageKey.dart';
-import 'ReefSigner.dart';
+import 'ReefAccount.dart';
 
 part 'account_model.g.dart';
 
@@ -13,7 +14,10 @@ abstract class _AccountModel with Store {
   String? selectedAddress;
 
   @observable
-  ObservableList<ReefSigner> signers = ObservableList<ReefSigner>();
+  ObservableList<ReefAccount> signers = ObservableList<ReefAccount>();
+
+  @observable
+  FeedbackDataModel<List<FeedbackDataModel<ReefAccount>>> accountsFDM=FeedbackDataModel([], [FeedbackStatus(StatusCode.loading,'Initializing')]);
 
   @observable
   bool loadingSigners = true;
@@ -29,9 +33,14 @@ abstract class _AccountModel with Store {
   }
 
   @action
-  void setSigners(List<ReefSigner> signers) {
+  void setSigners(List<ReefAccount> signers) {
     this.signers.clear();
     this.signers.addAll(signers);
+  }
+
+  @action
+  void setAccountsFDM(FeedbackDataModel<List<FeedbackDataModel<ReefAccount>>> accounts) {
+    accountsFDM = accounts;
   }
 
 }

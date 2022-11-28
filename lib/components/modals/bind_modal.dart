@@ -3,7 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:reef_mobile_app/components/modal.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
-import 'package:reef_mobile_app/model/account/ReefSigner.dart';
+import 'package:reef_mobile_app/model/account/ReefAccount.dart';
 import 'package:reef_mobile_app/model/tokens/TokenWithAmount.dart';
 import 'package:reef_mobile_app/utils/constants.dart';
 import 'package:reef_mobile_app/utils/elements.dart';
@@ -13,7 +13,7 @@ import 'package:reef_mobile_app/utils/functions.dart';
 const MIN_BALANCE = 5;
 
 class BindEvm extends StatefulWidget {
-  final ReefSigner bindFor;
+  final ReefAccount bindFor;
 
   const BindEvm({Key? key, required this.bindFor}) : super(key: key);
 
@@ -24,7 +24,7 @@ class BindEvm extends StatefulWidget {
 class _BindEvmState extends State<BindEvm> {
   bool selectAccount = false;
   dynamic transferBalanceFrom;
-  List<ReefSigner> availableTxAccounts = [];
+  List<ReefAccount> availableTxAccounts = [];
 
   @override
   void initState() {
@@ -38,16 +38,16 @@ class _BindEvmState extends State<BindEvm> {
     }
   }
 
-  bool hasBalanceForBinding(ReefSigner reefSigner) {
+  bool hasBalanceForBinding(ReefAccount reefSigner) {
     return reefSigner.balance >= BigInt.from(MIN_BALANCE * 1e18);
   }
 
-  bool hasBalanceForFunding(ReefSigner reefSigner) {
+  bool hasBalanceForFunding(ReefAccount reefSigner) {
     return reefSigner.balance >= BigInt.from(MIN_BALANCE * 1e18 * 2);
   }
 
-  List<ReefSigner> getSignersWithEnoughBalance(ReefSigner bindFor) {
-    List<ReefSigner> _availableTxAccounts = ReefAppState
+  List<ReefAccount> getSignersWithEnoughBalance(ReefAccount bindFor) {
+    List<ReefAccount> _availableTxAccounts = ReefAppState
         .instance.model.accounts.signers
         .where((signer) =>
             signer.address != bindFor.address && hasBalanceForFunding(signer))
@@ -70,7 +70,7 @@ class _BindEvmState extends State<BindEvm> {
         transferBalanceFrom.address, widget.bindFor.address, reefToken);
   }
 
-  Widget buildAccount(ReefSigner signer) {
+  Widget buildAccount(ReefAccount signer) {
     return ViewBoxContainer(
       color: Colors.white,
       child: Padding(
