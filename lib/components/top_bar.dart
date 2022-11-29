@@ -40,7 +40,7 @@ Widget topBar(BuildContext context) {
               var selAddr =
                   ReefAppState.instance.model.accounts.selectedAddress;
 
-              var selSignerList = ReefAppState.instance.model.accounts.signers
+              var selSignerList = ReefAppState.instance.model.accounts.accountsList
                   .where((element) => element.address == selAddr);
 
               return selSignerList.length > 0

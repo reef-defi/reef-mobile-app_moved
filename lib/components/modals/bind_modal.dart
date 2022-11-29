@@ -48,7 +48,7 @@ class _BindEvmState extends State<BindEvm> {
 
   List<ReefAccount> getSignersWithEnoughBalance(ReefAccount bindFor) {
     List<ReefAccount> _availableTxAccounts = ReefAppState
-        .instance.model.accounts.signers
+        .instance.model.accounts.accountsList
         .where((signer) =>
             signer.address != bindFor.address && hasBalanceForFunding(signer))
         .toList();

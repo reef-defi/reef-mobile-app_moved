@@ -86,7 +86,7 @@ class AccountsList extends StatelessWidget {
               (FeedbackDataModel<ReefAccount> acc) => Column(
                 children: [
                   AccountBox(
-                      reefAccount: acc.data,
+                      reefAccountFDM: acc,
                       selected: selectedAddress != null
                           ? selectedAddress == acc.data.address
                           : false,

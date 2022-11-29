@@ -5,6 +5,7 @@ import 'package:reef_mobile_app/components/modal.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/StorageKey.dart';
 import 'package:reef_mobile_app/model/account/ReefAccount.dart';
+import 'package:reef_mobile_app/model/feedback-data-model/FeedbackDataModel.dart';
 import 'package:reef_mobile_app/pages/SplashScreen.dart';
 
 class SelectAccount extends StatelessWidget {
@@ -15,8 +16,8 @@ class SelectAccount extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<ReefAccount> accountList = ReefAppState.instance.model.accounts.signers
-        .where((signer) => signer.address != signerAddress)
+    List<FeedbackDataModel<ReefAccount>> accountList = ReefAppState.instance.model.accounts.accountsFDM.data
+        .where((accFDM) => accFDM.data.address != signerAddress)
         .toList();
 
     return Padding(
@@ -33,13 +34,13 @@ class SelectAccount extends StatelessWidget {
                   spacing: 24,
                   children: accountList
                       .map<Widget>(
-                        (ReefAccount signer) => Column(
+                        (FeedbackDataModel<ReefAccount> account) => Column(
                           children: [
                             AccountBox(
-                                reefAccount: signer,
+                                reefAccountFDM: account,
                                 selected: false,
                                 onSelected: () {
-                                  callback(signer.address);
+                                  callback(account.data.address);
                                   Navigator.of(context).pop();
                                 },
                                 showOptions: false),

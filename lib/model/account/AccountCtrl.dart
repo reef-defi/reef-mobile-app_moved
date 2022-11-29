@@ -113,7 +113,7 @@ class AccountCtrl {
       _accountModel.setSelectedAddress(address);
     });
 
-    _accountModel.setLoadingSigners(true);
+    // _accountModel.setLoadingSigners(true);
     jsApi.jsObservable('window.reefState.accounts\$').listen((accs) async {
 
       ParseListFn<FeedbackDataModel<ReefAccount>> parsableListFn = getParsableListFn(ReefAccount.fromJson);
@@ -129,7 +129,7 @@ class AccountCtrl {
       _accountModel.setAccountsFDM(accsListFdm);
       return;
       print('GOT AAAA ${accs}');
-      _accountModel.setLoadingSigners(false);
+      // _accountModel.setLoadingSigners(false);
 
       var accounts = [];
 
@@ -144,7 +144,7 @@ class AccountCtrl {
         return ReefAccount.fromJson(s);
       }));
 
-      _accountModel.setSigners(reefSigners);
+      // _accountModel.setSigners(reefSigners);
       print('AVAILABLE Signers ${accs.length}');
       reefSigners.forEach((signer) {
         print('  ${signer.name} - ${signer.address} - ${signer.isEvmClaimed}');
