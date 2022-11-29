@@ -9,13 +9,32 @@ part of 'token_model.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$TokenModel on _TokenModel, Store {
-  Computed<TokenWithAmount>? _$reefTokenComputed;
+  Computed<FeedbackDataModel<TokenWithAmount>>? _$reefTokenComputed;
 
   @override
-  TokenWithAmount get reefToken =>
-      (_$reefTokenComputed ??= Computed<TokenWithAmount>(() => super.reefToken,
+  FeedbackDataModel<TokenWithAmount> get reefToken => (_$reefTokenComputed ??=
+          Computed<FeedbackDataModel<TokenWithAmount>>(() => super.reefToken,
               name: '_TokenModel.reefToken'))
-          .value;
+      .value;
+
+  late final _$selectedAccountTokensAtom =
+      Atom(name: '_TokenModel.selectedAccountTokens', context: context);
+
+  @override
+  FeedbackDataModel<List<FeedbackDataModel<TokenWithAmount>>>
+      get selectedAccountTokens {
+    _$selectedAccountTokensAtom.reportRead();
+    return super.selectedAccountTokens;
+  }
+
+  @override
+  set selectedAccountTokens(
+      FeedbackDataModel<List<FeedbackDataModel<TokenWithAmount>>> value) {
+    _$selectedAccountTokensAtom.reportWrite(value, super.selectedAccountTokens,
+        () {
+      super.selectedAccountTokens = value;
+    });
+  }
 
   late final _$selectedSignerTokensAtom =
       Atom(name: '_TokenModel.selectedSignerTokens', context: context);
@@ -31,22 +50,6 @@ mixin _$TokenModel on _TokenModel, Store {
     _$selectedSignerTokensAtom.reportWrite(value, super.selectedSignerTokens,
         () {
       super.selectedSignerTokens = value;
-    });
-  }
-
-  late final _$tokenListAtom =
-      Atom(name: '_TokenModel.tokenList', context: context);
-
-  @override
-  ObservableList<TokenWithAmount> get tokenList {
-    _$tokenListAtom.reportRead();
-    return super.tokenList;
-  }
-
-  @override
-  set tokenList(ObservableList<TokenWithAmount> value) {
-    _$tokenListAtom.reportWrite(value, super.tokenList, () {
-      super.tokenList = value;
     });
   }
 
@@ -102,22 +105,23 @@ mixin _$TokenModel on _TokenModel, Store {
       ActionController(name: '_TokenModel', context: context);
 
   @override
-  void setSelectedSignerTokens(List<TokenWithAmount> tkns) {
+  void setSelectedAccountTokens(
+      FeedbackDataModel<List<FeedbackDataModel<TokenWithAmount>>> tknsFdm) {
     final _$actionInfo = _$_TokenModelActionController.startAction(
-        name: '_TokenModel.setSelectedSignerTokens');
+        name: '_TokenModel.setSelectedAccountTokens');
     try {
-      return super.setSelectedSignerTokens(tkns);
+      return super.setSelectedAccountTokens(tknsFdm);
     } finally {
       _$_TokenModelActionController.endAction(_$actionInfo);
     }
   }
 
   @override
-  void setTokenList(List<TokenWithAmount> tkns) {
+  void setSelectedSignerTokens(List<TokenWithAmount> tkns) {
     final _$actionInfo = _$_TokenModelActionController.startAction(
-        name: '_TokenModel.setTokenList');
+        name: '_TokenModel.setSelectedSignerTokens');
     try {
-      return super.setTokenList(tkns);
+      return super.setSelectedSignerTokens(tkns);
     } finally {
       _$_TokenModelActionController.endAction(_$actionInfo);
     }
@@ -159,8 +163,8 @@ mixin _$TokenModel on _TokenModel, Store {
   @override
   String toString() {
     return '''
+selectedAccountTokens: ${selectedAccountTokens},
 selectedSignerTokens: ${selectedSignerTokens},
-tokenList: ${tokenList},
 selectedSignerNFTs: ${selectedSignerNFTs},
 activity: ${activity},
 reefPrice: ${reefPrice},

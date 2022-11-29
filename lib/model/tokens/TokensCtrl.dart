@@ -12,17 +12,17 @@ class TokenCtrl {
   final JsApiService jsApi;
 
   TokenCtrl(this.jsApi, TokenModel tokenModel) {
-    jsApi.jsObservable('window.reefState.selectedTokenPrices\$').listen((tokens) {
-      print('TODOOOOO');
-      return;
-      if (tokens == null) {
-        return;
-      }
-      print('TODO !!! TokensCtrl init $tokens');
-      return;
-      List<TokenWithAmount> tknList =
-          List.from(tokens.map((t) => TokenWithAmount.fromJSON(t)));
-      tokenModel.setSelectedSignerTokens(tknList);
+    jsApi
+        .jsObservable('window.reefState.selectedTokenPrices\$')
+        .listen((tokens) {
+      ParseListFn<FeedbackDataModel<TokenWithAmount>> parsableListFn =
+          getParsableListFn(TokenWithAmount.fromJson);
+      var tokensListFdm =
+          FeedbackDataModel.fromJsonList(tokens, parsableListFn);
+
+      print(
+          'GOT TOKENS ${tokensListFdm.statusList.map((e) => e.code)} msg = ${tokensListFdm.statusList[0].message}');
+      tokenModel.setSelectedAccountTokens(tokensListFdm);
     });
 
     jsApi.jsObservable('window.reefState.selectedNFTs\$').listen((tokens) {
@@ -37,14 +37,16 @@ class TokenCtrl {
     });
 
     jsApi.jsObservable('window.tokenUtil.reefPrice\$').listen((value) {
-      var fdm = FeedbackDataModel.fromJson(value, (v)=>v);
-      if(fdm!=null && fdm.hasStatus(StatusCode.completeData)){
+      var fdm = FeedbackDataModel.fromJson(value, (v) => v);
+      if (fdm != null && fdm.hasStatus(StatusCode.completeData)) {
         print('TODOOOOOO');
         // tokenModel.setReefPrice(fdm.data+.0);
       }
     });
 
-    jsApi.jsObservable('reefState.selectedTransactionHistory\$').listen((items) {
+    jsApi
+        .jsObservable('reefState.selectedTransactionHistory\$')
+        .listen((items) {
       print('TODOOOOO');
       return;
       if (items == null) {

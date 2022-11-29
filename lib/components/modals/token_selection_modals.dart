@@ -99,15 +99,15 @@ class TokenSelectionState extends State<TokenSelection> {
                   maxHeight: 256, minWidth: double.infinity),
               child: Observer(builder: (_) {
                 var displayTokens = ReefAppState
-                    .instance.model.tokens.selectedSignerTokens
+                    .instance.model.tokens.selectedAccountTokens.data
                     .toList();
                 if (filterTokensBy.isNotEmpty) {
                   displayTokens = displayTokens
                       .where((tkn) =>
-                          tkn.name
+                          tkn.data.name
                               .toLowerCase()
                               .contains(valueContainer.text.toLowerCase()) ||
-                          tkn.address
+                          tkn.data.address
                               .toLowerCase()
                               .contains(valueContainer.text.toLowerCase()))
                       .toList();
@@ -120,7 +120,7 @@ class TokenSelectionState extends State<TokenSelection> {
                                 {
                                   // TODO show token with option of adding to list
                                   widget
-                                      .callback(TokenWithAmount.fromJSON(token))
+                                      .callback(TokenWithAmount.fromJson(token))
                                 }
                             });
                   }
@@ -153,7 +153,7 @@ class TokenSelectionState extends State<TokenSelection> {
                                         borderRadius: BorderRadius.circular(8)),
                                     elevation: 0,
                                     onPressed: () {
-                                      widget.callback(e);
+                                      widget.callback(e.data);
                                       Navigator.of(context).pop();
                                     },
                                     child: Row(
@@ -161,26 +161,26 @@ class TokenSelectionState extends State<TokenSelection> {
                                           MainAxisAlignment.spaceBetween,
                                       children: [
                                         Row(children: [
-                                          IconFromUrl(e.iconUrl),
+                                          IconFromUrl(e.data.iconUrl),
                                           const Gap(12),
                                           Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              Text(e.name,
+                                              Text(e.data.name,
                                                   style: const TextStyle(
                                                       fontSize: 16)),
                                               Wrap(spacing: 8.0, children: [
                                                 Text(toAmountDisplayBigInt(
-                                                    e.balance,
-                                                    decimals: e.decimals)),
-                                                Text(e.symbol)
+                                                    e.data.balance,
+                                                    decimals: e.data.decimals)),
+                                                Text(e.data.symbol)
                                               ]),
                                               Row(
                                                 mainAxisSize: MainAxisSize.min,
                                                 children: [
                                                   Text(
-                                                    e.address
+                                                    e.data.address
                                                         .toString()
                                                         .shorten(),
                                                     style: TextStyle(
@@ -204,7 +204,7 @@ class TokenSelectionState extends State<TokenSelection> {
                                                         Clipboard.setData(
                                                             ClipboardData(
                                                                 text:
-                                                                    e.address));
+                                                                    e.data.address));
                                                       },
                                                       child: Row(
                                                         mainAxisSize:
@@ -234,9 +234,9 @@ class TokenSelectionState extends State<TokenSelection> {
                                       ],
                                     )),
                               ),
-                              if (e.address !=
+                              if (e.data.address !=
                                   displayTokens[displayTokens.length - 1]
-                                      .address)
+                                      .data.address)
                                 const Gap(4),
                             ],
                           ))

@@ -212,7 +212,7 @@ class _SwapPageState extends State<SwapPage> {
     var res = await ReefAppState.instance.tokensCtrl
         .findToken(Constants.REEF_TOKEN_ADDRESS);
     print("TEST FIND TOKEN: ${res}");
-    tokens.add(TokenWithAmount.fromJSON(res));
+    tokens.add(TokenWithAmount.fromJson(res));
   }
 
   @override
