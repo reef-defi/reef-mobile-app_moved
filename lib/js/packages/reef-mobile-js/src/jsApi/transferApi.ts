@@ -38,7 +38,7 @@ export const initApi = (signingKey: Signer) => {
                 combineLatest([of(from)]),
                 take(1),
                 map(([sgnrs, addr]: [ReefAccount[], string]) => findSigner(sgnrs, addr)),
-                combineLatest([reefState.currentProvider$]),
+                combineLatest([reefState.selectedProvider$]),
                 switchMap(async ([signer, provider]: [ReefAccount | undefined, Provider]) => {
                     if (!signer) {
                         console.log(" transfer.send() - NO SIGNER FOUND",);

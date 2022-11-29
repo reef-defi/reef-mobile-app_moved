@@ -3003,10 +3003,10 @@
     graphql "^16.6.0"
     subscriptions-transport-ws "^0.11.0"
 
-"@reef-chain/util-lib@^0.3.1":
-  version "0.3.1"
-  resolved "https://registry.yarnpkg.com/@reef-chain/util-lib/-/util-lib-0.3.1.tgz#63c1c2140e0028ad35b24d19b72c35d9a707b167"
-  integrity sha512-ztFie1UXqM2/42dDF8nlctHULmZVbxzTSAaiJITxYW4LHGgUkAHL4hitbfOjmEkJ48oZl5D6IOCaXsFClhG3cw==
+"@reef-chain/util-lib@^0.4.0":
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/@reef-chain/util-lib/-/util-lib-0.4.0.tgz#2a3e8a2b8fd75cabb9f8275718d658264d24c446"
+  integrity sha512-uhp71ck3jqQ2Ure2SBrgr2nU/aed4rxe2oDve6GCGIuQjx2o5YzjUdi3O+hingqthxoZKXELwmDsCuEt9QjPZA==
   dependencies:
     "@apollo/client" "^3.6.9"
     "@polkadot/extension-inject" "^0.44.6"

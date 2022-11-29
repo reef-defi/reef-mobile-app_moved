@@ -29,7 +29,7 @@ export const initApi = () => {
         // Executes a swap
         execute: async (signerAddress: string, token1: TokenWithAmount, token2: TokenWithAmount, settings: SwapSettings) => {
             return firstValueFrom(
-                combineLatest([reefState.currentNetwork$, reefState.accounts$]).pipe(
+                combineLatest([reefState.selectedNetwork$, reefState.accounts$]).pipe(
                     take(1),
                     switchMap(async ([network, reefSigners]) => {
                         const reefSigner = reefSigners.find((s)=>s.address===signerAddress);
@@ -86,7 +86,7 @@ export const initApi = () => {
         // Returns pool reserves, if pool exists
         getPoolReserves: async (token1Address: string, token2Address: string) => {
             return firstValueFrom(
-                combineLatest([appState.currentNetwork$, appState.currentProvider$]).pipe(
+                combineLatest([appState.selectedNetwork$, appState.selectedProvider$]).pipe(
                     take(1),
                     switchMap(async ([network, provider]) => {
                         return getPoolReserves(token1Address, token2Address, provider, network.factoryAddress);

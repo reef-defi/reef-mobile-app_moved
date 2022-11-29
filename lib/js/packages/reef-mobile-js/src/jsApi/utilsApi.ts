@@ -18,7 +18,7 @@ export const initApi = () => {
                 map((value => value.data))
             );
             return firstValueFrom(
-                combineLatest([graphql.apolloClientInstance$, reefState.currentNetwork$, reefState.currentProvider$, price$]).pipe(
+                combineLatest([graphql.apolloClientInstance$, reefState.selectedNetwork$, reefState.selectedProvider$, price$]).pipe(
                     take(1),
                     switchMap(async ([apolloInstance, net, provider, reefPrice]:[any, network.Network, Provider, number]) => {
                         return await fetchTokenData(apolloInstance, tokenAddress, provider, network.getReefswapNetworkConfig(net).factoryAddress, reefPrice);
@@ -31,7 +31,7 @@ export const initApi = () => {
             return ethers.utils.isAddress(address);
         },
         decodeMethod: (data: string, types: any) => {
-            return firstValueFrom(reefState.currentProvider$.pipe(
+            return firstValueFrom(reefState.selectedProvider$.pipe(
                 take(1),
                 map(async (provider: Provider) => {
                     const api = provider.api;
@@ -74,9 +74,9 @@ export const initApi = () => {
                 take(1)
             ));
         },
-        setCurrentNetwork: (networkName: string) => {
+        setSelectedNetwork: (networkName: string) => {
             const network: Network = network.AVAILABLE_NETWORKS[networkName] || network.AVAILABLE_NETWORKS.mainnet;
-            return reefState.setCurrentNetwork(network);
+            return reefState.setSelectedNetwork(network);
         },
         bytesString: (bytes: string) => {
             return isAscii(bytes) ? u8aToString(u8aUnwrapBytes(bytes)) : bytes;

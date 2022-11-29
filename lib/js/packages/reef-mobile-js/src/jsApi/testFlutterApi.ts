@@ -28,7 +28,7 @@ export function testReefObservables() {
                 console.log('SIGNERS', v?.length),
             error: (e) => console.log('SIGNERS ERR', e.message)
         });
-    reefState.currentAddress$.subscribe(
+    reefState.selectedAddress$.subscribe(
         {
             next: (v) =>
                 console.log('ADDRESS', v),

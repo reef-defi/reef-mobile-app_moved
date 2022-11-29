@@ -12,7 +12,7 @@ const CHAIN_TYPE = "substrate";
 export const initApi = () => {
     (window as any).metadata = {
         getMetadata: async () => {
-            return firstValueFrom(reefState.currentProvider$.pipe(
+            return firstValueFrom(reefState.selectedProvider$.pipe(
                     take(1),
                     map(async (provider: Provider) => {
                         const api = provider.api;

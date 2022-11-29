@@ -38,7 +38,7 @@ class AccountCtrl {
   Future<void> setSelectedAddress(String address) {
     // TODO check if in signers
     return _jsApi
-        .jsCallVoidReturn('window.reefState.setCurrentAddress("$address")');
+        .jsCallVoidReturn('window.reefState.setSelectedAddress("$address")');
   }
 
   Future<String> generateAccount() async {
@@ -103,7 +103,7 @@ class AccountCtrl {
 
   void _initJsObservables(JsApiService jsApi, StorageService storage) {
     jsApi
-        .jsObservable('window.reefState.currentAddress\$')
+        .jsObservable('window.reefState.selectedAddress\$')
         .listen((address) async {
       if (address == null || address == '') {
         return;
@@ -113,22 +113,15 @@ class AccountCtrl {
       _accountModel.setSelectedAddress(address);
     });
 
-    // _accountModel.setLoadingSigners(true);
     jsApi.jsObservable('window.reefState.accounts\$').listen((accs) async {
 
       ParseListFn<FeedbackDataModel<ReefAccount>> parsableListFn = getParsableListFn(ReefAccount.fromJson);
       var accsListFdm = FeedbackDataModel.fromJsonList(accs, parsableListFn);
 
-      // print('GETTING ACCOUNTS ${accsListFdm.hasStatus(StatusCode.completeData)} ${accsListFdm.statusList[0].message} len =${accsListFdm.data.length}');
-      print('GETTING ACCOUNTS ${accs}');
-      accsListFdm.data.forEach((element) {
-        if(element.data.isEvmClaimed){
-          print('acc evm=${element.data.evmAddress} is=${element.data.isEvmClaimed}');
-        }
-      });
+      print('GOT ACCOUNTS ${accsListFdm.hasStatus(StatusCode.completeData)} ${accsListFdm.statusList[0].message} len =${accsListFdm.data.length}');
+
       _accountModel.setAccountsFDM(accsListFdm);
       return;
-      print('GOT AAAA ${accs}');
       // _accountModel.setLoadingSigners(false);
 
       var accounts = [];
