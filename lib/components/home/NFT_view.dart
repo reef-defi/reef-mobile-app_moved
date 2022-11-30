@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:gap/gap.dart';
+import 'package:reef_mobile_app/model/feedback-data-model/FeedbackDataModel.dart';
 import 'package:reef_mobile_app/model/tokens/TokenNFT.dart';
 import 'package:reef_mobile_app/utils/elements.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
@@ -90,47 +91,55 @@ class _NFTViewState extends State<NFTView> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-        physics: const BouncingScrollPhysics(),
-        padding: const EdgeInsets.all(0),
-        children: [
-          SizedBox(
-            width: double.infinity,
-            child:
-                ReefAppState.instance.model.tokens.selectedSignerNFTs.isNotEmpty
-                    ? Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 32, horizontal: 48.0),
-                        child: Observer(builder: (_) {
-                          return Wrap(
-                            runSpacing: 24,
-                            children: ReefAppState
-                                .instance.model.tokens.selectedSignerNFTs
-                                .map((TokenNFT tkn) {
-                              return Column(
-                                children: [
-                                  nftCard(tkn.name, tkn.iconUrl ?? '',
-                                      tkn.balance.toInt() ?? 0),
-                                ],
-                              );
-                            }).toList(),
-                          );
-                        }))
-                    : Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 32),
-                        child: ViewBoxContainer(
-                            child: Center(
-                                child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 24.0),
-                          child: Text(
-                            "No NFTs on this account",
-                            style: TextStyle(
-                                color: Styles.textLightColor,
-                                fontWeight: FontWeight.w500),
-                          ),
-                        ))),
-                      ),
-          )
-        ]);
+    return Column(children: [
+      if (
+      // ReefAppState.instance.model.tokens.selectedNFTs.statusList.length <
+      //         2 &&
+          !ReefAppState.instance.model.tokens.selectedNFTs
+              .hasStatus(StatusCode.completeData))
+        Text(ReefAppState
+                .instance.model.tokens.selectedNFTs.statusList[0].message ??
+            'Loading ${ReefAppState.instance.model.tokens.selectedNFTs.data.length}'),
+      Padding(
+        padding: const EdgeInsets.symmetric(vertical: 32),
+        child: ViewBoxContainer(
+            child: Center(
+                child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 24.0),
+          child: Text(
+            "No NFTs on this account",
+            style: TextStyle(
+                color: Styles.textLightColor, fontWeight: FontWeight.w500),
+          ),
+        ))),
+      ),
+      //TODO seems ListView needs to fix child components
+      if (ReefAppState.instance.model.tokens.selectedNFTs.data.isNotEmpty)
+        ListView(
+            physics: const BouncingScrollPhysics(),
+            padding: const EdgeInsets.all(0),
+            children: [
+              SizedBox(
+                  width: double.infinity,
+                  child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 32, horizontal: 48.0),
+                      child: Observer(builder: (_) {
+                        return Wrap(
+                          runSpacing: 24,
+                          children: ReefAppState
+                              .instance.model.tokens.selectedNFTs.data
+                              .map((FeedbackDataModel<TokenNFT> tkn) {
+                            return Column(
+                              children: [
+                                nftCard(tkn.data.name, tkn.data.iconUrl ?? '',
+                                    tkn.data.balance.toInt() ?? 0),
+                              ],
+                            );
+                          }).toList(),
+                        );
+                      })))
+            ])
+    ]);
   }
 }

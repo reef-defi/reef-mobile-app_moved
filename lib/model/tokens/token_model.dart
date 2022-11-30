@@ -5,7 +5,6 @@ import 'package:reef_mobile_app/model/tokens/TokenActivity.dart';
 import 'package:reef_mobile_app/model/tokens/TokenNFT.dart';
 import 'package:reef_mobile_app/model/tokens/TokenWithAmount.dart';
 
-import '../../utils/constants.dart';
 
 part 'token_model.g.dart';
 
@@ -13,22 +12,15 @@ class TokenModel = _TokenModel with _$TokenModel;
 
 abstract class _TokenModel with Store {
   @observable
-  FeedbackDataModel<List<FeedbackDataModel<TokenWithAmount>>> selectedAccountTokens = FeedbackDataModel([], [FeedbackStatus(StatusCode.loading, 'Setting up token list.')]);
+  FeedbackDataModel<List<FeedbackDataModel<TokenWithAmount>>> selectedErc20s = FeedbackDataModel([], [FeedbackStatus(StatusCode.loading, 'Setting up token list.')]);
 
   @action
-  void setSelectedAccountTokens(FeedbackDataModel<List<FeedbackDataModel<TokenWithAmount>>> tknsFdm) {
-    selectedAccountTokens = tknsFdm;
+  void setSelectedErc20s(FeedbackDataModel<List<FeedbackDataModel<TokenWithAmount>>> tknsFdm) {
+    selectedErc20s = tknsFdm;
   }
-...TODO replace selectedSignerTokens
-  @observable
-  ObservableList<TokenWithAmount> selectedSignerTokens =
-      ObservableList<TokenWithAmount>();
 
-  @action
-  void setSelectedSignerTokens(List<TokenWithAmount> tkns) {
-    this.selectedSignerTokens.clear();
-    this.selectedSignerTokens.addAll(tkns);
-  }
+  @computed
+  List<TokenWithAmount> get selectedErc20List => selectedErc20s.data.map((fdm) => fdm.data).toList();
 
   /*@observable
   ObservableList<TokenWithAmount> tokenList = ObservableList<TokenWithAmount>();
@@ -40,12 +32,11 @@ abstract class _TokenModel with Store {
   }*/
 
   @observable
-  ObservableList<TokenNFT> selectedSignerNFTs = ObservableList<TokenNFT>();
+  FeedbackDataModel<List<FeedbackDataModel<TokenNFT>>> selectedNFTs = FeedbackDataModel([], [FeedbackStatus(StatusCode.loading, 'Setting up token list.')]);
 
   @action
-  void setSelectedSignerNFTs(List<TokenNFT> tkns) {
-    this.selectedSignerNFTs.clear();
-    this.selectedSignerNFTs.addAll(tkns);
+  void setSelectedNFTs(FeedbackDataModel<List<FeedbackDataModel<TokenNFT>>> tknsFdm) {
+    selectedNFTs = tknsFdm;
   }
 
   @observable
@@ -65,6 +56,6 @@ abstract class _TokenModel with Store {
     reefPrice = value;
   }
 
-  @computed
-  FeedbackDataModel<TokenWithAmount> get reefToken => selectedAccountTokens.data.firstWhere((tkn) => tkn.data.address == Constants.REEF_TOKEN_ADDRESS);
-}
+  // @computed
+  // TokenWithAmount get reefToken => selectedAccountTokenList.firstWhere((tkn) => tkn.address == Constants.REEF_TOKEN_ADDRESS);
+  }

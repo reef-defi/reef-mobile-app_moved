@@ -180,15 +180,15 @@ class _TokenViewState extends State<TokenView> {
               padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 0),
               child: Observer(builder: (_) {return Column(children: [
                   if(ReefAppState
-                      .instance.model.tokens.selectedAccountTokens.statusList.length<2 &&
+                      .instance.model.tokens.selectedErc20s.statusList.length<2 &&
                       !ReefAppState
-                      .instance.model.tokens.selectedAccountTokens.hasStatus(StatusCode.completeData))Text(ReefAppState
-                      .instance.model.tokens.selectedAccountTokens.statusList[0].message??'Loading ${ReefAppState
-                      .instance.model.tokens.selectedAccountTokens.data.length}'),
+                      .instance.model.tokens.selectedErc20s.hasStatus(StatusCode.completeData))Text(ReefAppState
+                      .instance.model.tokens.selectedErc20s.statusList[0].message??'Loading ${ReefAppState
+                      .instance.model.tokens.selectedErc20s.data.length}'),
                   Wrap(
                     spacing: 24,
                     children: ReefAppState
-                        .instance.model.tokens.selectedAccountTokens.data
+                        .instance.model.tokens.selectedErc20s.data
                         .map((FeedbackDataModel<TokenWithAmount> tkn) {
                       return Column(
                         children: [

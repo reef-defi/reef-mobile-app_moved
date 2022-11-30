@@ -9,63 +9,46 @@ part of 'token_model.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$TokenModel on _TokenModel, Store {
-  Computed<FeedbackDataModel<TokenWithAmount>>? _$reefTokenComputed;
+  Computed<List<TokenWithAmount>>? _$selectedErc20ListComputed;
 
   @override
-  FeedbackDataModel<TokenWithAmount> get reefToken => (_$reefTokenComputed ??=
-          Computed<FeedbackDataModel<TokenWithAmount>>(() => super.reefToken,
-              name: '_TokenModel.reefToken'))
-      .value;
+  List<TokenWithAmount> get selectedErc20List =>
+      (_$selectedErc20ListComputed ??= Computed<List<TokenWithAmount>>(
+              () => super.selectedErc20List,
+              name: '_TokenModel.selectedErc20List'))
+          .value;
 
-  late final _$selectedAccountTokensAtom =
-      Atom(name: '_TokenModel.selectedAccountTokens', context: context);
+  late final _$selectedErc20sAtom =
+      Atom(name: '_TokenModel.selectedErc20s', context: context);
 
   @override
   FeedbackDataModel<List<FeedbackDataModel<TokenWithAmount>>>
-      get selectedAccountTokens {
-    _$selectedAccountTokensAtom.reportRead();
-    return super.selectedAccountTokens;
+      get selectedErc20s {
+    _$selectedErc20sAtom.reportRead();
+    return super.selectedErc20s;
   }
 
   @override
-  set selectedAccountTokens(
+  set selectedErc20s(
       FeedbackDataModel<List<FeedbackDataModel<TokenWithAmount>>> value) {
-    _$selectedAccountTokensAtom.reportWrite(value, super.selectedAccountTokens,
-        () {
-      super.selectedAccountTokens = value;
+    _$selectedErc20sAtom.reportWrite(value, super.selectedErc20s, () {
+      super.selectedErc20s = value;
     });
   }
 
-  late final _$selectedSignerTokensAtom =
-      Atom(name: '_TokenModel.selectedSignerTokens', context: context);
+  late final _$selectedNFTsAtom =
+      Atom(name: '_TokenModel.selectedNFTs', context: context);
 
   @override
-  ObservableList<TokenWithAmount> get selectedSignerTokens {
-    _$selectedSignerTokensAtom.reportRead();
-    return super.selectedSignerTokens;
+  FeedbackDataModel<List<FeedbackDataModel<TokenNFT>>> get selectedNFTs {
+    _$selectedNFTsAtom.reportRead();
+    return super.selectedNFTs;
   }
 
   @override
-  set selectedSignerTokens(ObservableList<TokenWithAmount> value) {
-    _$selectedSignerTokensAtom.reportWrite(value, super.selectedSignerTokens,
-        () {
-      super.selectedSignerTokens = value;
-    });
-  }
-
-  late final _$selectedSignerNFTsAtom =
-      Atom(name: '_TokenModel.selectedSignerNFTs', context: context);
-
-  @override
-  ObservableList<TokenNFT> get selectedSignerNFTs {
-    _$selectedSignerNFTsAtom.reportRead();
-    return super.selectedSignerNFTs;
-  }
-
-  @override
-  set selectedSignerNFTs(ObservableList<TokenNFT> value) {
-    _$selectedSignerNFTsAtom.reportWrite(value, super.selectedSignerNFTs, () {
-      super.selectedSignerNFTs = value;
+  set selectedNFTs(FeedbackDataModel<List<FeedbackDataModel<TokenNFT>>> value) {
+    _$selectedNFTsAtom.reportWrite(value, super.selectedNFTs, () {
+      super.selectedNFTs = value;
     });
   }
 
@@ -105,34 +88,24 @@ mixin _$TokenModel on _TokenModel, Store {
       ActionController(name: '_TokenModel', context: context);
 
   @override
-  void setSelectedAccountTokens(
+  void setSelectedErc20s(
       FeedbackDataModel<List<FeedbackDataModel<TokenWithAmount>>> tknsFdm) {
     final _$actionInfo = _$_TokenModelActionController.startAction(
-        name: '_TokenModel.setSelectedAccountTokens');
+        name: '_TokenModel.setSelectedErc20s');
     try {
-      return super.setSelectedAccountTokens(tknsFdm);
+      return super.setSelectedErc20s(tknsFdm);
     } finally {
       _$_TokenModelActionController.endAction(_$actionInfo);
     }
   }
 
   @override
-  void setSelectedSignerTokens(List<TokenWithAmount> tkns) {
+  void setSelectedNFTs(
+      FeedbackDataModel<List<FeedbackDataModel<TokenNFT>>> tknsFdm) {
     final _$actionInfo = _$_TokenModelActionController.startAction(
-        name: '_TokenModel.setSelectedSignerTokens');
+        name: '_TokenModel.setSelectedNFTs');
     try {
-      return super.setSelectedSignerTokens(tkns);
-    } finally {
-      _$_TokenModelActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
-  void setSelectedSignerNFTs(List<TokenNFT> tkns) {
-    final _$actionInfo = _$_TokenModelActionController.startAction(
-        name: '_TokenModel.setSelectedSignerNFTs');
-    try {
-      return super.setSelectedSignerNFTs(tkns);
+      return super.setSelectedNFTs(tknsFdm);
     } finally {
       _$_TokenModelActionController.endAction(_$actionInfo);
     }
@@ -163,12 +136,11 @@ mixin _$TokenModel on _TokenModel, Store {
   @override
   String toString() {
     return '''
-selectedAccountTokens: ${selectedAccountTokens},
-selectedSignerTokens: ${selectedSignerTokens},
-selectedSignerNFTs: ${selectedSignerNFTs},
+selectedErc20s: ${selectedErc20s},
+selectedNFTs: ${selectedNFTs},
 activity: ${activity},
 reefPrice: ${reefPrice},
-reefToken: ${reefToken}
+selectedErc20List: ${selectedErc20List}
     ''';
   }
 }

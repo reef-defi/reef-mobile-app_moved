@@ -22,18 +22,16 @@ class TokenCtrl {
 
       print(
           'GOT TOKENS ${tokensListFdm.statusList.map((e) => e.code)} msg = ${tokensListFdm.statusList[0].message}');
-      tokenModel.setSelectedAccountTokens(tokensListFdm);
+      tokenModel.setSelectedErc20s(tokensListFdm);
     });
 
     jsApi.jsObservable('window.reefState.selectedNFTs\$').listen((tokens) {
-      print('TODOOOOO');
-      return;
-      if (tokens == null) {
-        return;
-      }
-      List<TokenNFT> tknList =
-          List.from(tokens.map((t) => TokenNFT.fromJSON(t)));
-      tokenModel.setSelectedSignerNFTs(tknList);
+      print('GOT NFTS ${tokens}');
+      ParseListFn<FeedbackDataModel<TokenNFT>> parsableListFn =
+      getParsableListFn(TokenNFT.fromJson);
+      var tokensListFdm =
+      FeedbackDataModel.fromJsonList(tokens, parsableListFn);
+      tokenModel.setSelectedNFTs(tokensListFdm);
     });
 
     jsApi.jsObservable('window.tokenUtil.reefPrice\$').listen((value) {

@@ -87,7 +87,7 @@ class _SendPageState extends State<SendPage> {
               children: [
                 Observer(builder: (_) {
                   var tokens =
-                      ReefAppState.instance.model.tokens.selectedSignerTokens;
+                      ReefAppState.instance.model.tokens.selectedErc20List;
                   var selectedToken = tokens
                       .firstWhere((tkn) => tkn.address == selectedTokenAddress);
                   if (selectedToken == null && !tokens.isEmpty) {

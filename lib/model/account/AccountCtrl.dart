@@ -121,6 +121,7 @@ class AccountCtrl {
       print('GOT ACCOUNTS ${accsListFdm.hasStatus(StatusCode.completeData)} ${accsListFdm.statusList[0].message} len =${accsListFdm.data.length}');
 
       _accountModel.setAccountsFDM(accsListFdm);
+      print('TODOOOOOO accs icon');
       return;
       // _accountModel.setLoadingSigners(false);
 

@@ -99,7 +99,7 @@ class TokenSelectionState extends State<TokenSelection> {
                   maxHeight: 256, minWidth: double.infinity),
               child: Observer(builder: (_) {
                 var displayTokens = ReefAppState
-                    .instance.model.tokens.selectedAccountTokens.data
+                    .instance.model.tokens.selectedErc20s.data
                     .toList();
                 if (filterTokensBy.isNotEmpty) {
                   displayTokens = displayTokens

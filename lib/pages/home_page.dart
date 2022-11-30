@@ -87,7 +87,7 @@ class _HomePageState extends State<HomePage> {
                   Center(
                     child: Observer(builder: (_) {
                       return GradientText(
-                        "\$${sumTokenBalances(ReefAppState.instance.model.tokens.selectedSignerTokens.toList()).toStringAsFixed(0)}",
+                        "\$${sumTokenBalances(ReefAppState.instance.model.tokens.selectedErc20List.toList()).toStringAsFixed(0)}",
                         gradient: textGradient(),
                         style: GoogleFonts.poppins(
                             color: Styles.textColor,

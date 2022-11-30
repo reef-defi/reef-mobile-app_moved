@@ -22,7 +22,7 @@ class TokenWithAmount extends Token {
             decimals: decimals);
 
   static TokenWithAmount fromJson(dynamic json) {
-    var tkn = Token.fromJSON(json);
+    var tkn = Token.fromJson(json);
     // TODO check why json['amount'] can be null
     var amt = BigInt.parse(json['amount'] != null && json['amount'] != "" ? json['amount'] : "0");
     var price = json['price']??0;
