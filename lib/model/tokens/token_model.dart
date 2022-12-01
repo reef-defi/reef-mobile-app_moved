@@ -22,14 +22,8 @@ abstract class _TokenModel with Store {
   @computed
   List<TokenWithAmount> get selectedErc20List => selectedErc20s.data.map((fdm) => fdm.data).toList();
 
-  /*@observable
-  ObservableList<TokenWithAmount> tokenList = ObservableList<TokenWithAmount>();
-
-  @action
-  void setTokenList(List<TokenWithAmount> tkns) {
-    this.tokenList.clear();
-    this.tokenList.addAll(tkns);
-  }*/
+  @computed
+  List<TokenNFT> get selectedNFTList => selectedNFTs.data.map((fdm) => fdm.data).toList();
 
   @observable
   FeedbackDataModel<List<FeedbackDataModel<TokenNFT>>> selectedNFTs = FeedbackDataModel([], [FeedbackStatus(StatusCode.loading, 'Setting up token list.')]);
@@ -49,7 +43,7 @@ abstract class _TokenModel with Store {
   }
 
   @observable
-  double? reefPrice=0;
+  double? reefPrice=0.0;
 
   @action
   void setReefPrice(double value) {

@@ -17,6 +17,13 @@ mixin _$TokenModel on _TokenModel, Store {
               () => super.selectedErc20List,
               name: '_TokenModel.selectedErc20List'))
           .value;
+  Computed<List<TokenNFT>>? _$selectedNFTListComputed;
+
+  @override
+  List<TokenNFT> get selectedNFTList => (_$selectedNFTListComputed ??=
+          Computed<List<TokenNFT>>(() => super.selectedNFTList,
+              name: '_TokenModel.selectedNFTList'))
+      .value;
 
   late final _$selectedErc20sAtom =
       Atom(name: '_TokenModel.selectedErc20s', context: context);
@@ -140,7 +147,8 @@ selectedErc20s: ${selectedErc20s},
 selectedNFTs: ${selectedNFTs},
 activity: ${activity},
 reefPrice: ${reefPrice},
-selectedErc20List: ${selectedErc20List}
+selectedErc20List: ${selectedErc20List},
+selectedNFTList: ${selectedNFTList}
     ''';
   }
 }

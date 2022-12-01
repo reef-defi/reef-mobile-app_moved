@@ -120,20 +120,20 @@ class AccountCtrl {
 
       print('GOT ACCOUNTS ${accsListFdm.hasStatus(StatusCode.completeData)} ${accsListFdm.statusList[0].message} len =${accsListFdm.data.length}');
 
-      _accountModel.setAccountsFDM(accsListFdm);
-      print('TODOOOOOO accs icon');
-      return;
-      // _accountModel.setLoadingSigners(false);
+      print('TODOOOOOO accs icon ');
+      _setAccountIconsFromStorage(accsListFdm);
 
-      var accounts = [];
+      _accountModel.setAccountsFDM(accsListFdm);
+
+      /*var accIcons = [];
 
       (await _storage.getAllAccounts()).forEach(((account) => {
-            accounts.add({"address": account.address, "svg": account.svg})
+            accIcons.add({"address": account.address, "svg": account.svg})
           }));
 
       var reefSigners = List<ReefAccount>.from(accs.map((s) {
         dynamic list =
-            accounts.where((item) => item["address"] == s["address"]).toList();
+            accIcons.where((item) => item["address"] == s["address"]).toList();
         if (list.length > 0) s["iconSVG"] = list[0]["svg"];
         return ReefAccount.fromJson(s);
       }));
@@ -142,7 +142,7 @@ class AccountCtrl {
       print('AVAILABLE Signers ${accs.length}');
       reefSigners.forEach((signer) {
         print('  ${signer.name} - ${signer.address} - ${signer.isEvmClaimed}');
-      });
+      });*/
     });
   }
 
@@ -166,5 +166,19 @@ class AccountCtrl {
   toReefEVMAddressWithNotificationString(String evmAddress) async {
     return await _jsApi.jsCall(
         'window.account.toReefEVMAddressWithNotification("$evmAddress")');
+  }
+
+  void _setAccountIconsFromStorage(FeedbackDataModel<List<FeedbackDataModel<ReefAccount>>> accsListFdm) async {
+    var accIcons = [];
+
+    (await _storage.getAllAccounts()).forEach(((account) => {
+    accIcons.add({"address": account.address, "svg": account.svg})
+    }));
+
+    accsListFdm.data.forEach((accFdm) {
+      var accIcon = accIcons.firstWhere((accIcon) => accIcon['address'] == accFdm.data.address, orElse: ()=>null);
+      accFdm.data.iconSVG = accIcon?['svg'];
+    });
+
   }
 }
