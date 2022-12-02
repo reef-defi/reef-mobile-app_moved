@@ -120,29 +120,9 @@ class AccountCtrl {
 
       print('GOT ACCOUNTS ${accsListFdm.hasStatus(StatusCode.completeData)} ${accsListFdm.statusList[0].message} len =${accsListFdm.data.length}');
 
-      print('TODOOOOOO accs icon ');
       _setAccountIconsFromStorage(accsListFdm);
 
       _accountModel.setAccountsFDM(accsListFdm);
-
-      /*var accIcons = [];
-
-      (await _storage.getAllAccounts()).forEach(((account) => {
-            accIcons.add({"address": account.address, "svg": account.svg})
-          }));
-
-      var reefSigners = List<ReefAccount>.from(accs.map((s) {
-        dynamic list =
-            accIcons.where((item) => item["address"] == s["address"]).toList();
-        if (list.length > 0) s["iconSVG"] = list[0]["svg"];
-        return ReefAccount.fromJson(s);
-      }));
-
-      // _accountModel.setSigners(reefSigners);
-      print('AVAILABLE Signers ${accs.length}');
-      reefSigners.forEach((signer) {
-        print('  ${signer.name} - ${signer.address} - ${signer.isEvmClaimed}');
-      });*/
     });
   }
 
