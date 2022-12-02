@@ -37,8 +37,11 @@ class TokenCtrl {
     jsApi.jsObservable('window.tokenUtil.reefPrice\$').listen((value) {
       var fdm = FeedbackDataModel.fromJson(value, (v) => v);
       if (fdm != null && fdm.hasStatus(StatusCode.completeData)) {
-        print('TODOOOOOO');
-        // tokenModel.setReefPrice(fdm.data+.0);
+        if(fdm.data is int){
+          fdm.data = (fdm.data as int).toDouble();
+        }
+
+        tokenModel.setReefPrice(fdm.data);
       }
     });
 
