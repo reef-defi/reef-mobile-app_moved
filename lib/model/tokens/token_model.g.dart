@@ -59,19 +59,19 @@ mixin _$TokenModel on _TokenModel, Store {
     });
   }
 
-  late final _$activityAtom =
-      Atom(name: '_TokenModel.activity', context: context);
+  late final _$txHistoryAtom =
+      Atom(name: '_TokenModel.txHistory', context: context);
 
   @override
-  ObservableList<TokenActivity> get activity {
-    _$activityAtom.reportRead();
-    return super.activity;
+  FeedbackDataModel<List<TokenActivity>> get txHistory {
+    _$txHistoryAtom.reportRead();
+    return super.txHistory;
   }
 
   @override
-  set activity(ObservableList<TokenActivity> value) {
-    _$activityAtom.reportWrite(value, super.activity, () {
-      super.activity = value;
+  set txHistory(FeedbackDataModel<List<TokenActivity>> value) {
+    _$txHistoryAtom.reportWrite(value, super.txHistory, () {
+      super.txHistory = value;
     });
   }
 
@@ -119,11 +119,11 @@ mixin _$TokenModel on _TokenModel, Store {
   }
 
   @override
-  void setTokenActivity(List<TokenActivity> items) {
+  void setTxHistory(FeedbackDataModel<List<TokenActivity>> historyFdm) {
     final _$actionInfo = _$_TokenModelActionController.startAction(
-        name: '_TokenModel.setTokenActivity');
+        name: '_TokenModel.setTxHistory');
     try {
-      return super.setTokenActivity(items);
+      return super.setTxHistory(historyFdm);
     } finally {
       _$_TokenModelActionController.endAction(_$actionInfo);
     }
@@ -145,7 +145,7 @@ mixin _$TokenModel on _TokenModel, Store {
     return '''
 selectedErc20s: ${selectedErc20s},
 selectedNFTs: ${selectedNFTs},
-activity: ${activity},
+txHistory: ${txHistory},
 reefPrice: ${reefPrice},
 selectedErc20List: ${selectedErc20List},
 selectedNFTList: ${selectedNFTList}

@@ -122,7 +122,7 @@ class _ActivityViewState extends State<ActivityView> {
 
   @override
   Widget build(BuildContext context) {
-    print(ReefAppState.instance.model.tokens.activity.map((item) => [
+    print(ReefAppState.instance.model.tokens.txHistory.data.map((item) => [
           item.token,
           item.isInbound,
           item.extrinsic,
@@ -144,7 +144,7 @@ class _ActivityViewState extends State<ActivityView> {
                 child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     child: ReefAppState
-                            .instance.model.tokens.activity.isNotEmpty
+                            .instance.model.tokens.txHistory.data.isNotEmpty
                         ? Observer(builder: (_) {
                             // return Column(
                             //     children: ReefAppState.instance.model.tokens.activity
@@ -153,7 +153,7 @@ class _ActivityViewState extends State<ActivityView> {
                             //         .toList());
                             return Column(
                               children: ReefAppState
-                                  .instance.model.tokens.activity
+                                  .instance.model.tokens.txHistory.data
                                   .map((item) => Column(
                                         children: [
                                           activityItem(
@@ -166,7 +166,7 @@ class _ActivityViewState extends State<ActivityView> {
                                             iconUrl: item.token?.iconUrl,
                                           ),
                                           if (ReefAppState.instance.model.tokens
-                                                  .activity.last !=
+                                                  .txHistory.data.last !=
                                               item)
                                             const Divider(
                                               height: 32,

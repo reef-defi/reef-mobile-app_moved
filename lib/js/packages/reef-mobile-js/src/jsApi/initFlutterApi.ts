@@ -17,6 +17,7 @@ export const initFlutterApi = async (flutterJS: FlutterJS) => {
     try {
         console.log("INIT FLUTTER JS API");
         const signingKey = getFlutterSigningKey(flutterJS);
+
         (window as any).jsApi = {
             initReefState: async (selNetwork: AVAILABLE_NETWORKS, accounts: Account[]) => {
                 let accountsWithMeta: InjectedAccountWithMeta[] = await Promise.all(

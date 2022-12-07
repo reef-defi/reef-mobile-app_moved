@@ -34,12 +34,11 @@ abstract class _TokenModel with Store {
   }
 
   @observable
-  ObservableList<TokenActivity> activity = ObservableList<TokenActivity>();
+  FeedbackDataModel<List<TokenActivity>> txHistory = FeedbackDataModel([], [FeedbackStatus(StatusCode.loading, 'Setting up transaction history.')]);
 
   @action
-  void setTokenActivity(List<TokenActivity> items) {
-    this.activity.clear();
-    this.activity.addAll(items);
+  void setTxHistory(FeedbackDataModel<List<TokenActivity>> historyFdm) {
+    txHistory = historyFdm;
   }
 
   @observable

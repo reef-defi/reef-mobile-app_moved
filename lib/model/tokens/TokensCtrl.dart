@@ -26,11 +26,11 @@ class TokenCtrl {
     });
 
     jsApi.jsObservable('window.reefState.selectedNFTs\$').listen((tokens) {
-      print('GOT NFTS ${tokens}');
       ParseListFn<FeedbackDataModel<TokenNFT>> parsableListFn =
       getParsableListFn(TokenNFT.fromJson);
       var tokensListFdm =
       FeedbackDataModel.fromJsonList(tokens, parsableListFn);
+      print('GOT NFTS ${tokensListFdm.statusList}');
       tokenModel.setSelectedNFTs(tokensListFdm);
     });
 
@@ -46,16 +46,15 @@ class TokenCtrl {
     });
 
     jsApi
-        .jsObservable('reefState.selectedTransactionHistory\$')
+        .jsObservable('window.reefState.selectedTransactionHistory\$')
         .listen((items) {
-      print('TODOOOOO');
-      return;
-      if (items == null) {
-        return;
-      }
-      List<TokenActivity> tknList =
-          List.from(items.map((i) => TokenActivity.fromJSON(i)));
-      tokenModel.setTokenActivity(tknList);
+      var parsableFn =
+          (accList) => List<TokenActivity>.from(accList.map(TokenActivity.fromJSON));
+      var tokensListFdm =
+      FeedbackDataModel.fromJsonList(items, parsableFn);
+
+      tokenModel.setTxHistory(tokensListFdm);
+      print('GOT HISTORY=${tokensListFdm.data.length}');
     });
   }
 
