@@ -1,10 +1,10 @@
 import 'package:mobx/mobx.dart';
+import 'package:reef_mobile_app/model/feedback-data-model/FeedbackDataModel.dart';
 import 'package:reef_mobile_app/model/tokens/Token.dart';
 import 'package:reef_mobile_app/model/tokens/TokenActivity.dart';
 import 'package:reef_mobile_app/model/tokens/TokenNFT.dart';
 import 'package:reef_mobile_app/model/tokens/TokenWithAmount.dart';
 
-import '../../utils/constants.dart';
 
 part 'token_model.g.dart';
 
@@ -12,50 +12,43 @@ class TokenModel = _TokenModel with _$TokenModel;
 
 abstract class _TokenModel with Store {
   @observable
-  ObservableList<TokenWithAmount> selectedSignerTokens =
-      ObservableList<TokenWithAmount>();
+  FeedbackDataModel<List<FeedbackDataModel<TokenWithAmount>>> selectedErc20s = FeedbackDataModel([], [FeedbackStatus(StatusCode.loading, 'Setting up token list.')]);
 
   @action
-  void setSelectedSignerTokens(List<TokenWithAmount> tkns) {
-    this.selectedSignerTokens.clear();
-    this.selectedSignerTokens.addAll(tkns);
+  void setSelectedErc20s(FeedbackDataModel<List<FeedbackDataModel<TokenWithAmount>>> tknsFdm) {
+    selectedErc20s = tknsFdm;
+  }
+
+  @computed
+  List<TokenWithAmount> get selectedErc20List => selectedErc20s.data.map((fdm) => fdm.data).toList();
+
+  @computed
+  List<TokenNFT> get selectedNFTList => selectedNFTs.data.map((fdm) => fdm.data).toList();
+
+  @observable
+  FeedbackDataModel<List<FeedbackDataModel<TokenNFT>>> selectedNFTs = FeedbackDataModel([], [FeedbackStatus(StatusCode.loading, 'Setting up token list.')]);
+
+  @action
+  void setSelectedNFTs(FeedbackDataModel<List<FeedbackDataModel<TokenNFT>>> tknsFdm) {
+    selectedNFTs = tknsFdm;
   }
 
   @observable
-  ObservableList<TokenWithAmount> tokenList = ObservableList<TokenWithAmount>();
+  FeedbackDataModel<List<TokenActivity>> txHistory = FeedbackDataModel([], [FeedbackStatus(StatusCode.loading, 'Setting up transaction history.')]);
 
   @action
-  void setTokenList(List<TokenWithAmount> tkns) {
-    this.tokenList.clear();
-    this.tokenList.addAll(tkns);
+  void setTxHistory(FeedbackDataModel<List<TokenActivity>> historyFdm) {
+    txHistory = historyFdm;
   }
 
   @observable
-  ObservableList<TokenNFT> selectedSignerNFTs = ObservableList<TokenNFT>();
-
-  @action
-  void setSelectedSignerNFTs(List<TokenNFT> tkns) {
-    this.selectedSignerNFTs.clear();
-    this.selectedSignerNFTs.addAll(tkns);
-  }
-
-  @observable
-  ObservableList<TokenActivity> activity = ObservableList<TokenActivity>();
-
-  @action
-  void setTokenActivity(List<TokenActivity> items) {
-    this.activity.clear();
-    this.activity.addAll(items);
-  }
-
-  @observable
-  double? reefPrice;
+  double? reefPrice=0.0;
 
   @action
   void setReefPrice(double value) {
     reefPrice = value;
   }
 
-  @computed
-  TokenWithAmount get reefToken => tokenList.firstWhere((tkn) => tkn.address == Constants.REEF_TOKEN_ADDRESS);
-}
+  // @computed
+  // TokenWithAmount get reefToken => selectedAccountTokenList.firstWhere((tkn) => tkn.address == Constants.REEF_TOKEN_ADDRESS);
+  }

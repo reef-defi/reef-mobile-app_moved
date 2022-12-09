@@ -7,22 +7,19 @@
     "@polkadot/keyring": "^9.4.1",
     "@polkadot/ui-shared": "^2.4.1",
     "@popperjs/core": "^2.11.5",
-    "@reef-defi/extension-base": "^1.0.15m y",
-    "@reef-defi/react-lib": "^1.2.7",
+    "@reef-defi/extension-base": "^1.0.15",
+    "@reef-chain/util-lib": "^0.4.0",
     "crypto-browserify": "^3.12.0",
     "esbuild": "^0.14.42",
     "ethers": "^5.6.9",
     "events": "^3.3.0",
     "flutter-js-bridge": "0.0.1",
-    "react": "~17.0.2",
-    "react-dom": "~17.0.2",
-    "react-transition-group": "4.4.2",
     "rxjs": "^7.5.5",
     "stream": "^0.0.2"
   },
   "scripts": {
-    "build": "esbuild src/index.ts --bundle --outfile=dist/index.js --tsconfig=tsconfig.json --define:process.env.NODE_ENV=\\\"production\\\" ",
-    "start": "esbuild src/index.ts --bundle --outfile=dist/index.js --watch --tsconfig=tsconfig.json --define:process.env.NODE_ENV=\\\"production\\\""
+    "build": "esbuild src/index.ts --bundle --outfile=dist/index.js --external:react --tsconfig=tsconfig.json --define:process.env.NODE_ENV=\\\"production\\\" ",
+    "start": "esbuild src/index.ts --bundle --outfile=dist/index.js --external:react --watch --tsconfig=tsconfig.json --define:process.env.NODE_ENV=\\\"production\\\" "
   },
   "browser": {
     "crypto": false

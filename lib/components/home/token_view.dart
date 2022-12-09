@@ -3,6 +3,7 @@ import "package:flutter/material.dart";
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
+import 'package:reef_mobile_app/model/feedback-data-model/FeedbackDataModel.dart';
 import 'package:reef_mobile_app/model/navigation/navigation_model.dart';
 import 'package:reef_mobile_app/model/tokens/TokenWithAmount.dart';
 import 'package:reef_mobile_app/utils/elements.dart';
@@ -177,24 +178,31 @@ class _TokenViewState extends State<TokenView> {
             // ),
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 0),
-              child: Observer(builder: (_) {
-                return Wrap(
-                  spacing: 24,
-                  children: ReefAppState
-                      .instance.model.tokens.selectedSignerTokens
-                      .map((TokenWithAmount tkn) {
-                    return Column(
-                      children: [
-                        tokenCard(tkn.name, tkn.address,
-                            tokenName: tkn.symbol,
-                            iconURL: tkn.iconUrl,
-                            price: tkn.price?.toDouble() ?? 0,
-                            balance: decimalsToDouble(tkn.balance)),
-                        const SizedBox(height: 12),
-                      ],
-                    );
-                  }).toList(),
-                );
+              child: Observer(builder: (_) {return Column(children: [
+                  if(ReefAppState
+                      .instance.model.tokens.selectedErc20s.statusList.length<2 &&
+                      !ReefAppState
+                      .instance.model.tokens.selectedErc20s.hasStatus(StatusCode.completeData))Text(ReefAppState
+                      .instance.model.tokens.selectedErc20s.statusList[0].message??'Loading ${ReefAppState
+                      .instance.model.tokens.selectedErc20s.data.length}'),
+                  Wrap(
+                    spacing: 24,
+                    children: ReefAppState
+                        .instance.model.tokens.selectedErc20s.data
+                        .map((FeedbackDataModel<TokenWithAmount> tkn) {
+                      return Column(
+                        children: [
+                          tokenCard(tkn.data.name, tkn.data.address,
+                              tokenName: tkn.data.symbol,
+                              iconURL: tkn.data.iconUrl,
+                              price: tkn.data.price?.toDouble() ?? 0,
+                              balance: decimalsToDouble(tkn.data.balance)),
+                          const SizedBox(height: 12),
+                        ],
+                      );
+                    }).toList(),
+                  )
+                ]);
               }),
             ),
           )

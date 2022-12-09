@@ -24,8 +24,8 @@ class TokenNFT extends Token {
             balance: balance,
             decimals: 0);
 
-  static fromJSON(dynamic json) {
-    var tkn = Token.fromJSON(json);
+  static TokenNFT fromJson(dynamic json) {
+    var tkn = Token.fromJson(json);
     return TokenNFT(
         name: tkn.name,
         address: tkn.address,

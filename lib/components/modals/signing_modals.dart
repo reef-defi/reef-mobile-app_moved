@@ -9,13 +9,15 @@ import 'package:reef_mobile_app/components/modal.dart';
 import 'package:reef_mobile_app/components/modals/bind_modal.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/StorageKey.dart';
-import 'package:reef_mobile_app/model/account/ReefSigner.dart';
+import 'package:reef_mobile_app/model/account/ReefAccount.dart';
 import 'package:reef_mobile_app/model/signing/signature_request.dart';
 import 'package:reef_mobile_app/model/signing/tx_decoded_data.dart';
 import 'package:reef_mobile_app/utils/elements.dart';
 import 'package:reef_mobile_app/utils/functions.dart';
 import 'package:reef_mobile_app/utils/gradient_text.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
+
+import '../../model/feedback-data-model/FeedbackDataModel.dart';
 
 List<TableRow> createTable({required keyTexts, required valueTexts}) {
   List<TableRow> rows = [];
@@ -76,7 +78,7 @@ List<TableRow> createTransactionTable(TxDecodedData txData) {
 }
 
 class EvmNotClaimedModal extends StatefulWidget {
-  final ReefSigner signer;
+  final FeedbackDataModel<ReefAccount> signer;
 
   const EvmNotClaimedModal(this.signer, {Key? key}) : super(key: key);
 
@@ -93,7 +95,7 @@ class _EvmNotClaimedModalState extends State<EvmNotClaimedModal> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             AccountBox(
-                reefSigner: widget.signer,
+                reefAccountFDM: widget.signer,
                 selected: false,
                 onSelected: () {},
                 showOptions: false),
@@ -138,7 +140,7 @@ class SignModal extends StatefulWidget {
   final List<TableRow> detailsTable;
   final bool isTransaction;
   final String signatureIdent;
-  final ReefSigner signer;
+  final FeedbackDataModel<ReefAccount> signer;
   const SignModal(
       this.detailsTable, this.isTransaction, this.signatureIdent, this.signer,
       {Key? key})
@@ -187,7 +189,7 @@ class _SignModalState extends State<SignModal> {
         Navigator.pop(context);
         ReefAppState.instance.signingCtrl.confirmSignature(
           widget.signatureIdent,
-          widget.signer.address,
+          widget.signer.data.address,
         );
       });
     } else {
@@ -208,7 +210,7 @@ class _SignModalState extends State<SignModal> {
         Navigator.pop(context);
         ReefAppState.instance.signingCtrl.confirmSignature(
           widget.signatureIdent,
-          widget.signer.address,
+          widget.signer.data.address,
         );
       });
     }
@@ -222,7 +224,7 @@ class _SignModalState extends State<SignModal> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           AccountBox(
-              reefSigner: widget.signer,
+              reefAccountFDM: widget.signer,
               selected: false,
               onSelected: () => {},
               showOptions: false),
@@ -379,8 +381,8 @@ Future<TxDecodedData> _getTxDecodedData(SignatureRequest request) async {
 }
 
 void showSigningModal(context, SignatureRequest signatureRequest) async {
-  var signer = ReefAppState.instance.model.accounts.signers.firstWhere(
-      (sig) => sig.address == signatureRequest.payload.address,
+  var account = ReefAppState.instance.model.accounts.accountsFDM.data.firstWhere(
+      (acc) => acc.data.address == signatureRequest.payload.address,
       orElse: () => throw Exception("Signer not found"));
 
   var signatureIdent = signatureRequest.signatureIdent;
@@ -395,22 +397,22 @@ void showSigningModal(context, SignatureRequest signatureRequest) async {
       bytes,
     ]);
     showModal(context,
-        child: SignModal(detailsTable, false, signatureIdent, signer),
+        child: SignModal(detailsTable, false, signatureIdent, account),
         dismissible: true,
         headText: "Sign Message");
   } else {
     var txDecodedData = await _getTxDecodedData(signatureRequest);
     if (txDecodedData.methodName != null &&
         txDecodedData.methodName!.startsWith("evm.") &&
-        !signer.isEvmClaimed) {
+        !account.data.isEvmClaimed) {
       showModal(context,
-          child: EvmNotClaimedModal(signer),
+          child: EvmNotClaimedModal(account),
           dismissible: true,
           headText: "EVM account not claimed");
     } else {
       List<TableRow> detailsTable = createTransactionTable(txDecodedData);
       showModal(context,
-          child: SignModal(detailsTable, true, signatureIdent, signer),
+          child: SignModal(detailsTable, true, signatureIdent, account),
           dismissible: true,
           headText: "Sign Transaction");
     }

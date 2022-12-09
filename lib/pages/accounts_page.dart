@@ -9,6 +9,7 @@ import 'package:reef_mobile_app/components/modals/account_modals.dart';
 import 'package:reef_mobile_app/components/modals/add_account_modal.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/account/AccountCtrl.dart';
+import 'package:reef_mobile_app/model/feedback-data-model/FeedbackDataModel.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 
 import '../components/SignatureContentToggle.dart';
@@ -41,82 +42,97 @@ class _AccountsPageState extends State<AccountsPage> {
   Widget build(BuildContext context) {
     return SignatureContentToggle(Column(
       children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  // const Image(
-                  //   image: AssetImage("./assets/images/reef.png"),
-                  //   width: 24,
-                  //   height: 24,
-                  // ),
-                  const Gap(8),
-                  Text(
-                    "Accounts",
-                    style: GoogleFonts.spaceGrotesk(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 32,
-                        color: Colors.grey[800]),
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  MaterialButton(
-                    onPressed: () => showAddAccountModal('Add account menu', openModal,
-                        context: context),
-                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    minWidth: 0,
-                    height: 36,
-                    elevation: 0,
-                    padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        side: const BorderSide(color: Colors.black26)),
-                    child: Row(children: [
-                      Icon(
-                        Icons.add_circle_rounded,
-                        color: Styles.textLightColor,
-                        size: 22,
-                      ),
-                      const Gap(4),
-                      Text(
-                        "Add Account",
-                        style: GoogleFonts.roboto(
-                            color: Styles.textLightColor,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500),
-                      )
-                    ]),
-                  ),
-                  const Gap(8)
-                ],
-              ),
-            ],
-          ),
-        ),
+        buildHeader(context),
         const Gap(16),
         Observer(builder: (_) {
-          if (ReefAppState.instance.model.accounts.loadingSigners == true) {
-            return Text(
-              'Loading accounts...',
-              style: TextStyle(fontSize: 16, color: Styles.textLightColor),
-            );
+          var accsFeedbackDataModel =
+              ReefAppState.instance.model.accounts.accountsFDM;
+          if (accsFeedbackDataModel.hasStatus(StatusCode.completeData)) {
+            return SizedBox.shrink();
           }
-          if (ReefAppState.instance.model.accounts.signers.isNotEmpty) {
-            return Expanded(
-                child: AccountsList(
-                    ReefAppState.instance.model.accounts.signers,
-                    ReefAppState.instance.model.accounts.selectedAddress,
-                    ReefAppState.instance.accountCtrl.setSelectedAddress)
-            );
+          return Container(
+              child: Text(
+            accsFeedbackDataModel.statusList[0].message ?? '',
+            style: TextStyle(fontSize: 16, color: Styles.textLightColor),
+          ));
+        }),
+        Observer(builder: (_) {
+          var accsFeedbackDataModel =
+              ReefAppState.instance.model.accounts.accountsFDM;
+          if (ReefAppState.instance.model.accounts.accountsFDM.data.length ==
+              0) {
+            return SizedBox.shrink();
           }
-          return const Text('No accounts present');
+          // return Text('len=${accsFeedbackDataModel.data.length}');
+          return Flexible(child: AccountsList(
+              ReefAppState.instance.model.accounts.accountsFDM.data,
+              ReefAppState.instance.model.accounts.selectedAddress,
+              ReefAppState.instance.accountCtrl.setSelectedAddress)
+          );
         }),
       ],
     ));
+  }
+
+  Padding buildHeader(BuildContext context) {
+    return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                // const Image(
+                //   image: AssetImage("./assets/images/reef.png"),
+                //   width: 24,
+                //   height: 24,
+                // ),
+                const Gap(8),
+                Text(
+                  "Accounts",
+                  style: GoogleFonts.spaceGrotesk(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 32,
+                      color: Colors.grey[800]),
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                MaterialButton(
+                  onPressed: () => showAddAccountModal(
+                      'Add account menu', openModal,
+                      context: context),
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  minWidth: 0,
+                  height: 36,
+                  elevation: 0,
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      side: const BorderSide(color: Colors.black26)),
+                  child: Row(children: [
+                    Icon(
+                      Icons.add_circle_rounded,
+                      color: Styles.textLightColor,
+                      size: 22,
+                    ),
+                    const Gap(4),
+                    Text(
+                      "Add Account",
+                      style: GoogleFonts.roboto(
+                          color: Styles.textLightColor,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500),
+                    )
+                  ]),
+                ),
+                const Gap(8)
+              ],
+            ),
+          ],
+        ),
+      );
   }
 }

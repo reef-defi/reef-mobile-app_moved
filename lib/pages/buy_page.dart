@@ -125,11 +125,9 @@ class _BuyPageState extends State<BuyPage> {
         setState(() {
           selectedPair = pairs.first;
           if (selectedPair.quotation == null) {
-            TokenWithAmount? reefToken =
-                ReefAppState.instance.model.tokens.tokenList.firstWhere(
-                    (token) => token.address == Constants.REEF_TOKEN_ADDRESS);
-            if (reefToken.price != null) {
-              selectedPair.quotation = reefToken.price;
+            var reefPrice = ReefAppState.instance.model.tokens.reefPrice;
+            if (reefPrice != null) {
+              selectedPair.quotation = reefPrice;
             } else {
               showAlertModal("Error", ["An error occurred"], context: context);
               throw Exception('No quotation found');

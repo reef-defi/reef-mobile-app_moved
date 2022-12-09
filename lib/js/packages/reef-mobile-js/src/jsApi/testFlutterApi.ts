@@ -1,4 +1,4 @@
-import {appState, graphql} from "@reef-defi/react-lib";
+import {reefState, graphql} from "@reef-chain/util-lib";
 import {map} from "rxjs/operators";
 import {interval} from "rxjs/dist/types";
 
@@ -22,25 +22,25 @@ export function testReefObservables() {
                 console.log('APOLLO ', v),
             error: (e) => console.log('APOLLO ERR', e.message)
         });
-    appState.signers$.subscribe(
+    reefState.accounts$.subscribe(
         {
             next: (v) =>
                 console.log('SIGNERS', v?.length),
             error: (e) => console.log('SIGNERS ERR', e.message)
         });
-    appState.currentAddress$.subscribe(
+    reefState.selectedAddress$.subscribe(
         {
             next: (v) =>
                 console.log('ADDRESS', v),
             error: (e) => console.log('ADDRESS ERR', e.message)
         });
-    appState.selectedSigner$.subscribe(
+    reefState.selectedAccount$.subscribe(
         {
             next: (v) =>
                 console.log('SIGNER', v),
             error: (e) => console.log('SIGNER ERR', e.message)
         });
-    appState.selectedSignerTokenBalances$.subscribe(
+    reefState.selectedSignerTokenBalances$.subscribe(
         {
             next: (v) =>
                 console.log('TOKENS', v),

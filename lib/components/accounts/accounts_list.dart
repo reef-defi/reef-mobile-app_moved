@@ -1,17 +1,18 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:reef_mobile_app/model/account/ReefSigner.dart';
+import 'package:reef_mobile_app/model/account/ReefAccount.dart';
+import 'package:reef_mobile_app/model/feedback-data-model/FeedbackDataModel.dart';
 
 import '../../utils/styles.dart';
 import '../account_box.dart';
 import '../modals/account_modals.dart';
 
 class AccountsList extends StatelessWidget {
-  final List<ReefSigner> signers;
+  final List<FeedbackDataModel<ReefAccount>> accounts;
   final void Function(String) selectAddress;
   final String? selectedAddress;
-  const AccountsList(this.signers, this.selectedAddress, this.selectAddress,
+  const AccountsList(this.accounts, this.selectedAddress, this.selectAddress,
       {Key? key})
       : super(key: key);
 
@@ -20,7 +21,9 @@ class AccountsList extends StatelessWidget {
     return ListView(
       physics: const BouncingScrollPhysics(),
       padding: const EdgeInsets.all(0),
-      children: signers.isEmpty
+      scrollDirection: Axis.vertical,
+      shrinkWrap: true,
+      children: accounts.isEmpty
           ? [
               DottedBorder(
                 dashPattern: const [4, 2],
@@ -69,25 +72,25 @@ class AccountsList extends StatelessWidget {
                 ),
               )
             ]
-          : [toAccountBoxList(signers)],
+          : [toAccountBoxList(accounts)],
     );
   }
 
-  Widget toAccountBoxList(List<ReefSigner> signers) {
+  Widget toAccountBoxList(List<FeedbackDataModel<ReefAccount>> signers) {
     signers.removeWhere((sig) => sig == null);
 
     return Wrap(
         spacing: 24,
         children: signers
             .map<Widget>(
-              (ReefSigner signer) => Column(
+              (FeedbackDataModel<ReefAccount> acc) => Column(
                 children: [
                   AccountBox(
-                      reefSigner: signer,
+                      reefAccountFDM: acc,
                       selected: selectedAddress != null
-                          ? selectedAddress == signer.address
+                          ? selectedAddress == acc.data.address
                           : false,
-                      onSelected: () => selectAddress(signer.address),
+                      onSelected: () => selectAddress(acc.data.address),
                       showOptions: true),
                   const Gap(12)
                 ],

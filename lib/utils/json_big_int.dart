@@ -11,12 +11,18 @@ class JsonBigInt {
     if (type == 'Int') {
       return BigInt.tryParse(value, radix: 10);
     }
+    if (type == 'Double') {
+      return BigInt.tryParse(value, radix: 10);
+    }
     return null;
   }
 
   static JsonBigInt _fromJson(dynamic jsonVal) {
     if (jsonVal is int) {
       return JsonBigInt('Int', jsonVal.toString());
+    }
+    if (jsonVal is double) {
+      return JsonBigInt('Double', jsonVal.toString());
     }
     return JsonBigInt(jsonVal['type'], jsonVal['hex']);
   }

@@ -1,4 +1,4 @@
-import { appState } from '@reef-defi/react-lib';
+import { reefState } from '@reef-chain/util-lib';
 import { switchMap, take } from "rxjs/operators";
 import { Contract} from "ethers";
 import { ReefswapRouter } from "./abi/ReefswapRouter";
@@ -29,7 +29,7 @@ export const initApi = () => {
         // Executes a swap
         execute: async (signerAddress: string, token1: TokenWithAmount, token2: TokenWithAmount, settings: SwapSettings) => {
             return firstValueFrom(
-                combineLatest([appState.currentNetwork$, appState.signers$]).pipe(
+                combineLatest([reefState.selectedNetwork$, reefState.accounts$]).pipe(
                     take(1),
                     switchMap(async ([network, reefSigners]) => {
                         const reefSigner = reefSigners.find((s)=>s.address===signerAddress);
@@ -37,11 +37,11 @@ export const initApi = () => {
                             console.log("swap.send() - NO SIGNER FOUND",);
                             return false;
                         }
-    
+
                         settings = resolveSettings(settings);
                         const sellAmount = calculateAmount({ decimals: token1.decimals, amount: token1.amount });
                         const minBuyAmount = calculateAmountWithPercentage(
-                            { decimals: token2.decimals, amount: token2.amount }, 
+                            { decimals: token2.decimals, amount: token2.amount },
                             settings.slippageTolerance
                         );
                         const swapRouter = new Contract(
@@ -49,7 +49,7 @@ export const initApi = () => {
                             ReefswapRouter,
                             reefSigner.signer
                         );
-    
+
                         try {
                             // Approve token1
                             console.log("Waiting for confirmation of token approval...");
@@ -60,7 +60,7 @@ export const initApi = () => {
                                 reefSigner.signer
                             );
                             console.log("Token approved");
-    
+
                             // Swap
                             console.log("Waiting for confirmation of swap...");
                             const tx = await swapRouter.swapExactTokensForTokensSupportingFeeOnTransferTokens(
@@ -72,7 +72,7 @@ export const initApi = () => {
                             );
                             const receipt = await tx.wait();
                             console.log("SWAP RESULT=", receipt);
-    
+
                             return receipt;
                         } catch (e) {
                             console.log("ERROR swapping tokens", e);
@@ -86,7 +86,7 @@ export const initApi = () => {
         // Returns pool reserves, if pool exists
         getPoolReserves: async (token1Address: string, token2Address: string) => {
             return firstValueFrom(
-                combineLatest([appState.currentNetwork$, appState.currentProvider$]).pipe(
+                combineLatest([appState.selectedNetwork$, appState.selectedProvider$]).pipe(
                     take(1),
                     switchMap(async ([network, provider]) => {
                         return getPoolReserves(token1Address, token2Address, provider, network.factoryAddress);
@@ -95,7 +95,7 @@ export const initApi = () => {
                 )
             );
         },
-        /* 
+        /*
         * buy == true
         *     tokenAmount: amount of token2 to buy
         *     returns amount of token1 required

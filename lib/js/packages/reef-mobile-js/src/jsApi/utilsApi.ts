@@ -1,24 +1,27 @@
-import { appState, graphql, availableNetworks, Network } from '@reef-defi/react-lib';
-import { map, switchMap, take } from "rxjs/operators";
-import { combineLatest, firstValueFrom } from "rxjs";
-import { fetchTokenData } from './utils/tokenUtils';
-import { ethers } from 'ethers';
-import { Metadata, TypeRegistry } from '@polkadot/types';
-import type { AnyJson } from "@polkadot/types/types";
-import type { Call } from "@polkadot/types/interfaces";
-import { Provider } from "@reef-defi/evm-provider";
-import { getSpecTypes } from "@polkadot/types-known";
-import { base64Decode, base64Encode } from '@reef-defi/util-crypto';
-import { isAscii, u8aToString, u8aUnwrapBytes } from '@reef-defi/util';
+import {graphql, network, reefState, tokenUtil} from '@reef-chain/util-lib';
+import {map, switchMap, take} from "rxjs/operators";
+import {combineLatest, firstValueFrom} from "rxjs";
+import {fetchTokenData} from './utils/tokenUtils';
+import {ethers} from 'ethers';
+import {Metadata, TypeRegistry} from '@polkadot/types';
+import type {AnyJson} from "@polkadot/types/types";
+import type {Call} from "@polkadot/types/interfaces";
+import {Provider} from "@reef-defi/evm-provider";
+import {getSpecTypes} from "@polkadot/types-known";
+import {base64Decode, base64Encode} from '@reef-defi/util-crypto';
+import {isAscii, u8aToString, u8aUnwrapBytes} from '@reef-defi/util';
 
 export const initApi = () => {
     (window as any).utils = {
         findToken: async (tokenAddress: string) => {
+            let price$ = reefState.skipBeforeStatus$(tokenUtil.reefPrice$, reefState.FeedbackStatusCode.COMPLETE_DATA).pipe(
+                map((value => value.data))
+            );
             return firstValueFrom(
-                combineLatest([graphql.apolloClientInstance$, appState.currentNetwork$, appState.currentProvider$, appState.reefPrice$]).pipe(
+                combineLatest([graphql.apolloClientInstance$, reefState.selectedNetwork$, reefState.selectedProvider$, price$]).pipe(
                     take(1),
-                    switchMap(async ([apolloInstance, network, provider, reefPrice]) => {
-                        return await fetchTokenData(apolloInstance, tokenAddress, provider, network.factoryAddress, reefPrice);
+                    switchMap(async ([apolloInstance, net, provider, reefPrice]:[any, network.Network, Provider, number]) => {
+                        return await fetchTokenData(apolloInstance, tokenAddress, provider, network.getReefswapNetworkConfig(net).factoryAddress, reefPrice);
                     }),
                     take(1)
                 )
@@ -28,7 +31,7 @@ export const initApi = () => {
             return ethers.utils.isAddress(address);
         },
         decodeMethod: (data: string, types: any) => {
-            return firstValueFrom(appState.currentProvider$.pipe(
+            return firstValueFrom(reefState.selectedProvider$.pipe(
                 take(1),
                 map(async (provider: Provider) => {
                     const api = provider.api;
@@ -37,10 +40,10 @@ export const initApi = () => {
                     if (!types) {
                         types = getSpecTypes(api.registry, api.runtimeChain.toString(), api.runtimeVersion.specName, api.runtimeVersion.specVersion ) as unknown as Record<string, string>;
                     }
-                    
+
                     let args: AnyJson | null = null;
                     let method: Call | null = null;
-        
+
                     try {
                         const registry = new TypeRegistry();
                         registry.register(types);
@@ -61,19 +64,19 @@ export const initApi = () => {
                         args = null;
                         method = null;
                     }
-        
+
                     const info = method?.meta ? method.meta.docs.map((d) => d.toString().trim()).join(' ') : '';
                     const methodParams = method?.meta ? `(${method.meta.args.map(({ name }) => name).join(', ')})` : '';
                     const methodName = method ? `${method.section}.${method.method}${methodParams}` : '';
-        
+
                     return { methodName, args, info };
                 }),
                 take(1)
             ));
         },
-        setCurrentNetwork: (networkName: string) => {
-            const network: Network = availableNetworks[networkName] || availableNetworks.mainnet;
-            return appState.setCurrentNetwork(network);
+        setSelectedNetwork: (networkName: string) => {
+            const network: Network = network.AVAILABLE_NETWORKS[networkName] || network.AVAILABLE_NETWORKS.mainnet;
+            return reefState.setSelectedNetwork(network);
         },
         bytesString: (bytes: string) => {
             return isAscii(bytes) ? u8aToString(u8aUnwrapBytes(bytes)) : bytes;

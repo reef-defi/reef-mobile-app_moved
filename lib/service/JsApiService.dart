@@ -22,6 +22,7 @@ class JsApiService {
 
   final controllerInit = Completer<WebViewController>();
   final jsApiLoaded = Completer<WebViewController>();
+
   // when web page loads
   final jsApiReady = Completer<WebViewController>();
 
@@ -33,7 +34,7 @@ class JsApiService {
   late Widget _wdg;
 
   get widget {
-    print('JS API SERVICE GET WIDGET $flutterJsFilePath');
+    // print('JS API SERVICE GET WIDGET $flutterJsFilePath');
     return WebViewFlutterJS(
       hidden: hiddenWidget,
       controller: controllerInit,
@@ -46,17 +47,20 @@ class JsApiService {
 
   JsApiService._(bool this.hiddenWidget, String this.flutterJsFilePath,
       {String? url, String? html}) {
-    print('JS API SERVICE CREATE $flutterJsFilePath');
+    // print('JS API SERVICE CREATE $flutterJsFilePath');
     _renderWithFlutterJS(flutterJsFilePath, html, url);
   }
 
   JsApiService.reefAppJsApi()
-      : this._(true, 'lib/js/packages/reef-mobile-js/dist/index.js', url:'https://app.reef.io');
+      : this._(true, 'lib/js/packages/reef-mobile-js/dist/index.js',
+            url: 'https://app.reef.io');
 
   JsApiService.dAppInjectedHtml(String html, String? baseUrl)
-      : this._(false, 'lib/js/packages/dApp-js/dist/index.js', html:html, url: baseUrl);
+      : this._(false, 'lib/js/packages/dApp-js/dist/index.js',
+            html: html, url: baseUrl);
 
-  void _renderWithFlutterJS(String fJsFilePath, String? htmlString, String? baseUrl) {
+  void _renderWithFlutterJS(
+      String fJsFilePath, String? htmlString, String? baseUrl) {
     htmlString ??= "<html><head></head><body></body></html>";
     controllerInit.future.then((ctrl) {
       return _getFlutterJsHeaderTags(fJsFilePath).then((headerTags) {
@@ -65,6 +69,11 @@ class JsApiService {
         return _renderHtml(ctrl, htmlString, baseUrl);
       });
     });
+  }
+
+  // for js methods with no return value
+  Future<void> jsCallVoidReturn(String executeJs) {
+    return _controller.then((ctrl) => ctrl.runJavascript(executeJs));
   }
 
   Future<String> jsCall(String executeJs) {
@@ -87,13 +96,11 @@ class JsApiService {
   }
 
   void confirmTxSignature(String reqId, String mnemonic) {
-    jsCall(
-        '${TX_SIGN_CONFIRMATION_JS_FN_NAME}("$reqId", "$mnemonic")');
+    jsCall('${TX_SIGN_CONFIRMATION_JS_FN_NAME}("$reqId", "$mnemonic")');
   }
 
   void sendDappMsgResponse(String reqId, dynamic value) {
-    jsCall(
-        '${DAPP_MSG_CONFIRMATION_JS_FN_NAME}(`$reqId`, `$value`)');
+    jsCall('${DAPP_MSG_CONFIRMATION_JS_FN_NAME}(`$reqId`, `$value`)');
   }
 
   Future<String> _getFlutterJsHeaderTags(String assetsFilePath) async {
@@ -129,8 +136,12 @@ class JsApiService {
         htmlString.substring(insertAt);
   }
 
-  void _renderHtml(WebViewController ctrl, String htmlString, String? baseUrl) async {
-    ctrl.loadHtmlString(htmlString, baseUrl: baseUrl).then((value) => ctrl).catchError((err) {
+  void _renderHtml(
+      WebViewController ctrl, String htmlString, String? baseUrl) async {
+    ctrl
+        .loadHtmlString(htmlString, baseUrl: baseUrl)
+        .then((value) => ctrl)
+        .catchError((err) {
       print('Error loading HTML=$err');
     });
   }
@@ -148,7 +159,7 @@ class JsApiService {
             jsApiLoaded.future.then((ctrl) => jsApiReady.complete(ctrl));
           } else if (apiMsg.streamId == TX_SIGNATURE_CONFIRMATION_STREAM_ID) {
             jsTxSignatureConfirmationMessageSubj.add(apiMsg);
-          }else if (apiMsg.streamId == DAPP_MSG_CONFIRMATION_STREAM_ID) {
+          } else if (apiMsg.streamId == DAPP_MSG_CONFIRMATION_STREAM_ID) {
             jsDAppMsgSubj.add(apiMsg);
           } else if (int.tryParse(apiMsg.streamId) == null) {
             jsMessageUnknownSubj.add(apiMsg);

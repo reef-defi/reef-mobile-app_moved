@@ -2,8 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:reef_mobile_app/model/StorageKey.dart';
-import 'package:reef_mobile_app/model/account/ReefSigner.dart';
+import 'package:reef_mobile_app/model/account/ReefAccount.dart';
 import 'package:reef_mobile_app/model/account/stored_account.dart';
+import 'package:reef_mobile_app/model/feedback-data-model/FeedbackDataModel.dart';
 import 'package:reef_mobile_app/service/JsApiService.dart';
 import 'package:reef_mobile_app/service/StorageService.dart';
 import 'package:reef_mobile_app/utils/constants.dart';
@@ -23,20 +24,21 @@ class AccountCtrl {
     _initWasm(_jsApi);
   }
 
-  Future getAccountsList() async {
+  Future getStorageAccountsList() async {
     var accounts = [];
     (await _storage.getAllAccounts())
         .forEach(((account) => {accounts.add(account.toJsonSkinny())}));
     return accounts;
   }
 
-  Future getAccount(String address) async {
+  Future getStorageAccount(String address) async {
     return await _storage.getAccount(address);
   }
 
-  void setSelectedAddress(String address) {
+  Future<void> setSelectedAddress(String address) {
     // TODO check if in signers
-    _jsApi.jsCall('window.appState.setCurrentAddress("$address")');
+    return _jsApi
+        .jsCallVoidReturn('window.reefState.setSelectedAddress("$address")');
   }
 
   Future<String> generateAccount() async {
@@ -96,12 +98,12 @@ class AccountCtrl {
   }
 
   Stream availableSignersStream() {
-    return _jsApi.jsObservable('window.account.availableSigners\$');
+    return _jsApi.jsObservable('window.reefState.accounts\$');
   }
 
   void _initJsObservables(JsApiService jsApi, StorageService storage) {
     jsApi
-        .jsObservable('window.appState.currentAddress\$')
+        .jsObservable('window.reefState.selectedAddress\$')
         .listen((address) async {
       if (address == null || address == '') {
         return;
@@ -111,36 +113,23 @@ class AccountCtrl {
       _accountModel.setSelectedAddress(address);
     });
 
-    _accountModel.setLoadingSigners(true);
-    jsApi
-        .jsObservable('window.account.availableSigners\$')
-        .listen((signers) async {
-      _accountModel.setLoadingSigners(false);
+    jsApi.jsObservable('window.reefState.accounts\$').listen((accs) async {
 
-      var accounts = [];
+      ParseListFn<FeedbackDataModel<ReefAccount>> parsableListFn = getParsableListFn(ReefAccount.fromJson);
+      var accsListFdm = FeedbackDataModel.fromJsonList(accs, parsableListFn);
 
-      (await _storage.getAllAccounts()).forEach(((account) => {
-            accounts.add({"address": account.address, "svg": account.svg})
-          }));
+      print('GOT ACCOUNTS ${accsListFdm.hasStatus(StatusCode.completeData)} ${accsListFdm.statusList[0].message} len =${accsListFdm.data.length}');
 
-      var reefSigners = List<ReefSigner>.from(signers.map((s) {
-        dynamic list =
-            accounts.where((item) => item["address"] == s["address"]).toList();
-        if (list.length > 0) s["iconSVG"] = list[0]["svg"];
-        return ReefSigner.fromJson(s);
-      }));
+      _setAccountIconsFromStorage(accsListFdm);
 
-      _accountModel.setSigners(reefSigners);
-      print('AVAILABLE Signers ${signers.length}');
-      reefSigners.forEach((signer) {
-        print('  ${signer.name} - ${signer.address} - ${signer.isEvmClaimed}');
-      });
+      _accountModel.setAccountsFDM(accsListFdm);
     });
   }
 
   void _initSavedDeviceAccountAddress(StorageService storage) async {
     // TODO check if this address also exists in keystore
     var savedAddress = await storage.getValue(StorageKey.selected_address.name);
+    // TODO if null get first address from storage // https://app.clickup.com/t/37rvnpw
     if (kDebugMode) {
       print('SET SAVED ADDRESS=$savedAddress');
     }
@@ -155,6 +144,21 @@ class AccountCtrl {
   }
 
   toReefEVMAddressWithNotificationString(String evmAddress) async {
-    return await _jsApi.jsCall('window.account.toReefEVMAddressWithNotification("$evmAddress")');
+    return await _jsApi.jsCall(
+        'window.account.toReefEVMAddressWithNotification("$evmAddress")');
+  }
+
+  void _setAccountIconsFromStorage(FeedbackDataModel<List<FeedbackDataModel<ReefAccount>>> accsListFdm) async {
+    var accIcons = [];
+
+    (await _storage.getAllAccounts()).forEach(((account) => {
+    accIcons.add({"address": account.address, "svg": account.svg})
+    }));
+
+    accsListFdm.data.forEach((accFdm) {
+      var accIcon = accIcons.firstWhere((accIcon) => accIcon['address'] == accFdm.data.address, orElse: ()=>null);
+      accFdm.data.iconSVG = accIcon?['svg'];
+    });
+
   }
 }

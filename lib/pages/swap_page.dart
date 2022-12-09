@@ -26,10 +26,10 @@ class SwapPage extends StatefulWidget {
 
 class _SwapPageState extends State<SwapPage> {
   // TODO: use tokenList instead of selectedSignerTokens
-  var tokens = ReefAppState.instance.model.tokens.selectedSignerTokens;
+  var tokens = ReefAppState.instance.model.tokens.selectedErc20List;
 
   TokenWithAmount? selectedTopToken = ReefAppState
-      .instance.model.tokens.selectedSignerTokens
+      .instance.model.tokens.selectedErc20List
       .firstWhere((token) => token.address == Constants.REEF_TOKEN_ADDRESS);
 
   TokenWithAmount? selectedBottomToken;
@@ -212,7 +212,7 @@ class _SwapPageState extends State<SwapPage> {
     var res = await ReefAppState.instance.tokensCtrl
         .findToken(Constants.REEF_TOKEN_ADDRESS);
     print("TEST FIND TOKEN: ${res}");
-    tokens.add(TokenWithAmount.fromJSON(res));
+    tokens.add(TokenWithAmount.fromJson(res));
   }
 
   @override

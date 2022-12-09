@@ -46,7 +46,7 @@ class DAppRequestService {
         break;
       case 'pub(accounts.list)':
         var accounts =
-            await ReefAppState.instance.accountCtrl.getAccountsList();
+            await ReefAppState.instance.accountCtrl.getStorageAccountsList();
         responseFn(message.reqId, jsonEncode(accounts));
         break;
       case 'pub(accounts.subscribe)':

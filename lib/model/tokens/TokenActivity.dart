@@ -11,12 +11,12 @@ class TokenActivity {
 
   TokenActivity({required this.timestamp, required this.isInbound, required this.url, this.token, this.tokenNFT});
 
-  static fromJSON (dynamic json) {
+  static TokenActivity fromJSON (dynamic json) {
     var token, tokenNFT;
     if(json['token']['contractType']!=null){
-      tokenNFT = TokenNFT.fromJSON(json['token']);
+      tokenNFT = TokenNFT.fromJson(json['token']);
     }else{
-      token = Token.fromJSON(json['token']);
+      token = Token.fromJson(json['token']);
     }
     return TokenActivity(timestamp: DateTime.parse(json['timestamp']), isInbound: json['inbound'], url: json['url'], token: token, tokenNFT: tokenNFT);
   }

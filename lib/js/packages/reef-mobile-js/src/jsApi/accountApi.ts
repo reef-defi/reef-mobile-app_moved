@@ -1,14 +1,25 @@
-import {appState, ReefSigner, utils} from '@reef-defi/react-lib';
+import {AddressName, ReefSigner, reefState} from '@reef-chain/util-lib';
 import {map, switchMap, take} from "rxjs/operators";
-import { Account, buildAccountWithMeta } from "./initFlutterApi";
 import type {InjectedAccountWithMeta} from "@reef-defi/extension-inject/types";
-import { firstValueFrom } from 'rxjs';
+import {firstValueFrom} from 'rxjs';
+import {REEF_EXTENSION_IDENT} from "@reef-defi/extension-inject";
+
+export const buildAccountWithMeta = async (name: string, address: string): Promise<InjectedAccountWithMeta> => {
+    const acountWithMeta: InjectedAccountWithMeta = {
+        address,
+        meta: {
+            name,
+            source: REEF_EXTENSION_IDENT
+        }
+    };
+
+    return acountWithMeta;
+}
 
 export const innitApi = () => {
 
-    // return account.selectedSigner$ without big signer object from ReefSigner
     (window as any).account = {
-        selectedSigner$: appState.selectedSigner$.pipe(
+        /*selectedSigner$: reefState.selectedAccount$.pipe(
             map(sig =>sig? ({
                 address: sig.address,
                 name: sig.name,
@@ -16,8 +27,8 @@ export const innitApi = () => {
                 isEvmClaimed: sig.isEvmClaimed
             }):null),
         ),
-        availableSigners$: appState.signers$.pipe(
-            map((signers: ReefSigner[]) =>
+        availableSigners$: reefState.accounts$*//*.pipe(
+            map((signers: ReefAccount[]) =>
                 signers.map(sig => ({
                     address: sig.address,
                     evmAddress: sig.evmAddress,
@@ -26,18 +37,18 @@ export const innitApi = () => {
                     isEvmClaimed: sig.isEvmClaimed
                 })
             )),
-        ),
-        updateAccounts: async (accounts: Account[]) => {
+        ),*/
+        updateAccounts: async (accounts: AddressName[]) => {
             let accountsWithMeta: InjectedAccountWithMeta[] = await Promise.all(
-                accounts.map(async (account: Account) => {
+                accounts.map(async (account: AddressName) => {
                     return await buildAccountWithMeta(account.name, account.address);
                 }
             ));
             console.log("updateAccounts=",accountsWithMeta);
-            appState.accountsJsonSubj.next(accountsWithMeta);
+            reefState.setAccounts(accountsWithMeta);
         },
         claimEvmAccount: async (nativeAddress: string) => {
-            return firstValueFrom(appState.signers$.pipe(
+            return firstValueFrom(reefState.accounts$.pipe(
                 take(1),
                 map((signers: ReefSigner[]) => {
                     return signers.find((s)=> s.address === nativeAddress);
