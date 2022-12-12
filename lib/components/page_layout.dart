@@ -11,6 +11,7 @@ import 'package:reef_mobile_app/pages/settings_page.dart';
 import 'package:reef_mobile_app/pages/swap_page.dart';
 import 'package:reef_mobile_app/utils/constants.dart';
 import "package:reef_mobile_app/utils/styles.dart";
+import 'package:collection/collection.dart';
 
 import 'SignatureContentToggle.dart';
 
@@ -44,12 +45,14 @@ class _BottomNavState extends State<BottomNav> {
 
   void _onItemTapped(int index) {
     HapticFeedback.selectionClick();
-    ReefAppState.instance.navigation.navigate(NavigationPage.values[index]);
+    ReefAppState.instance.navigation
+        .navigate(bottomNavigationBarItems[index].page);
   }
 
-  List<BottomNavigationBarItem> bottomNavigationBarItems = const [
-    BottomNavigationBarItem(
+  List<BarItemNavigationPage> bottomNavigationBarItems = const [
+    BarItemNavigationPage(
       icon: Icon(Icons.home_outlined),
+      page: NavigationPage.home,
       label: 'Home',
     ),
     // BottomNavigationBarItem(
@@ -60,16 +63,18 @@ class _BottomNavState extends State<BottomNav> {
     //   icon: Icon(CupertinoIcons.money_dollar_circle),
     //   label: 'Buy',
     // ),
-    BottomNavigationBarItem(
+    BarItemNavigationPage(
       icon: Icon(Icons.account_balance_wallet_outlined),
+      page: NavigationPage.accounts,
       //  SvgIcon(
       //   'assets/images/reef_icon.svg',
       //   height: 20,
       // ),
       label: 'Accounts',
     ),
-    BottomNavigationBarItem(
+    BarItemNavigationPage(
       icon: Icon(Icons.settings_outlined),
+      page: NavigationPage.settings,
       label: 'Settings',
     ),
   ];
@@ -131,29 +136,52 @@ class _BottomNavState extends State<BottomNav> {
             ),
           ),
         )),
-        bottomNavigationBar: Observer(
-            builder: (_) => BottomNavigationBar(
-                  backgroundColor: Styles.whiteColor,
-                  showSelectedLabels: false,
-                  showUnselectedLabels: false,
-                  selectedLabelStyle:
-                      TextStyle(fontSize: 20, color: Styles.primaryColor),
-                  type: BottomNavigationBarType.fixed,
-                  selectedItemColor:
-                      ReefAppState.instance.navigation.currentPage.index <
-                              bottomNavigationBarItems.length
-                          ? Styles.purpleColor
-                          : Colors.black38,
-                  unselectedItemColor: Colors.black38,
-                  items: bottomNavigationBarItems,
-                  currentIndex:
-                      ReefAppState.instance.navigation.currentPage.index <
-                              bottomNavigationBarItems.length
-                          ? ReefAppState.instance.navigation.currentPage.index
-                          : 0,
-                  onTap: _onItemTapped,
-                )),
+        bottomNavigationBar: Observer(builder: (_) {
+          int currIndex = bottomNavigationBarItems.indexWhere((barItem) =>
+              barItem.page == ReefAppState.instance.navigation.currentPage);
+          if (currIndex < 0) {
+            currIndex = 0;
+          }
+          var itemColor = bottomNavigationBarItems.firstWhereOrNull((barItem) =>
+                      barItem.page ==
+                      ReefAppState.instance.navigation.currentPage) !=
+                  null
+              ? Styles.purpleColor
+              : Colors.black38;
+
+          return BottomNavigationBar(
+            backgroundColor: Styles.whiteColor,
+            showSelectedLabels: false,
+            showUnselectedLabels: false,
+            selectedLabelStyle:
+                TextStyle(fontSize: 20, color: Styles.primaryColor),
+            type: BottomNavigationBarType.fixed,
+            selectedItemColor: itemColor,
+            unselectedItemColor: Colors.black38,
+            items: bottomNavigationBarItems,
+            currentIndex: currIndex,
+            onTap: _onItemTapped,
+          );
+        }),
       ),
     ));
   }
+}
+
+class BarItemNavigationPage extends BottomNavigationBarItem {
+  final NavigationPage page;
+
+  const BarItemNavigationPage({
+    required icon,
+    required this.page,
+    label,
+    Widget? activeIcon,
+    backgroundColor,
+    tooltip,
+  }) : super(
+            icon: icon,
+            label: label,
+            activeIcon: activeIcon,
+            backgroundColor: backgroundColor,
+            tooltip: tooltip);
 }
