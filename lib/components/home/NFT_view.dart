@@ -1,3 +1,4 @@
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -27,7 +28,7 @@ class _NFTViewState extends State<NFTView> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                         color: Colors.purple,
                         borderRadius: BorderRadius.all(Radius.circular(20))),
                     child: Row(children: [
@@ -43,7 +44,7 @@ class _NFTViewState extends State<NFTView> {
                       const Gap(8),
                       Text(
                         name,
-                        style: TextStyle(
+                        style: const TextStyle(
                             color: Colors.white,
                             fontSize: 20,
                             fontWeight: FontWeight.w700,
@@ -91,55 +92,84 @@ class _NFTViewState extends State<NFTView> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
+    return Flex(direction: Axis.vertical, children: [
       if (
       // ReefAppState.instance.model.tokens.selectedNFTs.statusList.length <
       //         2 &&
-          !ReefAppState.instance.model.tokens.selectedNFTs
-              .hasStatus(StatusCode.completeData))
+      !ReefAppState.instance.model.tokens.selectedNFTs
+          .hasStatus(StatusCode.completeData))
         Text(ReefAppState
                 .instance.model.tokens.selectedNFTs.statusList[0].message ??
             'Loading ${ReefAppState.instance.model.tokens.selectedNFTs.data.length}'),
-      Padding(
-        padding: const EdgeInsets.symmetric(vertical: 32),
-        child: ViewBoxContainer(
-            child: Center(
-                child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 24.0),
-          child: Text(
-            "No NFTs on this account",
-            style: TextStyle(
-                color: Styles.textLightColor, fontWeight: FontWeight.w500),
-          ),
-        ))),
-      ),
-      //TODO seems ListView needs to fix child components
-      if (ReefAppState.instance.model.tokens.selectedNFTs.data.isNotEmpty)
-        ListView(
-            physics: const BouncingScrollPhysics(),
-            padding: const EdgeInsets.all(0),
-            children: [
-              SizedBox(
-                  width: double.infinity,
+      //? updated code
+      if (ReefAppState.instance.model.tokens.selectedNFTs.data.isEmpty)
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 32),
+          child: ViewBoxContainer(
+              child: Center(
                   child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 32, horizontal: 48.0),
-                      child: Observer(builder: (_) {
-                        return Wrap(
-                          runSpacing: 24,
-                          children: ReefAppState
-                              .instance.model.tokens.selectedNFTs.data
-                              .map((FeedbackDataModel<TokenNFT> tkn) {
-                            return Column(
-                              children: [
-                                nftCard(tkn.data.name, tkn.data.iconUrl ?? '',
-                                    tkn.data.balance.toInt() ?? 0),
-                              ],
-                            );
-                          }).toList(),
-                        );
-                      })))
-            ])
+            padding: const EdgeInsets.symmetric(vertical: 24.0),
+            child: Text(
+              "No NFTs on this account",
+              style: TextStyle(
+                  color: Styles.textLightColor, fontWeight: FontWeight.w500),
+            ),
+          ))),
+        )
+      else
+        Expanded(
+          child: Observer(builder: (context) {
+            final nftScrollController = ScrollController();
+            return GridView.builder(
+              controller: nftScrollController,
+              scrollDirection: Axis.vertical,
+              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                  mainAxisExtent: 125,
+                  mainAxisSpacing: 24,
+                  crossAxisSpacing: 24,
+                  maxCrossAxisExtent: 400),
+              itemBuilder: (context, index) => Builder(
+                builder: (context) {
+                  final tkn = ReefAppState
+                      .instance.model.tokens.selectedNFTs.data[index];
+                  return SizedBox(
+                    child: nftCard(tkn.data.name, tkn.data.iconUrl ?? '',
+                        tkn.data.balance.toInt()),
+                  );
+                },
+              ),
+              itemCount:
+                  ReefAppState.instance.model.tokens.selectedNFTs.data.length,
+            );
+          }),
+        )
+      //? previous code
+      // if (ReefAppState.instance.model.tokens.selectedNFTs.data.length > 0)
+      //   ListView(
+      //       physics: const BouncingScrollPhysics(),
+      //       padding: const EdgeInsets.all(0),
+      //       children: [
+      //         SizedBox(
+      //             width: double.infinity,
+      //             child: Padding(
+      //                 padding: const EdgeInsets.symmetric(
+      //                     vertical: 32, horizontal: 48.0),
+      //                 child: Observer(builder: (_) {
+      //                   return Wrap(
+      //                     runSpacing: 24,
+      //                     children: ReefAppState
+      //                         .instance.model.tokens.selectedNFTs.data
+      //                         .map((FeedbackDataModel<TokenNFT> tkn) {
+      //                       return Column(
+      //                         children: [
+      //                           nftCard(tkn.data.name, tkn.data.iconUrl ?? '',
+      //                               tkn.data.balance.toInt()),
+      //                         ],
+      //                       );
+      //                     }).toList(),
+      //                   );
+      //                 })))
+      //       ])
     ]);
   }
 }
