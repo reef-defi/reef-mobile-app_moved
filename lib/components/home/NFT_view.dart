@@ -1,4 +1,3 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -92,84 +91,57 @@ class _NFTViewState extends State<NFTView> {
 
   @override
   Widget build(BuildContext context) {
-    return Flex(direction: Axis.vertical, children: [
-      if (
-      // ReefAppState.instance.model.tokens.selectedNFTs.statusList.length <
-      //         2 &&
-      !ReefAppState.instance.model.tokens.selectedNFTs
-          .hasStatus(StatusCode.completeData))
-        Text(ReefAppState
-                .instance.model.tokens.selectedNFTs.statusList[0].message ??
-            'Loading ${ReefAppState.instance.model.tokens.selectedNFTs.data.length}'),
-      //? updated code
-      if (ReefAppState.instance.model.tokens.selectedNFTs.data.isEmpty)
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 32),
-          child: ViewBoxContainer(
-              child: Center(
-                  child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 24.0),
-            child: Text(
-              "No NFTs on this account",
-              style: TextStyle(
-                  color: Styles.textLightColor, fontWeight: FontWeight.w500),
-            ),
-          ))),
-        )
-      else
-        Expanded(
-          child: Observer(builder: (context) {
-            final nftScrollController = ScrollController();
-            return GridView.builder(
-              controller: nftScrollController,
-              scrollDirection: Axis.vertical,
-              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                  mainAxisExtent: 125,
-                  mainAxisSpacing: 24,
-                  crossAxisSpacing: 24,
-                  maxCrossAxisExtent: 400),
-              itemBuilder: (context, index) => Builder(
-                builder: (context) {
-                  final tkn = ReefAppState
-                      .instance.model.tokens.selectedNFTs.data[index];
-                  return SizedBox(
-                    child: nftCard(tkn.data.name, tkn.data.iconUrl ?? '',
-                        tkn.data.balance.toInt()),
-                  );
-                },
+    return Observer(
+      builder: (context) {
+        final selectedNFTs = ReefAppState.instance.model.tokens.selectedNFTs;
+        return Flex(direction: Axis.vertical, children: [
+          if (
+          // ReefAppState.instance.model.tokens.selectedNFTs.statusList.length <
+          //         2 &&
+          !selectedNFTs.hasStatus(StatusCode.completeData))
+            Text(ReefAppState
+                    .instance.model.tokens.selectedNFTs.statusList[0].message ??
+                'Loading ${selectedNFTs.data.length}'),
+          if (selectedNFTs.data.isEmpty)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 32),
+              child: ViewBoxContainer(
+                  child: Center(
+                      child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 24.0),
+                child: Text(
+                  "No NFTs on this account",
+                  style: TextStyle(
+                      color: Styles.textLightColor,
+                      fontWeight: FontWeight.w500),
+                ),
+              ))),
+            )
+          else
+            Expanded(
+              child: GridView.builder(
+                scrollDirection: Axis.vertical,
+                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                    mainAxisExtent: 125,
+                    mainAxisSpacing: 24,
+                    crossAxisSpacing: 24,
+                    maxCrossAxisExtent: 400),
+                itemBuilder: (context, index) => Builder(
+                  builder: (context) {
+                    final tkn = ReefAppState
+                        .instance.model.tokens.selectedNFTs.data[index];
+                    return nftCard(
+                      tkn.data.name,
+                      tkn.data.iconUrl ?? '',
+                      tkn.data.balance.toInt(),
+                    );
+                  },
+                ),
+                itemCount: selectedNFTs.data.length,
               ),
-              itemCount:
-                  ReefAppState.instance.model.tokens.selectedNFTs.data.length,
-            );
-          }),
-        )
-      //? previous code
-      // if (ReefAppState.instance.model.tokens.selectedNFTs.data.length > 0)
-      //   ListView(
-      //       physics: const BouncingScrollPhysics(),
-      //       padding: const EdgeInsets.all(0),
-      //       children: [
-      //         SizedBox(
-      //             width: double.infinity,
-      //             child: Padding(
-      //                 padding: const EdgeInsets.symmetric(
-      //                     vertical: 32, horizontal: 48.0),
-      //                 child: Observer(builder: (_) {
-      //                   return Wrap(
-      //                     runSpacing: 24,
-      //                     children: ReefAppState
-      //                         .instance.model.tokens.selectedNFTs.data
-      //                         .map((FeedbackDataModel<TokenNFT> tkn) {
-      //                       return Column(
-      //                         children: [
-      //                           nftCard(tkn.data.name, tkn.data.iconUrl ?? '',
-      //                               tkn.data.balance.toInt()),
-      //                         ],
-      //                       );
-      //                     }).toList(),
-      //                   );
-      //                 })))
-      //       ])
-    ]);
+            )
+        ]);
+      },
+    );
   }
 }
