@@ -20,8 +20,7 @@ class TokenCtrl {
       var tokensListFdm =
           FeedbackDataModel.fromJsonList(tokens, parsableListFn);
 
-      print(
-          'GOT TOKENS ${tokensListFdm.statusList.map((e) => e.code)} msg = ${tokensListFdm.statusList[0].message}');
+      // print('GOT TOKENS ${tokensListFdm.statusList.map((e) => e.code)} msg = ${tokensListFdm.statusList[0].message}');
       tokenModel.setSelectedErc20s(tokensListFdm);
     });
 
@@ -30,7 +29,6 @@ class TokenCtrl {
       getParsableListFn(TokenNFT.fromJson);
       var tokensListFdm =
       FeedbackDataModel.fromJsonList(tokens, parsableListFn);
-      print('GOT NFTS ${tokensListFdm.statusList}');
       tokenModel.setSelectedNFTs(tokensListFdm);
     });
 
@@ -40,7 +38,6 @@ class TokenCtrl {
         if(fdm.data is int){
           fdm.data = (fdm.data as int).toDouble();
         }
-
         tokenModel.setReefPrice(fdm.data);
       }
     });
@@ -48,6 +45,9 @@ class TokenCtrl {
     jsApi
         .jsObservable('window.reefState.selectedTransactionHistory\$')
         .listen((items) {
+          if(items==null) {
+            return;
+          }
       var parsableFn =
           (accList) => List<TokenActivity>.from(accList.map(TokenActivity.fromJSON));
       var tokensListFdm =
