@@ -76,7 +76,6 @@ class SignatureContentToggle extends StatelessObserverWidget {
   }
 
   void _confirmSign(SignatureRequest? signatureRequest) {
-    // print("_confirmSign: $signatureRequest");
     if (signatureRequest == null) return;
     ReefAppState.instance.signingCtrl.confirmSignature(
       signatureRequest.signatureIdent,

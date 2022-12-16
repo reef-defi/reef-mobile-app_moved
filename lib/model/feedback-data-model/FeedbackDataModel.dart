@@ -50,6 +50,25 @@ ParseListFn<FeedbackDataModel<T>> getParsableListFn<T>(ParseFn<T> fn) {
   return parsableFn;
 }
 
+String? getFdmListMessage(FeedbackDataModel<List> list, String itemName) {
+  String? message = null;
+  if (list
+      .hasStatus(StatusCode.completeData)
+      && list.data.isEmpty
+  ){
+    message = 'No ${itemName}s found.';
+  }
+  if (list
+      .hasStatus(StatusCode.loading)){
+    message = 'Loading ${itemName}s...';
+  }
+  if (list
+      .hasStatus(StatusCode.error)){
+    message = 'Error loading ${itemName}s (${list.statusList[0].message})';
+  }
+  return message;
+}
+
 class FeedbackDataModel<T> {
   T data;
   List<FeedbackStatus> statusList;

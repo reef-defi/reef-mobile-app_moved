@@ -264,12 +264,10 @@ class _HomePageState extends State<HomePage> {
             if (t is ScrollUpdateNotification) {
               if (t.metrics.pixels != 0) {
                 setState(() {
-                  print("yes");
                   _isScrolling = true;
                 });
               } else {
                 setState(() {
-                  print("no");
                   _isScrolling = false;
                 });
               }
