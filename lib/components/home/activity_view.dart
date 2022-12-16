@@ -9,6 +9,8 @@ import 'package:reef_mobile_app/utils/functions.dart';
 import 'package:reef_mobile_app/utils/icon_url.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 
+import '../../model/feedback-data-model/FeedbackDataModel.dart';
+
 class ActivityView extends StatefulWidget {
   const ActivityView({Key? key}) : super(key: key);
 
@@ -122,7 +124,7 @@ class _ActivityViewState extends State<ActivityView> {
 
   @override
   Widget build(BuildContext context) {
-    print(ReefAppState.instance.model.tokens.txHistory.data.map((item) => [
+    /*print(ReefAppState.instance.model.tokens.txHistory.data.map((item) => [
           item.token,
           item.isInbound,
           item.extrinsic,
@@ -130,67 +132,66 @@ class _ActivityViewState extends State<ActivityView> {
           item.tokenNFT,
           item.url,
           item.token?.iconUrl ?? "",
-        ]));
-    return ListView(
-        physics: const BouncingScrollPhysics(),
-        padding: const EdgeInsets.all(0),
-        children: [
-          SizedBox(
-            width: double.infinity,
-            child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 32, horizontal: 0.0),
-              child: ViewBoxContainer(
-                child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    child: ReefAppState
-                            .instance.model.tokens.txHistory.data.isNotEmpty
-                        ? Observer(builder: (_) {
-                            // return Column(
-                            //     children: ReefAppState.instance.model.tokens.activity
-                            //         .map((element) =>
-                            //             Text(element.timestamp.toIso8601String()))
-                            //         .toList());
-                            return Column(
-                              children: ReefAppState
-                                  .instance.model.tokens.txHistory.data
-                                  .map((item) => Column(
-                                        children: [
-                                          activityItem(
-                                            tokenName: item.token?.name ?? "",
-                                            type: item.isInbound
-                                                ? 'received'
-                                                : 'sent',
-                                            timeStamp: item.timestamp,
-                                            amount: item.token?.balance,
-                                            iconUrl: item.token?.iconUrl,
-                                          ),
-                                          if (ReefAppState.instance.model.tokens
-                                                  .txHistory.data.last !=
-                                              item)
-                                            const Divider(
-                                              height: 32,
-                                              color: Color(0x20000000),
-                                              thickness: 0.5,
-                                            ),
-                                        ],
-                                      ))
-                                  .toList(),
-                            );
-                          })
-                        : Center(
-                            child: Padding(
+        ]));*/
+    return Observer(builder: (_)
+    {
+      String? message = getFdmListMessage(
+          ReefAppState.instance.model.tokens.txHistory, 'activity item');
+
+      return ListView(
+          physics: const BouncingScrollPhysics(),
+          padding: const EdgeInsets.all(0),
+          children: [
+            SizedBox(
+              width: double.infinity,
+              child: Padding(
+                padding:
+                const EdgeInsets.symmetric(vertical: 32, horizontal: 0.0),
+                child: ViewBoxContainer(
+                  child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      child: message==null
+                          ? Column(
+                        children: ReefAppState
+                            .instance.model.tokens.txHistory.data
+                            .map((item) =>
+                            Column(
+                              children: [
+                                activityItem(
+                                  tokenName: item.token?.name ?? "",
+                                  type: item.isInbound
+                                      ? 'received'
+                                      : 'sent',
+                                  timeStamp: item.timestamp,
+                                  amount: item.token?.balance,
+                                  iconUrl: item.token?.iconUrl,
+                                ),
+                                if (ReefAppState.instance.model.tokens
+                                    .txHistory.data.last !=
+                                    item)
+                                  const Divider(
+                                    height: 32,
+                                    color: Color(0x20000000),
+                                    thickness: 0.5,
+                                  ),
+                              ],
+                            ))
+                            .toList(),
+                      )
+                          : Center(
+                          child: Padding(
                             padding: const EdgeInsets.symmetric(vertical: 8.0),
                             child: Text(
-                              "No activity yet",
+                              message,
                               style: TextStyle(
                                   color: Styles.textLightColor,
                                   fontWeight: FontWeight.w500),
                             ),
                           ))),
+                ),
               ),
-            ),
-          )
-        ]);
+            )
+          ]);
+    });
   }
 }

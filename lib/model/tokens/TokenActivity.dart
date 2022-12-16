@@ -11,7 +11,7 @@ class TokenActivity {
 
   TokenActivity({required this.timestamp, required this.isInbound, required this.url, this.token, this.tokenNFT});
 
-  static TokenActivity fromJSON (dynamic json) {
+  static TokenActivity fromJson (dynamic json) {
     var token, tokenNFT;
     if(json['token']['contractType']!=null){
       tokenNFT = TokenNFT.fromJson(json['token']);

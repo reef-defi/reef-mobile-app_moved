@@ -45,11 +45,8 @@ class TokenCtrl {
     jsApi
         .jsObservable('window.reefState.selectedTransactionHistory\$')
         .listen((items) {
-          if(items==null) {
-            return;
-          }
       var parsableFn =
-          (accList) => List<TokenActivity>.from(accList.map(TokenActivity.fromJSON));
+          (accList) => List<TokenActivity>.from(accList.map(TokenActivity.fromJson));
       var tokensListFdm =
       FeedbackDataModel.fromJsonList(items, parsableFn);
 

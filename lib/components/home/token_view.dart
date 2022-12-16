@@ -178,13 +178,22 @@ class _TokenViewState extends State<TokenView> {
             // ),
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 0),
-              child: Observer(builder: (_) {return Column(children: [
-                  if(ReefAppState
-                      .instance.model.tokens.selectedErc20s.statusList.length<2 &&
-                      !ReefAppState
-                      .instance.model.tokens.selectedErc20s.hasStatus(StatusCode.completeData))Text(ReefAppState
-                      .instance.model.tokens.selectedErc20s.statusList[0].message??'Loading ${ReefAppState
-                      .instance.model.tokens.selectedErc20s.data.length}'),
+              child: Observer(builder: (_) {
+
+                String? message = getFdmListMessage(ReefAppState.instance.model.tokens.selectedErc20s, 'Token');
+
+                return Column(children: [
+                  if(message!=null) ViewBoxContainer(
+                        child: Center(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 24.0),
+                              child: Text(
+                                message,
+                                style: TextStyle(
+                                    color: Styles.textLightColor, fontWeight: FontWeight.w500),
+                              ),
+                            ))),
+
                   Wrap(
                     spacing: 24,
                     children: ReefAppState
