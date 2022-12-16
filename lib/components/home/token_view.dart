@@ -30,6 +30,8 @@ class _TokenViewState extends State<TokenView> {
             padding:
                 const EdgeInsets.symmetric(vertical: 15.0, horizontal: 15.0),
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Row(
                   children: [
@@ -39,9 +41,10 @@ class _TokenViewState extends State<TokenView> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         Container(
-                          constraints: BoxConstraints(maxWidth: 100),
+                          constraints: const BoxConstraints(maxWidth: 100),
                           child: Text(name,
                               overflow: TextOverflow.ellipsis,
                               style: GoogleFonts.poppins(
@@ -66,6 +69,7 @@ class _TokenViewState extends State<TokenView> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         GradientText(
                             price != 0
@@ -118,7 +122,6 @@ class _TokenViewState extends State<TokenView> {
                     )),*/
                     const SizedBox(width: 15),
                     Container(
-                        child: Container(
                       decoration: BoxDecoration(
                           boxShadow: const [
                             BoxShadow(
@@ -154,7 +157,7 @@ class _TokenViewState extends State<TokenView> {
                               .navigate(NavigationPage.send, data: address);
                         },
                       ),
-                    )),
+                    ),
                   ],
                 )
               ],
@@ -163,58 +166,56 @@ class _TokenViewState extends State<TokenView> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-        physics: const BouncingScrollPhysics(),
-        padding: const EdgeInsets.all(0),
-        children: [
-          SizedBox(
-            // constraints: const BoxConstraints.expand(),
-            width: double.infinity,
-            // // replace later, just for debugging
-            // decoration: BoxDecoration(
-            //   border: Border.all(
-            //     color: Colors.red,
-            //   ),
-            // ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 0),
-              child: Observer(builder: (_) {
+    return Observer( builder: (context) {
+        final selectedERC20s =
+            ReefAppState.instance.model.tokens.selectedErc20s;
 
-                String? message = getFdmListMessage(ReefAppState.instance.model.tokens.selectedErc20s, 'Token');
+        String? message = getFdmListMessage(selectedERC20s, 'Token');
 
-                return Column(children: [
-                  if(message!=null) ViewBoxContainer(
-                        child: Center(
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 24.0),
-                              child: Text(
-                                message,
-                                style: TextStyle(
-                                    color: Styles.textLightColor, fontWeight: FontWeight.w500),
-                              ),
-                            ))),
-
-                  Wrap(
-                    spacing: 24,
-                    children: ReefAppState
-                        .instance.model.tokens.selectedErc20s.data
-                        .map((FeedbackDataModel<TokenWithAmount> tkn) {
-                      return Column(
-                        children: [
-                          tokenCard(tkn.data.name, tkn.data.address,
-                              tokenName: tkn.data.symbol,
-                              iconURL: tkn.data.iconUrl,
-                              price: tkn.data.price?.toDouble() ?? 0,
-                              balance: decimalsToDouble(tkn.data.balance)),
-                          const SizedBox(height: 12),
-                        ],
-                      );
-                    }).toList(),
-                  )
-                ]);
-              }),
-            ),
-          )
-        ]);
+        return CustomScrollView(
+          scrollDirection: Axis.vertical,
+          slivers: [
+            if (message!=null)
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 32),
+                  child: ViewBoxContainer(
+                      child: Center(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 24.0),
+                            child: Text(
+                              message,
+                              style: TextStyle(
+                                  color: Styles.textLightColor, fontWeight: FontWeight.w500),
+                            ),
+                          ))),
+                ),
+              )
+            else if (selectedERC20s.data.isNotEmpty)
+              SliverPadding(
+                padding: const EdgeInsets.symmetric(vertical: 32),
+                sliver: SliverGrid(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      final tkn = selectedERC20s.data[index];
+                      return tokenCard(tkn.data.name, tkn.data.address,
+                          tokenName: tkn.data.symbol,
+                          iconURL: tkn.data.iconUrl,
+                          price: tkn.data.price?.toDouble() ?? 0,
+                          balance: decimalsToDouble(tkn.data.balance));
+                    },
+                    childCount: selectedERC20s.data.length,
+                  ),
+                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                      mainAxisSpacing: 24,
+                      crossAxisSpacing: 24,
+                      childAspectRatio: 2.5,
+                      maxCrossAxisExtent: 400),
+                ),
+              ),
+          ],
+        );
+      },
+    );
   }
 }

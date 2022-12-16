@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:gap/gap.dart';
 import 'package:reef_mobile_app/model/feedback-data-model/FeedbackDataModel.dart';
-import 'package:reef_mobile_app/model/tokens/TokenNFT.dart';
 import 'package:reef_mobile_app/utils/elements.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 
@@ -94,9 +93,8 @@ class _NFTViewState extends State<NFTView> {
                   builder: (context) {
                     final tkn = ReefAppState
                         .instance.model.tokens.selectedNFTs.data[index];
-                    return SizedBox(
-                      child: nftCard(tkn.data.name, tkn.data.iconUrl ?? '',
-                          tkn.data.balance.toInt()),
+                    return nftCard(tkn.data.name, tkn.data.iconUrl ?? '',
+                          tkn.data.balance.toInt(),
                     );
                   },
                 ),
