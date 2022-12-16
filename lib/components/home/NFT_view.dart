@@ -94,9 +94,8 @@ class _NFTViewState extends State<NFTView> {
                   builder: (context) {
                     final tkn = ReefAppState
                         .instance.model.tokens.selectedNFTs.data[index];
-                    return SizedBox(
-                      child: nftCard(tkn.data.name, tkn.data.iconUrl ?? '',
-                          tkn.data.balance.toInt()),
+                    return nftCard(tkn.data.name, tkn.data.iconUrl ?? '',
+                          tkn.data.balance.toInt(),
                     );
                   },
                 ),
