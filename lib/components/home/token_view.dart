@@ -166,18 +166,30 @@ class _TokenViewState extends State<TokenView> {
 
   @override
   Widget build(BuildContext context) {
-    return Observer(
-      builder: (context) {
+    return Observer( builder: (context) {
         final selectedERC20s =
             ReefAppState.instance.model.tokens.selectedErc20s;
+
+        String? message = getFdmListMessage(selectedERC20s, 'Token');
+
         return CustomScrollView(
           scrollDirection: Axis.vertical,
           slivers: [
-            if (selectedERC20s.statusList.length < 2 &&
-                !selectedERC20s.hasStatus(StatusCode.completeData))
+            if (message!=null)
               SliverToBoxAdapter(
-                child: Text(selectedERC20s.statusList[0].message ??
-                    'Loading ${ReefAppState.instance.model.tokens.selectedErc20s.data.length}'),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 32),
+                  child: ViewBoxContainer(
+                      child: Center(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 24.0),
+                            child: Text(
+                              message,
+                              style: TextStyle(
+                                  color: Styles.textLightColor, fontWeight: FontWeight.w500),
+                            ),
+                          ))),
+                ),
               )
             else if (selectedERC20s.data.isNotEmpty)
               SliverPadding(
