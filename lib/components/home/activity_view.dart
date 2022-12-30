@@ -133,53 +133,49 @@ class _ActivityViewState extends State<ActivityView> {
           item.url,
           item.token?.iconUrl ?? "",
         ]));*/
-    return Observer(builder: (_)
-    {
+    return Observer(builder: (_) {
       String? message = getFdmListMessage(
           ReefAppState.instance.model.tokens.txHistory, 'activity item');
 
-      return ListView(
-          physics: const BouncingScrollPhysics(),
-          padding: const EdgeInsets.all(0),
-          children: [
-            SizedBox(
-              width: double.infinity,
-              child: Padding(
-                padding:
-                const EdgeInsets.symmetric(vertical: 32, horizontal: 0.0),
-                child: ViewBoxContainer(
-                  child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      child: message==null
-                          ? Column(
-                        children: ReefAppState
-                            .instance.model.tokens.txHistory.data
-                            .map((item) =>
-                            Column(
-                              children: [
-                                activityItem(
-                                  tokenName: item.token?.name ?? "",
-                                  type: item.isInbound
-                                      ? 'received'
-                                      : 'sent',
-                                  timeStamp: item.timestamp,
-                                  amount: item.token?.balance,
-                                  iconUrl: item.token?.iconUrl,
-                                ),
-                                if (ReefAppState.instance.model.tokens
-                                    .txHistory.data.last !=
-                                    item)
-                                  const Divider(
-                                    height: 32,
-                                    color: Color(0x20000000),
-                                    thickness: 0.5,
-                                  ),
-                              ],
-                            ))
-                            .toList(),
-                      )
-                          : Center(
-                          child: Padding(
+      return SliverList(
+        delegate: SliverChildListDelegate([
+          SizedBox(
+            width: double.infinity,
+            child: Padding(
+              padding:
+                  const EdgeInsets.symmetric(vertical: 32, horizontal: 0.0),
+              child: ViewBoxContainer(
+                child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    child: message == null
+                        ? Column(
+                            children: ReefAppState
+                                .instance.model.tokens.txHistory.data
+                                .map((item) => Column(
+                                      children: [
+                                        activityItem(
+                                          tokenName: item.token?.name ?? "",
+                                          type: item.isInbound
+                                              ? 'received'
+                                              : 'sent',
+                                          timeStamp: item.timestamp,
+                                          amount: item.token?.balance,
+                                          iconUrl: item.token?.iconUrl,
+                                        ),
+                                        if (ReefAppState.instance.model.tokens
+                                                .txHistory.data.last !=
+                                            item)
+                                          const Divider(
+                                            height: 32,
+                                            color: Color(0x20000000),
+                                            thickness: 0.5,
+                                          ),
+                                      ],
+                                    ))
+                                .toList(),
+                          )
+                        : Center(
+                            child: Padding(
                             padding: const EdgeInsets.symmetric(vertical: 8.0),
                             child: Text(
                               message,
@@ -188,10 +184,11 @@ class _ActivityViewState extends State<ActivityView> {
                                   fontWeight: FontWeight.w500),
                             ),
                           ))),
-                ),
               ),
-            )
-          ]);
+            ),
+          )
+        ]),
+      );
     });
   }
 }
