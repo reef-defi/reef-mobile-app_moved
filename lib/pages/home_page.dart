@@ -14,6 +14,7 @@ import 'package:reef_mobile_app/utils/functions.dart';
 import 'package:reef_mobile_app/utils/gradient_text.dart';
 import 'package:reef_mobile_app/utils/size_config.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
+import 'package:sliver_tools/sliver_tools.dart';
 
 import 'DAppPage.dart';
 
@@ -65,43 +66,6 @@ class _HomePageState extends State<HomePage> {
     }
   ];
 
-  Widget balanceSection(double size) {
-    bool _isBigText = size > 42;
-    return AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        curve: Curves.easeInOutCirc,
-        width: size,
-        child: FittedBox(
-          fit: BoxFit.contain,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 24.0),
-            child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text("Balance",
-                      style: TextStyle(
-                          fontSize: 38,
-                          fontWeight: FontWeight.w700,
-                          color: Styles.textColor)),
-                  Center(
-                    child: Observer(builder: (_) {
-                      return GradientText(
-                        "\$${sumTokenBalances(ReefAppState.instance.model.tokens.selectedErc20List.toList()).toStringAsFixed(0)}",
-                        gradient: textGradient(),
-                        style: GoogleFonts.poppins(
-                            color: Styles.textColor,
-                            fontSize: 68,
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: 3),
-                      );
-                    }),
-                  ),
-                ]),
-          ),
-        ));
-  }
-
   Widget rowMember(Map member) {
     return InkWell(
       onTap: () {
@@ -149,22 +113,24 @@ class _HomePageState extends State<HomePage> {
   Widget navSection() {
     return Container(
       width: double.infinity,
+      margin: const EdgeInsets.only(top: 12),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15),
           color: Styles.primaryBackgroundColor,
           boxShadow: [
             BoxShadow(
-              color: HSLColor.fromAHSL(
+              color: const HSLColor.fromAHSL(
                       1, 256.3636363636, 0.379310344828, 0.843137254902)
                   .toColor(),
-              offset: Offset(10, 10),
+              offset: const Offset(10, 10),
               blurRadius: 20,
               spreadRadius: -5,
             ),
             BoxShadow(
-              color: HSLColor.fromAHSL(1, 256.3636363636, 0.379310344828, 1)
-                  .toColor(),
-              offset: Offset(-10, -10),
+              color:
+                  const HSLColor.fromAHSL(1, 256.3636363636, 0.379310344828, 1)
+                      .toColor(),
+              offset: const Offset(-10, -10),
               blurRadius: 20,
               spreadRadius: -5,
             ),
@@ -178,6 +144,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  // todo: remove useless method
   void _onHorizontalDrag(DragEndDetails details) {
     if (details.primaryVelocity == 0) {
       return;
@@ -220,10 +187,9 @@ class _HomePageState extends State<HomePage> {
           statusBarColor: Colors.transparent,
           statusBarIconBrightness: Brightness.dark,
         ),
-        child: NotificationListener(
-          child: Column(
-            children: [
-              /*Row(children: [
+        child: CustomScrollView(
+          slivers: [
+            /*Row(children: [
                 ElevatedButton(
                   child: const Text('test dApp 1'),
                   onPressed: () => _navigateTestDApp(
@@ -239,67 +205,98 @@ class _HomePageState extends State<HomePage> {
                 ElevatedButton(
                     child: const Text('test'), onPressed: _navigateTestPage),
               ]),*/
-              balanceSection(_textSize),
-              navSection(),
-              AnimatedContainer(
+            SliverPersistentHeader(delegate: _BalanceHeaderDelegate()),
+            SliverPinnedHeader(
+              child: navSection(),
+            ),
+            SliverToBoxAdapter(
+              child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
                   height: _isScrolling ? 16 : 0),
-              Expanded(
-                // height: ((size.height + 64) / 2),
-                // width: double.infinity,
-                child: GestureDetector(
-                    onHorizontalDragEnd: (DragEndDetails details) =>
-                        _onHorizontalDrag(details),
-                    child: ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: _viewsMap
-                            .where((option) => option["active"])
-                            .toList()[0]["component"])),
-              ),
-              // TODO: ADD ALERT SYSTEM FOR ERRORS HERE
-              // test()
-            ],
-          ),
-          onNotification: (t) {
-            if (t is ScrollUpdateNotification) {
-              if (t.metrics.pixels != 0) {
-                setState(() {
-                  _isScrolling = true;
-                });
-              } else {
-                setState(() {
-                  _isScrolling = false;
-                });
-              }
-              if (t.metrics.pixels! > 196 && t.scrollDelta! > 0) {
-                setState(() {
-                  _textSize = 0.0;
-                });
-              }
-              if (t.metrics.pixels! < 196 && t.scrollDelta! < 0) {
-                setState(() {
-                  _textSize = 120.0;
-                });
-              }
-              // print("scroll delta:");
-              // print(t.scrollDelta);
-              // print("scroll pixels:");
-              // print(t.metrics.pixels);
-            }
-            return true;
-          },
+            ),
+
+            // height: ((size.height + 64) / 2),
+            // width: double.infinity,
+            _viewsMap.where((option) => option["active"]).toList()[0]
+                ["component"],
+
+            // TODO: ADD ALERT SYSTEM FOR ERRORS HERE
+            // test()
+          ],
         )));
   }
+}
 
-  double sumTokenBalances(List<TokenWithAmount> list) {
+class _BalanceHeaderDelegate extends SliverPersistentHeaderDelegate {
+  @override
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return Opacity(
+      opacity: _calculateOpacity(shrinkOffset),
+      child: balanceSection(30),
+    );
+  }
+
+  @override
+  double get maxExtent => 200;
+
+  @override
+  double get minExtent => 0;
+
+  @override
+  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) {
+    return true;
+  }
+
+  Widget balanceSection(double size) {
+    //bool _isBigText = size > 42;
+    return AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeInOutCirc,
+        width: size,
+        child: FittedBox(
+          fit: BoxFit.contain,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 24.0),
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text("Balance",
+                      style: TextStyle(
+                          fontSize: 38,
+                          fontWeight: FontWeight.w700,
+                          color: Styles.textColor)),
+                  Center(
+                    child: Observer(builder: (_) {
+                      return GradientText(
+                        "\$${_sumTokenBalances(ReefAppState.instance.model.tokens.selectedErc20List.toList()).toStringAsFixed(0)}",
+                        gradient: textGradient(),
+                        style: GoogleFonts.poppins(
+                            color: Styles.textColor,
+                            fontSize: 68,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 3),
+                      );
+                    }),
+                  ),
+                ]),
+          ),
+        ));
+  }
+
+  double _sumTokenBalances(List<TokenWithAmount> list) {
     var sum = 0.0;
-    list.forEach((token) {
+    for (final token in list) {
       double balValue =
           getBalanceValue(decimalsToDouble(token.balance), token.price);
       if (balValue > 0) {
         sum = sum + balValue;
       }
-    });
+    }
     return sum;
   }
+
+  double _calculateOpacity(double shrinkOffset) =>
+      ((shrinkOffset - 200) / 200).abs();
 }

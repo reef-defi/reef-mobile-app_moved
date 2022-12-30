@@ -5,12 +5,12 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/feedback-data-model/FeedbackDataModel.dart';
 import 'package:reef_mobile_app/model/navigation/navigation_model.dart';
-import 'package:reef_mobile_app/model/tokens/TokenWithAmount.dart';
 import 'package:reef_mobile_app/utils/elements.dart';
 import 'package:reef_mobile_app/utils/functions.dart';
 import 'package:reef_mobile_app/utils/gradient_text.dart';
 import 'package:reef_mobile_app/utils/icon_url.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
+import 'package:sliver_tools/sliver_tools.dart';
 
 class TokenView extends StatefulWidget {
   const TokenView({Key? key}) : super(key: key);
@@ -166,32 +166,34 @@ class _TokenViewState extends State<TokenView> {
 
   @override
   Widget build(BuildContext context) {
-    return Observer( builder: (context) {
+    return Observer(
+      builder: (context) {
         final selectedERC20s =
             ReefAppState.instance.model.tokens.selectedErc20s;
 
         String? message = getFdmListMessage(selectedERC20s, 'Token');
 
-        return CustomScrollView(
-          scrollDirection: Axis.vertical,
-          slivers: [
-            if (message!=null)
+        return MultiSliver(
+          pushPinnedChildren: false,
+          children: [
+            if (message != null)
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 32),
                   child: ViewBoxContainer(
                       child: Center(
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 24.0),
-                            child: Text(
-                              message,
-                              style: TextStyle(
-                                  color: Styles.textLightColor, fontWeight: FontWeight.w500),
-                            ),
-                          ))),
+                    padding: const EdgeInsets.symmetric(vertical: 24.0),
+                    child: Text(
+                      message,
+                      style: TextStyle(
+                          color: Styles.textLightColor,
+                          fontWeight: FontWeight.w500),
+                    ),
+                  ))),
                 ),
               )
-            else if (selectedERC20s.data.isNotEmpty)
+            else if (selectedERC20s.data.isNotEmpty || true)
               SliverPadding(
                 padding: const EdgeInsets.symmetric(vertical: 32),
                 sliver: SliverGrid(
@@ -201,8 +203,8 @@ class _TokenViewState extends State<TokenView> {
                       return tokenCard(tkn.data.name, tkn.data.address,
                           tokenName: tkn.data.symbol,
                           iconURL: tkn.data.iconUrl,
-                          price: tkn.data.price?.toDouble() ?? 0,
-                          balance: decimalsToDouble(tkn.data.balance));
+                          price: tkn.data.price ?? 0,
+                          balance: tkn.data.balance.toDouble());
                     },
                     childCount: selectedERC20s.data.length,
                   ),

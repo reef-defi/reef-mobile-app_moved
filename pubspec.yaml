@@ -55,6 +55,7 @@ dependencies:
   flutter_secure_storage: ^5.0.2
   http: ^0.13.5
   local_auth: ^2.1.2
+  sliver_tools: ^0.2.8
   #freezed: ^2.0.3+1 #immutable classes
 
 dev_dependencies:

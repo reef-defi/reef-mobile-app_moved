@@ -120,7 +120,7 @@ class _BottomNavState extends State<BottomNav> {
                     ),
                     Expanded(
                       child: Container(
-                        padding: const EdgeInsets.fromLTRB(16, 18, 16, 0),
+                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
                         width: double.infinity,
                         child: Observer(builder: (_) {
                           print(
