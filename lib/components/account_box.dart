@@ -101,31 +101,38 @@ class _AccountBoxState extends State<AccountBox> {
                   ]),
                   Expanded(
                       child: Padding(
-                    padding: EdgeInsets.only(left: 10),
+                    padding: const EdgeInsets.only(left: 8),
                     child: buildCentralColumn(widget.reefAccountFDM),
                   )),
                   if (widget.showOptions)
                     Column(
                       children: [
-                        PopupMenuButton<String>(
-                          icon: const Icon(
-                            Icons.more_vert,
-                            color: Colors.black45,
-                          ),
-                          enableFeedback: true,
-                          onSelected: (String choice) {
-                            choiceAction(
-                                choice, context, widget.reefAccountFDM.data);
-                          },
-                          tooltip: "More Actions",
-                          itemBuilder: (BuildContext context) {
-                            return Constants.choices.map((String choice) {
-                              return PopupMenuItem<String>(
-                                value: choice,
-                                child: Text(choice),
-                              );
-                            }).toList();
-                          },
+                        Row(
+                          children: [
+                            Container(
+                              margin: const EdgeInsets.all(2),
+                              child: PopupMenuButton<String>(
+                                icon: const Icon(
+                                  Icons.more_vert,
+                                  color: Colors.black45,
+                                ),
+                                enableFeedback: true,
+                                onSelected: (String choice) {
+                                  choiceAction(
+                                      choice, context, widget.reefAccountFDM.data);
+                                },
+                                tooltip: "More Actions",
+                                itemBuilder: (BuildContext context) {
+                                  return Constants.choices.map((String choice) {
+                                    return PopupMenuItem<String>(
+                                      value: choice,
+                                      child: Text(choice),
+                                    );
+                                  }).toList();
+                                },
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     )
@@ -155,15 +162,16 @@ class _AccountBoxState extends State<AccountBox> {
                 image: AssetImage("./assets/images/reef.png"),
                 width: 18,
                 height: 18),
-            Gap(4),
+            const Gap(4),
             Text(
-              '${toAmountDisplayBigInt(reefAccount.data.balance)} REEF',
+              '${ReefAppState.instance.model.balance.displayBalance? toAmountDisplayBigInt(reefAccount.data.balance):"***"} REEF',
               style: GoogleFonts.poppins(
                 color: Styles.textColor,
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
               ),
             )
+           
           ])
         ],
       ),
@@ -195,7 +203,7 @@ class _AccountBoxState extends State<AccountBox> {
                   style: const TextStyle(fontSize: 10),
                   children: <TextSpan>[
                     TextSpan(
-                      text: " ${widget.reefAccountFDM.data.evmAddress?.shorten()}",
+                      text: "${widget.reefAccountFDM.data.evmAddress?.shorten()}",
                       style: const TextStyle(
                           fontSize: 14, fontWeight: FontWeight.bold),
                     ),
@@ -293,7 +301,8 @@ void choiceAction(
           const SnackBar(content: Text("Native Address copied to clipboard")));
     });
   } else if (choice == Constants.copyEvmAddress) {
-    Clipboard.setData(ClipboardData(
+     if(account.isEvmClaimed){
+       Clipboard.setData(ClipboardData(
             text: await ReefAppState.instance.accountCtrl
                 .toReefEVMAddressWithNotificationString(account.evmAddress)))
         .then((_) {
@@ -301,5 +310,19 @@ void choiceAction(
           content: Text(
               "EVM Address copied to clipboard.\nUse it ONLY on Reef Chain!")));
     });
+    }else{
+      ReefAppState.instance.model.balance.toggle();
+      print(ReefAppState.instance.model.balance.displayBalance);
+      
+    Clipboard.setData(ClipboardData(
+            text: await ReefAppState.instance.accountCtrl
+                .toReefEVMAddressWithNotificationString(account.evmAddress)))
+        .then((_) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text(
+              "EVM Address not claimed")));
+    });
+    }
+   
   }
 }

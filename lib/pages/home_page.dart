@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:reef_mobile_app/components/SignatureContentToggle.dart';
 import 'package:reef_mobile_app/components/home/NFT_view.dart';
@@ -250,6 +251,7 @@ class _BalanceHeaderDelegate extends SliverPersistentHeaderDelegate {
 
   Widget balanceSection(double size) {
     //bool _isBigText = size > 42;
+    IconData icon = Icons.remove_red_eye_sharp;
     return AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeInOutCirc,
@@ -262,15 +264,31 @@ class _BalanceHeaderDelegate extends SliverPersistentHeaderDelegate {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text("Balance",
-                      style: TextStyle(
-                          fontSize: 38,
-                          fontWeight: FontWeight.w700,
-                          color: Styles.textColor)),
+                  Row(
+                    children: [
+                      Text("Balance",
+                          style: TextStyle(
+                              fontSize: 38,
+                              fontWeight: FontWeight.w700,
+                              color: Styles.textColor)
+                              ),
+                              Gap(10),
+                              IconButton(onPressed: (){
+                                ReefAppState.instance.model.balance.toggle();
+                              }, icon: Icon(icon))
+                              
+                    ],
+                  ),
                   Center(
                     child: Observer(builder: (_) {
+                      dynamic x = "***";
+                      if(ReefAppState.instance.model.balance.displayBalance){
+                        x='\$'+_sumTokenBalances(ReefAppState.instance.model.tokens.selectedErc20List.toList()).toStringAsFixed(0);
+                      }else{
+                        x="***";
+                      }
                       return GradientText(
-                        "\$${_sumTokenBalances(ReefAppState.instance.model.tokens.selectedErc20List.toList()).toStringAsFixed(0)}",
+                        "${x}",
                         gradient: textGradient(),
                         style: GoogleFonts.poppins(
                             color: Styles.textColor,
