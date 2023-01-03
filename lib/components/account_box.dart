@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:reef_mobile_app/components/BlurContent.dart';
 import 'package:reef_mobile_app/components/modals/bind_modal.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/account/ReefAccount.dart';
@@ -163,14 +165,17 @@ class _AccountBoxState extends State<AccountBox> {
                 width: 18,
                 height: 18),
             const Gap(4),
-            Text(
-              '${ReefAppState.instance.model.balance.displayBalance? toAmountDisplayBigInt(reefAccount.data.balance):"***"} REEF',
+            
+            Observer(builder:(_){
+              return BlurContent(Text(
+              '${toAmountDisplayBigInt(reefAccount.data.balance)} REEF',
               style: GoogleFonts.poppins(
                 color: Styles.textColor,
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
               ),
-            )
+            ), ReefAppState.instance.model.balance.displayBalance);
+            } )
            
           ])
         ],

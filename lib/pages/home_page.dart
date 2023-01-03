@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:reef_mobile_app/components/BlurContent.dart';
 import 'package:reef_mobile_app/components/SignatureContentToggle.dart';
 import 'package:reef_mobile_app/components/home/NFT_view.dart';
 import 'package:reef_mobile_app/components/home/activity_view.dart';
@@ -281,21 +282,9 @@ class _BalanceHeaderDelegate extends SliverPersistentHeaderDelegate {
                   ),
                   Center(
                     child: Observer(builder: (_) {
-                      dynamic x = "***";
-                      if(ReefAppState.instance.model.balance.displayBalance){
-                        x='\$'+_sumTokenBalances(ReefAppState.instance.model.tokens.selectedErc20List.toList()).toStringAsFixed(0);
-                      }else{
-                        x="***";
-                      }
-                      return GradientText(
-                        "${x}",
-                        gradient: textGradient(),
-                        style: GoogleFonts.poppins(
-                            color: Styles.textColor,
-                            fontSize: 68,
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: 3),
-                      );
+                      return BlurContent(
+                        GradientText("\$${_sumTokenBalances(ReefAppState.instance.model.tokens.selectedErc20List.toList()).toStringAsFixed(0)}",gradient: textGradient(),style: GoogleFonts.poppins(color: Styles.textColor,fontSize: 68,fontWeight: FontWeight.w800,letterSpacing: 3),),
+                        ReefAppState.instance.model.balance.displayBalance);
                     }),
                   ),
                 ]),
