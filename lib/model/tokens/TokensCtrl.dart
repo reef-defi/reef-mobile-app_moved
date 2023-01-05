@@ -20,15 +20,18 @@ class TokenCtrl {
       var tokensListFdm =
           FeedbackDataModel.fromJsonList(tokens, parsableListFn);
 
+      // print('GOT TOKENS ${tokensListFdm.data.length}');
       // print('GOT TOKENS ${tokensListFdm.statusList.map((e) => e.code)} msg = ${tokensListFdm.statusList[0].message}');
       tokenModel.setSelectedErc20s(tokensListFdm);
     });
 
     jsApi.jsObservable('window.reefState.selectedNFTs\$').listen((tokens) {
+
       ParseListFn<FeedbackDataModel<TokenNFT>> parsableListFn =
       getParsableListFn(TokenNFT.fromJson);
       var tokensListFdm =
       FeedbackDataModel.fromJsonList(tokens, parsableListFn);
+      print('NFTs=${tokensListFdm.data?.length}');
       tokenModel.setSelectedNFTs(tokensListFdm);
     });
 
