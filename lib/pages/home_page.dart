@@ -188,6 +188,8 @@ class _HomePageState extends State<HomePage> {
           statusBarIconBrightness: Brightness.dark,
         ),
         child: CustomScrollView(
+          physics: const BouncingScrollPhysics(),
+          clipBehavior: Clip.none,
           slivers: [
             /*Row(children: [
                 ElevatedButton(
@@ -209,16 +211,18 @@ class _HomePageState extends State<HomePage> {
             SliverPinnedHeader(
               child: navSection(),
             ),
-            SliverToBoxAdapter(
-              child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  height: _isScrolling ? 16 : 0),
-            ),
+            // SliverToBoxAdapter(
+            //   child: AnimatedContainer(
+            //       duration: const Duration(milliseconds: 200),
+            //       height: _isScrolling ? 16 : 0),
+            // ),
+            SliverClip(
+              child: _viewsMap.where((option) => option["active"]).toList()[0]
+                  ["component"],
+            )
 
             // height: ((size.height + 64) / 2),
             // width: double.infinity,
-            _viewsMap.where((option) => option["active"]).toList()[0]
-                ["component"],
 
             // TODO: ADD ALERT SYSTEM FOR ERRORS HERE
             // test()

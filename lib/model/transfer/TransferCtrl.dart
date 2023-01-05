@@ -1,4 +1,3 @@
-import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/tokens/TokenWithAmount.dart';
 import 'package:reef_mobile_app/service/JsApiService.dart';
 
@@ -9,6 +8,8 @@ class TransferCtrl {
 
   Future<dynamic> transferTokens(
       String fromAddress, String toAddress, TokenWithAmount token) async {
+    // print(
+    //     "$fromAddress | $toAddress | ${token.amount.toString()} | ${token.decimals}  | ${token.address}");
     return jsApi.jsPromise(
         'window.transfer.send("$fromAddress", "$toAddress", "${token.amount.toString()}", ${token.decimals}, "${token.address}")');
   }
@@ -18,6 +19,8 @@ class TransferCtrl {
       print('No from address value specified');
       return false;
     }
+    // 5CdFxKLc95MxH21fYKEyWv7pnzL7xh5DENYFkVBxrhf9JSe1
+    // 5CdFxKLc95MxH21fYKEyWv7pnzL7xh5DENYFkVBxrhf9JSe1
     const toAddress = '5DWsQ5XpdixnPZUMZMiPuGRXaUKN115YNNqDcneqWfKaqvsK';
 
     TokenWithAmount tokenReef = TokenWithAmount(

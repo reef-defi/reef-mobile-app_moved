@@ -25,6 +25,7 @@ class _TokenViewState extends State<TokenView> {
       double balance = 0.0,
       double price = 0.0,
       String tokenName = ""}) {
+    var balanceInBigInt = BigInt.from(balance);
     return ViewBoxContainer(
         child: Padding(
             padding:
@@ -74,7 +75,7 @@ class _TokenViewState extends State<TokenView> {
                         GradientText(
                             price != 0
                                 ? "\$${getBalanceValue(balance, price).toStringAsFixed(2)}"
-                                : "NA",
+                                : "N/A",
                             gradient: textGradient(),
                             style: GoogleFonts.poppins(
                               color: Styles.textColor,
@@ -82,7 +83,7 @@ class _TokenViewState extends State<TokenView> {
                               fontWeight: FontWeight.w900,
                             )),
                         Text(
-                          "${balance != 0 ? balance.toStringAsFixed(0) : 0} ${tokenName != "" ? tokenName : name.toUpperCase()}",
+                          "${balance != 0 ? toAmountDisplayBigInt(balanceInBigInt, fractionDigits: 2) : 0} ${tokenName != "" ? tokenName : name.toUpperCase()}",
                           style: GoogleFonts.poppins(
                             color: Styles.textColor,
                             fontSize: 14,

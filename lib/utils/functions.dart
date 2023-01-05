@@ -1,11 +1,7 @@
-import 'dart:convert';
-
-import '../model/feedback-data-model/FeedbackDataModel.dart';
-
 T? cast<T>(x) => x is T ? x : null;
 
 double getBalanceValue(double balance, price) {
-  if (price == null || price == null) {
+  if (price == null || balance == null) {
     return 0.0;
   }
   return balance * price;
@@ -21,7 +17,7 @@ extension ShortenExtension on String {
   String shorten() {
     try {
       return "${substring(0, 2)}...${substring(length - 5)}";
-    }catch(e){
+    } catch (e) {
       return toString();
     }
   }
