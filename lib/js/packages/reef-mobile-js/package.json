@@ -8,7 +8,7 @@
     "@polkadot/ui-shared": "^2.4.1",
     "@popperjs/core": "^2.11.5",
     "@reef-defi/extension-base": "^1.0.16",
-    "@reef-chain/util-lib": "^0.4.2",
+    "@reef-chain/util-lib": "^0.5.1",
     "crypto-browserify": "^3.12.0",
     "esbuild": "^0.14.42",
     "ethers": "^5.6.9",

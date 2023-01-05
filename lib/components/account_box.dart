@@ -225,7 +225,7 @@ class _AccountBoxState extends State<AccountBox> {
                     borderRadius: BorderRadius.circular(12)),
                 child: TextButton(
                     onPressed: () {
-                      showBindEvmModal(context, bindFor: widget.reefAccountFDM);
+                      showBindEvmModal(context, bindFor: widget.reefAccountFDM.data);
                     },
                     style: TextButton.styleFrom(
                       backgroundColor: Colors.black12,
