@@ -19,8 +19,6 @@ class TransferCtrl {
       print('No from address value specified');
       return false;
     }
-    // 5CdFxKLc95MxH21fYKEyWv7pnzL7xh5DENYFkVBxrhf9JSe1
-    // 5CdFxKLc95MxH21fYKEyWv7pnzL7xh5DENYFkVBxrhf9JSe1
     const toAddress = '5DWsQ5XpdixnPZUMZMiPuGRXaUKN115YNNqDcneqWfKaqvsK';
 
     TokenWithAmount tokenReef = TokenWithAmount(
