@@ -52,9 +52,10 @@ class LiquidCarouselState extends State<LiquidCarousel>
 
     return GestureDetector(
         key: _key,
-        onPanDown: (details) => _handlePanDown(details, _getSize()),
-        onPanUpdate: (details) => _handlePanUpdate(details, _getSize()),
-        onPanEnd: (details) => _handlePanEnd(details, _getSize()),
+        onHorizontalDragStart: (details) => _handlePanDown(details, _getSize()),
+        onHorizontalDragUpdate: (details) =>
+            _handlePanUpdate(details, _getSize()),
+        onHorizontalDragEnd: (details) => _handlePanEnd(details, _getSize()),
         child: Stack(
           children: <Widget>[
             widget.children[_index % l],
@@ -72,12 +73,13 @@ class LiquidCarouselState extends State<LiquidCarousel>
     return box.size;
   }
 
-  void _handlePanDown(DragDownDetails details, Size size) {
+  void _handlePanDown(DragStartDetails details, Size size) {
     if (_dragIndex != null && _dragCompleted) {
       _index = _dragIndex!;
     }
     _dragIndex = null;
-    _dragOffset = details.localPosition;
+
+    _dragOffset = details.globalPosition;
     _dragCompleted = false;
     _dragDirection = 0;
 
@@ -88,7 +90,9 @@ class LiquidCarouselState extends State<LiquidCarousel>
 
   void _handlePanUpdate(DragUpdateDetails details, Size size) {
     double dx = details.globalPosition.dx - _dragOffset!.dx;
-
+    if (details.globalPosition.dx > _dragOffset!.dx && _index == 0) return;
+    if (details.globalPosition.dx < _dragOffset!.dx &&
+        _index == widget.children.length - 1) return;
     if (!_isSwipeActive(dx)) {
       return;
     }
@@ -146,6 +150,11 @@ class LiquidCarouselState extends State<LiquidCarousel>
     final d = DragUpdateDetails(
         globalPosition: Offset(-MediaQuery.of(context).size.width,
             MediaQuery.of(context).size.height / 2));
+    _handlePanDown(
+        DragStartDetails(
+            globalPosition: Offset(MediaQuery.of(context).size.width,
+                MediaQuery.of(context).size.height / 2)),
+        _getSize());
     _handlePanUpdate(d, _getSize());
   }
 
@@ -153,7 +162,8 @@ class LiquidCarouselState extends State<LiquidCarousel>
     final d = DragUpdateDetails(
         globalPosition: Offset(MediaQuery.of(context).size.width,
             MediaQuery.of(context).size.height / 2));
-
+    _handlePanDown(
+        DragStartDetails(globalPosition: const Offset(0, 0)), _getSize());
     _handlePanUpdate(d, _getSize());
   }
 }
