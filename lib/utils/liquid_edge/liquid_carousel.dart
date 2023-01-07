@@ -8,8 +8,11 @@ import 'liquid_edge_clipper.dart';
 // Provide Key to the carousel to access the swipeToNext and swipeToPrevious methods from another widget
 class LiquidCarousel extends StatefulWidget {
   final List<Widget> children;
+  final bool cyclic;
+  final void Function(int)? onSwipe;
 
-  const LiquidCarousel({super.key, required this.children});
+  const LiquidCarousel(
+      {super.key, required this.children, this.cyclic = false, this.onSwipe});
 
   @override
   LiquidCarouselState createState() => LiquidCarouselState();
@@ -90,9 +93,11 @@ class LiquidCarouselState extends State<LiquidCarousel>
 
   void _handlePanUpdate(DragUpdateDetails details, Size size) {
     double dx = details.globalPosition.dx - _dragOffset!.dx;
-    if (details.globalPosition.dx > _dragOffset!.dx && _index == 0) return;
-    if (details.globalPosition.dx < _dragOffset!.dx &&
-        _index == widget.children.length - 1) return;
+    if (!widget.cyclic) {
+      if (details.globalPosition.dx > _dragOffset!.dx && _index == 0) return;
+      if (details.globalPosition.dx < _dragOffset!.dx &&
+          _index == widget.children.length - 1) return;
+    }
     if (!_isSwipeActive(dx)) {
       return;
     }
@@ -112,7 +117,14 @@ class LiquidCarouselState extends State<LiquidCarousel>
       _dragDirection = dx.sign;
       _edge.side = _dragDirection == 1.0 ? Side.left : Side.right;
       setState(() {
-        _dragIndex = _index - _dragDirection.toInt();
+        if (_index - _dragDirection.toInt() < 0) {
+          _dragIndex = widget.children.length - 1;
+        } else if (_index - _dragDirection.toInt() >
+            widget.children.length - 1) {
+          _dragIndex = 0;
+        } else {
+          _dragIndex = _index - _dragDirection.toInt();
+        }
       });
     }
     return _dragDirection != 0.0;
@@ -138,6 +150,9 @@ class LiquidCarouselState extends State<LiquidCarousel>
       _edge.farEdgeTension = 0.01;
       _edge.edgeTension = 0.0;
       _edge.applyTouchOffset();
+      if (widget.onSwipe != null) {
+        widget.onSwipe!(_dragIndex ?? 0);
+      }
     }
     return _dragCompleted;
   }
