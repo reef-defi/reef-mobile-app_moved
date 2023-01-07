@@ -118,7 +118,7 @@ class _EvmNotClaimedModalState extends State<EvmNotClaimedModal> {
                     ),
                     onPressed: () {
                       Navigator.of(context).pop();
-                      showBindEvmModal(context, bindFor: widget.signer);
+                      showBindEvmModal(context, bindFor: widget.signer.data);
                     },
                     child: const Text(
                       'Claim EVM account',

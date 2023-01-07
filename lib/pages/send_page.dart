@@ -80,7 +80,7 @@ class _SendPageState extends State<SendPage> {
     }
     var signerAddress = await ReefAppState.instance.storage
         .getValue(StorageKey.selected_address.name);
-    TokenWithAmount tokenToTranfer = TokenWithAmount(
+    TokenWithAmount tokenToTransfer = TokenWithAmount(
         name: sendToken.name,
         address: sendToken.address,
         iconUrl: sendToken.iconUrl,
@@ -90,8 +90,9 @@ class _SendPageState extends State<SendPage> {
         amount:
             BigInt.parse(toStringWithoutDecimals(amount, sendToken.decimals)),
         price: 0);
+
     await ReefAppState.instance.transferCtrl
-        .transferTokens(signerAddress, address, tokenToTranfer);
+        .transferTokens(signerAddress, address, tokenToTransfer);
     amountController.clear();
     valueController.clear();
   }
