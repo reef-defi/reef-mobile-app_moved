@@ -113,7 +113,7 @@ class _HomePageState extends State<HomePage> {
   Widget navSection() {
     return Container(
       width: double.infinity,
-      margin: const EdgeInsets.only(top: 12),
+      margin: const EdgeInsets.only(top: 12, left: 12, right: 12),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15),
           color: Styles.primaryBackgroundColor,
