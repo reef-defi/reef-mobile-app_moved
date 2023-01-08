@@ -275,8 +275,8 @@ class _BalanceHeaderDelegate extends SliverPersistentHeaderDelegate {
                               ),
                               Gap(10),
                               IconButton(onPressed: (){
-                                ReefAppState.instance.model.balance.toggle();
-                              }, icon: Icon(icon))
+                                ReefAppState.instance.model.appConfig.toggle();
+                              }, icon: Icon(icon)),
                               
                     ],
                   ),
@@ -284,7 +284,7 @@ class _BalanceHeaderDelegate extends SliverPersistentHeaderDelegate {
                     child: Observer(builder: (_) {
                       return BlurContent(
                         GradientText("\$${_sumTokenBalances(ReefAppState.instance.model.tokens.selectedErc20List.toList()).toStringAsFixed(0)}",gradient: textGradient(),style: GoogleFonts.poppins(color: Styles.textColor,fontSize: 68,fontWeight: FontWeight.w800,letterSpacing: 3),),
-                        ReefAppState.instance.model.balance.displayBalance);
+                        ReefAppState.instance.model.appConfig.displayBalance);
                     }),
                   ),
                 ]),

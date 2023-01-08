@@ -10,6 +10,9 @@ import 'package:reef_mobile_app/components/modals/add_account_modal.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/account/AccountCtrl.dart';
 import 'package:reef_mobile_app/model/feedback-data-model/FeedbackDataModel.dart';
+import 'package:reef_mobile_app/pages/send_nft_prev.dart';
+import 'package:reef_mobile_app/pages/send_page.dart';
+import 'package:reef_mobile_app/pages/swap_page.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 
 import '../components/SignatureContentToggle.dart';
@@ -125,7 +128,8 @@ class _AccountsPageState extends State<AccountsPage> {
                           color: Styles.textLightColor,
                           fontSize: 16,
                           fontWeight: FontWeight.w500),
-                    )
+                    ),
+                   
                   ]),
                 ),
                 const Gap(8)

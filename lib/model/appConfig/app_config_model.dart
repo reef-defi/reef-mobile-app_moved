@@ -1,10 +1,10 @@
 import 'package:mobx/mobx.dart';
 
-part 'display_balance.g.dart';
+part 'app_config_model.g.dart';
 
-class BalanceModel = _BalanceModel with _$BalanceModel;
+class AppConfigModel = _AppConfigModel with _$AppConfigModel;
 
-abstract class _BalanceModel with Store {
+abstract class _AppConfigModel with Store {
 
   @observable
   bool displayBalance = true;

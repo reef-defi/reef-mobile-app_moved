@@ -1,10 +1,16 @@
-class AppConfig {
+import 'package:reef_mobile_app/service/StorageService.dart';
+import 'package:reef_mobile_app/model/appConfig/app_config_model.dart';
 
-    AppConfig(this._storage, this._appConfigModel){
-        ...TODO set model value from storage
+class AppConfigCtrl {
+    final StorageService storage;
+    AppConfigModel appConfigModel;
+
+    AppConfigCtrl(this.storage, this.appConfigModel){
+      storage.setValue("displayBalance", appConfigModel.displayBalance);
     }
 
     toggle(){
-        ...TODO toggle value in storage, set model value from storage
+        storage.setValue("displayBalance", !appConfigModel.displayBalance);
+        appConfigModel.toggle();
     }
 }

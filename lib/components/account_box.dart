@@ -174,7 +174,7 @@ class _AccountBoxState extends State<AccountBox> {
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
               ),
-            ), ReefAppState.instance.model.balance.displayBalance);
+            ), ReefAppState.instance.model.appConfig.displayBalance);
             } )
            
           ])
@@ -316,8 +316,6 @@ void choiceAction(
               "EVM Address copied to clipboard.\nUse it ONLY on Reef Chain!")));
     });
     }else{
-      ReefAppState.instance.model.balance.toggle();
-      print(ReefAppState.instance.model.balance.displayBalance);
       
     Clipboard.setData(ClipboardData(
             text: await ReefAppState.instance.accountCtrl
