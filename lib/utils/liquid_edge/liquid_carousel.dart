@@ -8,8 +8,11 @@ import 'liquid_edge_clipper.dart';
 // Provide Key to the carousel to access the swipeToNext and swipeToPrevious methods from another widget
 class LiquidCarousel extends StatefulWidget {
   final List<Widget> children;
+  final bool cyclic;
+  final void Function(int)? onSwipe;
 
-  const LiquidCarousel({super.key, required this.children});
+  const LiquidCarousel(
+      {super.key, required this.children, this.cyclic = false, this.onSwipe});
 
   @override
   LiquidCarouselState createState() => LiquidCarouselState();
@@ -52,9 +55,10 @@ class LiquidCarouselState extends State<LiquidCarousel>
 
     return GestureDetector(
         key: _key,
-        onPanDown: (details) => _handlePanDown(details, _getSize()),
-        onPanUpdate: (details) => _handlePanUpdate(details, _getSize()),
-        onPanEnd: (details) => _handlePanEnd(details, _getSize()),
+        onHorizontalDragStart: (details) => _handlePanDown(details, _getSize()),
+        onHorizontalDragUpdate: (details) =>
+            _handlePanUpdate(details, _getSize()),
+        onHorizontalDragEnd: (details) => _handlePanEnd(details, _getSize()),
         child: Stack(
           children: <Widget>[
             widget.children[_index % l],
@@ -72,12 +76,13 @@ class LiquidCarouselState extends State<LiquidCarousel>
     return box.size;
   }
 
-  void _handlePanDown(DragDownDetails details, Size size) {
+  void _handlePanDown(DragStartDetails details, Size size) {
     if (_dragIndex != null && _dragCompleted) {
       _index = _dragIndex!;
     }
     _dragIndex = null;
-    _dragOffset = details.localPosition;
+
+    _dragOffset = details.globalPosition;
     _dragCompleted = false;
     _dragDirection = 0;
 
@@ -88,7 +93,11 @@ class LiquidCarouselState extends State<LiquidCarousel>
 
   void _handlePanUpdate(DragUpdateDetails details, Size size) {
     double dx = details.globalPosition.dx - _dragOffset!.dx;
-
+    if (!widget.cyclic) {
+      if (details.globalPosition.dx > _dragOffset!.dx && _index == 0) return;
+      if (details.globalPosition.dx < _dragOffset!.dx &&
+          _index == widget.children.length - 1) return;
+    }
     if (!_isSwipeActive(dx)) {
       return;
     }
@@ -108,7 +117,14 @@ class LiquidCarouselState extends State<LiquidCarousel>
       _dragDirection = dx.sign;
       _edge.side = _dragDirection == 1.0 ? Side.left : Side.right;
       setState(() {
-        _dragIndex = _index - _dragDirection.toInt();
+        if (_index - _dragDirection.toInt() < 0) {
+          _dragIndex = widget.children.length - 1;
+        } else if (_index - _dragDirection.toInt() >
+            widget.children.length - 1) {
+          _dragIndex = 0;
+        } else {
+          _dragIndex = _index - _dragDirection.toInt();
+        }
       });
     }
     return _dragDirection != 0.0;
@@ -134,6 +150,9 @@ class LiquidCarouselState extends State<LiquidCarousel>
       _edge.farEdgeTension = 0.01;
       _edge.edgeTension = 0.0;
       _edge.applyTouchOffset();
+      if (widget.onSwipe != null) {
+        widget.onSwipe!(_dragIndex ?? 0);
+      }
     }
     return _dragCompleted;
   }
@@ -146,6 +165,11 @@ class LiquidCarouselState extends State<LiquidCarousel>
     final d = DragUpdateDetails(
         globalPosition: Offset(-MediaQuery.of(context).size.width,
             MediaQuery.of(context).size.height / 2));
+    _handlePanDown(
+        DragStartDetails(
+            globalPosition: Offset(MediaQuery.of(context).size.width,
+                MediaQuery.of(context).size.height / 2)),
+        _getSize());
     _handlePanUpdate(d, _getSize());
   }
 
@@ -153,7 +177,8 @@ class LiquidCarouselState extends State<LiquidCarousel>
     final d = DragUpdateDetails(
         globalPosition: Offset(MediaQuery.of(context).size.width,
             MediaQuery.of(context).size.height / 2));
-
+    _handlePanDown(
+        DragStartDetails(globalPosition: const Offset(0, 0)), _getSize());
     _handlePanUpdate(d, _getSize());
   }
 }

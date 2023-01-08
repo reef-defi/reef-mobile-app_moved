@@ -17,12 +17,13 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
-    return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
+    return Container(
+        color: Styles.primaryBackgroundColor,
+        padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-             Text(
+            Text(
               "Settings",
               style: GoogleFonts.spaceGrotesk(
                   fontWeight: FontWeight.w500,
@@ -31,7 +32,7 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
             const Gap(32),
             const SwitchNetwork(),
-    /*Divider(
+            /*Divider(
               color: Styles.textLightColor,
               thickness: 1,
             ),
