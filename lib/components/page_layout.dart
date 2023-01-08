@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -10,8 +11,8 @@ import 'package:reef_mobile_app/pages/send_page.dart';
 import 'package:reef_mobile_app/pages/settings_page.dart';
 import 'package:reef_mobile_app/pages/swap_page.dart';
 import 'package:reef_mobile_app/utils/constants.dart';
+import 'package:reef_mobile_app/utils/liquid_edge/liquid_carousel.dart';
 import "package:reef_mobile_app/utils/styles.dart";
-import 'package:collection/collection.dart';
 
 import 'SignatureContentToggle.dart';
 
@@ -23,6 +24,8 @@ class BottomNav extends StatefulWidget {
 }
 
 class _BottomNavState extends State<BottomNav> {
+  final _liquidCarouselKey = GlobalKey<LiquidCarouselState>();
+
   Widget _getWidget(NavigationPage page) {
     print(ReefAppState.instance.navigation);
     switch (page) {
@@ -44,9 +47,25 @@ class _BottomNavState extends State<BottomNav> {
   }
 
   void _onItemTapped(int index) {
+    int currIndex = bottomNavigationBarItems.indexWhere((barItem) =>
+        barItem.page == ReefAppState.instance.navigation.currentPage);
+    if (currIndex == index) return;
     HapticFeedback.selectionClick();
     ReefAppState.instance.navigation
         .navigate(bottomNavigationBarItems[index].page);
+    _computeSwipeAnimation(currIndex: currIndex, index: index);
+  }
+
+  void _computeSwipeAnimation({required int currIndex, required int index}) {
+    if ((currIndex == 0 && index == 2) ||
+        (currIndex == 1 && index == 0) ||
+        (currIndex == 2 && index == 1)) {
+      _liquidCarouselKey.currentState?.swipeToPrevious();
+    } else if ((currIndex == 0 && index == 1) ||
+        (currIndex == 1 && index == 2) ||
+        (currIndex == 2 && index == 0)) {
+      _liquidCarouselKey.currentState?.swipeToNext();
+    }
   }
 
   List<BarItemNavigationPage> bottomNavigationBarItems = const [
@@ -119,17 +138,31 @@ class _BottomNavState extends State<BottomNav> {
                           child: topBar(context)),
                     ),
                     Expanded(
-                      child: Container(
-                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-                        width: double.infinity,
-                        child: Observer(builder: (_) {
-                          print(
-                              'DISPLAY PAGE =${ReefAppState.instance.navigation.currentPage}');
-                          return _getWidget(
-                              ReefAppState.instance.navigation.currentPage);
-                        }),
-                      ),
-                    )
+                        child: LiquidCarousel(
+                      key: _liquidCarouselKey,
+                      cyclic: true,
+                      onSwipe: (int index) {
+                        ReefAppState.instance.navigation
+                            .navigate(bottomNavigationBarItems[index].page);
+                      },
+                      children: [
+                        const HomePage(key: PageStorageKey("homepage")),
+                        AccountsPage(key: const PageStorageKey("accountPage")),
+                        const SettingsPage(key: PageStorageKey("settingsPage")),
+                      ],
+                    )),
+                    // Expanded(
+                    //   child: Container(
+                    //     padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+                    //     width: double.infinity,
+                    //     child: Observer(builder: (_) {
+                    //       print(
+                    //           'DISPLAY PAGE =${ReefAppState.instance.navigation.currentPage}');
+                    //       return _getWidget(
+                    //           ReefAppState.instance.navigation.currentPage);
+                    //     }),
+                    //   ),
+                    // )
                   ],
                 ),
               ],

@@ -115,7 +115,7 @@ class _HomePageState extends State<HomePage> {
   Widget navSection() {
     return Container(
       width: double.infinity,
-      margin: const EdgeInsets.only(top: 12),
+      margin: const EdgeInsets.only(top: 12, left: 12, right: 12),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15),
           color: Styles.primaryBackgroundColor,
@@ -161,9 +161,9 @@ class _HomePageState extends State<HomePage> {
         for (var element in temp) {
           element["active"] = (element["key"] == currentIndex + 1);
         }
-        setState(() {
-          _viewsMap = temp;
-        });
+        // setState(() {
+        //   _viewsMap = temp;
+        // });
       }
     } else {
       List temp = _viewsMap;
@@ -173,25 +173,31 @@ class _HomePageState extends State<HomePage> {
         for (var element in temp) {
           element["active"] = (element["key"] == currentIndex - 1);
         }
-        setState(() {
-          _viewsMap = temp;
-        });
+        // setState(() {
+        //   _viewsMap = temp;
+        // });
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    print("method called");
+
     SizeConfig.init(context);
 
-    return SignatureContentToggle(AnnotatedRegion<SystemUiOverlayStyle>(
-        value: const SystemUiOverlayStyle(
-          statusBarColor: Colors.transparent,
-          statusBarIconBrightness: Brightness.dark,
-        ),
-        child: CustomScrollView(
-          slivers: [
-            /*Row(children: [
+    return SignatureContentToggle(Container(
+        color: Styles.whiteColor,
+        child: AnnotatedRegion<SystemUiOverlayStyle>(
+            value: const SystemUiOverlayStyle(
+              statusBarColor: Colors.transparent,
+              statusBarIconBrightness: Brightness.dark,
+            ),
+            child: CustomScrollView(
+              physics: const BouncingScrollPhysics(),
+              clipBehavior: Clip.none,
+              slivers: [
+                /*Row(children: [
                 ElevatedButton(
                   child: const Text('test dApp 1'),
                   onPressed: () => _navigateTestDApp(
@@ -207,25 +213,28 @@ class _HomePageState extends State<HomePage> {
                 ElevatedButton(
                     child: const Text('test'), onPressed: _navigateTestPage),
               ]),*/
-            SliverPersistentHeader(delegate: _BalanceHeaderDelegate()),
-            SliverPinnedHeader(
-              child: navSection(),
-            ),
-            SliverToBoxAdapter(
-              child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  height: _isScrolling ? 16 : 0),
-            ),
+                SliverPersistentHeader(delegate: _BalanceHeaderDelegate()),
+                SliverPinnedHeader(
+                  child: navSection(),
+                ),
+                // SliverToBoxAdapter(
+                //   child: AnimatedContainer(
+                //       duration: const Duration(milliseconds: 200),
+                //       height: _isScrolling ? 16 : 0),
+                // ),
+                SliverClip(
+                  child: _viewsMap
+                      .where((option) => option["active"])
+                      .toList()[0]["component"],
+                )
 
-            // height: ((size.height + 64) / 2),
-            // width: double.infinity,
-            _viewsMap.where((option) => option["active"]).toList()[0]
-                ["component"],
+                // height: ((size.height + 64) / 2),
+                // width: double.infinity,
 
-            // TODO: ADD ALERT SYSTEM FOR ERRORS HERE
-            // test()
-          ],
-        )));
+                // TODO: ADD ALERT SYSTEM FOR ERRORS HERE
+                // test()
+              ],
+            ))));
   }
 }
 

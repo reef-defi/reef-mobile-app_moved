@@ -34,6 +34,7 @@ export const initApi = (signingKey: Signer) => {
     (window as any).transfer = {
         send: async (from: string, to: string, tokenAmount: string, tokenDecimals: number, tokenAddress: string) => {
         console.log('making transfer tx')
+        console.log(`From: ${from} | To: ${to} | Token Amount: ${tokenAmount} | Token Decimals: ${tokenDecimals} | Token Address: ${tokenDecimals}`)
             return firstValueFrom(reefState.accounts$.pipe(
                 combineLatest([of(from)]),
                 take(1),

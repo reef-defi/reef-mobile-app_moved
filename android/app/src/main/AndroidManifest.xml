@@ -10,7 +10,7 @@
    <application
         android:label="reef_mobile_app"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/reef_icon"
        >
 
         <activity

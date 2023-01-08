@@ -39,111 +39,112 @@ class _AccountBoxState extends State<AccountBox> {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: widget.onSelected,
-      child: Container(
-        width: double.infinity,
-        decoration: BoxDecoration(
-            color: widget.selected
-                ? Styles.primaryAccentColor.withAlpha(22)
-                : Styles.boxBackgroundColor,
-            border: Border.all(
-              color: widget.selected
-                  ? Styles.primaryAccentColor
-                  : Colors.grey[100]!,
-              width: 2,
-            ),
-            borderRadius: BorderRadius.circular(15)),
-        child: Stack(
-          children: [
-            if (widget.selected)
-              Positioned(
-                  top: 0,
-                  right: 0,
-                  child: Container(
-                    padding: const EdgeInsets.only(
-                        left: 12, bottom: 5, right: 10, top: 2),
-                    decoration: BoxDecoration(
-                        color: Styles.primaryAccentColor,
-                        borderRadius: const BorderRadius.only(
-                            bottomLeft: Radius.circular(15),
-                            topRight: Radius.circular(12))),
-                    child: Text(
-                      "Selected",
-                      style: TextStyle(
-                          color: Styles.whiteColor,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 12),
-                    ),
-                  )),
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 8, vertical: 24.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(children: [
-                    Container(
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.black12,
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(64),
-                        child: widget.reefAccountFDM.data.iconSVG != null
-                            ? SvgPicture.string(
-                                widget.reefAccountFDM.data.iconSVG!,
-                                height: 64,
-                                width: 64,
-                              )
-                            : const SizedBox(
-                                width: 64,
-                                height: 64,
-                              ),
-                      ),
-                    ),
-                  ]),
-                  Expanded(
-                      child: Padding(
-                    padding: const EdgeInsets.only(left: 8),
-                    child: buildCentralColumn(widget.reefAccountFDM),
-                  )),
-                  if (widget.showOptions)
-                    Column(
-                      children: [
-                        Row(
+      child: PhysicalModel(
+          borderRadius: BorderRadius.circular(15),
+          elevation: 4,
+          color: Colors.transparent,
+          child: Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Color(0xFF5D3BAD),
+                      Color(0xFFA93185),
+                    ]),
+                border: Border.all(
+                  color: widget.selected
+                      ? const Color(0xFFA93185)
+                      : Colors.transparent,
+                  width: 2,
+                ),
+                borderRadius: BorderRadius.circular(15)),
+            child: Stack(
+              children: [
+                if (widget.selected)
+                  Positioned(
+                      top: 0,
+                      right: 0,
+                      child: Container(
+                        padding: const EdgeInsets.only(
+                            left: 12, bottom: 5, right: 10, top: 2),
+                        decoration: BoxDecoration(
+                            color: Styles.primaryAccentColor,
+                            borderRadius: const BorderRadius.only(
+                                bottomLeft: Radius.circular(15),
+                                topRight: Radius.circular(12))),
+                        child: Text(
+                          "Selected",
+                          style: TextStyle(
+                              color: Styles.whiteColor,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 12),
+                        ),
+                      )),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 24.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(children: [
+                        Container(
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.black12,
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(64),
+                            child: widget.reefAccountFDM.data.iconSVG != null
+                                ? SvgPicture.string(
+                                    widget.reefAccountFDM.data.iconSVG!,
+                                    height: 64,
+                                    width: 64,
+                                  )
+                                : const SizedBox(
+                                    width: 64,
+                                    height: 64,
+                                  ),
+                          ),
+                        ),
+                      ]),
+                      Expanded(
+                          child: Padding(
+                        padding: const EdgeInsets.only(left: 10),
+                        child: buildCentralColumn(widget.reefAccountFDM),
+                      )),
+                      if (widget.showOptions)
+                        Column(
                           children: [
-                            Container(
-                              margin: const EdgeInsets.all(2),
-                              child: PopupMenuButton<String>(
-                                icon: const Icon(
-                                  Icons.more_vert,
-                                  color: Colors.black45,
-                                ),
-                                enableFeedback: true,
-                                onSelected: (String choice) {
-                                  choiceAction(
-                                      choice, context, widget.reefAccountFDM.data);
-                                },
-                                tooltip: "More Actions",
-                                itemBuilder: (BuildContext context) {
-                                  return Constants.choices.map((String choice) {
-                                    return PopupMenuItem<String>(
-                                      value: choice,
-                                      child: Text(choice),
-                                    );
-                                  }).toList();
-                                },
+                            PopupMenuButton<String>(
+                              icon: Icon(
+                                Icons.more_vert,
+                                color: Colors.grey.shade100,
                               ),
+                              enableFeedback: true,
+                              onSelected: (String choice) {
+                                choiceAction(choice, context,
+                                    widget.reefAccountFDM.data);
+                              },
+                              tooltip: "More Actions",
+                              itemBuilder: (BuildContext context) {
+                                return Constants.choices.map((String choice) {
+                                  return PopupMenuItem<String>(
+                                    value: choice,
+                                    child: Text(choice),
+                                  );
+                                }).toList();
+                              },
                             ),
                           ],
-                        ),
-                      ],
-                    )
-                ],
-              ),
+                        )
+                    ],
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
+          )),
     );
   }
 
@@ -155,7 +156,7 @@ class _AccountBoxState extends State<AccountBox> {
           Flexible(
               child: Text(reefAccount.data.name,
                   style: GoogleFonts.poppins(
-                    color: Styles.textColor,
+                    color: Colors.white,
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
                   ))),
@@ -170,7 +171,7 @@ class _AccountBoxState extends State<AccountBox> {
               return BlurContent(Text(
               '${toAmountDisplayBigInt(reefAccount.data.balance)} REEF',
               style: GoogleFonts.poppins(
-                color: Styles.textColor,
+                color: Colors.purpleAccent.shade100,
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
               ),
@@ -181,7 +182,7 @@ class _AccountBoxState extends State<AccountBox> {
         ],
       ),
       Gap(6),
-      Container(color: Colors.purple.withAlpha(44), height: 1),
+      Container(color: Colors.purpleAccent.shade100.withAlpha(44), height: 1),
       Gap(6),
       Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -190,13 +191,12 @@ class _AccountBoxState extends State<AccountBox> {
             Text.rich(
               TextSpan(
                 text: "Address:",
-                style: const TextStyle(fontSize: 10),
+                style: TextStyle(fontSize: 10, color: Colors.grey.shade300),
                 children: <TextSpan>[
                   TextSpan(
-                      text:
-                          " ${widget.reefAccountFDM.data.address?.shorten()} ",
-                      style:
-                          TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                      text: " ${widget.reefAccountFDM.data.address.shorten()} ",
+                      style: const TextStyle(
+                          fontSize: 14, fontWeight: FontWeight.bold)),
                 ],
               ),
             ),
@@ -208,7 +208,8 @@ class _AccountBoxState extends State<AccountBox> {
                   style: const TextStyle(fontSize: 10),
                   children: <TextSpan>[
                     TextSpan(
-                      text: "${widget.reefAccountFDM.data.evmAddress?.shorten()}",
+                      text:
+                          " ${widget.reefAccountFDM.data.evmAddress?.shorten()}",
                       style: const TextStyle(
                           fontSize: 14, fontWeight: FontWeight.bold),
                     ),
@@ -225,7 +226,8 @@ class _AccountBoxState extends State<AccountBox> {
                     borderRadius: BorderRadius.circular(12)),
                 child: TextButton(
                     onPressed: () {
-                      showBindEvmModal(context, bindFor: widget.reefAccountFDM.data);
+                      showBindEvmModal(context,
+                          bindFor: widget.reefAccountFDM.data);
                     },
                     style: TextButton.styleFrom(
                       backgroundColor: Colors.black12,

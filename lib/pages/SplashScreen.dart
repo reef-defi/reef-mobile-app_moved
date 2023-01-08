@@ -7,6 +7,7 @@ import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:reef_mobile_app/model/StorageKey.dart';
+import 'package:reef_mobile_app/pages/introduction_page.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 import '../main.dart';
 import '../model/ReefAppState.dart';
@@ -31,12 +32,14 @@ class SplashApp extends StatefulWidget {
 }
 
 class _SplashAppState extends State<SplashApp> {
+  static const _firstLaunch = "firstLaunch";
   bool _hasError = false;
   bool _isGifFinished = false;
   bool _requiresAuth = false;
   bool _isAuthenticated = false;
   bool _wrongPassword = false;
   bool _biometricsIsAvailable = false;
+  bool? _isFirstLaunch;
   Widget? onInitWidget;
   var loaded = false;
   final TextEditingController _passwordController = TextEditingController();
@@ -59,6 +62,11 @@ class _SplashAppState extends State<SplashApp> {
   void initState() {
     super.initState();
     _initializeAsyncDependencies();
+    _checkIfFirstLaunch().then((value) {
+      setState(() {
+        _isFirstLaunch = value;
+      });
+    });
     Timer(const Duration(milliseconds: 3830), () {
       setState(() {
         _isGifFinished = true;
@@ -90,6 +98,12 @@ class _SplashAppState extends State<SplashApp> {
     });
   }
 
+  Future<bool> _checkIfFirstLaunch() async {
+    final isFirstLaunch =
+        await ReefAppState.instance.storage.getValue(_firstLaunch);
+    return isFirstLaunch == null;
+  }
+
   Future<void> _initializeAsyncDependencies() async {
     final storageService = StorageService();
     await ReefAppState.instance.init(widget.reefJsApiService, storageService);
@@ -104,11 +118,10 @@ class _SplashAppState extends State<SplashApp> {
       title: 'Reef Chain App',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.blue,
-        textTheme: GoogleFonts.poppinsTextTheme(
-          Theme.of(context).textTheme,
-        )
-      ),
+          primarySwatch: Colors.blue,
+          textTheme: GoogleFonts.poppinsTextTheme(
+            Theme.of(context).textTheme,
+          )),
       home: _buildBody(),
       navigatorKey: navigatorKey,
     );
@@ -118,74 +131,88 @@ class _SplashAppState extends State<SplashApp> {
     if (_hasError) {
       return Center(
         child: ElevatedButton(
-          child: Text('retry'),
+          child: const Text('retry'),
           onPressed: () => main(),
         ),
       );
     }
-
+    if (_isFirstLaunch == true && loaded == true) {
+      return ShouldRebuild(
+          shouldRebuild: (oldWidget, newWidget) => false,
+          child: IntroductionPage(
+            title: "nice demo",
+            onDone: () async {
+              await ReefAppState.instance.storage.setValue(_firstLaunch, false);
+              setState(() {
+                _isFirstLaunch = false;
+              });
+            },
+          ));
+    }
     //TODO: Initialise the widget back
     return Stack(children: <Widget>[
       widget.reefJsApiService.widget,
-      loaded == false || _isAuthenticated == false
-          ? Stack(
-              children: [
-                Container(
-                  width: double.infinity,
-                  color: Styles.splashBackgroundColor,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Image.asset(
-                        "assets/images/intro.gif",
-                        height: 128.0,
-                        width: 128.0,
-                      ),
-                      const Gap(16),
-                      Visibility(
-                        maintainSize: true,
-                        maintainAnimation: true,
-                        maintainState: true,
-                        visible: _requiresAuth && !_isAuthenticated,
-                        child: _buildAuth(),
-                      ),
-                    ],
+      if ((loaded == false || _isAuthenticated == false) ||
+          _isFirstLaunch == null)
+        Stack(
+          children: [
+            Container(
+              width: double.infinity,
+              color: Styles.splashBackgroundColor,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    "assets/images/intro.gif",
+                    height: 128.0,
+                    width: 128.0,
                   ),
-                ),
-                Positioned(
-                  bottom: 24,
-                  right: 24,
-                  child: AnimatedOpacity(
-                    duration: const Duration(milliseconds: 250),
-                    curve: Curves.easeInOutCirc,
-                    opacity: _isGifFinished && _isAuthenticated ? 1 : 0,
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(
-                          "Loading App",
-                          style: GoogleFonts.poppins(
-                              fontWeight: FontWeight.w400,
-                              fontSize: 16,
-                              color: Styles.textLightColor,
-                              decoration: TextDecoration.none),
-                        ),
-                        const Gap(4),
-                        SizedBox(
-                          height: 12,
-                          width: 12,
-                          child: CircularProgressIndicator.adaptive(
-                              strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                  Styles.textLightColor)),
-                        ),
-                      ],
+                  const Gap(16),
+                  Visibility(
+                    maintainSize: true,
+                    maintainAnimation: true,
+                    maintainState: true,
+                    visible: _requiresAuth && !_isAuthenticated,
+                    child: _buildAuth(),
+                  ),
+                ],
+              ),
+            ),
+            Positioned(
+              bottom: 24,
+              right: 24,
+              child: AnimatedOpacity(
+                duration: const Duration(milliseconds: 250),
+                curve: Curves.easeInOutCirc,
+                opacity: _isGifFinished && _isAuthenticated ? 1 : 0,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Loading App",
+                      style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 16,
+                          color: Styles.textLightColor,
+                          decoration: TextDecoration.none),
                     ),
-                  ),
-                )
-              ],
+                    const Gap(4),
+                    SizedBox(
+                      height: 12,
+                      width: 12,
+                      child: CircularProgressIndicator.adaptive(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                              Styles.textLightColor)),
+                    ),
+                  ],
+                ),
+              ),
             )
-          : widget.displayOnInit(),
+          ],
+        )
+      else
+        widget.displayOnInit(),
     ]);
   }
 

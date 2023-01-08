@@ -19,27 +19,27 @@ class _SwitchNetworkState extends State<SwitchNetwork> {
         Text("NETWORK",
             style: TextStyle(color: Styles.textLightColor, fontSize: 16)),
       ]),
-      Observer(builder: (_){
-        if(ReefAppState.instance.model.network.selectedNetworkSwitching){
+      Observer(builder: (_) {
+        if (ReefAppState.instance.model.network.selectedNetworkSwitching) {
           return const Text('Registering on network');
         }
-      return Row(children: [
-        Text("Testnet", style: Theme.of(context).textTheme.bodyText1),
+        return Row(children: [
+          Text("Testnet", style: Theme.of(context).textTheme.bodyText1),
           Switch(
             // TODO listen to currentNetwork from mobx model
-            value: ReefAppState.instance.model.network.selectedNetworkName==
-                Network.mainnet.name,
+            value: ReefAppState.instance.model.network.selectedNetworkName ==
+                Network.testnet.name,
             onChanged: (value) {
               setState(() {
-                var currentNetwork = value ?  Network.mainnet : Network.testnet;
+                var currentNetwork = value ? Network.mainnet : Network.testnet;
                 ReefAppState.instance.networkCtrl.setNetwork(currentNetwork);
               });
             },
             activeColor: Styles.primaryAccentColorDark,
           ),
-        Text("Mainnet", style: Theme.of(context).textTheme.bodyText1)
-      ]);
-  }),
+          Text("Mainnet", style: Theme.of(context).textTheme.bodyText1)
+        ]);
+      }),
     ]);
   }
 }
