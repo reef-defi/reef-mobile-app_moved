@@ -47,14 +47,18 @@ class _AccountBoxState extends State<AccountBox> {
             width: double.infinity,
             decoration: BoxDecoration(
                 gradient: const LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
+                    begin: Alignment(0, 0.2),
+                     end: Alignment(0.1, 1.3),
+                    
                     colors: [
-                      Color(0xFF5D3BAD),
-                      Color(0xFFA93185),
-                    ]),
+                  
+                       Color.fromARGB(198, 93, 59, 173),
+                       Color.fromARGB(53, 185, 25, 197),
+                    ]
+                    
+                    ),
                 border: Border.all(
-                  color: widget.selected
+                  color: !widget.selected
                       ? const Color(0xFFA93185)
                       : Colors.transparent,
                   width: 2,

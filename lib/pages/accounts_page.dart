@@ -68,9 +68,11 @@ class _AccountsPageState extends State<AccountsPage> {
             if (accsFeedbackDataModel.data.isEmpty) {
               return const SizedBox.shrink();
             }
+            
             // return Text('len=${accsFeedbackDataModel.data.length}');
             return Flexible(
                 child: AccountsList(
+    
                     ReefAppState.instance.model.accounts.accountsFDM.data,
                     ReefAppState.instance.model.accounts.selectedAddress,
                     ReefAppState.instance.accountCtrl.setSelectedAddress));
@@ -113,6 +115,7 @@ class _AccountsPageState extends State<AccountsPage> {
                 minWidth: 0,
                 height: 36,
                 elevation: 0,
+        
                 color: Colors.purple,
                 padding:
                     const EdgeInsets.symmetric(vertical: 4, horizontal: 12),

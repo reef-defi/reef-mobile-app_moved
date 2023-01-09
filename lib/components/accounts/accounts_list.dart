@@ -76,26 +76,117 @@ class AccountsList extends StatelessWidget {
     );
   }
 
+//   Widget toAccountBoxList(List<FeedbackDataModel<ReefAccount>> signers) {
+//     signers.removeWhere((sig) => sig == null);
+
+//     return Wrap(
+//         spacing: 24,
+//         children: signers
+//             .map<Widget>(
+//               (FeedbackDataModel<ReefAccount> acc) => Column(
+//                 children: [
+//                   AccountBox(
+//                       reefAccountFDM: acc,
+//                       selected: selectedAddress != null
+//                           ? selectedAddress == acc.data.address
+//                           : false,
+//                       onSelected: () => selectAddress(acc.data.address),
+//                       showOptions: true),
+//                   const Gap(12)
+//                 ],
+//               ),
+//             )
+//             .toList());
+//   }
+// }
+
   Widget toAccountBoxList(List<FeedbackDataModel<ReefAccount>> signers) {
     signers.removeWhere((sig) => sig == null);
 
-    return Wrap(
-        spacing: 24,
-        children: signers
-            .map<Widget>(
-              (FeedbackDataModel<ReefAccount> acc) => Column(
-                children: [
-                  AccountBox(
-                      reefAccountFDM: acc,
-                      selected: selectedAddress != null
-                          ? selectedAddress == acc.data.address
-                          : false,
-                      onSelected: () => selectAddress(acc.data.address),
-                      showOptions: true),
-                  const Gap(12)
-                ],
-              ),
-            )
-            .toList());
+    Widget selectedWidget;
+    List<Widget> modifiedList = signers
+        .map<Widget>((FeedbackDataModel<ReefAccount> acc) {
+          if (selectedAddress != null && selectedAddress == acc.data.address) {
+            selectedWidget = Column(
+              children: [
+                AccountBox(
+                    reefAccountFDM: acc,
+                    selected: true,
+                    onSelected: () => selectAddress(acc.data.address),
+                    showOptions: true),
+                const Gap(12)
+              ],
+            );
+            return Gap(0.0);
+          } else {
+            return Column(
+              children: [
+                AccountBox(
+                    reefAccountFDM: acc,
+                    selected: false,
+                    onSelected: () => selectAddress(acc.data.address),
+                    showOptions: true),
+                const Gap(12)
+              ],
+            );
+          }
+        })
+        .where((widget) => widget != null)
+        .toList();
+
+    print("this is the modified list");
+    List<Widget> modifiedList2 = signers
+        .map<Widget>((FeedbackDataModel<ReefAccount> acc) {
+          if (selectedAddress != null && selectedAddress != acc.data.address) {
+            selectedWidget = Column(
+              children: [
+                AccountBox(
+                    reefAccountFDM: acc,
+                    selected: true,
+                    onSelected: () => selectAddress(acc.data.address),
+                    showOptions: true),
+                const Gap(12)
+              ],
+            );
+            return Gap(0.0);
+          } else {
+            return Column(
+              children: [
+                AccountBox(
+                    reefAccountFDM: acc,
+                    selected: false,
+                    onSelected: () => selectAddress(acc.data.address),
+                    showOptions: true),
+                const Gap(12)
+              ],
+            );
+          }
+        })
+        .where((widget) => widget != null)
+        .toList();
+
+    modifiedList.insert(
+        0,
+        Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8.0),
+            child: Text(
+              "All Accounts",
+              style: TextStyle(color: Styles.whiteColor, fontSize: 20.0),
+            ),
+          ),
+        ]));
+    modifiedList2.insert(
+        0,
+        Padding(
+          padding: const EdgeInsets.only(bottom: 8.0),
+          child: Text(
+            "Selected Account",
+            style: TextStyle(color: Styles.whiteColor, fontSize: 20.0),
+          ),
+        ));
+    List<Widget> combinedList = List.of(modifiedList2);
+    combinedList.addAll(modifiedList);
+    return Wrap(spacing: 24, children: combinedList);
   }
 }
