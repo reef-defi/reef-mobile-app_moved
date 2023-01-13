@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'side.dart';
@@ -19,7 +21,7 @@ class LiquidCarousel extends StatefulWidget {
 }
 
 class LiquidCarouselState extends State<LiquidCarousel>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   int _index = 0; // index of the base (bottom) child
   int? _dragIndex; // index of the top child
   Offset? _dragOffset; // starting offset of the drag
@@ -30,12 +32,28 @@ class LiquidCarouselState extends State<LiquidCarousel>
   late LiquidEdge _edge;
   late Ticker _ticker;
   final _key = GlobalKey();
+  late final AnimationController _previousSwipeController;
+  late final Animation _previousSwipeDragAnimation;
+  late final AnimationController _nextSwipeController;
+  late final Animation _nextSwipeDragAnimation;
 
   @override
   void initState() {
     _edge = LiquidEdge(count: 25);
     _ticker = createTicker(_tick)..start();
     super.initState();
+    _previousSwipeController = AnimationController(
+        vsync: this,
+        duration: const Duration(milliseconds: 700),
+        animationBehavior: AnimationBehavior.preserve);
+    _previousSwipeDragAnimation =
+        Tween<double>(begin: 0, end: 500).animate(_previousSwipeController);
+    _nextSwipeController = AnimationController(
+        vsync: this,
+        duration: const Duration(milliseconds: 700),
+        animationBehavior: AnimationBehavior.preserve);
+    _nextSwipeDragAnimation =
+        Tween<double>(begin: 400, end: 0).animate(_nextSwipeController);
   }
 
   @override
@@ -55,9 +73,14 @@ class LiquidCarouselState extends State<LiquidCarousel>
 
     return GestureDetector(
         key: _key,
-        onHorizontalDragStart: (details) => _handlePanDown(details, _getSize()),
-        onHorizontalDragUpdate: (details) =>
-            _handlePanUpdate(details, _getSize()),
+        onHorizontalDragStart: (details) {
+          if (_previousSwipeController.isAnimating) return;
+          if (_nextSwipeController.isAnimating) return;
+          _handlePanDown(details, _getSize());
+        },
+        onHorizontalDragUpdate: (details) {
+          _handlePanUpdate(details, _getSize());
+        },
         onHorizontalDragEnd: (details) => _handlePanEnd(details, _getSize()),
         child: Stack(
           children: <Widget>[
@@ -161,24 +184,41 @@ class LiquidCarouselState extends State<LiquidCarousel>
     _edge.applyTouchOffset();
   }
 
-  void swipeToNext() {
-    final d = DragUpdateDetails(
-        globalPosition: Offset(-MediaQuery.of(context).size.width,
-            MediaQuery.of(context).size.height / 2));
+  Future<bool> swipeToNext() async {
+    final verticalOffset = Random().nextDouble() * context.size!.height;
+
     _handlePanDown(
         DragStartDetails(
-            globalPosition: Offset(MediaQuery.of(context).size.width,
-                MediaQuery.of(context).size.height / 2)),
+            globalPosition:
+                Offset(MediaQuery.of(context).size.width, verticalOffset)),
         _getSize());
-    _handlePanUpdate(d, _getSize());
+    _nextSwipeDragAnimation.addListener(() {
+      final d = DragUpdateDetails(
+          globalPosition:
+              Offset(_nextSwipeDragAnimation.value, verticalOffset));
+      _handlePanUpdate(d, _getSize());
+    });
+    await _nextSwipeController.forward();
+    _nextSwipeDragAnimation.removeListener(() {});
+    _nextSwipeController.reset();
+
+    return true;
   }
 
-  void swipeToPrevious() {
-    final d = DragUpdateDetails(
-        globalPosition: Offset(MediaQuery.of(context).size.width,
-            MediaQuery.of(context).size.height / 2));
-    _handlePanDown(
-        DragStartDetails(globalPosition: const Offset(0, 0)), _getSize());
-    _handlePanUpdate(d, _getSize());
+  Future<bool> swipeToPrevious() async {
+    final verticalOffset = Random().nextDouble() * context.size!.height;
+
+    _handlePanDown(DragStartDetails(globalPosition: Offset(0, verticalOffset)),
+        _getSize());
+    _previousSwipeDragAnimation.addListener(() {
+      final d = DragUpdateDetails(
+          globalPosition:
+              Offset(_previousSwipeDragAnimation.value, verticalOffset));
+      _handlePanUpdate(d, _getSize());
+    });
+    await _previousSwipeController.forward();
+    _previousSwipeDragAnimation.removeListener(() {});
+    _previousSwipeController.reset();
+    return true;
   }
 }

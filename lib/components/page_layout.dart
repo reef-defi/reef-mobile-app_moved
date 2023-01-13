@@ -25,6 +25,7 @@ class BottomNav extends StatefulWidget {
 
 class _BottomNavState extends State<BottomNav> {
   final _liquidCarouselKey = GlobalKey<LiquidCarouselState>();
+  bool _swiping = false;
 
   Widget _getWidget(NavigationPage page) {
     print(ReefAppState.instance.navigation);
@@ -46,26 +47,37 @@ class _BottomNavState extends State<BottomNav> {
     }
   }
 
-  void _onItemTapped(int index) {
+  void _onItemTapped(int index) async {
+    if (_swiping) return;
+    _swiping = true;
     int currIndex = bottomNavigationBarItems.indexWhere((barItem) =>
         barItem.page == ReefAppState.instance.navigation.currentPage);
-    if (currIndex == index) return;
-    HapticFeedback.selectionClick();
-    ReefAppState.instance.navigation
-        .navigate(bottomNavigationBarItems[index].page);
-    _computeSwipeAnimation(currIndex: currIndex, index: index);
+    if (currIndex == index) {
+      _swiping = false;
+      return;
+    }
+    final swiped =
+        await _computeSwipeAnimation(currIndex: currIndex, index: index);
+    if (swiped) {
+      HapticFeedback.selectionClick();
+      ReefAppState.instance.navigation
+          .navigate(bottomNavigationBarItems[index].page);
+    }
+    _swiping = false;
   }
 
-  void _computeSwipeAnimation({required int currIndex, required int index}) {
+  Future<bool> _computeSwipeAnimation(
+      {required int currIndex, required int index}) async {
     if ((currIndex == 0 && index == 2) ||
         (currIndex == 1 && index == 0) ||
         (currIndex == 2 && index == 1)) {
-      _liquidCarouselKey.currentState?.swipeToPrevious();
+      return await _liquidCarouselKey.currentState!.swipeToPrevious();
     } else if ((currIndex == 0 && index == 1) ||
         (currIndex == 1 && index == 2) ||
         (currIndex == 2 && index == 0)) {
-      _liquidCarouselKey.currentState?.swipeToNext();
+      return await _liquidCarouselKey.currentState!.swipeToNext();
     }
+    return false;
   }
 
   List<BarItemNavigationPage> bottomNavigationBarItems = const [
