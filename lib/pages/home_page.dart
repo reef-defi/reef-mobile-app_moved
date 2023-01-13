@@ -1,11 +1,15 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:reef_mobile_app/components/SignatureContentToggle.dart';
 import 'package:reef_mobile_app/components/home/NFT_view.dart';
 import 'package:reef_mobile_app/components/home/activity_view.dart';
+import 'package:reef_mobile_app/components/home/hero_video.dart';
 import 'package:reef_mobile_app/components/home/token_view.dart';
+import 'package:reef_mobile_app/components/modals/account_modals.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/tokens/TokenWithAmount.dart';
 import 'package:reef_mobile_app/pages/test_page.dart';
@@ -16,6 +20,7 @@ import 'package:reef_mobile_app/utils/size_config.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
+import '../components/modals/add_account_modal.dart';
 import 'DAppPage.dart';
 
 class HomePage extends StatefulWidget {
@@ -182,16 +187,37 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     SizeConfig.init(context);
 
+    void openModal(String modalName) {
+      switch (modalName) {
+        case 'addAccount':
+          showCreateAccountModal(context);
+          break;
+        case 'importAccount':
+          showCreateAccountModal(context, fromMnemonic: true);
+          break;
+        default:
+          break;
+      }
+    }
+
+    final bool isAccountsEmpty =
+        ReefAppState.instance.model.accounts.accountsFDM.data.isEmpty;
+    // final bool isAccountsEmpty = true;
+
+    debugPrint(
+        "Home Page account length: ${ReefAppState.instance.model.accounts.accountsFDM.data.length.toString()}");
+
     return SignatureContentToggle(AnnotatedRegion<SystemUiOverlayStyle>(
         value: const SystemUiOverlayStyle(
           statusBarColor: Colors.transparent,
           statusBarIconBrightness: Brightness.dark,
         ),
-        child: CustomScrollView(
-          physics: const BouncingScrollPhysics(),
-          clipBehavior: Clip.none,
-          slivers: [
-            /*Row(children: [
+        child: (!isAccountsEmpty)
+            ? CustomScrollView(
+                physics: const BouncingScrollPhysics(),
+                clipBehavior: Clip.none,
+                slivers: [
+                  /*Row(children: [
                 ElevatedButton(
                   child: const Text('test dApp 1'),
                   onPressed: () => _navigateTestDApp(
@@ -207,27 +233,111 @@ class _HomePageState extends State<HomePage> {
                 ElevatedButton(
                     child: const Text('test'), onPressed: _navigateTestPage),
               ]),*/
-            SliverPersistentHeader(delegate: _BalanceHeaderDelegate()),
-            SliverPinnedHeader(
-              child: navSection(),
-            ),
-            // SliverToBoxAdapter(
-            //   child: AnimatedContainer(
-            //       duration: const Duration(milliseconds: 200),
-            //       height: _isScrolling ? 16 : 0),
-            // ),
-            SliverClip(
-              child: _viewsMap.where((option) => option["active"]).toList()[0]
-                  ["component"],
-            )
+                  SliverPersistentHeader(delegate: _BalanceHeaderDelegate()),
+                  SliverPinnedHeader(
+                    child: navSection(),
+                  ),
+                  // SliverToBoxAdapter(
+                  //   child: AnimatedContainer(
+                  //       duration: const Duration(milliseconds: 200),
+                  //       height: _isScrolling ? 16 : 0),
+                  // ),
+                  SliverClip(
+                    child: _viewsMap
+                        .where((option) => option["active"])
+                        .toList()[0]["component"],
+                  )
 
-            // height: ((size.height + 64) / 2),
-            // width: double.infinity,
+                  // height: ((size.height + 64) / 2),
+                  // width: double.infinity,
 
-            // TODO: ADD ALERT SYSTEM FOR ERRORS HERE
-            // test()
-          ],
-        )));
+                  // TODO: ADD ALERT SYSTEM FOR ERRORS HERE
+                  // test()
+                ],
+              )
+            : Center(
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 48),
+                  child: Column(
+                    children: [
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          const Center(child: VideoPlayerScreen()),
+                          Column(
+                            children: [
+                              SvgPicture.asset(
+                                'assets/images/reef-logo-light.svg',
+                                semanticsLabel: "Reef Logo",
+                                height: 64,
+                              ),
+                              Text(
+                                "Mobile App",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.w900),
+                              )
+                            ],
+                          )
+                        ],
+                      ),
+                      const SizedBox(height: 36),
+                      Center(
+                          child: Wrap(
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        alignment: WrapAlignment.center,
+                        runSpacing: 16,
+                        children: [
+                          DecoratedBox(
+                            decoration: BoxDecoration(
+                                color: Colors.black87,
+                                gradient: textGradient(),
+                                borderRadius: BorderRadius.circular(48)),
+                            child: TextButton.icon(
+                                onPressed: () {
+                                  HapticFeedback.selectionClick();
+                                  showAddAccountModal(
+                                      'Add account menu', openModal,
+                                      context: context);
+                                },
+                                style: TextButton.styleFrom(
+                                  backgroundColor: Colors.black12,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(48)),
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 8),
+                                  minimumSize: const Size(82, 30),
+                                  tapTargetSize:
+                                      MaterialTapTargetSize.shrinkWrap,
+                                ),
+                                icon: Icon(Icons.person_add_rounded,
+                                    color: Styles.primaryBackgroundColor,
+                                    size: 16),
+                                label: Text(
+                                  "Add an account",
+                                  style: TextStyle(
+                                      color: Styles.whiteColor,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 16),
+                                )),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8),
+                            child: Text(
+                              "Looks like no accounts are added yet. Click on the button above to add an account!",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  color: Styles.textLightColor, fontSize: 12),
+                            ),
+                          ),
+                        ],
+                      )),
+                    ],
+                  ),
+                ),
+              )));
   }
 }
 
