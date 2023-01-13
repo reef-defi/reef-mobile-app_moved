@@ -118,7 +118,7 @@ class _HomePageState extends State<HomePage> {
   Widget navSection() {
     return Container(
       width: double.infinity,
-      margin: const EdgeInsets.only(top: 12),
+      margin: const EdgeInsets.only(top: 12, left: 12, right: 12),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15),
           color: Styles.primaryBackgroundColor,
@@ -164,9 +164,9 @@ class _HomePageState extends State<HomePage> {
         for (var element in temp) {
           element["active"] = (element["key"] == currentIndex + 1);
         }
-        setState(() {
-          _viewsMap = temp;
-        });
+        // setState(() {
+        //   _viewsMap = temp;
+        // });
       }
     } else {
       List temp = _viewsMap;
@@ -176,15 +176,17 @@ class _HomePageState extends State<HomePage> {
         for (var element in temp) {
           element["active"] = (element["key"] == currentIndex - 1);
         }
-        setState(() {
-          _viewsMap = temp;
-        });
+        // setState(() {
+        //   _viewsMap = temp;
+        // });
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    print("method called");
+
     SizeConfig.init(context);
 
     void openModal(String modalName) {

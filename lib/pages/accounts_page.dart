@@ -40,36 +40,40 @@ class _AccountsPageState extends State<AccountsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return SignatureContentToggle(Column(
-      children: <Widget>[
-        buildHeader(context),
-        const Gap(16),
-        Observer(builder: (_) {
-          var accsFeedbackDataModel =
-              ReefAppState.instance.model.accounts.accountsFDM;
-          if (accsFeedbackDataModel.hasStatus(StatusCode.completeData)) {
-            return SizedBox.shrink();
-          }
-          return Container(
-              child: Text(
-            accsFeedbackDataModel.statusList[0].message ?? '',
-            style: TextStyle(fontSize: 16, color: Styles.textLightColor),
-          ));
-        }),
-        Observer(builder: (_) {
-          var accsFeedbackDataModel =
-              ReefAppState.instance.model.accounts.accountsFDM;
-          if (ReefAppState.instance.model.accounts.accountsFDM.data.isEmpty) {
-            return SizedBox.shrink();
-          }
-          // return Text('len=${accsFeedbackDataModel.data.length}');
-          return Flexible(
-              child: AccountsList(
-                  ReefAppState.instance.model.accounts.accountsFDM.data,
-                  ReefAppState.instance.model.accounts.selectedAddress,
-                  ReefAppState.instance.accountCtrl.setSelectedAddress));
-        }),
-      ],
+    return SignatureContentToggle(Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+      color: Color.fromARGB(255, 86, 54, 162),
+      child: Column(
+        children: <Widget>[
+          buildHeader(context),
+          const Gap(16),
+          Observer(builder: (_) {
+            var accsFeedbackDataModel =
+                ReefAppState.instance.model.accounts.accountsFDM;
+            if (accsFeedbackDataModel.hasStatus(StatusCode.completeData)) {
+              return const SizedBox.shrink();
+            }
+            return SizedBox(
+                child: Text(
+              accsFeedbackDataModel.statusList[0].message ?? '',
+              style: TextStyle(fontSize: 16, color: Styles.textLightColor),
+            ));
+          }),
+          Observer(builder: (_) {
+            final accsFeedbackDataModel =
+                ReefAppState.instance.model.accounts.accountsFDM;
+            if (accsFeedbackDataModel.data.isEmpty) {
+              return const SizedBox.shrink();
+            }
+            // return Text('len=${accsFeedbackDataModel.data.length}');
+            return Flexible(
+                child: AccountsList(
+                    ReefAppState.instance.model.accounts.accountsFDM.data,
+                    ReefAppState.instance.model.accounts.selectedAddress,
+                    ReefAppState.instance.accountCtrl.setSelectedAddress));
+          }),
+        ],
+      ),
     ));
   }
 
@@ -92,7 +96,7 @@ class _AccountsPageState extends State<AccountsPage> {
                 style: GoogleFonts.spaceGrotesk(
                     fontWeight: FontWeight.w500,
                     fontSize: 32,
-                    color: Colors.grey[800]),
+                    color: Colors.grey.shade100),
               ),
             ],
           ),
@@ -106,6 +110,7 @@ class _AccountsPageState extends State<AccountsPage> {
                 minWidth: 0,
                 height: 36,
                 elevation: 0,
+                color: Colors.purple,
                 padding:
                     const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
                 shape: RoundedRectangleBorder(
@@ -114,14 +119,14 @@ class _AccountsPageState extends State<AccountsPage> {
                 child: Row(children: [
                   Icon(
                     Icons.add_circle_rounded,
-                    color: Styles.textLightColor,
+                    color: Colors.grey.shade100,
                     size: 22,
                   ),
                   const Gap(4),
                   Text(
                     "Add Account",
                     style: GoogleFonts.roboto(
-                        color: Styles.textLightColor,
+                        color: Colors.grey.shade100,
                         fontSize: 16,
                         fontWeight: FontWeight.w500),
                   )

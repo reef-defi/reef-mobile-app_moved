@@ -88,7 +88,7 @@ class _NFTViewState extends State<NFTView> {
           )
         else if (selectedNFTs.data.isNotEmpty)
           SliverPadding(
-            padding: const EdgeInsets.symmetric(vertical: 32),
+            padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 12),
             sliver: SliverGrid(
               delegate: SliverChildBuilderDelegate(
                 (context, index) {
@@ -99,12 +99,12 @@ class _NFTViewState extends State<NFTView> {
                     tkn.data.balance.toInt(),
                   );
                 },
-                childCount: selectedNFTs.data.length + 200,
+                childCount: selectedNFTs.data.length,
               ),
               gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
                   mainAxisExtent: 125,
-                  mainAxisSpacing: 24,
-                  crossAxisSpacing: 24,
+                  mainAxisSpacing: 12,
+                  crossAxisSpacing: 12,
                   maxCrossAxisExtent: 200),
             ),
           ),
