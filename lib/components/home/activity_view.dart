@@ -143,7 +143,7 @@ class _ActivityViewState extends State<ActivityView> {
             width: double.infinity,
             child: Padding(
               padding:
-                  const EdgeInsets.symmetric(vertical: 32, horizontal: 0.0),
+                  const EdgeInsets.symmetric(vertical: 32, horizontal: 12.0),
               child: ViewBoxContainer(
                 child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 16),
@@ -158,7 +158,7 @@ class _ActivityViewState extends State<ActivityView> {
                                           type: item.isInbound
                                               ? 'received'
                                               : 'sent',
-                                          timeStamp: item.timestamp,
+                                          timeStamp: item.timestamp.toLocal(),
                                           amount: item.token?.balance,
                                           iconUrl: item.token?.iconUrl,
                                         ),
