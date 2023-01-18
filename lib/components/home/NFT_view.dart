@@ -70,11 +70,12 @@ class _NFTViewState extends State<NFTView> {
         if (message != null)
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 32),
+              padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 12),
               child: ViewBoxContainer(
                 child: Center(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 24.0),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 24.0, horizontal: 16),
                     child: Text(
                       message,
                       style: TextStyle(
@@ -88,7 +89,7 @@ class _NFTViewState extends State<NFTView> {
           )
         else if (selectedNFTs.data.isNotEmpty)
           SliverPadding(
-            padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 12),
+            padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 16),
             sliver: SliverGrid(
               delegate: SliverChildBuilderDelegate(
                 (context, index) {
