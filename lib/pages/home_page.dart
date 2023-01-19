@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:reef_mobile_app/components/BlurContent.dart';
 import 'package:reef_mobile_app/components/SignatureContentToggle.dart';
 import 'package:reef_mobile_app/components/home/NFT_view.dart';
 import 'package:reef_mobile_app/components/home/activity_view.dart';
 import 'package:reef_mobile_app/components/home/token_view.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
+import 'package:reef_mobile_app/model/appConfig/AppConfigCtrl.dart';
 import 'package:reef_mobile_app/model/tokens/TokenWithAmount.dart';
 import 'package:reef_mobile_app/pages/test_page.dart';
 import 'package:reef_mobile_app/utils/elements.dart';
@@ -258,7 +261,7 @@ class _BalanceHeaderDelegate extends SliverPersistentHeaderDelegate {
   }
 
   Widget balanceSection(double size) {
-    //bool _isBigText = size > 42;
+
     return AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeInOutCirc,
@@ -271,22 +274,25 @@ class _BalanceHeaderDelegate extends SliverPersistentHeaderDelegate {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text("Balance",
-                      style: TextStyle(
-                          fontSize: 38,
-                          fontWeight: FontWeight.w700,
-                          color: Styles.textColor)),
+                  Row(
+                    children: [
+                      Text("Balance",
+                          style: TextStyle(
+                              fontSize: 38,
+                              fontWeight: FontWeight.w700,
+                              color: Styles.textColor)
+                              ),
+                              const Gap(10),
+                              IconButton(onPressed: (){
+                                ReefAppState.instance.appConfigCtrl.setDisplayBalance();
+                              }, icon: Icon(ReefAppState.instance.model.appConfig.displayBalance == true? Icons.remove_red_eye_sharp : Icons.visibility_off)),  
+                    ],
+                  ),
                   Center(
                     child: Observer(builder: (_) {
-                      return GradientText(
-                        "\$${_sumTokenBalances(ReefAppState.instance.model.tokens.selectedErc20List.toList()).toStringAsFixed(0)}",
-                        gradient: textGradient(),
-                        style: GoogleFonts.poppins(
-                            color: Styles.textColor,
-                            fontSize: 68,
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: 3),
-                      );
+                     return BlurContent(
+                        GradientText("\$${_sumTokenBalances(ReefAppState.instance.model.tokens.selectedErc20List.toList()).toStringAsFixed(0)}",gradient: textGradient(),style: GoogleFonts.poppins(color: Styles.textColor,fontSize: 68,fontWeight: FontWeight.w800,letterSpacing: 3),),
+                        ReefAppState.instance.model.appConfig.displayBalance);
                     }),
                   ),
                 ]),
