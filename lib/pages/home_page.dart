@@ -284,7 +284,7 @@ class _BalanceHeaderDelegate extends SliverPersistentHeaderDelegate {
                               ),
                               const Gap(10),
                               IconButton(onPressed: (){
-                                ReefAppState.instance.appConfigCtrl.setDisplayBalance();
+                                ReefAppState.instance.appConfigCtrl.toggleDisplayBalance();
                               }, icon: Icon(ReefAppState.instance.model.appConfig.displayBalance == true? Icons.remove_red_eye_sharp : Icons.visibility_off)),  
                     ],
                   ),

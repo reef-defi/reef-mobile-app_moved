@@ -6,10 +6,11 @@ class AppConfigCtrl {
   AppConfigModel appConfigModel;
 
   AppConfigCtrl(this.storage, this.appConfigModel) {
-    storage.setValue("displayBalance", appConfigModel.displayBalance);
+    var storedValue = storage.getValue("displayBalance");
+    storage.setValue("displayBalance", storedValue);
   }
 
-  setDisplayBalance() {
+  toggleDisplayBalance() {
     var newValue = !appConfigModel.displayBalance;
     storage.setValue("displayBalance", newValue);
     appConfigModel.setDisplayBalance(newValue);
