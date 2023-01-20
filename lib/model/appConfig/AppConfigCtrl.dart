@@ -6,8 +6,12 @@ class AppConfigCtrl {
   AppConfigModel appConfigModel;
 
   AppConfigCtrl(this.storage, this.appConfigModel) {
-    var storedValue = storage.getValue("displayBalance");
-    storage.setValue("displayBalance", storedValue);
+    Future<dynamic> storedValueResult = storage.getValue("displayBalance");
+    bool storedValue = false;
+    storedValueResult.then((result) {
+      storedValue = result ? true : false;
+    });
+    appConfigModel.setDisplayBalance(storedValue);
   }
 
   toggleDisplayBalance() {
