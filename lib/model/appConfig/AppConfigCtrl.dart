@@ -7,11 +7,14 @@ class AppConfigCtrl {
 
   AppConfigCtrl(this.storage, this.appConfigModel) {
     Future<dynamic> storedValueResult = storage.getValue("displayBalance");
-    bool storedValue = false;
-    storedValueResult.then((result) {
-      storedValue = result ? true : false;
+    storedValueResult.then((storedValue) {
+      // if no value in storage - when app is newly installed - set to true
+      var setVal = storedValue??true;
+      appConfigModel.setDisplayBalance(setVal);
+      if(storedValue==null) {
+        storage.setValue("displayBalance", setVal);
+      }
     });
-    appConfigModel.setDisplayBalance(storedValue);
   }
 
   toggleDisplayBalance() {
