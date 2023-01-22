@@ -153,7 +153,7 @@ class _HomePageState extends State<HomePage> {
     SizeConfig.init(context);
 
     return SignatureContentToggle(Container(
-        color: Styles.whiteColor,
+        color: Styles.primaryBackgroundColor,
         child: AnnotatedRegion<SystemUiOverlayStyle>(
             value: const SystemUiOverlayStyle(
               statusBarColor: Colors.transparent,
