@@ -89,7 +89,7 @@ Widget toAccountBoxList(List<FeedbackDataModel<ReefAccount>> signers) {
                     AccountBox(
                         reefAccountFDM: acc,
                         selected: true,
-                        onSelected: () => selectAddress(acc.data.address),
+                        onSelected: () => {},
                         showOptions: true),
                     const Gap(12)
                 ],
@@ -114,23 +114,14 @@ Widget toAccountBoxList(List<FeedbackDataModel<ReefAccount>> signers) {
             Padding(
                 padding: const EdgeInsets.only(bottom: 8.0),
                 child: Text(
-                    "All Accounts",
+                    "Available",
                     style: TextStyle(color: Styles.whiteColor, fontSize: 20.0),
                 ),
             ),
         ]));
 
     if (selectedWidget != null) {
-        modifiedList.insert(
-            0,
-            Padding(
-                padding: const EdgeInsets.only(bottom: 8.0),
-                child: Text(
-                    "Selected Account",
-                    style: TextStyle(color: Styles.whiteColor, fontSize: 20.0),
-                ),
-            ));
-        modifiedList.insert(1, selectedWidget);
+        modifiedList.insert(0, selectedWidget);
     }
 
     return Wrap(spacing: 24, children: modifiedList);

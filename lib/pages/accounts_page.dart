@@ -42,7 +42,8 @@ class _AccountsPageState extends State<AccountsPage> {
   Widget build(BuildContext context) {
     return SignatureContentToggle(Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-      color: Color.fromARGB(255, 86, 54, 162),
+      color: Color.fromARGB(255, 59,31,167),
+      // color: Color.fromARGB(255, 86, 54, 162),
       child: Column(
         children: <Widget>[
           buildHeader(context),
@@ -92,7 +93,7 @@ class _AccountsPageState extends State<AccountsPage> {
               // ),
               const Gap(8),
               Text(
-                "Accounts",
+                "My Account",
                 style: GoogleFonts.spaceGrotesk(
                     fontWeight: FontWeight.w500,
                     fontSize: 32,
@@ -104,7 +105,7 @@ class _AccountsPageState extends State<AccountsPage> {
             children: [
               MaterialButton(
                 onPressed: () => showAddAccountModal(
-                    'Add account menu', openModal,
+                    'Add account', openModal,
                     context: context),
                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 minWidth: 0,
@@ -124,7 +125,7 @@ class _AccountsPageState extends State<AccountsPage> {
                   ),
                   const Gap(4),
                   Text(
-                    "Add Account",
+                    "Add",
                     style: GoogleFonts.roboto(
                         color: Colors.grey.shade100,
                         fontSize: 16,

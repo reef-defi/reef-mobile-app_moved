@@ -6,11 +6,11 @@ import 'package:reef_mobile_app/components/modals/signing_modals.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/signing/signature_request.dart';
 
-class BlurContent extends StatelessObserverWidget {
+class BlurableContent extends StatelessObserverWidget {
   final Widget child;
   final bool isChildBlur;
 
-  const BlurContent(this.child, this.isChildBlur, {Key? key}) : super(key: key);
+  const BlurableContent(this.child, this.isChildBlur, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

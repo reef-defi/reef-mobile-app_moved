@@ -54,7 +54,8 @@ class _AccountBoxState extends State<AccountBox> {
                        Color.fromARGB(53, 185, 25, 197),
                     ]),
                 border: Border.all(
-                  color:  const Color(0xFFA93185)
+                  color:   !widget.selected?Color(Styles.purpleColor.value): Color(Styles.blueColor.value),
+                  width: widget.selected?3:1
                 ),
                 borderRadius: BorderRadius.circular(15)),
             child: Stack(
@@ -67,7 +68,7 @@ class _AccountBoxState extends State<AccountBox> {
                         padding: const EdgeInsets.only(
                             left: 12, bottom: 5, right: 10, top: 2),
                         decoration: BoxDecoration(
-                            color: Styles.primaryAccentColor,
+                            color: Styles.blueColor,
                             borderRadius: const BorderRadius.only(
                                 bottomLeft: Radius.circular(15),
                                 topRight: Radius.circular(12))),
@@ -164,10 +165,10 @@ class _AccountBoxState extends State<AccountBox> {
                 height: 18),
             Gap(4),
              Observer(builder:(_){
-              return BlurContent(Text(
+              return BlurableContent(Text(
               '${toAmountDisplayBigInt(reefAccount.data.balance)} REEF',
               style: GoogleFonts.poppins(
-                color: Styles.textColor,
+                color: Styles.blueColor,
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
               ),
@@ -216,8 +217,8 @@ class _AccountBoxState extends State<AccountBox> {
                 !widget.reefAccountFDM.data.isEvmClaimed)
               DecoratedBox(
                 decoration: BoxDecoration(
-                    color: Colors.black87,
-                    gradient: textGradient(),
+                    color: Styles.primaryAccentColor,
+                    // gradient: textGradient(),
                     borderRadius: BorderRadius.circular(12)),
                 child: TextButton(
                     onPressed: () {

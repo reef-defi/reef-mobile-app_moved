@@ -147,43 +147,8 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // todo: remove useless method
-  void _onHorizontalDrag(DragEndDetails details) {
-    if (details.primaryVelocity == 0) {
-      return;
-    } // user have just tapped on screen (no dragging)
-
-    if (details.primaryVelocity?.compareTo(0) == -1) {
-      // dragged towards left
-      List temp = _viewsMap;
-      int currentIndex =
-          temp.where((element) => element["active"] == true).toList()[0]["key"];
-      if (currentIndex < _viewsMap.length - 1) {
-        for (var element in temp) {
-          element["active"] = (element["key"] == currentIndex + 1);
-        }
-        // setState(() {
-        //   _viewsMap = temp;
-        // });
-      }
-    } else {
-      List temp = _viewsMap;
-      int currentIndex =
-          temp.where((element) => element["active"] == true).toList()[0]["key"];
-      if (currentIndex > 0) {
-        for (var element in temp) {
-          element["active"] = (element["key"] == currentIndex - 1);
-        }
-        // setState(() {
-        //   _viewsMap = temp;
-        // });
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    print("method called");
 
     SizeConfig.init(context);
 
@@ -280,17 +245,20 @@ class _BalanceHeaderDelegate extends SliverPersistentHeaderDelegate {
                           style: TextStyle(
                               fontSize: 38,
                               fontWeight: FontWeight.w700,
-                              color: Styles.textColor)
+                              color: Styles.primaryColor)
                               ),
-                              const Gap(10),
                               IconButton(onPressed: (){
                                 ReefAppState.instance.appConfigCtrl.toggleDisplayBalance();
-                              }, icon: Icon(ReefAppState.instance.model.appConfig.displayBalance == true? Icons.remove_red_eye_sharp : Icons.visibility_off)),  
+                              }, icon: Icon(ReefAppState.instance.model.appConfig.displayBalance == true? Icons.remove_red_eye_sharp : Icons.visibility_off),
+                              color: Styles.textLightColor
+        )
+
+                      ,
                     ],
                   ),
                   Center(
                     child: Observer(builder: (_) {
-                     return BlurContent(
+                     return BlurableContent(
                         GradientText("\$${_sumTokenBalances(ReefAppState.instance.model.tokens.selectedErc20List.toList()).toStringAsFixed(0)}",gradient: textGradient(),style: GoogleFonts.poppins(color: Styles.textColor,fontSize: 68,fontWeight: FontWeight.w800,letterSpacing: 3),),
                         ReefAppState.instance.model.appConfig.displayBalance);
                     }),
