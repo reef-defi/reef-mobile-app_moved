@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -9,8 +10,8 @@ import 'package:reef_mobile_app/model/account/ReefAccount.dart';
 import 'package:reef_mobile_app/model/feedback-data-model/FeedbackDataModel.dart';
 import 'package:reef_mobile_app/utils/functions.dart';
 
-import '../utils/elements.dart';
 import '../utils/styles.dart';
+import 'BlurableContent.dart';
 
 class AccountBox extends StatefulWidget {
   final FeedbackDataModel<ReefAccount> reefAccountFDM;
@@ -52,7 +53,8 @@ class _AccountBoxState extends State<AccountBox> {
                        Color.fromARGB(53, 185, 25, 197),
                     ]),
                 border: Border.all(
-                  color:  const Color(0xFFA93185)
+                  color:   !widget.selected?Color(Styles.purpleColor.value): Color(Styles.blueColor.value),
+                  width: widget.selected?3:1
                 ),
                 borderRadius: BorderRadius.circular(15)),
             child: Stack(
@@ -65,7 +67,7 @@ class _AccountBoxState extends State<AccountBox> {
                         padding: const EdgeInsets.only(
                             left: 12, bottom: 5, right: 10, top: 2),
                         decoration: BoxDecoration(
-                            color: Styles.primaryAccentColor,
+                            color: Styles.blueColor,
                             borderRadius: const BorderRadius.only(
                                 bottomLeft: Radius.circular(15),
                                 topRight: Radius.circular(12))),
@@ -161,14 +163,17 @@ class _AccountBoxState extends State<AccountBox> {
                 width: 18,
                 height: 18),
             Gap(4),
-            Text(
+             Observer(builder:(_){
+              return BlurableContent(Text(
               '${toAmountDisplayBigInt(reefAccount.data.balance)} REEF',
               style: GoogleFonts.poppins(
-                color: Colors.purpleAccent.shade100,
+                color: Styles.blueColor,
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
               ),
-            )
+            ),
+            ReefAppState.instance.model.appConfig.displayBalance
+          );})
           ])
         ],
       ),
@@ -212,8 +217,8 @@ class _AccountBoxState extends State<AccountBox> {
                 !widget.reefAccountFDM.data.isEvmClaimed)
               DecoratedBox(
                 decoration: BoxDecoration(
-                    color: Colors.black87,
-                    gradient: textGradient(),
+                    color: Styles.primaryAccentColor,
+                    // gradient: textGradient(),
                     borderRadius: BorderRadius.circular(12)),
                 child: TextButton(
                     onPressed: () {
