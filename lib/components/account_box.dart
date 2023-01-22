@@ -11,8 +11,8 @@ import 'package:reef_mobile_app/model/account/ReefAccount.dart';
 import 'package:reef_mobile_app/model/feedback-data-model/FeedbackDataModel.dart';
 import 'package:reef_mobile_app/utils/functions.dart';
 
-import '../utils/elements.dart';
 import '../utils/styles.dart';
+import 'BlurableContent.dart';
 
 class AccountBox extends StatefulWidget {
   final FeedbackDataModel<ReefAccount> reefAccountFDM;

@@ -11,9 +11,7 @@ LinearGradient textGradient() {
     end: Alignment.bottomRight,
     colors: [
       Styles.blueColor,
-      Styles.secondaryAccentColor
-
-    ,
+      Styles.secondaryAccentColor,
     ],
   );
 }

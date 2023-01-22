@@ -19,6 +19,7 @@ import 'package:reef_mobile_app/utils/size_config.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
+import '../components/BlurableContent.dart';
 import 'DAppPage.dart';
 
 class HomePage extends StatefulWidget {
