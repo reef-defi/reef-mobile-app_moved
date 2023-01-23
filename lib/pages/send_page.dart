@@ -24,6 +24,9 @@ class SendPage extends StatefulWidget {
 }
 
 class _SendPageState extends State<SendPage> {
+  bool isTokenReef = false;
+  String sendBtnVal = "Missing destination address";
+  bool shouldSend = false;
   TextEditingController valueController = TextEditingController();
   String address = "";
   TextEditingController amountController = TextEditingController();
@@ -45,6 +48,14 @@ class _SendPageState extends State<SendPage> {
     setState(() {
       selectedTokenAddress = widget.preselected;
     });
+
+    //checking if selected token is REEF or not
+    if (widget.preselected ==
+        "0x0000000000000000000000000000000001000000") {
+      setState(() {
+        isTokenReef=true;
+      });
+    }
   }
 
   void _onFocusChange() {
@@ -74,10 +85,57 @@ class _SendPageState extends State<SendPage> {
     });
   }
 
+  Future<bool> _addressValidator(String address) async {
+    //checking if selected address is not evm
+    if (address.startsWith("5")) {
+      //if length of address == native address length
+      if (address.length == 48) {
+        String resolveEvmAddressResult;
+        try {
+          resolveEvmAddressResult = await ReefAppState.instance.accountCtrl
+              .resolveEvmAddress(address);
+          address = resolveEvmAddressResult;
+          return true;
+        } catch (e) {
+          return false;
+        }
+      } else {
+        return false;
+      }
+    } else if (address.startsWith("0")) {
+      return await ReefAppState.instance.accountCtrl.isValidEvmAddress(address);
+    }
+    return false;
+  }
+
+  void _validator() async {
+    bool addressValidatorResult = await _addressValidator(address);
+    if (address.isEmpty) {
+      setState(() {
+        sendBtnVal = "Missing destination address";
+      });
+    } else if (amount.isEmpty || amount == "0.00") {
+      setState(() {
+        sendBtnVal = "Insert amount";
+      });
+    } else if (addressValidatorResult && amount.isNotEmpty) {
+      setState(() {
+        sendBtnVal = "Confirm Send";
+      });
+    } else {
+      setState(() {
+        sendBtnVal = "Enter a valid address";
+      });
+    }
+  }
+
   void _onConfirmSend(TokenWithAmount sendToken) async {
+    bool _send = true;
     if (address.isEmpty || amount.isEmpty || sendToken.balance <= BigInt.zero) {
       return;
     }
+    
+
     var signerAddress = await ReefAppState.instance.storage
         .getValue(StorageKey.selected_address.name);
     TokenWithAmount tokenToTransfer = TokenWithAmount(
@@ -158,6 +216,7 @@ class _SendPageState extends State<SendPage> {
                                   valueController.text = selectedAddress;
                                 });
                               },
+                              isTokenReef
                             );
                           },
                           color: const Color(0xffDFDAED),
@@ -167,10 +226,11 @@ class _SendPageState extends State<SendPage> {
                         child: TextFormField(
                           focusNode: _focus,
                           controller: valueController,
-                          onChanged: (text) {
+                          onChanged: (text) async {
                             setState(() {
                               address = valueController.text;
                             });
+                            _validator();
                           },
                           style: const TextStyle(
                               fontSize: 14, fontWeight: FontWeight.w500),
@@ -252,7 +312,7 @@ class _SendPageState extends State<SendPage> {
                               ],
                               keyboardType: TextInputType.number,
                               controller: amountController,
-                              onChanged: (text) {
+                              onChanged: (text) async {
                                 setState(() {
                                   //you can access nameController in its scope to get
                                   // the value of text entered as shown below
@@ -337,7 +397,7 @@ class _SendPageState extends State<SendPage> {
                       thumbShape: const ThumbShape()),
                   child: Slider(
                     value: rating,
-                    onChanged: (newRating) {
+                    onChanged: (newRating) async {
                       setState(() {
                         rating = newRating;
                         String amountValue = (double.parse(
@@ -348,6 +408,8 @@ class _SendPageState extends State<SendPage> {
                         amount = amountValue;
                         amountController.text = amountValue;
                       });
+
+                      _validator();
                     },
                     divisions: 100,
                     label: "${(rating * 100).toInt()}%",
@@ -403,7 +465,7 @@ class _SendPageState extends State<SendPage> {
                           vertical: 15, horizontal: 22),
                       decoration: BoxDecoration(
                         color: const Color(0xffe6e2f1),
-                        gradient: (!(address.isEmpty || amount.isEmpty))
+                        gradient: (sendBtnVal == "Confirm Send")
                             ? const LinearGradient(colors: [
                                 Color(0xffae27a5),
                                 Color(0xff742cb2),
@@ -414,15 +476,11 @@ class _SendPageState extends State<SendPage> {
                       ),
                       child: Center(
                         child: Text(
-                          address.isEmpty
-                              ? 'Missing destination address'
-                              : amount.isEmpty
-                                  ? "Insert amount"
-                                  : "Confirm Send",
+                          sendBtnVal,
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
-                            color: (address.isEmpty || amount.isEmpty)
+                            color: (sendBtnVal != "Confirm Send")
                                 ? const Color(0x65898e9c)
                                 : Colors.white,
                           ),
