@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:reef_mobile_app/components/BlurContent.dart';
 import 'package:reef_mobile_app/components/SignatureContentToggle.dart';
 import 'package:reef_mobile_app/components/home/NFT_view.dart';
 import 'package:reef_mobile_app/components/home/activity_view.dart';
 import 'package:reef_mobile_app/components/home/token_view.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
-import 'package:reef_mobile_app/model/appConfig/AppConfigCtrl.dart';
 import 'package:reef_mobile_app/model/tokens/TokenWithAmount.dart';
 import 'package:reef_mobile_app/pages/test_page.dart';
 import 'package:reef_mobile_app/utils/elements.dart';
