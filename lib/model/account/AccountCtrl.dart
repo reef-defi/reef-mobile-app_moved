@@ -114,11 +114,12 @@ class AccountCtrl {
     });
 
     jsApi.jsObservable('window.reefState.accounts\$').listen((accs) async {
-
-      ParseListFn<FeedbackDataModel<ReefAccount>> parsableListFn = getParsableListFn(ReefAccount.fromJson);
+      ParseListFn<FeedbackDataModel<ReefAccount>> parsableListFn =
+          getParsableListFn(ReefAccount.fromJson);
       var accsListFdm = FeedbackDataModel.fromJsonList(accs, parsableListFn);
 
-      print('GOT ACCOUNTS ${accsListFdm.hasStatus(StatusCode.completeData)} ${accsListFdm.statusList[0].message} len =${accsListFdm.data.length}');
+      print(
+          'GOT ACCOUNTS ${accsListFdm.hasStatus(StatusCode.completeData)} ${accsListFdm.statusList[0].message} len =${accsListFdm.data.length}');
 
       _setAccountIconsFromStorage(accsListFdm);
 
@@ -130,12 +131,16 @@ class AccountCtrl {
     // TODO check if this address also exists in keystore
     var savedAddress = await storage.getValue(StorageKey.selected_address.name);
     // TODO if null get first address from storage // https://app.clickup.com/t/37rvnpw
+    // Finished ^^
     if (kDebugMode) {
       print('SET SAVED ADDRESS=$savedAddress');
+      print('FIRST ADDRESS=${(await _storage.getAllAccounts()).first.address}');
     }
     // TODO check if selected is in accounts
     if (savedAddress != null) {
       setSelectedAddress(savedAddress);
+    } else {
+      setSelectedAddress((await _storage.getAllAccounts()).first.address);
     }
   }
 
@@ -148,17 +153,20 @@ class AccountCtrl {
         'window.account.toReefEVMAddressWithNotification("$evmAddress")');
   }
 
-  void _setAccountIconsFromStorage(FeedbackDataModel<List<FeedbackDataModel<ReefAccount>>> accsListFdm) async {
+  void _setAccountIconsFromStorage(
+      FeedbackDataModel<List<FeedbackDataModel<ReefAccount>>>
+          accsListFdm) async {
     var accIcons = [];
 
     (await _storage.getAllAccounts()).forEach(((account) => {
-    accIcons.add({"address": account.address, "svg": account.svg})
-    }));
+          accIcons.add({"address": account.address, "svg": account.svg})
+        }));
 
     accsListFdm.data.forEach((accFdm) {
-      var accIcon = accIcons.firstWhere((accIcon) => accIcon['address'] == accFdm.data.address, orElse: ()=>null);
+      var accIcon = accIcons.firstWhere(
+          (accIcon) => accIcon['address'] == accFdm.data.address,
+          orElse: () => null);
       accFdm.data.iconSVG = accIcon?['svg'];
     });
-
   }
 }

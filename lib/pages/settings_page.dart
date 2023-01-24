@@ -15,6 +15,8 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
+  bool _showDeveloperSettings = false;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -30,8 +32,6 @@ class _SettingsPageState extends State<SettingsPage> {
                   fontSize: 32,
                   color: Colors.grey[800]),
             ),
-            const Gap(32),
-            const SwitchNetwork(),
             /*Divider(
               color: Styles.textLightColor,
               thickness: 1,
@@ -55,11 +55,6 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
             ),*/
             const Gap(24),
-            Divider(
-              color: Styles.textLightColor,
-              thickness: 1,
-            ),
-            const Gap(24),
             MaterialButton(
               materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
               onPressed: () =>
@@ -78,6 +73,60 @@ class _SettingsPageState extends State<SettingsPage> {
                 ],
               ),
             ),
+             const Gap(12),
+            Divider(
+              color: Styles.textLightColor,
+              thickness: 1,
+            ),
+            const Gap(24),
+            InkWell(
+              onTap: () {
+                setState(() {
+                  _showDeveloperSettings = !_showDeveloperSettings;
+                });
+              },
+              child: Row(
+                children: [
+                  Icon(Icons.code, color: Styles.textLightColor),
+                  const Gap(8),
+                  Text(
+                    "Developer Settings",
+                    style: Theme.of(context).textTheme.bodyText1,
+                  ),
+                  Expanded(child: Container()),
+                  Icon(_showDeveloperSettings
+                      ? Icons.keyboard_arrow_up
+                      : Icons.keyboard_arrow_down),
+                ],
+              ),
+            ),
+            if (_showDeveloperSettings)
+              Padding(
+                padding: const EdgeInsets.only(left: 12.0,bottom: 4.0),
+                child: Column(
+                  children: [
+                    const Gap(12),
+                    MaterialButton(
+                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                onPressed: () =>
+                    showSwitchNetworkModal("Switch Network", context: context),
+                padding: const EdgeInsets.all(2),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.network_wifi_1_bar_rounded,
+                      color: Styles.textLightColor,
+                      size: 22,
+                    ),
+                    const Gap(8),
+                    Text('Switch Network',
+                        style: Theme.of(context).textTheme.bodyText1),
+                  ],
+                ),
+            ),
+                  ],
+                ),
+              ),
           ],
         ));
   }
