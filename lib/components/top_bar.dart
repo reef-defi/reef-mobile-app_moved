@@ -6,6 +6,7 @@ import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:reef_mobile_app/model/navigation/navigation_model.dart';
 import 'package:reef_mobile_app/utils/size_config.dart';
+import 'package:reef_mobile_app/utils/styles.dart';
 
 import '../model/network/NetworkCtrl.dart';
 
@@ -64,16 +65,16 @@ Widget accountPill(BuildContext context, String title) {
       },
       child: Container(
           decoration: BoxDecoration(
-              border: Border.all(color: Colors.white30, width: 2),
+              border: Border.all(color: Styles.blueColor, width: 2),
               borderRadius: BorderRadius.circular(20),
-              boxShadow: [
+              /*boxShadow: [
                 BoxShadow(color: Colors.white30, blurRadius: 2, spreadRadius: 1)
-              ],
-              color: Colors.purple),
+              ],*/
+              color: Colors.transparent),
           child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 14, vertical: 6),
               child: Row(children: [
-                Icon(Icons.account_balance_wallet_rounded, color: Colors.white),
+                Icon(Icons.account_balance_wallet_rounded, color:Styles.blueColor),
                 Padding(
                   padding: EdgeInsets.only(left: 10),
                   child: Text((title ?? ''),

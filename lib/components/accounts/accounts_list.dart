@@ -76,26 +76,54 @@ class AccountsList extends StatelessWidget {
     );
   }
 
-  Widget toAccountBoxList(List<FeedbackDataModel<ReefAccount>> signers) {
+Widget toAccountBoxList(List<FeedbackDataModel<ReefAccount>> signers) {
     signers.removeWhere((sig) => sig == null);
 
-    return Wrap(
-        spacing: 24,
-        children: signers
-            .map<Widget>(
-              (FeedbackDataModel<ReefAccount> acc) => Column(
+    Widget selectedWidget = Container();
+    List<Widget> modifiedList = [];
+
+    for (var acc in signers) {
+        if (selectedAddress != null && selectedAddress == acc.data.address) {
+            selectedWidget = Column(
                 children: [
-                  AccountBox(
-                      reefAccountFDM: acc,
-                      selected: selectedAddress != null
-                          ? selectedAddress == acc.data.address
-                          : false,
-                      onSelected: () => selectAddress(acc.data.address),
-                      showOptions: true),
-                  const Gap(12)
+                    AccountBox(
+                        reefAccountFDM: acc,
+                        selected: true,
+                        onSelected: () => {},
+                        showOptions: true),
+                    const Gap(12)
                 ],
-              ),
-            )
-            .toList());
-  }
+            );
+        } else {
+            modifiedList.add(Column(
+                children: [
+                    AccountBox(
+                        reefAccountFDM: acc,
+                        selected: false,
+                        onSelected: () => selectAddress(acc.data.address),
+                        showOptions: true),
+                    const Gap(12)
+                ],
+            ));
+        }
+    }
+
+    modifiedList.insert(
+        0,
+        Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+            Padding(
+                padding: const EdgeInsets.only(bottom: 8.0),
+                child: Text(
+                    "Available",
+                    style: TextStyle(color: Styles.whiteColor, fontSize: 20.0),
+                ),
+            ),
+        ]));
+
+    if (selectedWidget != null) {
+        modifiedList.insert(0, selectedWidget);
+    }
+
+    return Wrap(spacing: 24, children: modifiedList);
+}
 }

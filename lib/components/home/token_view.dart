@@ -180,11 +180,13 @@ class _TokenViewState extends State<TokenView> {
             if (message != null)
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 32),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 32, horizontal: 12),
                   child: ViewBoxContainer(
                       child: Center(
                           child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 24.0),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 24.0, horizontal: 16),
                     child: Text(
                       message,
                       style: TextStyle(
@@ -196,7 +198,8 @@ class _TokenViewState extends State<TokenView> {
               )
             else if (selectedERC20s.data.isNotEmpty || true)
               SliverPadding(
-                padding: const EdgeInsets.symmetric(vertical: 32),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 32, horizontal: 12),
                 sliver: SliverGrid(
                   delegate: SliverChildBuilderDelegate(
                     (context, index) {

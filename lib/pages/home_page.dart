@@ -16,6 +16,7 @@ import 'package:reef_mobile_app/utils/size_config.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
+import '../components/BlurableContent.dart';
 import 'DAppPage.dart';
 
 class HomePage extends StatefulWidget {
@@ -144,48 +145,13 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // todo: remove useless method
-  void _onHorizontalDrag(DragEndDetails details) {
-    if (details.primaryVelocity == 0) {
-      return;
-    } // user have just tapped on screen (no dragging)
-
-    if (details.primaryVelocity?.compareTo(0) == -1) {
-      // dragged towards left
-      List temp = _viewsMap;
-      int currentIndex =
-          temp.where((element) => element["active"] == true).toList()[0]["key"];
-      if (currentIndex < _viewsMap.length - 1) {
-        for (var element in temp) {
-          element["active"] = (element["key"] == currentIndex + 1);
-        }
-        // setState(() {
-        //   _viewsMap = temp;
-        // });
-      }
-    } else {
-      List temp = _viewsMap;
-      int currentIndex =
-          temp.where((element) => element["active"] == true).toList()[0]["key"];
-      if (currentIndex > 0) {
-        for (var element in temp) {
-          element["active"] = (element["key"] == currentIndex - 1);
-        }
-        // setState(() {
-        //   _viewsMap = temp;
-        // });
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    print("method called");
 
     SizeConfig.init(context);
 
     return SignatureContentToggle(Container(
-        color: Styles.whiteColor,
+        color: Styles.primaryBackgroundColor,
         child: AnnotatedRegion<SystemUiOverlayStyle>(
             value: const SystemUiOverlayStyle(
               statusBarColor: Colors.transparent,
@@ -258,7 +224,7 @@ class _BalanceHeaderDelegate extends SliverPersistentHeaderDelegate {
   }
 
   Widget balanceSection(double size) {
-    //bool _isBigText = size > 42;
+
     return AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeInOutCirc,
@@ -271,22 +237,28 @@ class _BalanceHeaderDelegate extends SliverPersistentHeaderDelegate {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text("Balance",
-                      style: TextStyle(
-                          fontSize: 38,
-                          fontWeight: FontWeight.w700,
-                          color: Styles.textColor)),
+                  Row(
+                    children: [
+                      Text("Balance",
+                          style: TextStyle(
+                              fontSize: 38,
+                              fontWeight: FontWeight.w700,
+                              color: Styles.primaryColor)
+                              ),
+                              IconButton(onPressed: (){
+                                ReefAppState.instance.appConfigCtrl.toggleDisplayBalance();
+                              }, icon: Icon(ReefAppState.instance.model.appConfig.displayBalance == true? Icons.remove_red_eye_sharp : Icons.visibility_off),
+                              color: Styles.textLightColor
+        )
+
+                      ,
+                    ],
+                  ),
                   Center(
                     child: Observer(builder: (_) {
-                      return GradientText(
-                        "\$${_sumTokenBalances(ReefAppState.instance.model.tokens.selectedErc20List.toList()).toStringAsFixed(0)}",
-                        gradient: textGradient(),
-                        style: GoogleFonts.poppins(
-                            color: Styles.textColor,
-                            fontSize: 68,
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: 3),
-                      );
+                     return BlurableContent(
+                        GradientText("\$${_sumTokenBalances(ReefAppState.instance.model.tokens.selectedErc20List.toList()).toStringAsFixed(0)}",gradient: textGradient(),style: GoogleFonts.poppins(color: Styles.textColor,fontSize: 68,fontWeight: FontWeight.w800,letterSpacing: 3),),
+                        ReefAppState.instance.model.appConfig.displayBalance);
                     }),
                   ),
                 ]),

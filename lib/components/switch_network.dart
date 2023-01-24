@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:reef_mobile_app/components/modal.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/network/NetworkCtrl.dart';
+import 'package:reef_mobile_app/pages/SplashScreen.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 
 class SwitchNetwork extends StatefulWidget {
@@ -14,32 +16,40 @@ class SwitchNetwork extends StatefulWidget {
 class _SwitchNetworkState extends State<SwitchNetwork> {
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
-      Row(children: [
-        Text("NETWORK",
-            style: TextStyle(color: Styles.textLightColor, fontSize: 16)),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(10.0, 6.0, 10.0, 6.0),
+      child: Column(children: [
+        Row(children: [
+          Text("NETWORK",
+              style: TextStyle(color: Styles.textLightColor, fontSize: 12)),
+        ]),
+        Observer(builder: (_) {
+          if (ReefAppState.instance.model.network.selectedNetworkSwitching) {
+            return const Text('Registering on network');
+          }
+          return Row(children: [
+            Text("Testnet", style: Theme.of(context).textTheme.bodyText1),
+            Switch(
+              // TODO listen to currentNetwork from mobx model
+              value: ReefAppState.instance.model.network.selectedNetworkName ==
+                  Network.testnet.name,
+              onChanged: (value) {
+                setState(() {
+                  var currentNetwork = value ? Network.mainnet : Network.testnet;
+                  ReefAppState.instance.networkCtrl.setNetwork(currentNetwork);
+                });
+              },
+              activeColor: Styles.primaryAccentColorDark,
+            ),
+            Text("Mainnet", style: Theme.of(context).textTheme.bodyText1)
+          ]);
+        }),
       ]),
-      Observer(builder: (_) {
-        if (ReefAppState.instance.model.network.selectedNetworkSwitching) {
-          return const Text('Registering on network');
-        }
-        return Row(children: [
-          Text("Testnet", style: Theme.of(context).textTheme.bodyText1),
-          Switch(
-            // TODO listen to currentNetwork from mobx model
-            value: ReefAppState.instance.model.network.selectedNetworkName ==
-                Network.testnet.name,
-            onChanged: (value) {
-              setState(() {
-                var currentNetwork = value ? Network.mainnet : Network.testnet;
-                ReefAppState.instance.networkCtrl.setNetwork(currentNetwork);
-              });
-            },
-            activeColor: Styles.primaryAccentColorDark,
-          ),
-          Text("Mainnet", style: Theme.of(context).textTheme.bodyText1)
-        ]);
-      }),
-    ]);
+    );
   }
+}
+
+void showSwitchNetworkModal(String title, {BuildContext? context}) {
+  showModal(context ?? navigatorKey.currentContext,
+      child: const SwitchNetwork(), headText: title);
 }
