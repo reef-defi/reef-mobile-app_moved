@@ -51,6 +51,10 @@ class AccountCtrl {
     return isValid == 'true';
   }
 
+  Future<dynamic> resolveEvmAddress(String nativeAddress) async{
+    return await _jsApi.jsPromise('window.account.resolveEvmAddress("$nativeAddress")');
+  }
+
   Future<String> accountFromMnemonic(String mnemonic) async {
     return await _jsApi
         .jsPromise('window.keyring.accountFromMnemonic("$mnemonic")');
