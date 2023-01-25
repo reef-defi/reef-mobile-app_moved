@@ -8,6 +8,7 @@ import 'package:reef_mobile_app/components/modals/select_account_modal.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/StorageKey.dart';
 import 'package:reef_mobile_app/model/tokens/TokenWithAmount.dart';
+import 'package:reef_mobile_app/utils/constants.dart';
 import 'package:reef_mobile_app/utils/elements.dart';
 import 'package:reef_mobile_app/utils/functions.dart';
 import 'package:reef_mobile_app/utils/icon_url.dart';
@@ -17,6 +18,7 @@ import '../components/SignatureContentToggle.dart';
 
 class SendPage extends StatefulWidget {
   final String preselected;
+
   SendPage(this.preselected, {Key? key}) : super(key: key);
 
   @override
@@ -26,9 +28,11 @@ class SendPage extends StatefulWidget {
 class _SendPageState extends State<SendPage> {
   bool isTokenReef = false;
   String sendBtnVal = "Missing destination address";
+  ValidationError valError = ValidationError.NO_ADDRESS;
   bool shouldSend = false;
   TextEditingController valueController = TextEditingController();
   String address = "";
+  String? resolvedEvmAddress;
   TextEditingController amountController = TextEditingController();
   String amount = "";
 
@@ -50,10 +54,9 @@ class _SendPageState extends State<SendPage> {
     });
 
     //checking if selected token is REEF or not
-    if (widget.preselected ==
-        "0x0000000000000000000000000000000001000000") {
+    if (widget.preselected == Constants.REEF_TOKEN_ADDRESS) {
       setState(() {
-        isTokenReef=true;
+        isTokenReef = true;
       });
     }
   }
@@ -79,62 +82,52 @@ class _SendPageState extends State<SendPage> {
     _focusSecond.dispose();
   }
 
-  void _changeSelectedToken(String tokenAddr) {
+  /*void _changeSelectedToken(String tokenAddr) {
     setState(() {
       selectedTokenAddress = tokenAddr;
     });
-  }
+  }*/
 
-  Future<bool> _addressValidator(String address) async {
+  Future<bool> _isValidAddress(String address) async {
     //checking if selected address is not evm
     if (address.startsWith("5")) {
       //if length of address == native address length
-      if (address.length == 48) {
-        String resolveEvmAddressResult;
-        try {
-          resolveEvmAddressResult = await ReefAppState.instance.accountCtrl
-              .resolveEvmAddress(address);
-          address = resolveEvmAddressResult;
-          return true;
-        } catch (e) {
-          return false;
-        }
-      } else {
-        return false;
-      }
-    } else if (address.startsWith("0")) {
+      return address.length == 48;
+    } else if (address.startsWith("0x")) {
       return await ReefAppState.instance.accountCtrl.isValidEvmAddress(address);
     }
     return false;
   }
 
-  void _validator() async {
-    bool addressValidatorResult = await _addressValidator(address);
-    if (address.isEmpty) {
-      setState(() {
-        sendBtnVal = "Missing destination address";
-      });
+  Future<ValidationError> _validate(String addr, TokenWithAmount token) async {
+    var isValidAddr = await _isValidAddress(addr);
+    if (addr.isEmpty) {
+      return ValidationError.NO_ADDRESS;
     } else if (amount.isEmpty || amount == "0.00") {
-      setState(() {
-        sendBtnVal = "Insert amount";
-      });
-    } else if (addressValidatorResult && amount.isNotEmpty) {
-      setState(() {
-        sendBtnVal = "Confirm Send";
-      });
-    } else {
-      setState(() {
-        sendBtnVal = "Enter a valid address";
-      });
+      return ValidationError.NO_AMT;
+    } else if (isValidAddr &&
+        token.address != Constants.REEF_TOKEN_ADDRESS &&
+        !addr.startsWith('0x')) {
+      try {
+        resolvedEvmAddress =
+            await ReefAppState.instance.accountCtrl.resolveEvmAddress(addr);
+      } catch (e) {
+        resolvedEvmAddress = null;
+      }
+      if (resolvedEvmAddress == null) {
+        return ValidationError.NO_EVM_CONNECTED;
+      }
+    } else if (!isValidAddr && !amount.isNotEmpty) {
+      return ValidationError.ADDR_NOT_VALID;
     }
+
+    return ValidationError.OK;
   }
 
   void _onConfirmSend(TokenWithAmount sendToken) async {
-    bool _send = true;
     if (address.isEmpty || amount.isEmpty || sendToken.balance <= BigInt.zero) {
       return;
     }
-    
 
     var signerAddress = await ReefAppState.instance.storage
         .getValue(StorageKey.selected_address.name);
@@ -149,10 +142,28 @@ class _SendPageState extends State<SendPage> {
             BigInt.parse(toStringWithoutDecimals(amount, sendToken.decimals)),
         price: 0);
 
-    await ReefAppState.instance.transferCtrl
-        .transferTokens(signerAddress, address, tokenToTransfer);
+    await ReefAppState.instance.transferCtrl.transferTokens(
+        signerAddress, resolvedEvmAddress ?? address, tokenToTransfer);
     amountController.clear();
     valueController.clear();
+  }
+
+  getSendBtnLabel(ValidationError validation) {
+    switch (validation) {
+      case ValidationError.NO_ADDRESS:
+        return "Missing destination address";
+      case ValidationError.NO_AMT:
+        return "Insert amount";
+      case ValidationError.NO_EVM_CONNECTED:
+        return "Target not EVM";
+      case ValidationError.ADDR_NOT_VALID:
+        return "Enter a valid address";
+      case ValidationError.OK:
+        return "Confirm Send";
+      default:
+        return "Not Valid";
+    }
+
   }
 
   @override
@@ -208,16 +219,13 @@ class _SendPageState extends State<SendPage> {
                             borderRadius: BorderRadius.circular(10),
                           ),
                           onPressed: () {
-                            showSelectAccountModal(
-                              "Select account",
-                              (selectedAddress) {
-                                setState(() {
-                                  address = selectedAddress;
-                                  valueController.text = selectedAddress;
-                                });
-                              },
-                              isTokenReef
-                            );
+                            showSelectAccountModal("Select account",
+                                (selectedAddress) {
+                              setState(() {
+                                address = selectedAddress;
+                                valueController.text = selectedAddress;
+                              });
+                            }, isTokenReef);
                           },
                           color: const Color(0xffDFDAED),
                         ),
@@ -230,7 +238,11 @@ class _SendPageState extends State<SendPage> {
                             setState(() {
                               address = valueController.text;
                             });
-                            _validator();
+
+                            setState(() async {
+                              valError =
+                                  await _validate(address, selectedToken);
+                            });
                           },
                           style: const TextStyle(
                               fontSize: 14, fontWeight: FontWeight.w500),
@@ -408,8 +420,9 @@ class _SendPageState extends State<SendPage> {
                         amount = amountValue;
                         amountController.text = amountValue;
                       });
-
-                      _validator();
+                      setState(() async {
+                        valError = await _validate(address, selectedToken);
+                      });
                     },
                     divisions: 100,
                     label: "${(rating * 100).toInt()}%",
@@ -465,7 +478,7 @@ class _SendPageState extends State<SendPage> {
                           vertical: 15, horizontal: 22),
                       decoration: BoxDecoration(
                         color: const Color(0xffe6e2f1),
-                        gradient: (sendBtnVal == "Confirm Send")
+                        gradient: (valError == ValidationError.OK)
                             ? const LinearGradient(colors: [
                                 Color(0xffae27a5),
                                 Color(0xff742cb2),
@@ -476,11 +489,11 @@ class _SendPageState extends State<SendPage> {
                       ),
                       child: Center(
                         child: Text(
-                          sendBtnVal,
+                          getSendBtnLabel(valError),
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
-                            color: (sendBtnVal != "Confirm Send")
+                            color: (valError != ValidationError.OK)
                                 ? const Color(0x65898e9c)
                                 : Colors.white,
                           ),
@@ -524,4 +537,12 @@ class _SendPageState extends State<SendPage> {
       ),
     );
   }
+}
+
+enum ValidationError {
+  OK,
+  NO_EVM_CONNECTED,
+  NO_ADDRESS,
+  NO_AMT,
+  ADDR_NOT_VALID,
 }

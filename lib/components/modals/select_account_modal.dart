@@ -108,10 +108,10 @@ class SelectAccount extends StatelessWidget {
   }
 }
 
-void showSelectAccountModal(String title, Function(String) callback,bool isTokenReef,
+void showSelectAccountModal(String title, Function(String) callback,bool filterEvmAccounts,
     {BuildContext? context}) async {
   var signerAddress = await ReefAppState.instance.storage
       .getValue(StorageKey.selected_address.name);
   showModal(context ?? navigatorKey.currentContext,
-      child: SelectAccount(signerAddress, callback,isTokenReef), headText: title);
+      child: SelectAccount(signerAddress, callback, filterEvmAccounts), headText: title);
 }

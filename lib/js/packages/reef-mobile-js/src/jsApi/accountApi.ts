@@ -3,7 +3,7 @@ import {map, switchMap, take} from "rxjs/operators";
 import type {InjectedAccountWithMeta} from "@reef-defi/extension-inject/types";
 import {firstValueFrom} from 'rxjs';
 import {REEF_EXTENSION_IDENT} from "@reef-defi/extension-inject";
-import { resolveEvmAddress} from "@reef-defi/evm-provider/utils";
+import { resolveEvmAddress as utilsResolveEvmAddr} from "@reef-defi/evm-provider/utils";
 import {Provider} from "@reef-defi/evm-provider";
 
 export const buildAccountWithMeta = async (name: string, address: string): Promise<InjectedAccountWithMeta> => {
@@ -78,8 +78,8 @@ export const innitApi = () => {
         },
 
         resolveEvmAddress:async(nativeAddress:string)=>{
-            const provider = await reefState.selectedProvider$.pipe(take(1)).toPromise();
-            return resolveEvmAddress(provider,nativeAddress);
+            const provider = await firstValueFrom(reefState.selectedProvider$);
+            return utilsResolveEvmAddr(provider,nativeAddress);
         }
 
     };
