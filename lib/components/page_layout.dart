@@ -133,7 +133,7 @@ class _BottomNavState extends State<BottomNav> {
                       key: _liquidCarouselKey,
                       cyclic: true,
                       onSwipe: (int index) {
-                        ReefAppState.instance.navigationCtrl
+                        ReefAppState.instance.navigationCtrl.navigationModel
                             .navigate(bottomNavigationBarItems[index].page);
                       },
                       children: [
