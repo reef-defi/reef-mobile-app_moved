@@ -27,14 +27,20 @@ class _BottomNavState extends State<BottomNav> {
   final _liquidCarouselKey = GlobalKey<LiquidCarouselState>();
   bool _swiping = false;
 
+  @override
+  void initState() {
+    ReefAppState.instance.navigationCtrl.carouselKey = _liquidCarouselKey;
+    super.initState();
+  }
+
   Widget _getWidget(NavigationPage page) {
-    print(ReefAppState.instance.navigation);
     switch (page) {
       case NavigationPage.home:
         return const HomePage();
       case NavigationPage.send:
-        return SendPage(ReefAppState.instance.navigation.data ??
-            Constants.REEF_TOKEN_ADDRESS);
+        return SendPage(
+            ReefAppState.instance.model.navigationModel.data ??
+                Constants.REEF_TOKEN_ADDRESS);
 
       case NavigationPage.accounts:
         return AccountsPage();
@@ -48,36 +54,8 @@ class _BottomNavState extends State<BottomNav> {
   }
 
   void _onItemTapped(int index) async {
-    if (_swiping) return;
-    _swiping = true;
-    int currIndex = bottomNavigationBarItems.indexWhere((barItem) =>
-        barItem.page == ReefAppState.instance.navigation.currentPage);
-    if (currIndex == index) {
-      _swiping = false;
-      return;
-    }
-    final swiped =
-        await _computeSwipeAnimation(currIndex: currIndex, index: index);
-    if (swiped) {
-      HapticFeedback.selectionClick();
-      ReefAppState.instance.navigation
-          .navigate(bottomNavigationBarItems[index].page);
-    }
-    _swiping = false;
-  }
-
-  Future<bool> _computeSwipeAnimation(
-      {required int currIndex, required int index}) async {
-    if ((currIndex == 0 && index == 2) ||
-        (currIndex == 1 && index == 0) ||
-        (currIndex == 2 && index == 1)) {
-      return await _liquidCarouselKey.currentState!.swipeToPrevious();
-    } else if ((currIndex == 0 && index == 1) ||
-        (currIndex == 1 && index == 2) ||
-        (currIndex == 2 && index == 0)) {
-      return await _liquidCarouselKey.currentState!.swipeToNext();
-    }
-    return false;
+    ReefAppState.instance.navigationCtrl
+        .navigate(bottomNavigationBarItems[index].page);
   }
 
   List<BarItemNavigationPage> bottomNavigationBarItems = const [
@@ -154,7 +132,7 @@ class _BottomNavState extends State<BottomNav> {
                       key: _liquidCarouselKey,
                       cyclic: true,
                       onSwipe: (int index) {
-                        ReefAppState.instance.navigation
+                        ReefAppState.instance.model.navigationModel
                             .navigate(bottomNavigationBarItems[index].page);
                       },
                       children: [
@@ -183,13 +161,15 @@ class _BottomNavState extends State<BottomNav> {
         )),
         bottomNavigationBar: Observer(builder: (_) {
           int currIndex = bottomNavigationBarItems.indexWhere((barItem) =>
-              barItem.page == ReefAppState.instance.navigation.currentPage);
+              barItem.page ==
+              ReefAppState.instance.model.navigationModel.currentPage);
           if (currIndex < 0) {
             currIndex = 0;
           }
           var itemColor = bottomNavigationBarItems.firstWhereOrNull((barItem) =>
                       barItem.page ==
-                      ReefAppState.instance.navigation.currentPage) !=
+                      ReefAppState.instance.model.navigationModel
+                          .currentPage) !=
                   null
               ? Styles.purpleColor
               : Colors.black38;
