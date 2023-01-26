@@ -6,24 +6,24 @@ import 'package:reef_mobile_app/pages/swap_page.dart';
 import 'package:reef_mobile_app/utils/liquid_edge/liquid_carousel.dart';
 
 class NavigationCtrl {
-  final NavigationModel navigationModel;
+  final NavigationModel _navigationModel;
   GlobalKey<LiquidCarouselState>? carouselKey;
   bool _swiping = false;
 
-  NavigationCtrl(this.navigationModel);
+  NavigationCtrl(this._navigationModel);
 
   void navigate(NavigationPage navigationPage) async {
     if (_swiping) return;
     _swiping = true;
-    if (navigationModel.currentPage == navigationPage) {
+    if (_navigationModel.currentPage == navigationPage) {
       _swiping = false;
       return;
     }
     final swiped = await _computeSwipeAnimation(
-        currentPage: navigationModel.currentPage, page: navigationPage);
+        currentPage: _navigationModel.currentPage, page: navigationPage);
     if (swiped) {
       HapticFeedback.selectionClick();
-      navigationModel.navigate(navigationPage);
+      _navigationModel.navigate(navigationPage);
     }
     _swiping = false;
   }

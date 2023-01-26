@@ -39,7 +39,7 @@ class _BottomNavState extends State<BottomNav> {
         return const HomePage();
       case NavigationPage.send:
         return SendPage(
-            ReefAppState.instance.navigationCtrl.navigationModel.data ??
+            ReefAppState.instance.model.navigationModel.data ??
                 Constants.REEF_TOKEN_ADDRESS);
 
       case NavigationPage.accounts:
@@ -132,7 +132,7 @@ class _BottomNavState extends State<BottomNav> {
                       key: _liquidCarouselKey,
                       cyclic: true,
                       onSwipe: (int index) {
-                        ReefAppState.instance.navigationCtrl.navigationModel
+                        ReefAppState.instance.model.navigationModel
                             .navigate(bottomNavigationBarItems[index].page);
                       },
                       children: [
@@ -162,13 +162,13 @@ class _BottomNavState extends State<BottomNav> {
         bottomNavigationBar: Observer(builder: (_) {
           int currIndex = bottomNavigationBarItems.indexWhere((barItem) =>
               barItem.page ==
-              ReefAppState.instance.navigationCtrl.navigationModel.currentPage);
+              ReefAppState.instance.model.navigationModel.currentPage);
           if (currIndex < 0) {
             currIndex = 0;
           }
           var itemColor = bottomNavigationBarItems.firstWhereOrNull((barItem) =>
                       barItem.page ==
-                      ReefAppState.instance.navigationCtrl.navigationModel
+                      ReefAppState.instance.model.navigationModel
                           .currentPage) !=
                   null
               ? Styles.purpleColor
