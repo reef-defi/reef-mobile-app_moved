@@ -4,6 +4,7 @@ import 'package:reef_mobile_app/model/StorageKey.dart';
 import 'package:reef_mobile_app/model/ViewModel.dart';
 import 'package:reef_mobile_app/model/metadata/MetadataCtrl.dart';
 import 'package:reef_mobile_app/model/appConfig/AppConfigCtrl.dart';
+import 'package:reef_mobile_app/model/navigation/NavigationCtrl.dart';
 import 'package:reef_mobile_app/model/navigation/navigation_model.dart';
 import 'package:reef_mobile_app/model/network/NetworkCtrl.dart';
 import 'package:reef_mobile_app/model/signing/SigningCtrl.dart';
@@ -28,7 +29,7 @@ class ReefAppState {
   late SwapCtrl swapCtrl;
   late MetadataCtrl metadataCtrl;
   late NetworkCtrl networkCtrl;
-  late NavigationModel navigation;
+  late NavigationCtrl navigationCtrl;
   late AppConfigCtrl appConfigCtrl;
 
   ReefAppState._();
@@ -44,14 +45,14 @@ class ReefAppState {
     transferCtrl = TransferCtrl(jsApi);
     swapCtrl = SwapCtrl(jsApi);
     metadataCtrl = MetadataCtrl(jsApi, storage);
+    navigationCtrl = NavigationCtrl(NavigationModel());
     Network currentNetwork =
         await storage.getValue(StorageKey.network.name) == Network.testnet.name
             ? Network.testnet
             : Network.mainnet;
     networkCtrl = NetworkCtrl(storage, jsApi, model.network);
     await _initReefState(jsApi, currentNetwork);
-    appConfigCtrl = AppConfigCtrl(storage,model.appConfig);
-    navigation = NavigationModel();
+    appConfigCtrl = AppConfigCtrl(storage, model.appConfig);
   }
 
   _initReefState(JsApiService jsApiService, Network currentNetwork) async {

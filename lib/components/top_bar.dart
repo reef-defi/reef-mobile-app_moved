@@ -41,7 +41,8 @@ Widget topBar(BuildContext context) {
               var selAddr =
                   ReefAppState.instance.model.accounts.selectedAddress;
 
-              var selSignerList = ReefAppState.instance.model.accounts.accountsList
+              var selSignerList = ReefAppState
+                  .instance.model.accounts.accountsList
                   .where((element) => element.address == selAddr);
 
               return selSignerList.length > 0
@@ -61,7 +62,7 @@ Widget accountPill(BuildContext context, String title) {
 
   return GestureDetector(
       onTap: () {
-        ReefAppState.instance.navigation.navigate(NavigationPage.accounts);
+        ReefAppState.instance.navigationCtrl.navigate(NavigationPage.accounts);
       },
       child: Container(
           decoration: BoxDecoration(
@@ -74,7 +75,8 @@ Widget accountPill(BuildContext context, String title) {
           child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 14, vertical: 6),
               child: Row(children: [
-                Icon(Icons.account_balance_wallet_rounded, color:Styles.blueColor),
+                Icon(Icons.account_balance_wallet_rounded,
+                    color: Styles.blueColor),
                 Padding(
                   padding: EdgeInsets.only(left: 10),
                   child: Text((title ?? ''),

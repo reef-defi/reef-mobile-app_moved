@@ -98,7 +98,7 @@ class _TokenViewState extends State<TokenView> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    /*Expanded(
+                    Expanded(
                         child: ElevatedButton.icon(
                       icon: const Icon(
                         CupertinoIcons.repeat,
@@ -107,8 +107,8 @@ class _TokenViewState extends State<TokenView> {
                       ),
                       style: ElevatedButton.styleFrom(
                           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          backgroundColor: Color(0xffe7def0),
-                          shape: StadiumBorder(),
+                          backgroundColor: const Color(0xffe7def0),
+                          shape: const StadiumBorder(),
                           elevation: 0),
                       label: const Text(
                         'Swap',
@@ -117,10 +117,10 @@ class _TokenViewState extends State<TokenView> {
                             fontWeight: FontWeight.w700),
                       ),
                       onPressed: () {
-                        ReefAppState.instance.navigation
-                            .navigate(NavigationPage.swap);
+                        ReefAppState.instance.navigationCtrl
+                            .navigateToSwapPage(context: context);
                       },
-                    )),*/
+                    )),
                     const SizedBox(width: 15),
                     Container(
                       decoration: BoxDecoration(
@@ -154,8 +154,9 @@ class _TokenViewState extends State<TokenView> {
                               color: Colors.white, fontWeight: FontWeight.w700),
                         ),
                         onPressed: () {
-                          ReefAppState.instance.navigation
-                              .navigate(NavigationPage.send, data: address);
+                          ReefAppState.instance.navigationCtrl
+                              .navigateToSendPage(
+                                  context: context, preselected: address);
                         },
                       ),
                     ),
