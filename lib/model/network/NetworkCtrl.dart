@@ -27,6 +27,12 @@ class NetworkCtrl {
 
   Future<void> setNetwork(Network network) async {
     networkModel.setSelectedNetworkSwitching(true);
-    jsApi.jsCall('window.utils.setSelectedNetwork(`${network.name}`)');
+    print('swww to ${network.name}');
+    try {
+      await jsApi.jsCallVoidReturn(
+          'utils.setSelectedNetwork(`${network.name}`)');
+    }catch(e){
+      print('Error switching network');
+    }
   }
 }

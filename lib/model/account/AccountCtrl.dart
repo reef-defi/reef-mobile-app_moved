@@ -97,7 +97,7 @@ class AccountCtrl {
   }
 
   Future<bool> isValidEvmAddress(String address) async {
-    var res = await _jsApi.jsCall('window.utils.isValidEvmAddress("$address")');
+    var res = await _jsApi.jsCall('utils.isValidEvmAddress("$address")');
     return res == 'true';
   }
 

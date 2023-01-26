@@ -75,8 +75,8 @@ export const initApi = () => {
             ));
         },
         setSelectedNetwork: (networkName: string) => {
-            const network: Network = network.AVAILABLE_NETWORKS[networkName] || network.AVAILABLE_NETWORKS.mainnet;
-            return reefState.setSelectedNetwork(network);
+            const net: Network = network.AVAILABLE_NETWORKS[networkName] || network.AVAILABLE_NETWORKS.mainnet;
+            return reefState.setSelectedNetwork(net);
         },
         bytesString: (bytes: string) => {
             return isAscii(bytes) ? u8aToString(u8aUnwrapBytes(bytes)) : bytes;
