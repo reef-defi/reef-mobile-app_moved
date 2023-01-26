@@ -34,7 +34,6 @@ class _BottomNavState extends State<BottomNav> {
   }
 
   Widget _getWidget(NavigationPage page) {
-    print(ReefAppState.instance.navigationCtrl);
     switch (page) {
       case NavigationPage.home:
         return const HomePage();
