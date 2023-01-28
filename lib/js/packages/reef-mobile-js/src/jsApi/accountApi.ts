@@ -1,10 +1,11 @@
-import {AddressName, ReefSigner, reefState} from '@reef-chain/util-lib';
-import {map, switchMap, take} from "rxjs/operators";
+import {AddressName, getAccountSigner, ReefAccount, reefState, addressUtils} from '@reef-chain/util-lib';
+import {combineLatest, map, switchMap, take} from "rxjs/operators";
 import type {InjectedAccountWithMeta} from "@reef-defi/extension-inject/types";
 import {firstValueFrom} from 'rxjs';
 import {REEF_EXTENSION_IDENT} from "@reef-defi/extension-inject";
 import { resolveEvmAddress as utilsResolveEvmAddr} from "@reef-defi/evm-provider/utils";
 import {Provider} from "@reef-defi/evm-provider";
+import Signer from "@reef-defi/extension-base/page/Signer";
 
 export const buildAccountWithMeta = async (name: string, address: string): Promise<InjectedAccountWithMeta> => {
     const acountWithMeta: InjectedAccountWithMeta = {
@@ -18,7 +19,7 @@ export const buildAccountWithMeta = async (name: string, address: string): Promi
     return acountWithMeta;
 }
 
-export const innitApi = () => {
+export const innitApi = (signingKey: Signer) => {
 
     (window as any).account = {
         /*selectedSigner$: reefState.selectedAccount$.pipe(
@@ -52,17 +53,20 @@ export const innitApi = () => {
         claimEvmAccount: async (nativeAddress: string) => {
             return firstValueFrom(reefState.accounts$.pipe(
                 take(1),
-                map((signers: ReefSigner[]) => {
-                    return signers.find((s)=> s.address === nativeAddress);
+                map((accounts: ReefAccount[]) => {
+                    return accounts.find((s)=> s.address === nativeAddress);
                 }),
-                switchMap(async (signer: ReefSigner | undefined) => {
+                combineLatest([reefState.selectedProvider$]),
+                switchMap(async ([signer, provider]: [ReefAccount | undefined, Provider]) => {
                     if (!signer) {
                         console.log("account.claimEvmAccount() - NO SIGNER FOUND",);
                         return false
                     }
 
                     try {
-                        await signer.signer.claimDefaultAccount();
+
+                        const evmSigner = await getAccountSigner(signer.address, provider, signingKey);
+                        await evmSigner.claimDefaultAccount();
                         console.log("account binded:", signer.address, signer.isEvmClaimed, signer.evmAddress);
                         return true;
                     } catch (e) {
@@ -74,7 +78,7 @@ export const innitApi = () => {
             ));
         },
         toReefEVMAddressWithNotification: (evmAddress: string)=>{
-            return utils.toReefEVMAddressWithNotification(evmAddress);
+            return addressUtils.addReefSpecificStringFromAddress(evmAddress);
         },
 
         resolveEvmAddress:async(nativeAddress:string)=>{

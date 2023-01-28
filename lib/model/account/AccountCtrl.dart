@@ -117,7 +117,7 @@ class AccountCtrl {
       _accountModel.setSelectedAddress(address);
     });
 
-    jsApi.jsObservable('window.reefState.accounts\$').listen((accs) async {
+    jsApi.jsObservable('window.reefState.accounts_status\$').listen((accs) async {
 
       ParseListFn<FeedbackDataModel<ReefAccount>> parsableListFn = getParsableListFn(ReefAccount.fromJson);
       var accsListFdm = FeedbackDataModel.fromJsonList(accs, parsableListFn);

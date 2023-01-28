@@ -13,7 +13,7 @@ class TokenCtrl {
 
   TokenCtrl(this.jsApi, TokenModel tokenModel) {
     jsApi
-        .jsObservable('window.reefState.selectedTokenPrices\$')
+        .jsObservable('window.reefState.selectedTokenPrices_status\$')
         .listen((tokens) {
       ParseListFn<FeedbackDataModel<TokenWithAmount>> parsableListFn =
           getParsableListFn(TokenWithAmount.fromJson);
@@ -25,7 +25,7 @@ class TokenCtrl {
       tokenModel.setSelectedErc20s(tokensListFdm);
     });
 
-    jsApi.jsObservable('window.reefState.selectedNFTs\$').listen((tokens) {
+    jsApi.jsObservable('window.reefState.selectedNFTs_status\$').listen((tokens) {
 
       ParseListFn<FeedbackDataModel<TokenNFT>> parsableListFn =
       getParsableListFn(TokenNFT.fromJson);
@@ -46,7 +46,7 @@ class TokenCtrl {
     });
 
     jsApi
-        .jsObservable('window.reefState.selectedTransactionHistory\$')
+        .jsObservable('window.reefState.selectedTransactionHistory_status\$')
         .listen((items) {
       var parsableFn =
           (accList) => List<TokenActivity>.from(accList.map(TokenActivity.fromJson));
