@@ -22,10 +22,9 @@ class TokenView extends StatefulWidget {
 class _TokenViewState extends State<TokenView> {
   Widget tokenCard(String name, String address,
       {String? iconURL,
-      double balance = 0.0,
+      BigInt? balance,
       double price = 0.0,
       String tokenName = ""}) {
-    var balanceInBigInt = BigInt.from(balance);
     return ViewBoxContainer(
         child: Padding(
             padding:
@@ -74,7 +73,7 @@ class _TokenViewState extends State<TokenView> {
                       children: [
                         GradientText(
                             price != 0
-                                ? "\$${getBalanceValue(balance, price).toStringAsFixed(2)}"
+                                ? "\$${getBalanceValueBI(balance, price).toStringAsFixed(2)}"
                                 : "N/A",
                             gradient: textGradient(),
                             style: GoogleFonts.poppins(
@@ -83,7 +82,7 @@ class _TokenViewState extends State<TokenView> {
                               fontWeight: FontWeight.w900,
                             )),
                         Text(
-                          "${balance != 0 ? toAmountDisplayBigInt(balanceInBigInt, fractionDigits: 2) : 0} ${tokenName != "" ? tokenName : name.toUpperCase()}",
+                          "${balance != null && balance > BigInt.zero ? toAmountDisplayBigInt(balance, fractionDigits: 2) : 0} ${tokenName != "" ? tokenName : name.toUpperCase()}",
                           style: GoogleFonts.poppins(
                             color: Styles.textColor,
                             fontSize: 14,
@@ -209,7 +208,7 @@ class _TokenViewState extends State<TokenView> {
                           tokenName: tkn.data.symbol,
                           iconURL: tkn.data.iconUrl,
                           price: tkn.data.price ?? 0,
-                          balance: tkn.data.balance.toDouble());
+                          balance: tkn.data.balance);
                     },
                     childCount: selectedERC20s.data.length,
                   ),

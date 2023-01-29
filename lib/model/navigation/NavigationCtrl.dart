@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:reef_mobile_app/model/navigation/navigation_model.dart';
 import 'package:reef_mobile_app/pages/send_page.dart';
 import 'package:reef_mobile_app/pages/swap_page.dart';
 import 'package:reef_mobile_app/utils/liquid_edge/liquid_carousel.dart';
+import 'package:reef_mobile_app/utils/styles.dart';
 
 class NavigationCtrl {
   final NavigationModel _navigationModel;
@@ -33,13 +35,19 @@ class NavigationCtrl {
     Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => Scaffold(
             appBar: AppBar(
-              title: const Text("Send Tokens"),
+              title:  Text("Send Tokens",
+                  style: GoogleFonts.spaceGrotesk(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 24,)
+                          ),
               backgroundColor: Colors.deepPurple.shade700,
             ),
             body: Padding(
               padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
               child: SendPage(preselected),
-            ))));
+            ),
+          backgroundColor: Styles.greyColor,
+        )));
   }
 
   void navigateToSwapPage({required BuildContext context}) {

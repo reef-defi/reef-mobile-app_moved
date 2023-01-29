@@ -523,14 +523,14 @@ class _SendPageState extends State<SendPage> {
               //   width: 24,
               //   height: 24,
               // ),
-              const Gap(8),
-              Text(
-                "Send Tokens",
-                style: GoogleFonts.spaceGrotesk(
-                    fontWeight: FontWeight.w500,
-                    fontSize: 32,
-                    color: Colors.grey[800]),
-              ),
+              // const Gap(8),
+              // Text(
+              //   "Send Tokens",
+              //   style: GoogleFonts.spaceGrotesk(
+              //       fontWeight: FontWeight.w500,
+              //       fontSize: 32,
+              //       color: Colors.grey[800]),
+              // ),
             ],
           ),
         ],
