@@ -8,6 +8,7 @@ import 'package:reef_mobile_app/utils/styles.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
 import '../../model/ReefAppState.dart';
+import '../BlurContent.dart';
 
 class NFTView extends StatefulWidget {
   const NFTView({Key? key}) : super(key: key);
@@ -32,14 +33,19 @@ class _NFTViewState extends State<NFTView> {
                         borderRadius: BorderRadius.all(Radius.circular(20))),
                     child: Row(children: [
                       const Gap(12),
-                      Text(
-                        // TODO allow conversionRate to be null for no data
-                        "${balance}x",
-                        style: TextStyle(
-                            color: Styles.textLightColor,
-                            fontSize: 16,
-                            overflow: TextOverflow.ellipsis),
-                      ),
+                      Observer(builder: (context) {
+                        return BlurableContent(
+                            Text(
+                              // TODO allow conversionRate to be null for no data
+                              "${balance}x",
+                              style: TextStyle(
+                                  color: Styles.textLightColor,
+                                  fontSize: 16,
+                                  overflow: TextOverflow.ellipsis),
+                            ),
+                            ReefAppState
+                                .instance.model.appConfig.displayBalance);
+                      }),
                       const Gap(8),
                       Text(
                         name,
@@ -106,7 +112,7 @@ class _NFTViewState extends State<NFTView> {
                   mainAxisExtent: 125,
                   mainAxisSpacing: 12,
                   crossAxisSpacing: 12,
-                  maxCrossAxisExtent: 200),
+                  maxCrossAxisExtent: 400),
             ),
           ),
       ]);

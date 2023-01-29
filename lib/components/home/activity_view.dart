@@ -10,6 +10,7 @@ import 'package:reef_mobile_app/utils/icon_url.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 
 import '../../model/feedback-data-model/FeedbackDataModel.dart';
+import '../BlurContent.dart';
 
 class ActivityView extends StatefulWidget {
   const ActivityView({Key? key}) : super(key: key);
@@ -102,13 +103,17 @@ class _ActivityViewState extends State<ActivityView> {
                 ],
               ),
               Row(children: [
-                Text(
-                  amountText,
-                  style: GoogleFonts.spaceGrotesk(
-                      fontWeight: FontWeight.w700,
-                      color: isReceived ? Color(0xff35c57d) : iconColor,
-                      fontSize: 18),
-                ),
+                Observer(builder: (context) {
+                  return BlurableContent(
+                      Text(
+                        amountText,
+                        style: GoogleFonts.spaceGrotesk(
+                            fontWeight: FontWeight.w700,
+                            color: isReceived ? Color(0xff35c57d) : iconColor,
+                            fontSize: 18),
+                      ),
+                      ReefAppState.instance.model.appConfig.displayBalance);
+                }),
                 const SizedBox(width: 4),
                 IconFromUrl(
                   iconUrl,

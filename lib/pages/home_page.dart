@@ -257,7 +257,7 @@ class _BalanceHeaderDelegate extends SliverPersistentHeaderDelegate {
                   Center(
                     child: Observer(builder: (_) {
                      return BlurableContent(
-                        GradientText("\$${_sumTokenBalances(ReefAppState.instance.model.tokens.selectedErc20List.toList()).toStringAsFixed(0)}",gradient: textGradient(),style: GoogleFonts.poppins(color: Styles.textColor,fontSize: 68,fontWeight: FontWeight.w800,letterSpacing: 3),),
+                        GradientText("\$${_sumTokenBalances(ReefAppState.instance.model.tokens.selectedErc20List.toList()).toStringAsFixed(2)}",gradient: textGradient(),style: GoogleFonts.poppins(color: Styles.textColor,fontSize: 68,fontWeight: FontWeight.w800,letterSpacing: 3),),
                         ReefAppState.instance.model.appConfig.displayBalance);
                     }),
                   ),
@@ -270,7 +270,7 @@ class _BalanceHeaderDelegate extends SliverPersistentHeaderDelegate {
     var sum = 0.0;
     for (final token in list) {
       double balValue =
-          getBalanceValue(decimalsToDouble(token.balance), token.price);
+          getBalanceValueBI(token.balance, token.price);
       if (balValue > 0) {
         sum = sum + balValue;
       }
