@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import "package:flutter/material.dart";
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:reef_mobile_app/components/BlurableContent.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/feedback-data-model/FeedbackDataModel.dart';
 import 'package:reef_mobile_app/model/navigation/navigation_model.dart';
@@ -71,24 +72,34 @@ class _TokenViewState extends State<TokenView> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        GradientText(
-                            price != 0
-                                ? "\$${getBalanceValueBI(balance, price).toStringAsFixed(2)}"
-                                : "N/A",
-                            gradient: textGradient(),
-                            style: GoogleFonts.poppins(
-                              color: Styles.textColor,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w900,
-                            )),
-                        Text(
-                          "${balance != null && balance > BigInt.zero ? toAmountDisplayBigInt(balance, fractionDigits: 2) : 0} ${tokenName != "" ? tokenName : name.toUpperCase()}",
-                          style: GoogleFonts.poppins(
-                            color: Styles.textColor,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        )
+                        Observer(builder: (context) {
+                          return BlurableContent(
+                              GradientText(
+                                  price != 0
+                                      ? "\$${getBalanceValueBI(balance, price).toStringAsFixed(2)}"
+                                      : "N/A",
+                                  gradient: textGradient(),
+                                  style: GoogleFonts.poppins(
+                                    color: Styles.textColor,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w900,
+                                  )),
+                              ReefAppState
+                                  .instance.model.appConfig.displayBalance);
+                        }),
+                        Observer(builder: (context) {
+                          return BlurableContent(
+                              Text(
+                                "${balance != null && balance > BigInt.zero ? toAmountDisplayBigInt(balance, fractionDigits: 2) : 0} ${tokenName != "" ? tokenName : name.toUpperCase()}",
+                                style: GoogleFonts.poppins(
+                                  color: Styles.textColor,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              ReefAppState
+                                  .instance.model.appConfig.displayBalance);
+                        })
                       ],
                     ),
                   ],

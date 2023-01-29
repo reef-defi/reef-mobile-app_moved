@@ -14,7 +14,6 @@ double getBalanceValueBI(BigInt? balance, double? price) {
   var priceSplit = price.toString().split('.');
   var decimalPlaces = priceSplit.length==2?priceSplit[1].length:0;
   var res = ((balance * BigInt.parse(priceSplit[0]+(priceSplit[1]??'')))/BigInt.from(10).pow(decimalPlaces))/BigInt.from(10).pow(18).toDouble();
-  print('BALLL ${(res)} prii=${price} ');
   return res;
 }
 
