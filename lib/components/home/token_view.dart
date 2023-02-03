@@ -96,7 +96,7 @@ class _TokenViewState extends State<TokenView> {
                         Observer(builder: (context) {
                           return BlurableContent(
                               Text(
-                                "${balance != null && balance > BigInt.zero ? NumberFormat.compact().format((balance + BigInt.from(1003000)) / BigInt.from(10).pow(18)).toString() : 0} ${tokenName != "" ? tokenName : name.toUpperCase()}",
+                                "${balance != null && balance > BigInt.zero ? NumberFormat.compact().format((balance) / BigInt.from(10).pow(18)).toString() : 0} ${tokenName != "" ? tokenName : name.toUpperCase()}",
                                 style: GoogleFonts.poppins(
                                   color: Styles.textColor,
                                   fontSize: 14,
