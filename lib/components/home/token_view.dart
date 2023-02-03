@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import "package:flutter/material.dart";
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:reef_mobile_app/components/BlurableContent.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/feedback-data-model/FeedbackDataModel.dart';
@@ -57,7 +58,9 @@ class _TokenViewState extends State<TokenView> {
                         Text(
                           // TODO allow conversionRate to be null for no data
                           price != 0
-                              ? '\$${price.toStringAsFixed(4)}'
+                              ? NumberFormat.compactLong()
+                                  .format(price)
+                                  .toString()
                               : 'No pool data',
                           style: GoogleFonts.poppins(
                               fontWeight: FontWeight.normal,
@@ -76,7 +79,10 @@ class _TokenViewState extends State<TokenView> {
                           return BlurableContent(
                               GradientText(
                                   price != 0
-                                      ? "\$${getBalanceValueBI(balance, price).toStringAsFixed(2)}"
+                                      ? NumberFormat.compactLong()
+                                          .format(
+                                              getBalanceValueBI(balance, price))
+                                          .toString()
                                       : "N/A",
                                   gradient: textGradient(),
                                   style: GoogleFonts.poppins(
@@ -90,7 +96,7 @@ class _TokenViewState extends State<TokenView> {
                         Observer(builder: (context) {
                           return BlurableContent(
                               Text(
-                                "${balance != null && balance > BigInt.zero ? toAmountDisplayBigInt(balance, fractionDigits: 2) : 0} ${tokenName != "" ? tokenName : name.toUpperCase()}",
+                                "${balance != null && balance > BigInt.zero ? NumberFormat.compact().format((balance + BigInt.from(1003000)) / BigInt.from(10).pow(18)).toString() : 0} ${tokenName != "" ? tokenName : name.toUpperCase()}",
                                 style: GoogleFonts.poppins(
                                   color: Styles.textColor,
                                   fontSize: 14,

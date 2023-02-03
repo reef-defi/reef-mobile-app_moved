@@ -10,44 +10,51 @@ import 'package:reef_mobile_app/utils/styles.dart';
 class NavigationCtrl {
   final NavigationModel _navigationModel;
   GlobalKey<LiquidCarouselState>? carouselKey;
+  Future<bool>? _swipeComplete;
   bool _swiping = false;
 
   NavigationCtrl(this._navigationModel);
 
   void navigate(NavigationPage navigationPage) async {
     if (_swiping) return;
-    _swiping = true;
+
+    if (_swipeComplete != null) {
+      _swiping = true;
+      await _swipeComplete;
+      _swiping = false;
+    }
+    _swipeComplete = null;
+
     if (_navigationModel.currentPage == navigationPage) {
       _swiping = false;
       return;
     }
-    final swiped = await _computeSwipeAnimation(
+    _swipeComplete = _computeSwipeAnimation(
         currentPage: _navigationModel.currentPage, page: navigationPage);
-    if (swiped) {
-      HapticFeedback.selectionClick();
-      _navigationModel.navigate(navigationPage);
-    }
-    _swiping = false;
+
+    HapticFeedback.selectionClick();
+    _navigationModel.navigate(navigationPage);
   }
 
   void navigateToSendPage(
       {required BuildContext context, required String preselected}) {
     Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => Scaffold(
-            appBar: AppBar(
-              title:  Text("Send Tokens",
-                  style: GoogleFonts.spaceGrotesk(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 24,)
-                          ),
-              backgroundColor: Colors.deepPurple.shade700,
-            ),
-            body: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
-              child: SendPage(preselected),
-            ),
-          backgroundColor: Styles.greyColor,
-        )));
+              appBar: AppBar(
+                title: Text("Send Tokens",
+                    style: GoogleFonts.spaceGrotesk(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 24,
+                    )),
+                backgroundColor: Colors.deepPurple.shade700,
+              ),
+              body: Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
+                child: SendPage(preselected),
+              ),
+              backgroundColor: Styles.greyColor,
+            )));
   }
 
   void navigateToSwapPage({required BuildContext context}) {
