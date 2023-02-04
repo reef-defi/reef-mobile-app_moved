@@ -82,7 +82,7 @@ class CustomModalState extends State<CustomModal>
           child: Material(
             color: Colors.transparent,
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
               child: FadeTransition(
                 opacity: fadeAnimation,
                 child: ScaleTransition(
@@ -138,7 +138,7 @@ class CustomModalState extends State<CustomModal>
                             ],
                           ),
                         ),
-                        ClipRect(child: widget.child),
+                        Container( child: widget.child),
                       ],
                     ),
                   ),
