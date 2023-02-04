@@ -42,7 +42,7 @@ class _AccountsPageState extends State<AccountsPage> {
   Widget build(BuildContext context) {
     return SignatureContentToggle(Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-      color: Color.fromARGB(255, 59,31,167),
+      color: Styles.darkBackgroundColor,
       // color: Color.fromARGB(255, 86, 54, 162),
       child: Column(
         children: <Widget>[
