@@ -185,7 +185,8 @@ class LiquidCarouselState extends State<LiquidCarousel>
   }
 
   Future<bool> swipeToNext() async {
-    final verticalOffset = Random().nextDouble() * context.size!.height;
+    final verticalOffset =
+        Random().nextInt(200) + (context.size!.height / 2) - 100;
 
     _handlePanDown(
         DragStartDetails(
@@ -206,7 +207,8 @@ class LiquidCarouselState extends State<LiquidCarousel>
   }
 
   Future<bool> swipeToPrevious() async {
-    final verticalOffset = Random().nextDouble() * context.size!.height;
+    final verticalOffset =
+        Random().nextInt(400) + (context.size!.height / 2) - 200;
 
     _handlePanDown(DragStartDetails(globalPosition: Offset(0, verticalOffset)),
         _getSize());

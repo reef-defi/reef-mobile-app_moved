@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:gap/gap.dart';
+import 'package:intl/intl.dart';
 import 'package:reef_mobile_app/model/feedback-data-model/FeedbackDataModel.dart';
 import 'package:reef_mobile_app/utils/elements.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
@@ -24,42 +25,41 @@ class _NFTViewState extends State<NFTView> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                    decoration: const BoxDecoration(
-                        color: Colors.purple,
-                        borderRadius: BorderRadius.all(Radius.circular(20))),
-                    child: Row(children: [
-                      const Gap(12),
-                      Observer(builder: (context) {
-                        return BlurableContent(
-                            Text(
-                              // TODO allow conversionRate to be null for no data
-                              "${balance}x",
-                              style: TextStyle(
-                                  color: Styles.textLightColor,
-                                  fontSize: 16,
-                                  overflow: TextOverflow.ellipsis),
-                            ),
-                            ReefAppState
-                                .instance.model.appConfig.displayBalance);
-                      }),
-                      const Gap(8),
-                      Text(
-                        name,
-                        style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w700,
-                            overflow: TextOverflow.ellipsis),
-                      ),
-                      const Gap(12),
-                    ]))
-              ],
-            ),
-            const Gap(12)
+            Container(
+              margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+              decoration: const BoxDecoration(
+                  color: Colors.purple,
+                  borderRadius: BorderRadius.all(Radius.circular(20))),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Gap(12),
+                  Observer(builder: (context) {
+                    return BlurableContent(
+                        Flexible(
+                            child: Text(
+                          // TODO allow conversionRate to be null for no data
+                          "${NumberFormat.compactLong().format(balance)}x",
+                          style: TextStyle(
+                              color: Styles.textLightColor,
+                              fontSize: 16,
+                              overflow: TextOverflow.ellipsis),
+                        )),
+                        ReefAppState.instance.model.appConfig.displayBalance);
+                  }),
+                  const Gap(8),
+                  Text(
+                    name,
+                    style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                        overflow: TextOverflow.ellipsis),
+                  ),
+                  const Gap(12),
+                ],
+              ),
+            )
           ],
         ));
   }
@@ -112,7 +112,7 @@ class _NFTViewState extends State<NFTView> {
                   mainAxisExtent: 125,
                   mainAxisSpacing: 12,
                   crossAxisSpacing: 12,
-                  maxCrossAxisExtent: 400),
+                  maxCrossAxisExtent: 500),
             ),
           ),
       ]);

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:reef_mobile_app/components/SignatureContentToggle.dart';
 import 'package:reef_mobile_app/components/home/NFT_view.dart';
 import 'package:reef_mobile_app/components/home/activity_view.dart';
@@ -147,7 +148,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-
     SizeConfig.init(context);
 
     return SignatureContentToggle(Container(
@@ -224,7 +224,6 @@ class _BalanceHeaderDelegate extends SliverPersistentHeaderDelegate {
   }
 
   Widget balanceSection(double size) {
-
     return AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeInOutCirc,
@@ -243,22 +242,33 @@ class _BalanceHeaderDelegate extends SliverPersistentHeaderDelegate {
                           style: TextStyle(
                               fontSize: 38,
                               fontWeight: FontWeight.w700,
-                              color: Styles.primaryColor)
-                              ),
-                              IconButton(onPressed: (){
-                                ReefAppState.instance.appConfigCtrl.toggleDisplayBalance();
-                              }, icon: Icon(ReefAppState.instance.model.appConfig.displayBalance == true? Icons.remove_red_eye_sharp : Icons.visibility_off),
-                              color: Styles.textLightColor
-        )
-
-                      ,
+                              color: Styles.primaryColor)),
+                      IconButton(
+                          onPressed: () {
+                            ReefAppState.instance.appConfigCtrl
+                                .toggleDisplayBalance();
+                          },
+                          icon: Icon(ReefAppState.instance.model.appConfig
+                                      .displayBalance ==
+                                  true
+                              ? Icons.remove_red_eye_sharp
+                              : Icons.visibility_off),
+                          color: Styles.textLightColor),
                     ],
                   ),
                   Center(
                     child: Observer(builder: (_) {
-                     return BlurableContent(
-                        GradientText("\$${_sumTokenBalances(ReefAppState.instance.model.tokens.selectedErc20List.toList()).toStringAsFixed(2)}",gradient: textGradient(),style: GoogleFonts.poppins(color: Styles.textColor,fontSize: 68,fontWeight: FontWeight.w800,letterSpacing: 3),),
-                        ReefAppState.instance.model.appConfig.displayBalance);
+                      return BlurableContent(
+                          GradientText(
+                            "\$${NumberFormat.compact().format(_sumTokenBalances(ReefAppState.instance.model.tokens.selectedErc20List.toList()))}",
+                            gradient: textGradient(),
+                            style: GoogleFonts.poppins(
+                                color: Styles.textColor,
+                                fontSize: 68,
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: 3),
+                          ),
+                          ReefAppState.instance.model.appConfig.displayBalance);
                     }),
                   ),
                 ]),
@@ -269,8 +279,7 @@ class _BalanceHeaderDelegate extends SliverPersistentHeaderDelegate {
   double _sumTokenBalances(List<TokenWithAmount> list) {
     var sum = 0.0;
     for (final token in list) {
-      double balValue =
-          getBalanceValueBI(token.balance, token.price);
+      double balValue = getBalanceValueBI(token.balance, token.price);
       if (balValue > 0) {
         sum = sum + balValue;
       }

@@ -150,18 +150,15 @@ class GradientRectSliderTrackShape extends SliderTrackShape
       this.darkenInactive: true});
 
   @override
-  void paint(
-    PaintingContext context,
-    Offset offset, {
-    required RenderBox parentBox,
-    required SliderThemeData sliderTheme,
-    required Animation<double> enableAnimation,
-    required TextDirection textDirection,
-    required Offset thumbCenter,
-    bool isDiscrete = false,
-    bool isEnabled = false,
-    double additionalActiveTrackHeight = 2,
-  }) {
+  void paint(PaintingContext context, Offset offset,
+      {required RenderBox parentBox,
+      required SliderThemeData sliderTheme,
+      required Animation<double> enableAnimation,
+      required Offset thumbCenter,
+      Offset? secondaryOffset,
+      bool isEnabled = false,
+      bool isDiscrete = false,
+      required TextDirection textDirection}) {
     assert(context != null);
     assert(offset != null);
     assert(parentBox != null);
@@ -224,11 +221,11 @@ class GradientRectSliderTrackShape extends SliderTrackShape
       RRect.fromLTRBAndCorners(
         trackRect.left,
         (textDirection == TextDirection.ltr)
-            ? trackRect.top - (additionalActiveTrackHeight / 2)
+            ? trackRect.top // - (additionalActiveTrackHeight / 2)
             : trackRect.top,
         thumbCenter.dx,
         (textDirection == TextDirection.ltr)
-            ? trackRect.bottom + (additionalActiveTrackHeight / 2)
+            ? trackRect.bottom // + (additionalActiveTrackHeight / 2)
             : trackRect.bottom,
         topLeft: (textDirection == TextDirection.ltr)
             ? activeTrackRadius
@@ -243,11 +240,11 @@ class GradientRectSliderTrackShape extends SliderTrackShape
       RRect.fromLTRBAndCorners(
         thumbCenter.dx,
         (textDirection == TextDirection.rtl)
-            ? trackRect.top - (additionalActiveTrackHeight / 2)
+            ? trackRect.top // - (additionalActiveTrackHeight / 2)
             : trackRect.top,
         trackRect.right,
         (textDirection == TextDirection.rtl)
-            ? trackRect.bottom + (additionalActiveTrackHeight / 2)
+            ? trackRect.bottom // + (additionalActiveTrackHeight / 2)
             : trackRect.bottom,
         topRight: (textDirection == TextDirection.rtl)
             ? activeTrackRadius

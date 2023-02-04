@@ -40,15 +40,26 @@ class _ActivityViewState extends State<ActivityView> {
 
     switch (type) {
       case "received":
-        amountText =
-            "+ ${amount != null ? toAmountDisplayBigInt(amount!, fractionDigits: 2) : 0}";
+        if (amount != null) {
+          amountText =
+              "+ ${formatAmountToDisplayBigInt(amount, fractionDigits: 2)}";
+        } else {
+          amountText = "0";
+        }
+        // amountText =
+        //     "+ ${amount != null ? toAmountDisplayBigInt(amount!, fractionDigits: 2) : 0}";
         icon = CupertinoIcons.arrow_down_left;
         bgColor = const Color(0x3335c57d);
         iconColor = const Color(0xff35c57d);
         break;
       case "sent":
-        amountText =
-            "- ${amount != null ? toAmountDisplayBigInt(amount!, fractionDigits: 2) : 0}";
+        if (amount != null) {
+          amountText = "- ${formatAmountToDisplayBigInt(amount)}";
+        } else {
+          amountText = "0";
+        }
+        // amountText =
+        //     "- ${amount != null ? toAmountDisplayBigInt(amount!, fractionDigits: 2) : 0}";
         icon = CupertinoIcons.arrow_up_right;
         bgColor = const Color(0x8cd8dce6);
         iconColor = const Color(0xffb2b0c8);

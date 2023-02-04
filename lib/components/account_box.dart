@@ -47,15 +47,16 @@ class _AccountBoxState extends State<AccountBox> {
             decoration: BoxDecoration(
                 gradient: const LinearGradient(
                     begin: Alignment(0, 0.2),
-                     end: Alignment(0.1, 1.3),
+                    end: Alignment(0.1, 1.3),
                     colors: [
                       Color.fromARGB(198, 93, 59, 173),
-                       Color.fromARGB(53, 185, 25, 197),
+                      Color.fromARGB(53, 185, 25, 197),
                     ]),
                 border: Border.all(
-                  color:   !widget.selected?Color(Styles.purpleColor.value): Color(Styles.blueColor.value),
-                  width: widget.selected?3:1
-                ),
+                    color: !widget.selected
+                        ? Color(Styles.purpleColor.value)
+                        : Color(Styles.blueColor.value),
+                    width: widget.selected ? 3 : 1),
                 borderRadius: BorderRadius.circular(15)),
             child: Stack(
               children: [
@@ -163,16 +164,18 @@ class _AccountBoxState extends State<AccountBox> {
                 width: 18,
                 height: 18),
             Gap(4),
-             Observer(builder:(_){
-              return BlurableContent(Text(
-              '${toAmountDisplayBigInt(reefAccount.data.balance)} REEF',
-              style: GoogleFonts.poppins(
-                color: Styles.blueColor,
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-              ),
-            ), ReefAppState.instance.model.appConfig.displayBalance);
-            } )
+            Observer(builder: (_) {
+              return BlurableContent(
+                  Text(
+                    '${formatAmountToDisplayBigInt(reefAccount.data.balance)} REEF',
+                    style: GoogleFonts.poppins(
+                      color: Styles.blueColor,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  ReefAppState.instance.model.appConfig.displayBalance);
+            })
           ])
         ],
       ),
