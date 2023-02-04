@@ -5,24 +5,29 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:reef_mobile_app/utils/elements.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 
-Future<dynamic> showModal(context, {child, dismissible = true, headText}) {
+Future<dynamic> showModal(context, {child, dismissible = true, headText, Color background = Styles.primaryBackgroundColor, Color textColor = Styles.textColor}) {
   return showDialog(
       context: context,
       barrierDismissible: dismissible,
       builder: (BuildContext context) => CustomModal(
-          child: child, headText: headText, dismissible: dismissible));
+          child: child, headText: headText, dismissible: dismissible, background: background, textColor: textColor));
 }
 
 class CustomModal extends StatefulWidget {
   final Widget child;
   final String headText;
   final bool dismissible;
+  final Color background;
+  final Color textColor;
 
   const CustomModal(
       {Key? key,
       required this.child,
       this.headText = "Transaction",
-      this.dismissible = true})
+      this.dismissible = true,
+      this.background = Styles.primaryBackgroundColor,
+      this.textColor = Styles.textColor,
+      })
       : super(key: key);
 
   @override
@@ -83,6 +88,7 @@ class CustomModalState extends State<CustomModal>
                 child: ScaleTransition(
                   scale: scaleAnimation,
                   child: ViewBoxContainer(
+                    color: widget.background,
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -107,7 +113,7 @@ class CustomModalState extends State<CustomModal>
                                       widget.headText,
                                       style: GoogleFonts.spaceGrotesk(
                                           fontSize: 18,
-                                          color: Styles.textColor,
+                                          color: widget.textColor,
                                           fontWeight: FontWeight.w500),
                                     ),
                                   ],

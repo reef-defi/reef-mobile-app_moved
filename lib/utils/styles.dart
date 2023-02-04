@@ -9,11 +9,11 @@ class Styles {
   static Color secondaryAccentColor = const Color(0xff5531a9);
   static Color yellowColor = const Color(0xFFDFE94B);
   static Color greenColor = const Color(0xff26b686);
-  static Color greyColor = const Color(0xFFE6E8E8);
+  static const Color greyColor = Color(0xFFE6E8E8);
   static Color whiteColor = Colors.white;
   static Color buttonColor = const Color(0xFF4C66EE);
-  static Color blueColor = const Color(0xff0d6efd);
-  static Color textColor = const Color(0xff313a52);
+  static const Color blueColor = Color(0xff0d6efd);
+  static const Color textColor = Color(0xff313a52);
   static Color navColor = const Color(0xffe5e1f0);
   static const Color boxBackgroundColor = Color(0xfff8f7fc);
   static const Color splashBackgroundColor = Color(0xfffef9f6);

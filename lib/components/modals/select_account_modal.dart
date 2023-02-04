@@ -7,6 +7,7 @@ import 'package:reef_mobile_app/model/StorageKey.dart';
 import 'package:reef_mobile_app/model/account/ReefAccount.dart';
 import 'package:reef_mobile_app/model/feedback-data-model/FeedbackDataModel.dart';
 import 'package:reef_mobile_app/pages/SplashScreen.dart';
+import 'package:reef_mobile_app/utils/styles.dart';
 
 // class SelectAccount extends StatelessWidget {
 //   final String signerAddress;
@@ -113,5 +114,5 @@ void showSelectAccountModal(String title, Function(String) callback,bool filterE
   var signerAddress = await ReefAppState.instance.storage
       .getValue(StorageKey.selected_address.name);
   showModal(context ?? navigatorKey.currentContext,
-      child: SelectAccount(signerAddress, callback, filterEvmAccounts), headText: title);
+      child: SelectAccount(signerAddress, callback, filterEvmAccounts), headText: title, background: Styles.purpleColor, textColor: Styles.textLightColor);
 }
