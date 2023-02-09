@@ -8,6 +8,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:reef_mobile_app/model/account/stored_account.dart';
 import 'package:reef_mobile_app/model/metadata/metadata.dart';
 import 'package:reef_mobile_app/model/auth_url/auth_url.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class StorageService {
   Completer<Box<dynamic>> mainBox = Completer();
@@ -17,7 +18,6 @@ class StorageService {
   Completer<Box<dynamic>> jwtsBox = Completer();
 
   StorageService() {
-    _checkPermission();
     _initAsync();
   }
 
@@ -82,8 +82,9 @@ class StorageService {
   }
 
   _initHive() async {
+    final prefs = await SharedPreferences.getInstance();
     var dir = await getApplicationDocumentsDirectory();
-    var path = dir.path + "/hive_store";
+    var path = "${dir.path}/hive_store";
     Hive
       ..init(path)
       ..registerAdapter(StoredAccountAdapter())
@@ -97,6 +98,11 @@ class StorageService {
 
     // Encryption
     const secureStorage = FlutterSecureStorage();
+    if (prefs.getBool('first_run') ?? true) {
+      await secureStorage.deleteAll();
+
+      prefs.setBool('first_run', false);
+    }
     var key = await secureStorage.read(key: 'encryptionKey');
     if (key == null) {
       var key = Hive.generateSecureKey();
