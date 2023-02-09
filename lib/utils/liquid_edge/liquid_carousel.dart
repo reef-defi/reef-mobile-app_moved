@@ -58,6 +58,8 @@ class LiquidCarouselState extends State<LiquidCarousel>
 
   @override
   void dispose() {
+    _previousSwipeController.dispose();
+    _nextSwipeController.dispose();
     _ticker.dispose();
     super.dispose();
   }
