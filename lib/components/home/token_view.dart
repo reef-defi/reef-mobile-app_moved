@@ -6,7 +6,6 @@ import 'package:intl/intl.dart';
 import 'package:reef_mobile_app/components/BlurableContent.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/feedback-data-model/FeedbackDataModel.dart';
-import 'package:reef_mobile_app/model/navigation/navigation_model.dart';
 import 'package:reef_mobile_app/utils/elements.dart';
 import 'package:reef_mobile_app/utils/functions.dart';
 import 'package:reef_mobile_app/utils/gradient_text.dart';
@@ -114,7 +113,7 @@ class _TokenViewState extends State<TokenView> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Expanded(
+                    /*Expanded(
                         child: ElevatedButton.icon(
                       icon: const Icon(
                         CupertinoIcons.repeat,
@@ -137,8 +136,9 @@ class _TokenViewState extends State<TokenView> {
                             .navigateToSwapPage(context: context);
                       },
                     )),
-                    const SizedBox(width: 15),
-                    Container(
+                    const SizedBox(width: 15),*/
+                    Expanded(
+                        child: Container(
                       decoration: BoxDecoration(
                           boxShadow: const [
                             BoxShadow(
@@ -175,7 +175,7 @@ class _TokenViewState extends State<TokenView> {
                                   context: context, preselected: address);
                         },
                       ),
-                    ),
+                    )),
                   ],
                 )
               ],
