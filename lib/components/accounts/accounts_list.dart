@@ -76,54 +76,55 @@ class AccountsList extends StatelessWidget {
     );
   }
 
-Widget toAccountBoxList(List<FeedbackDataModel<ReefAccount>> signers) {
+  Widget toAccountBoxList(List<FeedbackDataModel<ReefAccount>> signers) {
     signers.removeWhere((sig) => sig == null);
 
     Widget selectedWidget = Container();
     List<Widget> modifiedList = [];
 
     for (var acc in signers) {
-        if (selectedAddress != null && selectedAddress == acc.data.address) {
-            selectedWidget = Column(
-                children: [
-                    AccountBox(
-                        reefAccountFDM: acc,
-                        selected: true,
-                        onSelected: () => {},
-                        showOptions: true),
-                    const Gap(12)
-                ],
-            );
-        } else {
-            modifiedList.add(Column(
-                children: [
-                    AccountBox(
-                        reefAccountFDM: acc,
-                        selected: false,
-                        onSelected: () => selectAddress(acc.data.address),
-                        showOptions: true),
-                    const Gap(12)
-                ],
-            ));
-        }
+      if (selectedAddress != null && selectedAddress == acc.data.address) {
+        selectedWidget = Column(
+          children: [
+            AccountBox(
+                reefAccountFDM: acc,
+                selected: true,
+                onSelected: () => {},
+                showOptions: true),
+            const Gap(12)
+          ],
+        );
+      } else {
+        modifiedList.add(Column(
+          children: [
+            AccountBox(
+                reefAccountFDM: acc,
+                selected: false,
+                onSelected: () => selectAddress(acc.data.address),
+                showOptions: true),
+            const Gap(12)
+          ],
+        ));
+      }
     }
 
-    modifiedList.insert(
-        0,
-        Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+    if (signers.length > 1) {
+      modifiedList.insert(
+          0,
+          Row(mainAxisAlignment: MainAxisAlignment.start, children: [
             Padding(
-                padding: const EdgeInsets.only(bottom: 8.0),
-                child: Text(
-                    "Available",
-                    style: TextStyle(color: Styles.whiteColor, fontSize: 20.0),
-                ),
+              padding: const EdgeInsets.only(bottom: 8.0),
+              child: Text(
+                "Available",
+                style: TextStyle(color: Styles.whiteColor, fontSize: 20.0),
+              ),
             ),
-        ]));
-
+          ]));
+    }
     if (selectedWidget != null) {
-        modifiedList.insert(0, selectedWidget);
+      modifiedList.insert(0, selectedWidget);
     }
 
     return Wrap(spacing: 24, children: modifiedList);
-}
+  }
 }
