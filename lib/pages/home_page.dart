@@ -7,6 +7,9 @@ import 'package:reef_mobile_app/components/SignatureContentToggle.dart';
 import 'package:reef_mobile_app/components/home/NFT_view.dart';
 import 'package:reef_mobile_app/components/home/activity_view.dart';
 import 'package:reef_mobile_app/components/home/token_view.dart';
+import 'package:reef_mobile_app/components/modal.dart';
+import 'package:reef_mobile_app/components/modals/account_modals.dart';
+import 'package:reef_mobile_app/components/modals/add_account_modal.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/tokens/TokenWithAmount.dart';
 import 'package:reef_mobile_app/pages/test_page.dart';
@@ -102,7 +105,7 @@ class _HomePageState extends State<HomePage> {
             opacity: member["active"] ? 1 : 0.5,
             child: Text(
               member["name"],
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
                 color: Styles.textColor,
@@ -186,11 +189,24 @@ class _HomePageState extends State<HomePage> {
                 //       duration: const Duration(milliseconds: 200),
                 //       height: _isScrolling ? 16 : 0),
                 // ),
-                SliverClip(
-                  child: _viewsMap
-                      .where((option) => option["active"])
-                      .toList()[0]["component"],
-                )
+                Observer(builder: (_) {
+                  final accsFeedbackDataModel =
+                      ReefAppState.instance.model.accounts.accountsFDM;
+                  if (accsFeedbackDataModel.data.isEmpty) {
+                    return SliverPadding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 40, vertical: 12),
+                        sliver: SliverToBoxAdapter(
+                          child: createAccountBox(context),
+                        ));
+                  }
+                  // return Text('len=${accsFeedbackDataModel.data.length}');
+                  return SliverClip(
+                    child: _viewsMap
+                        .where((option) => option["active"])
+                        .toList()[0]["component"],
+                  );
+                }),
 
                 // height: ((size.height + 64) / 2),
                 // width: double.infinity,
@@ -199,6 +215,57 @@ class _HomePageState extends State<HomePage> {
                 // test()
               ],
             ))));
+  }
+
+  Widget createAccountBox(BuildContext context) => Flex(
+        direction: Axis.vertical,
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const SizedBox(height: 20),
+          const Text(
+            "No Account currently available, create or import an account to view your assets.",
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 20),
+          ElevatedButton.icon(
+              style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.resolveWith(
+                      (states) => Styles.purpleColor)),
+              onPressed: () {
+                showAddAccountModal('Add account', openModal,
+                    parentContext: context);
+              },
+              icon: const Icon(Icons.account_balance_wallet_outlined),
+              label: const Text("Create New Account")),
+        ],
+      );
+
+  void showAddAccountModal(String title, Function(String) callback,
+      {BuildContext? parentContext}) {
+    showModal(parentContext ?? context,
+        child: AddAccount(callback: callback), headText: title);
+  }
+
+  void openModal(String modalName) {
+    switch (modalName) {
+      case 'addAccount':
+        showCreateAccountModal(context);
+        break;
+      case 'importAccount':
+        showCreateAccountModal(context, fromMnemonic: true);
+        break;
+      default:
+        break;
+    }
+  }
+
+  void showCreateAccountModal(BuildContext context,
+      {bool fromMnemonic = false}) {
+    showModal(context,
+        headText: fromMnemonic ? "Import Account" : "Create Account",
+        dismissible: true,
+        child: CurrentScreen(fromMnemonic: fromMnemonic));
   }
 }
 

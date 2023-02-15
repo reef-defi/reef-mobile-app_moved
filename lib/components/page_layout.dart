@@ -2,6 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:reef_mobile_app/components/top_bar.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/navigation/navigation_model.dart';
@@ -29,8 +30,17 @@ class _BottomNavState extends State<BottomNav> {
 
   @override
   void initState() {
+    _checkNotificationPermission();
     ReefAppState.instance.navigationCtrl.carouselKey = _liquidCarouselKey;
     super.initState();
+  }
+
+  Future<bool> _checkNotificationPermission() async {
+    final status = await Permission.storage.status;
+    if (status.isDenied) {
+      await Permission.notification.request();
+    }
+    return status.isGranted;
   }
 
   Widget _getWidget(NavigationPage page) {
@@ -38,9 +48,8 @@ class _BottomNavState extends State<BottomNav> {
       case NavigationPage.home:
         return const HomePage();
       case NavigationPage.send:
-        return SendPage(
-            ReefAppState.instance.model.navigationModel.data ??
-                Constants.REEF_TOKEN_ADDRESS);
+        return SendPage(ReefAppState.instance.model.navigationModel.data ??
+            Constants.REEF_TOKEN_ADDRESS);
 
       case NavigationPage.accounts:
         return AccountsPage();
@@ -129,6 +138,7 @@ class _BottomNavState extends State<BottomNav> {
                     ),
                     Expanded(
                         child: LiquidCarousel(
+                      parentContext: context,
                       key: _liquidCarouselKey,
                       cyclic: true,
                       onSwipe: (int index) {
@@ -168,8 +178,8 @@ class _BottomNavState extends State<BottomNav> {
           }
           var itemColor = bottomNavigationBarItems.firstWhereOrNull((barItem) =>
                       barItem.page ==
-                      ReefAppState.instance.model.navigationModel
-                          .currentPage) !=
+                      ReefAppState
+                          .instance.model.navigationModel.currentPage) !=
                   null
               ? Styles.purpleColor
               : Colors.black38;

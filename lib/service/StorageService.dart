@@ -75,13 +75,13 @@ class StorageService {
   Future<dynamic> deleteJwt(String address) =>
       jwtsBox.future.then((Box<dynamic> box) => box.delete(address));
 
-  _initAsync() async {
+  Future<void> _initAsync() async {
     if (await _checkPermission()) {
       _initHive();
     }
   }
 
-  _initHive() async {
+  Future<void> _initHive() async {
     final prefs = await SharedPreferences.getInstance();
     var dir = await getApplicationDocumentsDirectory();
     var path = "${dir.path}/hive_store";
@@ -117,16 +117,18 @@ class StorageService {
   }
 
   Future<bool> _checkPermission() async {
-    var status = await Permission.storage.status;
+    final status = await Permission.storage.status;
     print('PERMISSION STORAGE=$status');
     if (status.isDenied) {
       // We didn't ask for permission yet or the permission has been denied before but not permanently.
       if (await Permission.storage.request().isGranted) {
         print("PERMISSION GRANTED");
+        return true;
       } else {
         print("PERMISSION DENIED");
+        return false;
       }
     }
-    return status.isGranted;
+    return await Permission.storage.status.isGranted;
   }
 }
