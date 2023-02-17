@@ -9,6 +9,8 @@ import 'package:reef_mobile_app/utils/constants.dart';
 import 'package:reef_mobile_app/utils/elements.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 import 'package:reef_mobile_app/utils/functions.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 
 const MIN_BALANCE = 5;
 
@@ -147,7 +149,7 @@ class _BindEvmState extends State<BindEvm> {
           func();
         },
         child: Text(
-          'Continue',
+          AppLocalizations.of(context)!.bind_modal_continue,
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w700,
@@ -184,7 +186,7 @@ class _BindEvmState extends State<BindEvm> {
 
   Widget buildBound() {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      const Text("Successfully connected to Ethereum VM address "),
+      Text(AppLocalizations.of(context)!.bind_modal_selected),
       Text(widget.bindFor.evmAddress.shorten(),
           style: const TextStyle(fontWeight: FontWeight.bold)),
       const Gap(48),
@@ -193,10 +195,10 @@ class _BindEvmState extends State<BindEvm> {
 
   Widget buildBind() {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Column(crossAxisAlignment: CrossAxisAlignment.start, children: const [
-        Text("Start using Reef EVM smart contracts."),
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Text(AppLocalizations.of(context)!.bind_modal_start_using_reef_evm),
         Gap(8),
-        Text("First connect EVM address for:"),
+        Text(AppLocalizations.of(context)!.bind_modal_first_connect),
         Gap(8)
       ]),
       // Bind for
@@ -213,19 +215,19 @@ class _BindEvmState extends State<BindEvm> {
         // Insufficient balance
         if (transferBalanceFrom == null) ...[
           // No other accounts with enough balance
-          const Text(
+          Text(
               "Not enough REEF in account for connect EVM address transaction fee."),
           const Gap(16),
         ] else ...[
           // Other accounts with enough balance
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Row(children: const [
+            Row(children: [
               Text("~$MIN_BALANCE REEF ",
                   style: TextStyle(fontWeight: FontWeight.bold)),
-              Text("is needed for transaction fee."),
+              Text(AppLocalizations.of(context)!.bind_modal_is_needed_for_transaction),
             ]),
             const Gap(24),
-            const Text("Coins will be transfered from account:"),
+            Text(AppLocalizations.of(context)!.bind_modal_coins_will_be_transferred),
             const Gap(8)
           ]),
           // Transfer from
