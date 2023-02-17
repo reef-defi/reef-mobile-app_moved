@@ -14,5 +14,7 @@
   "mainnet":"मेननेट",
   "network":"नेटवर्क",
   "home":"घर",
-  "accounts":"खाते "
+  "accounts":"खाते ",
+  "registering_on_network":"नेटवर्क पर पंजीकरण",
+  "new_password":"नया पासवर्ड"
 }

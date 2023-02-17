@@ -12,7 +12,9 @@
   "switch_network":"Switch Network",
   "testnet":"Testnet",
   "mainnet":"Mainnet",
-  "network":"Network",
+  "network":"NETWORK",
   "home":"Home",
-  "accounts":"Accounts"
+  "accounts":"Accounts",
+  "registering_on_network":"Registering on network",
+  "new_password":"NEW PASSWORD"
 }

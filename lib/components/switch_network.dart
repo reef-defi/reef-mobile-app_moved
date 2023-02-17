@@ -30,7 +30,11 @@ class _SwitchNetworkState extends State<SwitchNetwork> {
         ]),
         Observer(builder: (_) {
           if (ReefAppState.instance.model.network.selectedNetworkSwitching) {
-            return const Text('Registering on network');
+            return Builder(
+              builder: (context) {
+                return Text(AppLocalizations.of(context)!.registering_on_network);
+              }
+            );
           }
           return Row(children: [
             Builder(

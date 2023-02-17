@@ -6,6 +6,7 @@ import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/StorageKey.dart';
 import 'package:reef_mobile_app/pages/SplashScreen.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ChangePassword extends StatefulWidget {
   const ChangePassword({Key? key}) : super(key: key);
@@ -126,12 +127,16 @@ class _ChangePasswordState extends State<ChangePassword> {
               (confirmCurrPassword.isNotEmpty &&
                   !confirmCurrPasswordError)) ...[
             const Gap(12),
-            Text(
-              "NEW PASSWORD",
-              style: TextStyle(
-                  fontSize: 10,
-                  fontWeight: FontWeight.w500,
-                  color: Styles.textLightColor),
+            Builder(
+              builder: (context) {
+                return Text(
+                  AppLocalizations.of(context)!.new_password,
+                  style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w500,
+                      color: Styles.textLightColor),
+                );
+              }
             ),
             const Gap(8),
             Container(
@@ -261,13 +266,17 @@ class _ChangePasswordState extends State<ChangePassword> {
                           Navigator.of(context).pop();
                         }
                       },
-                      child: const Text(
-                        'Change Password',
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                        ),
+                      child: Builder(
+                        builder: (context) {
+                          return Text(
+                            AppLocalizations.of(context)!.change_password,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          );
+                        }
                       ),
                     ),
                   ),
