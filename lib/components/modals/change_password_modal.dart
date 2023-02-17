@@ -73,7 +73,7 @@ class _ChangePasswordState extends State<ChangePassword> {
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           if (hasPassword) ...[
             Text(
-              "CURRENT PASSWORD",
+              AppLocalizations.of(context)!.change_password_current_password,
               style: TextStyle(
                   fontSize: 10,
                   fontWeight: FontWeight.w500,
@@ -115,7 +115,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                   const Gap(8),
                   Flexible(
                     child: Text(
-                      "Password is incorrect",
+                      AppLocalizations.of(context)!.change_password_password_incorrect,
                       style: TextStyle(color: Colors.grey[600], fontSize: 13),
                     ),
                   ),
@@ -173,7 +173,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                   const Gap(8),
                   Flexible(
                     child: Text(
-                      "Password is too short",
+                      AppLocalizations.of(context)!.password_too_short,
                       style: TextStyle(color: Colors.grey[600], fontSize: 13),
                     ),
                   ),
@@ -183,7 +183,7 @@ class _ChangePasswordState extends State<ChangePassword> {
             if (newPassword.isNotEmpty && !newPasswordError) ...[
               const Gap(16),
               Text(
-                "REPEAT PASSWORD FOR VERIFICATION",
+                AppLocalizations.of(context)!.repetitive_password,
                 style: TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.w500,
@@ -225,7 +225,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                     const Gap(8),
                     Flexible(
                       child: Text(
-                        "Passwords do not match",
+                        AppLocalizations.of(context)!.password_do_not_match,
                         style: TextStyle(color: Colors.grey[600], fontSize: 13),
                       ),
                     ),

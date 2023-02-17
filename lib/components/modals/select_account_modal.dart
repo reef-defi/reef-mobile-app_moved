@@ -7,6 +7,7 @@ import 'package:reef_mobile_app/model/StorageKey.dart';
 import 'package:reef_mobile_app/model/account/ReefAccount.dart';
 import 'package:reef_mobile_app/model/feedback-data-model/FeedbackDataModel.dart';
 import 'package:reef_mobile_app/pages/SplashScreen.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SelectAccount extends StatelessWidget {
   final String signerAddress;
@@ -26,8 +27,8 @@ class SelectAccount extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (accountList.isEmpty)
-              const Text(
-                "No other accounts available",
+              Text(
+                AppLocalizations.of(context)!.no_other_accounts,
               )
             else
               Wrap(

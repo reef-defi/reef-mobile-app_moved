@@ -47,5 +47,8 @@
   "bind_modal_is_needed_for_transaction": "लेनदेन शुल्क के लिए आवश्यक है।",
   "bind_modal_coins_will_be_transferred": "सिक्के खाता से स्थानांतरित होंगे:",
   "bind_modal_start_using_reef_evm": "रीफ ईवीएम स्मार्ट कॉन्ट्रैक्ट का उपयोग शुरू करें।",
-  "bind_modal_first_connect": "पहले के लिए ईवीएम पते कनेक्ट करें:"
+  "bind_modal_first_connect": "पहले के लिए ईवीएम पते कनेक्ट करें:",
+  "change_password_current_password":"वर्तमान पासवर्ड",
+  "change_password_password_incorrect":"पासवर्ड गलत है",
+  "no_other_accounts":"कोई अन्य खाता उपलब्ध नहीं है"
 }

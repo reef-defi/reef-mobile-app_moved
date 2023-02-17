@@ -48,5 +48,8 @@
   "bind_modal_is_needed_for_transaction":"is needed for transaction fee.",
   "bind_modal_coins_will_be_transferred":"Coins will be transfered from account:",
   "bind_modal_start_using_reef_evm":"Start using Reef EVM smart contracts.",
-  "bind_modal_first_connect":"First connect EVM address for:"
+  "bind_modal_first_connect":"First connect EVM address for:",
+  "change_password_current_password":"CURRENT PASSWORD",
+  "change_password_password_incorrect":"Password is incorrect",
+  "no_other_accounts":"No other accounts available"
 }
