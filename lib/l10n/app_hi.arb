@@ -42,5 +42,10 @@
   "auth_url_list_cancel":"रद्द करें",
   "auth_url_list_yes":"हाँ",
   "auth_url_list_del":"वेबसाइट हटाएं",
-  "auth_url_list_no_website_yet":"अभी तक कोई वेबसाइट अनुरोध नहीं है!"
+  "auth_url_list_no_website_yet":"अभी तक कोई वेबसाइट अनुरोध नहीं है!","bind_modal_continue": "जारी रखें",
+  "bind_modal_selected": "इथेरियम वीएम पते से सफलतापूर्वक कनेक्ट हो गया है",
+  "bind_modal_is_needed_for_transaction": "लेनदेन शुल्क के लिए आवश्यक है।",
+  "bind_modal_coins_will_be_transferred": "सिक्के खाता से स्थानांतरित होंगे:",
+  "bind_modal_start_using_reef_evm": "रीफ ईवीएम स्मार्ट कॉन्ट्रैक्ट का उपयोग शुरू करें।",
+  "bind_modal_first_connect": "पहले के लिए ईवीएम पते कनेक्ट करें:"
 }

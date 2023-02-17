@@ -146,7 +146,7 @@ class _BindEvmState extends State<BindEvm> {
         onPressed: () {
           func();
         },
-        child: const Text(
+        child: Text(
           'Continue',
           style: TextStyle(
             fontSize: 16,
