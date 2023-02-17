@@ -11,6 +11,7 @@ import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/account/AccountCtrl.dart';
 import 'package:reef_mobile_app/model/feedback-data-model/FeedbackDataModel.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../components/SignatureContentToggle.dart';
 
@@ -92,12 +93,16 @@ class _AccountsPageState extends State<AccountsPage> {
               //   height: 24,
               // ),
               const Gap(8),
-              Text(
-                "My Account",
-                style: GoogleFonts.spaceGrotesk(
-                    fontWeight: FontWeight.w500,
-                    fontSize: 32,
-                    color: Colors.grey.shade100),
+              Builder(
+                builder: (context) {
+                  return Text(
+                    AppLocalizations.of(context)!.my_account,
+                    style: GoogleFonts.spaceGrotesk(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 32,
+                        color: Colors.grey.shade100),
+                  );
+                }
               ),
             ],
           ),
@@ -124,12 +129,16 @@ class _AccountsPageState extends State<AccountsPage> {
                     size: 22,
                   ),
                   const Gap(4),
-                  Text(
-                    "Add",
-                    style: GoogleFonts.roboto(
-                        color: Colors.grey.shade100,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500),
+                  Builder(
+                    builder: (context) {
+                      return Text(
+                        AppLocalizations.of(context)!.add,
+                        style: GoogleFonts.roboto(
+                            color: Colors.grey.shade100,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500),
+                      );
+                    }
                   )
                 ]),
               ),

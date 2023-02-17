@@ -56,6 +56,8 @@ dependencies:
   http: ^0.13.5
   local_auth: ^2.1.2
   sliver_tools: ^0.2.8
+  flutter_localizations:
+    sdk: flutter
   #freezed: ^2.0.3+1 #immutable classes
 
 dev_dependencies:
@@ -82,6 +84,7 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+  generate: true
 
   # To add assets to your application, add an assets section, like this:
   assets:

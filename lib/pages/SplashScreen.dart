@@ -13,6 +13,8 @@ import '../main.dart';
 import '../model/ReefAppState.dart';
 import '../service/JsApiService.dart';
 import '../service/StorageService.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 typedef WidgetCallback = Widget Function();
 
@@ -116,6 +118,9 @@ class _SplashAppState extends State<SplashApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Reef Chain App',
+    localizationsDelegates: AppLocalizations.localizationsDelegates,
+  supportedLocales: AppLocalizations.supportedLocales,
+      locale: const Locale('hi'),
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
           primarySwatch: Colors.blue,

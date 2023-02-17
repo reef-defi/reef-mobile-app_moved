@@ -11,6 +11,7 @@ import 'package:reef_mobile_app/utils/gradient_text.dart';
 import 'package:reef_mobile_app/utils/icon_url.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 import 'package:sliver_tools/sliver_tools.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class TokenView extends StatefulWidget {
   const TokenView({Key? key}) : super(key: key);
@@ -172,7 +173,7 @@ class _TokenViewState extends State<TokenView> {
         final selectedERC20s =
             ReefAppState.instance.model.tokens.selectedErc20s;
 
-        String? message = getFdmListMessage(selectedERC20s, 'Token');
+        String? message = getFdmListMessage(selectedERC20s, AppLocalizations.of(context)!.balance, AppLocalizations.of(context)!.loading);
 
         return MultiSliver(
           pushPinnedChildren: false,

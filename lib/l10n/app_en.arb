@@ -1,0 +1,18 @@
+{
+  "balance": "Balance",
+  "tokens": "Tokens",
+  "nfts": "NFTs",
+  "activity": "Activity",
+  "loading": "Loading",
+  "my_account":"My Account",
+  "add": "Add",
+  "settings":"Settings",
+  "change_password":"Change Password",
+  "developer_settings":"Developer Settings",
+  "switch_network":"Switch Network",
+  "testnet":"Testnet",
+  "mainnet":"Mainnet",
+  "network":"Network",
+  "home":"Home",
+  "accounts":"Accounts"
+}

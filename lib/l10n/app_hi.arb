@@ -1,0 +1,18 @@
+{
+  "balance": "मात्रा",
+  "tokens": "टोकन",
+  "nfts":"एनएफटी",
+  "activity": "गतिविधियाँ",
+  "loading":"लोड हो रहा है ",
+  "my_account":"मेरा खाता",
+  "add": "जोड़ें",
+  "settings":"समायोजन",
+  "change_password":"पासवर्ड बदलें",
+  "developer_settings":"डेवलपर सेटिंग्स",
+  "switch_network":"नेटवर्क बदलें",
+  "testnet":"टेस्टनेट",
+  "mainnet":"मेननेट",
+  "network":"नेटवर्क",
+  "home":"घर",
+  "accounts":"खाते "
+}

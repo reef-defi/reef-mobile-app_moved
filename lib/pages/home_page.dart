@@ -15,6 +15,7 @@ import 'package:reef_mobile_app/utils/gradient_text.dart';
 import 'package:reef_mobile_app/utils/size_config.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 import 'package:sliver_tools/sliver_tools.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../components/BlurableContent.dart';
 import 'DAppPage.dart';
@@ -100,7 +101,7 @@ class _HomePageState extends State<HomePage> {
           child: Opacity(
             opacity: member["active"] ? 1 : 0.5,
             child: Text(
-              member["name"],
+              member["name"]=="Tokens"?AppLocalizations.of(context)!.balance:member["name"]=="Activity"?AppLocalizations.of(context)!.activity:AppLocalizations.of(context)!.nfts,
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
@@ -239,12 +240,16 @@ class _BalanceHeaderDelegate extends SliverPersistentHeaderDelegate {
                 children: [
                   Row(
                     children: [
-                      Text("Balance",
-                          style: TextStyle(
-                              fontSize: 38,
-                              fontWeight: FontWeight.w700,
-                              color: Styles.primaryColor)
-                              ),
+                      Builder(
+                        builder: (context) {
+                          return Text(AppLocalizations.of(context)!.balance,
+                              style: TextStyle(
+                                  fontSize: 38,
+                                  fontWeight: FontWeight.w700,
+                                  color: Styles.primaryColor)
+                                  );
+                        }
+                      ),
                               IconButton(onPressed: (){
                                 ReefAppState.instance.appConfigCtrl.toggleDisplayBalance();
                               }, icon: Icon(ReefAppState.instance.model.appConfig.displayBalance == true? Icons.remove_red_eye_sharp : Icons.visibility_off),

@@ -8,6 +8,7 @@ import 'package:reef_mobile_app/utils/elements.dart';
 import 'package:reef_mobile_app/utils/functions.dart';
 import 'package:reef_mobile_app/utils/icon_url.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../model/feedback-data-model/FeedbackDataModel.dart';
 
@@ -135,7 +136,7 @@ class _ActivityViewState extends State<ActivityView> {
         ]));*/
     return Observer(builder: (_) {
       String? message = getFdmListMessage(
-          ReefAppState.instance.model.tokens.txHistory, 'activity item');
+          ReefAppState.instance.model.tokens.txHistory, AppLocalizations.of(context)!.activity, AppLocalizations.of(context)!.loading);
 
       return SliverList(
         delegate: SliverChildListDelegate([
