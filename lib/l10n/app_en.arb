@@ -38,5 +38,9 @@
   "incorrect_password":"Incorrect Password",
   "auth_url":"Only approve this request if you trust the application. Approving gives the application access to the addresses of your accounts.",
   "auth_allow":"Yes, allow this application access",
-  "auth_reject":"Reject"
+  "auth_reject":"Reject",
+  "auth_url_list_cancel":"Cancel",
+  "auth_url_list_yes":"Yes",
+  "auth_url_list_del":"Delete Website",
+  "auth_url_list_no_website_yet":"No website request yet!"
 }
