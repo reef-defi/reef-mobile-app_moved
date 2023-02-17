@@ -5,6 +5,7 @@ import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/network/NetworkCtrl.dart';
 import 'package:reef_mobile_app/pages/SplashScreen.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SwitchNetwork extends StatefulWidget {
   const SwitchNetwork({Key? key}) : super(key: key);
@@ -20,15 +21,23 @@ class _SwitchNetworkState extends State<SwitchNetwork> {
       padding: const EdgeInsets.fromLTRB(10.0, 6.0, 10.0, 6.0),
       child: Column(children: [
         Row(children: [
-          Text("NETWORK",
-              style: TextStyle(color: Styles.textLightColor, fontSize: 12)),
+          Builder(
+            builder: (context) {
+              return Text(AppLocalizations.of(context)!.network,
+                  style: TextStyle(color: Styles.textLightColor, fontSize: 12));
+            }
+          ),
         ]),
         Observer(builder: (_) {
           if (ReefAppState.instance.model.network.selectedNetworkSwitching) {
             return const Text('Registering on network');
           }
           return Row(children: [
-            Text("Testnet", style: Theme.of(context).textTheme.bodyText1),
+            Builder(
+              builder: (context) {
+                return Text(AppLocalizations.of(context)!.testnet, style: Theme.of(context).textTheme.bodyText1);
+              }
+            ),
             Switch(
               // TODO listen to currentNetwork from mobx model
               value: ReefAppState.instance.model.network.selectedNetworkName ==
@@ -41,7 +50,11 @@ class _SwitchNetworkState extends State<SwitchNetwork> {
               },
               activeColor: Styles.primaryAccentColorDark,
             ),
-            Text("Mainnet", style: Theme.of(context).textTheme.bodyText1)
+            Builder(
+              builder: (context) {
+                return Text(AppLocalizations.of(context)!.mainnet, style: Theme.of(context).textTheme.bodyText1);
+              }
+            )
           ]);
         }),
       ]),
