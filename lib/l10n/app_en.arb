@@ -35,5 +35,8 @@
   "import_the_account": "Import the account",
   "add_the_account":"Add the account",
   "send":"Send",
-  "incorrect_password":"Incorrect Password"
+  "incorrect_password":"Incorrect Password",
+  "auth_url":"Only approve this request if you trust the application. Approving gives the application access to the addresses of your accounts.",
+  "auth_allow":"Yes, allow this application access",
+  "auth_reject":"Reject"
 }
