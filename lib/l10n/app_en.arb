@@ -16,5 +16,22 @@
   "home":"Home",
   "accounts":"Accounts",
   "registering_on_network":"Registering on network",
-  "new_password":"NEW PASSWORD"
+  "new_password":"NEW PASSWORD",
+  "add_account":"Add account",
+  "create_new_account":"Create new account",
+  "import_account_from_pre_existing_seed":"Import account from pre-existing seed",
+  "copy_to_clipboard":"Copy to clipboard",
+  "please_write_down":"Please write down your wallet's mnemonic seed and keep it in a safe place. The mnemonic can be used to restore your wallet. Keep it carefully to not lose your assets.",
+  "i_have_saved_my":"I have saved my mnemonic seed safely.",
+  "next_step":"Next Step",
+  "generated_2_word":"GENERATED 12-WORD MNEMONIC SEED: ",
+  "existing":"EXISTING 12 OR 24-WORD MNEMONIC SEED:",
+  "already_added":"This account has already been added",
+  "descriptive":"A DESCRIPTIVE NAME FOR YOUR ACCOUNT",
+  "password_for_reef_app":"A PASSWORD FOR REEF APP",
+  "password_too_short":"Password is too short",
+  "repetitive_password":"REPEAT PASSWORD FOR VERIFICATION",
+  "password_do_not_match": "Passwords do not match",
+  "import_the_account": "Import the account",
+  "add_the_account":"Add the account"
 }

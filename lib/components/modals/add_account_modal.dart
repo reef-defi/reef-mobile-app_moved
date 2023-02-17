@@ -3,6 +3,7 @@ import 'package:gap/gap.dart';
 import 'package:reef_mobile_app/components/modal.dart';
 import 'package:reef_mobile_app/pages/SplashScreen.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AddAccount extends StatelessWidget {
   final Function(String) callback;
@@ -30,8 +31,12 @@ class AddAccount extends StatelessWidget {
                     size: 22,
                   ),
                   const Gap(8),
-                  Text('Create new account',
-                      style: Theme.of(context).textTheme.bodyText1),
+                  Builder(
+                    builder: (context) {
+                      return Text(AppLocalizations.of(context)!.create_new_account,
+                          style: Theme.of(context).textTheme.bodyText1);
+                    }
+                  ),
                 ],
               ),
             ),
@@ -52,8 +57,12 @@ class AddAccount extends StatelessWidget {
                   ),
                   const Gap(8),
                   Flexible(
-                    child: Text('Import account from pre-existing seed',
-                        style: Theme.of(context).textTheme.bodyText1),
+                    child: Builder(
+                      builder: (context) {
+                        return Text(AppLocalizations.of(context)!.import_account_from_pre_existing_seed,
+                            style: Theme.of(context).textTheme.bodyText1);
+                      }
+                    ),
                   ),
                 ],
               ),

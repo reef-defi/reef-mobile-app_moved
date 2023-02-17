@@ -110,7 +110,7 @@ class _AccountsPageState extends State<AccountsPage> {
             children: [
               MaterialButton(
                 onPressed: () => showAddAccountModal(
-                    'Add account', openModal,
+                    AppLocalizations.of(context)!.add_account, openModal,
                     context: context),
                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 minWidth: 0,
