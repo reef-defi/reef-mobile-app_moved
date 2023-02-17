@@ -14,6 +14,7 @@ import 'package:reef_mobile_app/utils/elements.dart';
 import 'package:reef_mobile_app/utils/functions.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 class AccountImportContent extends StatefulWidget {
   final VoidCallback next;
   final Function(StoredAccount) callback;
@@ -886,7 +887,7 @@ Widget buildAccountBox(StoredAccount? account, {name = "<No Name>"}) {
 
 void showCreateAccountModal(BuildContext context, {bool fromMnemonic = false}) {
   showModal(context,
-      headText: fromMnemonic ? "Import Account" : "Create Account",
+      headText: fromMnemonic ? AppLocalizations.of(context)!.import_the_account : AppLocalizations.of(context)!.create_new_account,
       dismissible: true,
       child: CurrentScreen(fromMnemonic: fromMnemonic));
 }

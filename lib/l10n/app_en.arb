@@ -33,5 +33,7 @@
   "repetitive_password":"REPEAT PASSWORD FOR VERIFICATION",
   "password_do_not_match": "Passwords do not match",
   "import_the_account": "Import the account",
-  "add_the_account":"Add the account"
+  "add_the_account":"Add the account",
+  "send":"Send",
+  "incorrect_password":"Incorrect Password"
 }

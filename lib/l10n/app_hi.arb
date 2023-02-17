@@ -33,5 +33,7 @@
   "repetitive_password":"सत्यापन के लिए पासवर्ड दोहराएं",
   "password_do_not_match": "सांकेतिक शब्द मेल नहीं खाते",
   "import_the_account": "खाता आयात करें",
-  "add_the_account":"खाता जोड़ें"
+  "add_the_account":"खाता जोड़ें",
+  "send":"भेजें",
+  "incorrect_password":"गलत पासवर्ड"
 }
