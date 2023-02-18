@@ -218,7 +218,7 @@ class _AccountBoxState extends State<AccountBox> {
                       children: <TextSpan>[
                         TextSpan(
                           text:
-                              " ${widget.reefAccountFDM.data.evmAddress?.shorten()}",
+                              " ${widget.reefAccountFDM.data.evmAddress.shorten()}",
                           style: const TextStyle(
                               fontSize: 14, fontWeight: FontWeight.bold),
                         ),
@@ -291,7 +291,7 @@ showAlertDialog(BuildContext context, ReefAccount signer) {
   AlertDialog alert = AlertDialog(
     title: const Text("Delete Account"),
     content: Text(
-        "You will delete account with name ${signer.name} ${signer.address?.shorten()}. Continue?"),
+        "You will delete account with name ${signer.name} ${signer.address.shorten()}. Continue?"),
     actions: [
       cancelButton,
       continueButton,

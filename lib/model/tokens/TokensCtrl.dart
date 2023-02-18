@@ -29,7 +29,7 @@ class TokenCtrl {
       ParseListFn<StatusDataObject<TokenNFT>> parsableListFn =
           getParsableListFn(TokenNFT.fromJson);
       var tokensListFdm = StatusDataObject.fromJsonList(tokens, parsableListFn);
-      print('NFTs=${tokensListFdm.data?.length}');
+      print('NFTs=${tokensListFdm.data.length}');
       tokenModel.setSelectedNFTs(tokensListFdm);
     });
 

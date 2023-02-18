@@ -1,4 +1,5 @@
-mport 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 import 'package:reef_mobile_app/model/status-data-object/StatusDataObject.dart';
