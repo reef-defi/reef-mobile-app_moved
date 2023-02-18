@@ -1,5 +1,5 @@
 import 'package:mobx/mobx.dart';
-import 'package:reef_mobile_app/model/feedback-data-model/FeedbackDataModel.dart';
+import 'package:reef_mobile_app/model/status-data-object/StatusDataObject.dart';
 import 'package:reef_mobile_app/model/tokens/TokenActivity.dart';
 import 'package:reef_mobile_app/model/tokens/TokenNFT.dart';
 import 'package:reef_mobile_app/model/tokens/TokenWithAmount.dart';
@@ -10,13 +10,13 @@ class TokenModel = _TokenModel with _$TokenModel;
 
 abstract class _TokenModel with Store {
   @observable
-  FeedbackDataModel<List<FeedbackDataModel<TokenWithAmount>>> selectedErc20s =
-      FeedbackDataModel(
+  StatusDataObject<List<StatusDataObject<TokenWithAmount>>> selectedErc20s =
+      StatusDataObject(
           [], [FeedbackStatus(StatusCode.loading, 'Setting up token list.')]);
 
   @action
   void setSelectedErc20s(
-      FeedbackDataModel<List<FeedbackDataModel<TokenWithAmount>>> tknsFdm) {
+      StatusDataObject<List<StatusDataObject<TokenWithAmount>>> tknsFdm) {
     selectedErc20s = tknsFdm;
   }
 
@@ -29,22 +29,22 @@ abstract class _TokenModel with Store {
       selectedNFTs.data.map((fdm) => fdm.data).toList();
 
   @observable
-  FeedbackDataModel<List<FeedbackDataModel<TokenNFT>>> selectedNFTs =
-      FeedbackDataModel(
+  StatusDataObject<List<StatusDataObject<TokenNFT>>> selectedNFTs =
+      StatusDataObject(
           [], [FeedbackStatus(StatusCode.loading, 'Setting up token list.')]);
 
   @action
   void setSelectedNFTs(
-      FeedbackDataModel<List<FeedbackDataModel<TokenNFT>>> tknsFdm) {
+      StatusDataObject<List<StatusDataObject<TokenNFT>>> tknsFdm) {
     selectedNFTs = tknsFdm;
   }
 
   @observable
-  FeedbackDataModel<List<TokenActivity>> txHistory = FeedbackDataModel([],
+  StatusDataObject<List<TokenActivity>> txHistory = StatusDataObject([],
       [FeedbackStatus(StatusCode.loading, 'Setting up transaction history.')]);
 
   @action
-  void setTxHistory(FeedbackDataModel<List<TokenActivity>> historyFdm) {
+  void setTxHistory(StatusDataObject<List<TokenActivity>> historyFdm) {
     txHistory = historyFdm;
   }
 

@@ -1,5 +1,5 @@
 import 'package:mobx/mobx.dart';
-import 'package:reef_mobile_app/model/feedback-data-model/FeedbackDataModel.dart';
+import 'package:reef_mobile_app/model/status-data-object/StatusDataObject.dart';
 
 import 'ReefAccount.dart';
 
@@ -12,8 +12,8 @@ abstract class _AccountModel with Store {
   String? selectedAddress;
 
   @observable
-  FeedbackDataModel<List<FeedbackDataModel<ReefAccount>>> accountsFDM =
-      FeedbackDataModel(
+  StatusDataObject<List<StatusDataObject<ReefAccount>>> accountsFDM =
+      StatusDataObject(
           [], [FeedbackStatus(StatusCode.loading, 'Initializing')]);
 
   @action
@@ -23,7 +23,7 @@ abstract class _AccountModel with Store {
 
   @action
   void setAccountsFDM(
-      FeedbackDataModel<List<FeedbackDataModel<ReefAccount>>> accounts) {
+      StatusDataObject<List<StatusDataObject<ReefAccount>>> accounts) {
     accountsFDM = accounts;
   }
 

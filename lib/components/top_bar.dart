@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
-import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/navigation/navigation_model.dart';
 import 'package:reef_mobile_app/utils/size_config.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
@@ -79,7 +79,7 @@ Widget accountPill(BuildContext context, String title) {
                     color: Styles.blueColor),
                 Padding(
                   padding: EdgeInsets.only(left: 10),
-                  child: Text((title ?? ''),
+                  child: Text((title),
                       style: GoogleFonts.spaceGrotesk(
                           color: Colors.white,
                           fontSize: 18,
