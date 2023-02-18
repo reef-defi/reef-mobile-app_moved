@@ -381,9 +381,9 @@ Future<TxDecodedData> _getTxDecodedData(SignatureRequest request) async {
 }
 
 void showSigningModal(context, SignatureRequest signatureRequest) async {
-  var account = ReefAppState.instance.model.accounts.accountsFDM.data.firstWhere(
-      (acc) => acc.data.address == signatureRequest.payload.address,
-      orElse: () => throw Exception("Signer not found"));
+  var account = ReefAppState.instance.model.accounts.accountsFDM.data
+      .firstWhere((acc) => acc.data.address == signatureRequest.payload.address,
+          orElse: () => throw Exception("Signer not found"));
 
   var signatureIdent = signatureRequest.signatureIdent;
 

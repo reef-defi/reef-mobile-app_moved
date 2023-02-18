@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:gap/gap.dart';
 import 'package:reef_mobile_app/components/account_box.dart';
 import 'package:reef_mobile_app/components/modal.dart';
@@ -109,8 +108,7 @@ class SelectAccount extends StatelessWidget {
                             ],
                           ),
                         )
-                        .toList())
-        ));
+                        .toList())));
   }
 }
 
