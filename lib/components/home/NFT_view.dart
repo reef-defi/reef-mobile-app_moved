@@ -26,14 +26,14 @@ class _NFTViewState extends State<NFTView> {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Container(
-              margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+              margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
               decoration: const BoxDecoration(
                   color: Colors.purple,
-                  borderRadius: BorderRadius.all(Radius.circular(20))),
+                  borderRadius: BorderRadius.all(Radius.circular(10))),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Gap(12),
+                  const Gap(8),
                   Observer(builder: (context) {
                     return BlurableContent(
                         Flexible(
@@ -42,7 +42,7 @@ class _NFTViewState extends State<NFTView> {
                           "${NumberFormat.compactLong().format(balance)}x",
                           style: TextStyle(
                               color: Styles.textLightColor,
-                              fontSize: 16,
+                              fontSize: 12,
                               overflow: TextOverflow.ellipsis),
                         )),
                         ReefAppState.instance.model.appConfig.displayBalance);
@@ -52,11 +52,11 @@ class _NFTViewState extends State<NFTView> {
                     name,
                     style: const TextStyle(
                         color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w900,
                         overflow: TextOverflow.ellipsis),
                   ),
-                  const Gap(12),
+                  const Gap(8),
                 ],
               ),
             )
@@ -95,7 +95,7 @@ class _NFTViewState extends State<NFTView> {
           )
         else if (selectedNFTs.data.isNotEmpty)
           SliverPadding(
-            padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 16),
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
             sliver: SliverGrid(
               delegate: SliverChildBuilderDelegate(
                 (context, index) {
@@ -109,10 +109,10 @@ class _NFTViewState extends State<NFTView> {
                 childCount: selectedNFTs.data.length,
               ),
               gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                  mainAxisExtent: 125,
-                  mainAxisSpacing: 12,
-                  crossAxisSpacing: 12,
-                  maxCrossAxisExtent: 500),
+                  mainAxisExtent: 160,
+                  mainAxisSpacing: 8,
+                  crossAxisSpacing: 8,
+                  maxCrossAxisExtent: 250),
             ),
           ),
       ]);
