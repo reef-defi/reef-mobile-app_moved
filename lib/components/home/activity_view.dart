@@ -9,7 +9,7 @@ import 'package:reef_mobile_app/utils/functions.dart';
 import 'package:reef_mobile_app/utils/icon_url.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 
-import '../../model/feedback-data-model/FeedbackDataModel.dart';
+import '../../model/status-data-object/StatusDataObject.dart';
 import '../BlurContent.dart';
 
 class ActivityView extends StatefulWidget {

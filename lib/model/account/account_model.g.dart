@@ -37,14 +37,13 @@ mixin _$AccountModel on _AccountModel, Store {
       Atom(name: '_AccountModel.accountsFDM', context: context);
 
   @override
-  FeedbackDataModel<List<FeedbackDataModel<ReefAccount>>> get accountsFDM {
+  StatusDataObject<List<StatusDataObject<ReefAccount>>> get accountsFDM {
     _$accountsFDMAtom.reportRead();
     return super.accountsFDM;
   }
 
   @override
-  set accountsFDM(
-      FeedbackDataModel<List<FeedbackDataModel<ReefAccount>>> value) {
+  set accountsFDM(StatusDataObject<List<StatusDataObject<ReefAccount>>> value) {
     _$accountsFDMAtom.reportWrite(value, super.accountsFDM, () {
       super.accountsFDM = value;
     });
@@ -66,7 +65,7 @@ mixin _$AccountModel on _AccountModel, Store {
 
   @override
   void setAccountsFDM(
-      FeedbackDataModel<List<FeedbackDataModel<ReefAccount>>> accounts) {
+      StatusDataObject<List<StatusDataObject<ReefAccount>>> accounts) {
     final _$actionInfo = _$_AccountModelActionController.startAction(
         name: '_AccountModel.setAccountsFDM');
     try {

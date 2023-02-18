@@ -29,15 +29,14 @@ mixin _$TokenModel on _TokenModel, Store {
       Atom(name: '_TokenModel.selectedErc20s', context: context);
 
   @override
-  FeedbackDataModel<List<FeedbackDataModel<TokenWithAmount>>>
-      get selectedErc20s {
+  StatusDataObject<List<StatusDataObject<TokenWithAmount>>> get selectedErc20s {
     _$selectedErc20sAtom.reportRead();
     return super.selectedErc20s;
   }
 
   @override
   set selectedErc20s(
-      FeedbackDataModel<List<FeedbackDataModel<TokenWithAmount>>> value) {
+      StatusDataObject<List<StatusDataObject<TokenWithAmount>>> value) {
     _$selectedErc20sAtom.reportWrite(value, super.selectedErc20s, () {
       super.selectedErc20s = value;
     });
@@ -47,13 +46,13 @@ mixin _$TokenModel on _TokenModel, Store {
       Atom(name: '_TokenModel.selectedNFTs', context: context);
 
   @override
-  FeedbackDataModel<List<FeedbackDataModel<TokenNFT>>> get selectedNFTs {
+  StatusDataObject<List<StatusDataObject<TokenNFT>>> get selectedNFTs {
     _$selectedNFTsAtom.reportRead();
     return super.selectedNFTs;
   }
 
   @override
-  set selectedNFTs(FeedbackDataModel<List<FeedbackDataModel<TokenNFT>>> value) {
+  set selectedNFTs(StatusDataObject<List<StatusDataObject<TokenNFT>>> value) {
     _$selectedNFTsAtom.reportWrite(value, super.selectedNFTs, () {
       super.selectedNFTs = value;
     });
@@ -63,13 +62,13 @@ mixin _$TokenModel on _TokenModel, Store {
       Atom(name: '_TokenModel.txHistory', context: context);
 
   @override
-  FeedbackDataModel<List<TokenActivity>> get txHistory {
+  StatusDataObject<List<TokenActivity>> get txHistory {
     _$txHistoryAtom.reportRead();
     return super.txHistory;
   }
 
   @override
-  set txHistory(FeedbackDataModel<List<TokenActivity>> value) {
+  set txHistory(StatusDataObject<List<TokenActivity>> value) {
     _$txHistoryAtom.reportWrite(value, super.txHistory, () {
       super.txHistory = value;
     });
@@ -96,7 +95,7 @@ mixin _$TokenModel on _TokenModel, Store {
 
   @override
   void setSelectedErc20s(
-      FeedbackDataModel<List<FeedbackDataModel<TokenWithAmount>>> tknsFdm) {
+      StatusDataObject<List<StatusDataObject<TokenWithAmount>>> tknsFdm) {
     final _$actionInfo = _$_TokenModelActionController.startAction(
         name: '_TokenModel.setSelectedErc20s');
     try {
@@ -108,7 +107,7 @@ mixin _$TokenModel on _TokenModel, Store {
 
   @override
   void setSelectedNFTs(
-      FeedbackDataModel<List<FeedbackDataModel<TokenNFT>>> tknsFdm) {
+      StatusDataObject<List<StatusDataObject<TokenNFT>>> tknsFdm) {
     final _$actionInfo = _$_TokenModelActionController.startAction(
         name: '_TokenModel.setSelectedNFTs');
     try {
@@ -119,7 +118,7 @@ mixin _$TokenModel on _TokenModel, Store {
   }
 
   @override
-  void setTxHistory(FeedbackDataModel<List<TokenActivity>> historyFdm) {
+  void setTxHistory(StatusDataObject<List<TokenActivity>> historyFdm) {
     final _$actionInfo = _$_TokenModelActionController.startAction(
         name: '_TokenModel.setTxHistory');
     try {
