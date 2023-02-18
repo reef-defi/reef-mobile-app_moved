@@ -2,14 +2,14 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:reef_mobile_app/model/account/ReefAccount.dart';
-import 'package:reef_mobile_app/model/feedback-data-model/FeedbackDataModel.dart';
+import 'package:reef_mobile_app/model/status-data-object/StatusDataObject.dart';
 
 import '../../utils/styles.dart';
 import '../account_box.dart';
 import '../modals/account_modals.dart';
 
 class AccountsList extends StatelessWidget {
-  final List<FeedbackDataModel<ReefAccount>> accounts;
+  final List<StatusDataObject<ReefAccount>> accounts;
   final void Function(String) selectAddress;
   final String? selectedAddress;
   const AccountsList(this.accounts, this.selectedAddress, this.selectAddress,
@@ -76,7 +76,7 @@ class AccountsList extends StatelessWidget {
     );
   }
 
-  Widget toAccountBoxList(List<FeedbackDataModel<ReefAccount>> signers) {
+  Widget toAccountBoxList(List<StatusDataObject<ReefAccount>> signers) {
     signers.removeWhere((sig) => sig == null);
 
     Widget selectedWidget = Container();

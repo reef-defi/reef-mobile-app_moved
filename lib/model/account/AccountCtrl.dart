@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:reef_mobile_app/model/StorageKey.dart';
 import 'package:reef_mobile_app/model/account/ReefAccount.dart';
 import 'package:reef_mobile_app/model/account/stored_account.dart';
-import 'package:reef_mobile_app/model/feedback-data-model/FeedbackDataModel.dart';
+import 'package:reef_mobile_app/model/status-data-object/StatusDataObject.dart';
 import 'package:reef_mobile_app/service/JsApiService.dart';
 import 'package:reef_mobile_app/service/StorageService.dart';
 import 'package:reef_mobile_app/utils/constants.dart';
@@ -121,9 +121,9 @@ class AccountCtrl {
     jsApi
         .jsObservable('window.reefState.accounts_status\$')
         .listen((accs) async {
-      ParseListFn<FeedbackDataModel<ReefAccount>> parsableListFn =
+      ParseListFn<StatusDataObject<ReefAccount>> parsableListFn =
           getParsableListFn(ReefAccount.fromJson);
-      var accsListFdm = FeedbackDataModel.fromJsonList(accs, parsableListFn);
+      var accsListFdm = StatusDataObject.fromJsonList(accs, parsableListFn);
 
       print(
           'GOT ACCOUNTS ${accsListFdm.hasStatus(StatusCode.completeData)} ${accsListFdm.statusList[0].message} len =${accsListFdm.data.length}');
@@ -157,8 +157,7 @@ class AccountCtrl {
   }
 
   void _setAccountIconsFromStorage(
-      FeedbackDataModel<List<FeedbackDataModel<ReefAccount>>>
-          accsListFdm) async {
+      StatusDataObject<List<StatusDataObject<ReefAccount>>> accsListFdm) async {
     var accIcons = [];
 
     (await _storage.getAllAccounts()).forEach(((account) => {

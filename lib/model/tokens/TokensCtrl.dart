@@ -1,4 +1,4 @@
-import 'package:reef_mobile_app/model/feedback-data-model/FeedbackDataModel.dart';
+import 'package:reef_mobile_app/model/status-data-object/StatusDataObject.dart';
 import 'package:reef_mobile_app/model/tokens/TokenActivity.dart';
 import 'package:reef_mobile_app/model/tokens/TokenNFT.dart';
 import 'package:reef_mobile_app/model/tokens/TokenWithAmount.dart';
@@ -13,10 +13,9 @@ class TokenCtrl {
     jsApi
         .jsObservable('window.reefState.selectedTokenPrices_status\$')
         .listen((tokens) {
-      ParseListFn<FeedbackDataModel<TokenWithAmount>> parsableListFn =
+      ParseListFn<StatusDataObject<TokenWithAmount>> parsableListFn =
           getParsableListFn(TokenWithAmount.fromJson);
-      var tokensListFdm =
-          FeedbackDataModel.fromJsonList(tokens, parsableListFn);
+      var tokensListFdm = StatusDataObject.fromJsonList(tokens, parsableListFn);
 
       // print('GOT TOKENS ${tokensListFdm.data.length}');
       // print(
@@ -27,16 +26,15 @@ class TokenCtrl {
     jsApi
         .jsObservable('window.reefState.selectedNFTs_status\$')
         .listen((tokens) {
-      ParseListFn<FeedbackDataModel<TokenNFT>> parsableListFn =
+      ParseListFn<StatusDataObject<TokenNFT>> parsableListFn =
           getParsableListFn(TokenNFT.fromJson);
-      var tokensListFdm =
-          FeedbackDataModel.fromJsonList(tokens, parsableListFn);
+      var tokensListFdm = StatusDataObject.fromJsonList(tokens, parsableListFn);
       print('NFTs=${tokensListFdm.data?.length}');
       tokenModel.setSelectedNFTs(tokensListFdm);
     });
 
     jsApi.jsObservable('window.tokenUtil.reefPrice\$').listen((value) {
-      var fdm = FeedbackDataModel.fromJson(value, (v) => v);
+      var fdm = StatusDataObject.fromJson(value, (v) => v);
       if (fdm != null && fdm.hasStatus(StatusCode.completeData)) {
         if (fdm.data is int) {
           fdm.data = (fdm.data as int).toDouble();
@@ -50,7 +48,7 @@ class TokenCtrl {
         .listen((items) {
       var parsableFn = (accList) =>
           List<TokenActivity>.from(accList.map(TokenActivity.fromJson));
-      var tokensListFdm = FeedbackDataModel.fromJsonList(items, parsableFn);
+      var tokensListFdm = StatusDataObject.fromJsonList(items, parsableFn);
 
       tokenModel.setTxHistory(tokensListFdm);
       print('GOT HISTORY=${tokensListFdm.data.length}');

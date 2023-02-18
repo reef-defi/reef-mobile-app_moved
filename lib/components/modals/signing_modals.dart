@@ -17,7 +17,7 @@ import 'package:reef_mobile_app/utils/functions.dart';
 import 'package:reef_mobile_app/utils/gradient_text.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 
-import '../../model/feedback-data-model/FeedbackDataModel.dart';
+import '../../model/status-data-object/StatusDataObject.dart';
 
 List<TableRow> createTable({required keyTexts, required valueTexts}) {
   List<TableRow> rows = [];
@@ -78,7 +78,7 @@ List<TableRow> createTransactionTable(TxDecodedData txData) {
 }
 
 class EvmNotClaimedModal extends StatefulWidget {
-  final FeedbackDataModel<ReefAccount> signer;
+  final StatusDataObject<ReefAccount> signer;
 
   const EvmNotClaimedModal(this.signer, {Key? key}) : super(key: key);
 
@@ -140,7 +140,7 @@ class SignModal extends StatefulWidget {
   final List<TableRow> detailsTable;
   final bool isTransaction;
   final String signatureIdent;
-  final FeedbackDataModel<ReefAccount> signer;
+  final StatusDataObject<ReefAccount> signer;
   const SignModal(
       this.detailsTable, this.isTransaction, this.signatureIdent, this.signer,
       {Key? key})

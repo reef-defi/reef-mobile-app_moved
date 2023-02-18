@@ -9,7 +9,7 @@ import 'package:reef_mobile_app/components/modals/account_modals.dart';
 import 'package:reef_mobile_app/components/modals/add_account_modal.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/account/AccountCtrl.dart';
-import 'package:reef_mobile_app/model/feedback-data-model/FeedbackDataModel.dart';
+import 'package:reef_mobile_app/model/status-data-object/StatusDataObject.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 
 import '../components/SignatureContentToggle.dart';
@@ -104,8 +104,7 @@ class _AccountsPageState extends State<AccountsPage> {
           Row(
             children: [
               MaterialButton(
-                onPressed: () => showAddAccountModal(
-                    'Add account', openModal,
+                onPressed: () => showAddAccountModal('Add account', openModal,
                     context: context),
                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 minWidth: 0,
