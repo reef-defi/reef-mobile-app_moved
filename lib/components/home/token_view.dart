@@ -57,7 +57,7 @@ class _TokenViewState extends State<TokenView> {
                         Text(
                           // TODO allow conversionRate to be null for no data
                           price != 0
-                              ? NumberFormat.compactLong()
+                              ? NumberFormat.simpleCurrency(decimalDigits: 4)
                                   .format(price)
                                   .toString()
                               : 'No pool data',

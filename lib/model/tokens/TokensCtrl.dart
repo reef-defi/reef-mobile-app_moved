@@ -1,10 +1,8 @@
 import 'package:reef_mobile_app/model/feedback-data-model/FeedbackDataModel.dart';
-import 'package:reef_mobile_app/model/tokens/Token.dart';
 import 'package:reef_mobile_app/model/tokens/TokenActivity.dart';
 import 'package:reef_mobile_app/model/tokens/TokenNFT.dart';
 import 'package:reef_mobile_app/model/tokens/TokenWithAmount.dart';
 import 'package:reef_mobile_app/service/JsApiService.dart';
-import 'package:reef_mobile_app/utils/constants.dart';
 
 import 'token_model.dart';
 
@@ -21,16 +19,18 @@ class TokenCtrl {
           FeedbackDataModel.fromJsonList(tokens, parsableListFn);
 
       // print('GOT TOKENS ${tokensListFdm.data.length}');
-      // print('GOT TOKENS ${tokensListFdm.statusList.map((e) => e.code)} msg = ${tokensListFdm.statusList[0].message}');
+      // print(
+      //     'GOT TOKENS ${tokensListFdm.statusList.map((e) => e.code)} msg = ${tokensListFdm.statusList[0].message}');
       tokenModel.setSelectedErc20s(tokensListFdm);
     });
 
-    jsApi.jsObservable('window.reefState.selectedNFTs_status\$').listen((tokens) {
-
+    jsApi
+        .jsObservable('window.reefState.selectedNFTs_status\$')
+        .listen((tokens) {
       ParseListFn<FeedbackDataModel<TokenNFT>> parsableListFn =
-      getParsableListFn(TokenNFT.fromJson);
+          getParsableListFn(TokenNFT.fromJson);
       var tokensListFdm =
-      FeedbackDataModel.fromJsonList(tokens, parsableListFn);
+          FeedbackDataModel.fromJsonList(tokens, parsableListFn);
       print('NFTs=${tokensListFdm.data?.length}');
       tokenModel.setSelectedNFTs(tokensListFdm);
     });
@@ -38,7 +38,7 @@ class TokenCtrl {
     jsApi.jsObservable('window.tokenUtil.reefPrice\$').listen((value) {
       var fdm = FeedbackDataModel.fromJson(value, (v) => v);
       if (fdm != null && fdm.hasStatus(StatusCode.completeData)) {
-        if(fdm.data is int){
+        if (fdm.data is int) {
           fdm.data = (fdm.data as int).toDouble();
         }
         tokenModel.setReefPrice(fdm.data);
@@ -48,10 +48,9 @@ class TokenCtrl {
     jsApi
         .jsObservable('window.reefState.selectedTransactionHistory_status\$')
         .listen((items) {
-      var parsableFn =
-          (accList) => List<TokenActivity>.from(accList.map(TokenActivity.fromJson));
-      var tokensListFdm =
-      FeedbackDataModel.fromJsonList(items, parsableFn);
+      var parsableFn = (accList) =>
+          List<TokenActivity>.from(accList.map(TokenActivity.fromJson));
+      var tokensListFdm = FeedbackDataModel.fromJsonList(items, parsableFn);
 
       tokenModel.setTxHistory(tokensListFdm);
       print('GOT HISTORY=${tokensListFdm.data.length}');

@@ -24,8 +24,9 @@ class TokenWithAmount extends Token {
   static TokenWithAmount fromJson(dynamic json) {
     var tkn = Token.fromJson(json);
     // TODO check why json['amount'] can be null
-    var amt = BigInt.parse(json['amount'] != null && json['amount'] != "" ? json['amount'] : "0");
-    var price = json['price']??0;
+    var amt = BigInt.parse(
+        json['amount'] != null && json['amount'] != "" ? json['amount'] : "0");
+    var price = json['price'] ?? 0;
     return TokenWithAmount(
         name: tkn.name,
         address: tkn.address,
@@ -38,21 +39,20 @@ class TokenWithAmount extends Token {
   }
 
   Map toJsonSkinny() => {
-    'address': address,
-    'decimals': decimals,
-    'amount': amount.toString(),
-  };
+        'address': address,
+        'decimals': decimals,
+        'amount': amount.toString(),
+      };
 
   TokenWithAmount setAmount(String newAmount) {
     return TokenWithAmount(
-      name: name,
-      address: address,
-      iconUrl: iconUrl,
-      symbol: symbol,
-      balance: balance,
-      decimals: decimals,
-      amount: BigInt.parse(newAmount),
-      price: price
-    );
+        name: name,
+        address: address,
+        iconUrl: iconUrl,
+        symbol: symbol,
+        balance: balance,
+        decimals: decimals,
+        amount: BigInt.parse(newAmount),
+        price: price);
   }
 }

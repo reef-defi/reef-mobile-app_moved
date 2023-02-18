@@ -51,8 +51,9 @@ class AccountCtrl {
     return isValid == 'true';
   }
 
-  Future<dynamic> resolveEvmAddress(String nativeAddress) async{
-    return await _jsApi.jsPromise('window.account.resolveEvmAddress("$nativeAddress")');
+  Future<dynamic> resolveEvmAddress(String nativeAddress) async {
+    return await _jsApi
+        .jsPromise('window.account.resolveEvmAddress("$nativeAddress")');
   }
 
   Future<String> accountFromMnemonic(String mnemonic) async {
@@ -117,12 +118,15 @@ class AccountCtrl {
       _accountModel.setSelectedAddress(address);
     });
 
-    jsApi.jsObservable('window.reefState.accounts_status\$').listen((accs) async {
-
-      ParseListFn<FeedbackDataModel<ReefAccount>> parsableListFn = getParsableListFn(ReefAccount.fromJson);
+    jsApi
+        .jsObservable('window.reefState.accounts_status\$')
+        .listen((accs) async {
+      ParseListFn<FeedbackDataModel<ReefAccount>> parsableListFn =
+          getParsableListFn(ReefAccount.fromJson);
       var accsListFdm = FeedbackDataModel.fromJsonList(accs, parsableListFn);
 
-      print('GOT ACCOUNTS ${accsListFdm.hasStatus(StatusCode.completeData)} ${accsListFdm.statusList[0].message} len =${accsListFdm.data.length}');
+      print(
+          'GOT ACCOUNTS ${accsListFdm.hasStatus(StatusCode.completeData)} ${accsListFdm.statusList[0].message} len =${accsListFdm.data.length}');
 
       _setAccountIconsFromStorage(accsListFdm);
 
@@ -152,17 +156,20 @@ class AccountCtrl {
         'window.account.toReefEVMAddressWithNotification("$evmAddress")');
   }
 
-  void _setAccountIconsFromStorage(FeedbackDataModel<List<FeedbackDataModel<ReefAccount>>> accsListFdm) async {
+  void _setAccountIconsFromStorage(
+      FeedbackDataModel<List<FeedbackDataModel<ReefAccount>>>
+          accsListFdm) async {
     var accIcons = [];
 
     (await _storage.getAllAccounts()).forEach(((account) => {
-    accIcons.add({"address": account.address, "svg": account.svg})
-    }));
+          accIcons.add({"address": account.address, "svg": account.svg})
+        }));
 
     accsListFdm.data.forEach((accFdm) {
-      var accIcon = accIcons.firstWhere((accIcon) => accIcon['address'] == accFdm.data.address, orElse: ()=>null);
+      var accIcon = accIcons.firstWhere(
+          (accIcon) => accIcon['address'] == accFdm.data.address,
+          orElse: () => null);
       accFdm.data.iconSVG = accIcon?['svg'];
     });
-
   }
 }
