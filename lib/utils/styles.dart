@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class Styles {
   static Color primaryColor = const Color(0xFF0E225D);
   static const Color primaryBackgroundColor = Color(0xffeeebf6);
-  static const Color darkBackgroundColor = Color.fromARGB(255, 59,31,167);
+  static const Color darkBackgroundColor = Color.fromARGB(255, 59, 31, 167);
   static Color primaryAccentColor = const Color(0xffbf37a7);
   static Color primaryAccentColorDark = const Color(0xffba24c7);
   static Color purpleColor = const Color(0xff76319b);
@@ -18,6 +18,6 @@ class Styles {
   static Color navColor = const Color(0xffe5e1f0);
   static const Color boxBackgroundColor = Color(0xfff8f7fc);
   static const Color splashBackgroundColor = Color(0xfffef9f6);
-  static Color textLightColor = const Color(0xff8890ab);
+  static const Color textLightColor = Color(0xff8890ab);
   static Color errorColor = const Color(0xFFCC0B0B);
 }
