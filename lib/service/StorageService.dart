@@ -1,13 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:hive/hive.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:hive/hive.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:reef_mobile_app/model/account/stored_account.dart';
-import 'package:reef_mobile_app/model/metadata/metadata.dart';
 import 'package:reef_mobile_app/model/auth_url/auth_url.dart';
+import 'package:reef_mobile_app/model/metadata/metadata.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class StorageService {

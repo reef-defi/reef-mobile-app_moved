@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:gap/gap.dart';
 import 'package:reef_mobile_app/components/account_box.dart';
 import 'package:reef_mobile_app/components/modal.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/StorageKey.dart';
 import 'package:reef_mobile_app/model/account/ReefAccount.dart';
-import 'package:reef_mobile_app/model/feedback-data-model/FeedbackDataModel.dart';
+import 'package:reef_mobile_app/model/status-data-object/StatusDataObject.dart';
 import 'package:reef_mobile_app/pages/SplashScreen.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 
@@ -67,7 +66,7 @@ class SelectAccount extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<FeedbackDataModel<ReefAccount>> accountList;
+    List<StatusDataObject<ReefAccount>> accountList;
     if (this.isTokenReef) {
       accountList = ReefAppState.instance.model.accounts.accountsFDM.data
           .where((accFDM) => accFDM.data.address != signerAddress)
@@ -95,7 +94,7 @@ class SelectAccount extends StatelessWidget {
                     shrinkWrap: true,
                     children: accountList
                         .map<Widget>(
-                          (FeedbackDataModel<ReefAccount> account) => Column(
+                          (StatusDataObject<ReefAccount> account) => Column(
                             children: [
                               AccountBox(
                                   reefAccountFDM: account,
@@ -109,8 +108,7 @@ class SelectAccount extends StatelessWidget {
                             ],
                           ),
                         )
-                        .toList())
-        ));
+                        .toList())));
   }
 }
 

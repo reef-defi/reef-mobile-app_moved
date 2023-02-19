@@ -7,14 +7,14 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:reef_mobile_app/components/modals/bind_modal.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/account/ReefAccount.dart';
-import 'package:reef_mobile_app/model/feedback-data-model/FeedbackDataModel.dart';
+import 'package:reef_mobile_app/model/status-data-object/StatusDataObject.dart';
 import 'package:reef_mobile_app/utils/functions.dart';
 
 import '../utils/styles.dart';
 import 'BlurableContent.dart';
 
 class AccountBox extends StatefulWidget {
-  final FeedbackDataModel<ReefAccount> reefAccountFDM;
+  final StatusDataObject<ReefAccount> reefAccountFDM;
   final bool selected;
   final VoidCallback onSelected;
   final bool showOptions;
@@ -147,7 +147,7 @@ class _AccountBoxState extends State<AccountBox> {
     );
   }
 
-  Widget buildCentralColumn(FeedbackDataModel<ReefAccount> reefAccount) {
+  Widget buildCentralColumn(StatusDataObject<ReefAccount> reefAccount) {
     return Flex(
         direction: Axis.vertical,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -218,7 +218,7 @@ class _AccountBoxState extends State<AccountBox> {
                       children: <TextSpan>[
                         TextSpan(
                           text:
-                              " ${widget.reefAccountFDM.data.evmAddress?.shorten()}",
+                              " ${widget.reefAccountFDM.data.evmAddress.shorten()}",
                           style: const TextStyle(
                               fontSize: 14, fontWeight: FontWeight.bold),
                         ),
@@ -291,7 +291,7 @@ showAlertDialog(BuildContext context, ReefAccount signer) {
   AlertDialog alert = AlertDialog(
     title: const Text("Delete Account"),
     content: Text(
-        "You will delete account with name ${signer.name} ${signer.address?.shorten()}. Continue?"),
+        "You will delete account with name ${signer.name} ${signer.address.shorten()}. Continue?"),
     actions: [
       cancelButton,
       continueButton,

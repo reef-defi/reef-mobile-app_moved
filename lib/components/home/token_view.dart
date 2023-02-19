@@ -5,7 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:reef_mobile_app/components/BlurableContent.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
-import 'package:reef_mobile_app/model/feedback-data-model/FeedbackDataModel.dart';
+import 'package:reef_mobile_app/model/status-data-object/StatusDataObject.dart';
 import 'package:reef_mobile_app/utils/elements.dart';
 import 'package:reef_mobile_app/utils/functions.dart';
 import 'package:reef_mobile_app/utils/gradient_text.dart';
@@ -57,7 +57,7 @@ class _TokenViewState extends State<TokenView> {
                         Text(
                           // TODO allow conversionRate to be null for no data
                           price != 0
-                              ? NumberFormat.compactLong()
+                              ? NumberFormat.simpleCurrency(decimalDigits: 4)
                                   .format(price)
                                   .toString()
                               : 'No pool data',
