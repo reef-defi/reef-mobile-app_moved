@@ -1,6 +1,5 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:reef_mobile_app/utils/gradient_text.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
@@ -68,6 +67,58 @@ class ViewBoxContainer extends StatelessWidget {
             ],
             borderRadius: BorderRadius.circular(15)),
         child: child);
+  }
+}
+
+class ImageBoxContainer extends StatelessWidget {
+  final Color color;
+  final Widget child;
+  final String imageUrl;
+
+  const ImageBoxContainer(
+      {Key? key,
+      required this.child,
+      this.color = Styles.boxBackgroundColor,
+      this.imageUrl = ''})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(children: [
+      Container(
+          width: double.infinity,
+          height: this.imageUrl != '' ? 150 : null,
+          decoration: BoxDecoration(
+            shape: BoxShape.rectangle,
+            image: this.imageUrl != ''
+                ? DecorationImage(
+                    image: NetworkImage(imageUrl), fit: BoxFit.cover)
+                : null,
+            color: color,
+            boxShadow: const [
+              const BoxShadow(
+                color: Color(0x12000000),
+                offset: Offset(0, 3),
+                blurRadius: 30,
+              )
+            ],
+            borderRadius: new BorderRadius.vertical(
+              top: new Radius.circular(15.0),
+              //right: new Radius.circular(20.0),
+            ),
+            // borderRadius: BorderRadius.circular(15)
+          )),
+      Container(
+          width: double.infinity,
+          height: 50,
+          decoration: BoxDecoration(
+              shape: BoxShape.rectangle,
+              color: Colors.white,
+              borderRadius: new BorderRadius.vertical(
+                bottom: new Radius.circular(15.0),
+              )),
+          child: child)
+    ]);
   }
 }
 

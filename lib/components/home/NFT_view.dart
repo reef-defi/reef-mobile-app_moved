@@ -19,26 +19,56 @@ class NFTView extends StatefulWidget {
 
 class _NFTViewState extends State<NFTView> {
   Widget nftCard(String name, String iconURL, int balance) {
-    return ViewBoxContainer(
+    return ImageBoxContainer(
         imageUrl: iconURL,
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-              decoration: const BoxDecoration(
-                  color: Colors.purple,
-                  borderRadius: BorderRadius.all(Radius.circular(20))),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Gap(12),
-                  Observer(builder: (context) {
+            Row(
+              //mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                    child: Padding(
+                  padding: EdgeInsets.only(left: 8),
+                  child: Text(
+                    name,
+                    style: const TextStyle(
+                        color: Styles.textColor,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700),
+                    overflow: TextOverflow.fade,
+                    maxLines: 1,
+                    softWrap: false,
+                  ),
+                )),
+                Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 8),
+                    decoration: const BoxDecoration(
+                        color: Colors.purple,
+                        borderRadius: BorderRadius.all(Radius.circular(50))),
+                    child: Row(
+                      children: [
+                        const Gap(8),
+                        Observer(builder: (context) {
+                          return BlurableContent(
+                              Text(
+                                NumberFormat.compact().format(balance),
+                                style: const TextStyle(color: Colors.white),
+                              ),
+                              ReefAppState
+                                  .instance.model.appConfig.displayBalance);
+                        }),
+                        const Gap(8),
+                      ],
+                    ))
+
+                /*Observer(builder: (context) {
                     return BlurableContent(
                         Flexible(
                             child: Text(
                           // TODO allow conversionRate to be null for no data
-                          "${NumberFormat.compactLong().format(balance)}x",
+                          "${NumberFormat.compact().format(balance)}",
                           style: TextStyle(
                               color: Styles.textLightColor,
                               fontSize: 16,
@@ -55,10 +85,9 @@ class _NFTViewState extends State<NFTView> {
                         fontWeight: FontWeight.w700,
                         overflow: TextOverflow.ellipsis),
                   ),
-                  const Gap(12),
-                ],
-              ),
-            )
+                  const Gap(12),*/
+              ],
+            ),
           ],
         ));
   }
@@ -108,10 +137,10 @@ class _NFTViewState extends State<NFTView> {
                 childCount: selectedNFTs.data.length,
               ),
               gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                  mainAxisExtent: 125,
+                  mainAxisExtent: 200,
                   mainAxisSpacing: 12,
                   crossAxisSpacing: 12,
-                  maxCrossAxisExtent: 500),
+                  maxCrossAxisExtent: 200),
             ),
           ),
       ]);
