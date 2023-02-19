@@ -57,6 +57,7 @@ dependencies:
   http: ^0.13.5
   local_auth: ^2.1.2
   sliver_tools: ^0.2.8
+  video_player: ^2.5.1
   #freezed: ^2.0.3+1 #immutable classes
 
 dev_dependencies:
