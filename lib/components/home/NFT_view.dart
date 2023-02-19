@@ -25,7 +25,6 @@ class _NFTViewState extends State<NFTView> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Row(
-              //mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
