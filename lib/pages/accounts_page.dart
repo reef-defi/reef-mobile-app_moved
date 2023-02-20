@@ -1,5 +1,3 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:gap/gap.dart';
@@ -110,16 +108,16 @@ class _AccountsPageState extends State<AccountsPage> {
                 minWidth: 0,
                 height: 36,
                 elevation: 0,
-                color: Colors.purple,
+                color: Colors.transparent,
                 padding:
                     const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
-                    side: const BorderSide(color: Colors.black26)),
+                    side: const BorderSide(color: Styles.purpleColor)),
                 child: Row(children: [
                   Icon(
                     Icons.add_circle_rounded,
-                    color: Colors.grey.shade100,
+                    color: Styles.purpleColor,
                     size: 22,
                   ),
                   const Gap(4),
