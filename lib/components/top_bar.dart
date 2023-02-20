@@ -37,7 +37,7 @@ Widget topBar(BuildContext context) {
                 return const SizedBox.shrink();
               })
             ]),
-            Observer(builder: (_) {
+            Expanded(child: Observer(builder: (_) {
               var selAddr =
                   ReefAppState.instance.model.accounts.selectedAddress;
 
@@ -46,9 +46,12 @@ Widget topBar(BuildContext context) {
                   .where((element) => element.address == selAddr);
 
               return selSignerList.length > 0
-                  ? accountPill(context, selSignerList.first.name)
+                  ? Padding(
+                      padding: EdgeInsets.only(top: 4),
+                      child: accountPill(context, selSignerList.first.name),
+                    )
                   : const SizedBox.shrink();
-            })
+            }))
           ],
         ),
         const Gap(16),
@@ -66,24 +69,30 @@ Widget accountPill(BuildContext context, String title) {
       },
       child: Container(
           decoration: BoxDecoration(
-              border: Border.all(color: Styles.blueColor, width: 2),
+              // border: Border.all(color: Styles.blueColor, width: 2),
               borderRadius: BorderRadius.circular(20),
               /*boxShadow: [
                 BoxShadow(color: Colors.white30, blurRadius: 2, spreadRadius: 1)
               ],*/
-              color: Colors.transparent),
+              color: Colors.white),
           child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 14, vertical: 6),
               child: Row(children: [
                 Icon(Icons.account_balance_wallet_rounded,
-                    color: Styles.blueColor),
-                Padding(
+                    color: Styles.purpleColor),
+                Expanded(
+                    child: Padding(
                   padding: EdgeInsets.only(left: 10),
-                  child: Text((title),
-                      style: GoogleFonts.spaceGrotesk(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold)),
-                )
+                  child: Text(
+                    title,
+                    style: GoogleFonts.spaceGrotesk(
+                        color: Styles.textColor,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold),
+                    overflow: TextOverflow.fade,
+                    maxLines: 1,
+                    softWrap: false,
+                  ),
+                ))
               ]))));
 }
