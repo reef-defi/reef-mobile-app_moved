@@ -63,36 +63,41 @@ Widget topBar(BuildContext context) {
 Widget accountPill(BuildContext context, String title) {
   SizeConfig.init(context);
 
+  // return Row(
+  //   mainAxisAlignment: MainAxisAlignment.end,
+  //   children: [Container(color: Colors.white, child: Text('hello'))],
+  // );
+
   return GestureDetector(
       onTap: () {
         ReefAppState.instance.navigationCtrl.navigate(NavigationPage.accounts);
       },
-      child: Container(
-          decoration: BoxDecoration(
-              // border: Border.all(color: Styles.blueColor, width: 2),
-              borderRadius: BorderRadius.circular(20),
-              /*boxShadow: [
+      child: Expanded(
+          child: Container(
+              decoration: BoxDecoration(
+                  // border: Border.all(color: Styles.blueColor, width: 2),
+                  borderRadius: BorderRadius.circular(20),
+                  /*boxShadow: [
                 BoxShadow(color: Colors.white30, blurRadius: 2, spreadRadius: 1)
               ],*/
-              color: Colors.white),
-          child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-              child: Row(children: [
-                Icon(Icons.account_balance_wallet_rounded,
-                    color: Styles.purpleColor),
-                Expanded(
-                    child: Padding(
-                  padding: EdgeInsets.only(left: 10),
-                  child: Text(
-                    title,
-                    style: GoogleFonts.spaceGrotesk(
-                        color: Styles.textColor,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold),
-                    overflow: TextOverflow.fade,
-                    maxLines: 1,
-                    softWrap: false,
-                  ),
-                ))
-              ]))));
+                  color: Colors.white),
+              child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  child:
+                      Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                    Icon(Icons.account_balance_wallet_rounded,
+                        color: Styles.purpleColor), Expanded(
+                      // padding: EdgeInsets.only(left: 10),
+                      child: Text(
+                        title, // + 'flasdjfls fdsajflasjf fdsa fasf',
+                        style: GoogleFonts.spaceGrotesk(
+                            color: Styles.textColor,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold),
+                        overflow: TextOverflow.fade,
+                        maxLines: 1,
+                        softWrap: false,
+                      ),
+
+                  ])))));
 }
