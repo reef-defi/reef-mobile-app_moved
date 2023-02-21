@@ -9,7 +9,7 @@ class LocaleCtrl {
     Future<dynamic> storedValueResult = storage.getValue("selectedLanguage");
     storedValueResult.then((storedValue) {
       // if no value in storage - when app is newly installed - set to english
-      var setLang = 'hi';
+      var setLang = 'en';
       localeModel.setSelectedLanguage(setLang);
       if(storedValue==null) {
         storage.setValue("selectedLanguage", setLang);
