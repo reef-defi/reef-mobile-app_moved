@@ -87,7 +87,7 @@ class _SettingsPageState extends State<SettingsPage> {
             MaterialButton(
               materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
               onPressed: () =>
-                  showSelectLanguageModal('Change Language', context: context),
+                  showSelectLanguageModal(AppLocalizations.of(context)!.select_language, context: context),
               padding: const EdgeInsets.all(2),
               child: Row(
                 children: [
@@ -99,7 +99,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   const Gap(8),
                   Builder(
                     builder: (context) {
-                      return Text("Select Language",
+                      return Text(AppLocalizations.of(context)!.select_language,
                           style: Theme.of(context).textTheme.bodyText1);
                     }
                   ),

@@ -106,7 +106,7 @@ class _SelectLanguageState extends State<SelectLanguage> {
                   },
                   child: Builder(builder: (context) {
                     return Text(
-                      'Change Language',
+                      AppLocalizations.of(context)!.change_language,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontSize: 14,
