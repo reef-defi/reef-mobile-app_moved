@@ -3,6 +3,8 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:reef_mobile_app/components/modals/signing_modals.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/signing/signature_request.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 
 class SignatureContentToggle extends StatelessObserverWidget {
   final Widget content;
@@ -37,7 +39,7 @@ class SignatureContentToggle extends StatelessObserverWidget {
         children: [
           Scaffold(
               appBar: AppBar(
-                title: Text('Sign Transaction'),
+                title: Text(AppLocalizations.of(context)!.sign_transaction),
               ),
               body: Center(
                 child: Column(
@@ -54,17 +56,17 @@ class SignatureContentToggle extends StatelessObserverWidget {
                 children: [
                   ElevatedButton.icon(
                     icon: const Icon(Icons.check),
-                    label: Text('Decode'),
+                    label: Text(AppLocalizations.of(context)!.decode),
                     onPressed: () => _decodeMethod(signatureRequest),
                   ),
                   ElevatedButton.icon(
                     icon: const Icon(Icons.arrow_back),
-                    label: Text('Cancel'),
+                    label: Text(AppLocalizations.of(context)!.cancel),
                     onPressed: () => _cancel(signatureRequest),
                   ),
                   ElevatedButton.icon(
                     icon: const Icon(Icons.key),
-                    label: Text('Sign'),
+                    label: Text(AppLocalizations.of(context)!.to_create_account),
                     onPressed: () => _confirmSign(signatureRequest),
                   ),
                 ],

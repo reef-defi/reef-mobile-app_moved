@@ -59,6 +59,10 @@
   "staking_closes_in":"Staking closes in",
   "bond_started_on":"Bond started on",
   "funds_unlock_on":"Funds unlock on",
-  "bond_contract":"Bond Contract"
+  "bond_contract":"Bond Contract",
+  "gen_12_word":"GENERATED 12-WORD MNEMONIC SEED:",
+  "sign_transaction":"Sign Transaction",
+  "cancel":"Cancel",
+  "decode":"Decode"
 
 }
