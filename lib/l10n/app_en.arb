@@ -63,6 +63,7 @@
   "gen_12_word":"GENERATED 12-WORD MNEMONIC SEED:",
   "sign_transaction":"Sign Transaction",
   "cancel":"Cancel",
-  "decode":"Decode"
-
+  "decode":"Decode",
+  "you_disabled_this_dapp_domain":"You disabled this dApp domain",
+  "enable":"enable"
 }
