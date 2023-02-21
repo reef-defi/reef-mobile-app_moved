@@ -51,5 +51,8 @@
   "bind_modal_first_connect":"First connect EVM address for:",
   "change_password_current_password":"CURRENT PASSWORD",
   "change_password_password_incorrect":"Password is incorrect",
-  "no_other_accounts":"No other accounts available"
+  "no_other_accounts":"No other accounts available",
+  "available":"Available",
+  "click_on":"Click on",
+  "to_create_account":"to create a new account"
 }

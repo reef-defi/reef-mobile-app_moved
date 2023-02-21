@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:reef_mobile_app/model/account/ReefAccount.dart';
 import 'package:reef_mobile_app/model/feedback-data-model/FeedbackDataModel.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../utils/styles.dart';
 import '../account_box.dart';
@@ -40,7 +41,7 @@ class AccountsList extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            "Click on ",
+                            AppLocalizations.of(context)!.click_on,
                             style: TextStyle(color: Styles.textLightColor),
                           ),
                           const Gap(2),
@@ -64,7 +65,7 @@ class AccountsList extends StatelessWidget {
                           ),
                           const Gap(2),
                           Text(
-                            " to create a new account",
+                            AppLocalizations.of(context)!.to_create_account,
                             style: TextStyle(color: Styles.textLightColor),
                           ),
                         ],
@@ -113,9 +114,13 @@ Widget toAccountBoxList(List<FeedbackDataModel<ReefAccount>> signers) {
         Row(mainAxisAlignment: MainAxisAlignment.start, children: [
             Padding(
                 padding: const EdgeInsets.only(bottom: 8.0),
-                child: Text(
-                    "Available",
-                    style: TextStyle(color: Styles.whiteColor, fontSize: 20.0),
+                child: Builder(
+                  builder: (context) {
+                    return Text(
+                        AppLocalizations.of(context)!.available,
+                        style: TextStyle(color: Styles.whiteColor, fontSize: 20.0),
+                    );
+                  }
                 ),
             ),
         ]));

@@ -50,5 +50,8 @@
   "bind_modal_first_connect": "पहले के लिए ईवीएम पते कनेक्ट करें:",
   "change_password_current_password":"वर्तमान पासवर्ड",
   "change_password_password_incorrect":"पासवर्ड गलत है",
-  "no_other_accounts":"कोई अन्य खाता उपलब्ध नहीं है"
+  "no_other_accounts":"कोई अन्य खाता उपलब्ध नहीं है",
+  "available":"उपलब्ध",
+  "click_on":"पर क्लिक करें",
+  "to_create_account":"एक नया खाता बनाने के लिए"
 }
