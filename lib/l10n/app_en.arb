@@ -65,5 +65,12 @@
   "cancel":"Cancel",
   "decode":"Decode",
   "you_disabled_this_dapp_domain":"You disabled this dApp domain",
-  "enable":"enable"
+  "enable":"enable",
+  "reliable":"Reliable",
+  "extensible":"Extensible",
+  "efficient":"Efficient",
+  "fast":"Fast",
+  "blockchain_for_defi":"Blockchain for DeFi, NFT and Gaming",
+  "introducing_reef_chain":"Introducing Reef Chain",
+  "reef_chain_desc":"Reef chain is an EVM compatible blockchain for DeFi. It is fast, scalable, has low transaction costs and does no wasteful mining. It is built with Substrate Framework and comes with on-chain governance."
 }
