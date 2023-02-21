@@ -53,5 +53,10 @@
   "no_other_accounts":"कोई अन्य खाता उपलब्ध नहीं है",
   "available":"उपलब्ध",
   "click_on":"पर क्लिक करें",
-  "to_create_account":"एक नया खाता बनाने के लिए"
+  "to_create_account":"एक नया खाता बनाने के लिए",
+  "reef_community_bond": "रीफ समुदाय स्टेकिंग बॉन्ड",
+"staking_closes_in": "स्टेकिंग बंद होता है",
+"bond_started_on": "बॉन्ड शुरू हुआ",
+"funds_unlock_on": "फंड अनलॉक होते हैं",
+"bond_contract": "बॉन्ड कांट्रैक्ट"
 }

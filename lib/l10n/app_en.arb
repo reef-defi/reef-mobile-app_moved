@@ -54,5 +54,11 @@
   "no_other_accounts":"No other accounts available",
   "available":"Available",
   "click_on":"Click on",
-  "to_create_account":"to create a new account"
+  "to_create_account":"to create a new account",
+  "reef_community_bond":"Reef community staking bond",
+  "staking_closes_in":"Staking closes in",
+  "bond_started_on":"Bond started on",
+  "funds_unlock_on":"Funds unlock on",
+  "bond_contract":"Bond Contract"
+
 }
