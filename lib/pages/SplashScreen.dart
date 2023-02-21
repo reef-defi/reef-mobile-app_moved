@@ -31,9 +31,21 @@ class SplashApp extends StatefulWidget {
 
   @override
   _SplashAppState createState() => _SplashAppState();
+
+  static void setLocale(BuildContext context, String newLocale){
+    _SplashAppState? state = context.findAncestorStateOfType<_SplashAppState>();
+    state?.setLocale(newLocale);
+  }
 }
 
 class _SplashAppState extends State<SplashApp> {
+  String _locale = ReefAppState.instance.model.locale.selectedLanguage;
+
+  setLocale(String locale){
+    setState(() {
+      _locale = locale;
+    });
+  }
   static const _firstLaunch = "firstLaunch";
   bool _hasError = false;
   bool _isGifFinished = false;
@@ -118,9 +130,13 @@ class _SplashAppState extends State<SplashApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Reef Chain App',
-    localizationsDelegates: AppLocalizations.localizationsDelegates,
-  supportedLocales: AppLocalizations.supportedLocales,
-      locale: const Locale('hi'),
+       localizationsDelegates: [
+    AppLocalizations.delegate,
+    GlobalMaterialLocalizations.delegate,
+    GlobalWidgetsLocalizations.delegate,
+  ],
+      supportedLocales: AppLocalizations.supportedLocales,
+      locale:Locale(_locale),
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
           primarySwatch: Colors.blue,

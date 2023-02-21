@@ -4,6 +4,7 @@ import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:reef_mobile_app/components/modals/auth_url_list_modal.dart';
 import 'package:reef_mobile_app/components/modals/change_password_modal.dart';
+import 'package:reef_mobile_app/components/modals/language_selection_modal.dart';
 import 'package:reef_mobile_app/components/switch_network.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -76,6 +77,29 @@ class _SettingsPageState extends State<SettingsPage> {
                   Builder(
                     builder: (context) {
                       return Text(AppLocalizations.of(context)!.change_password,
+                          style: Theme.of(context).textTheme.bodyText1);
+                    }
+                  ),
+                ],
+              ),
+            ),
+            const Gap(24),
+            MaterialButton(
+              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              onPressed: () =>
+                  showSelectLanguageModal('Change Language', context: context),
+              padding: const EdgeInsets.all(2),
+              child: Row(
+                children: [
+                  Icon(
+                    CupertinoIcons.globe,
+                    color: Styles.textLightColor,
+                    size: 22,
+                  ),
+                  const Gap(8),
+                  Builder(
+                    builder: (context) {
+                      return Text("Select Language",
                           style: Theme.of(context).textTheme.bodyText1);
                     }
                   ),
