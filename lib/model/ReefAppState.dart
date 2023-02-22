@@ -32,6 +32,7 @@ class ReefAppState {
   late NetworkCtrl networkCtrl;
   late NavigationCtrl navigationCtrl;
   late AppConfigCtrl appConfigCtrl;
+  late NavigationModel navigation;
   late LocaleCtrl localeCtrl;
 
   ReefAppState._();
