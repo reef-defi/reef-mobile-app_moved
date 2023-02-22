@@ -1,9 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:gap/gap.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:reef_mobile_app/components/modals/select_account_modal.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/StorageKey.dart';
@@ -27,9 +25,7 @@ class SendPage extends StatefulWidget {
 
 class _SendPageState extends State<SendPage> {
   bool isTokenReef = false;
-  String sendBtnVal = "Missing destination address";
   ValidationError valError = ValidationError.NO_ADDRESS;
-  bool shouldSend = false;
   TextEditingController valueController = TextEditingController();
   String address = "";
   String? resolvedEvmAddress;
@@ -125,7 +121,9 @@ class _SendPageState extends State<SendPage> {
   }
 
   void _onConfirmSend(TokenWithAmount sendToken) async {
-    if (address.isEmpty || amount.isEmpty || sendToken.balance <= BigInt.zero) {
+    if (address.isEmpty ||
+        sendToken.balance <= BigInt.zero ||
+        valError != ValidationError.OK) {
       return;
     }
 
@@ -163,7 +161,6 @@ class _SendPageState extends State<SendPage> {
       default:
         return "Not Valid";
     }
-
   }
 
   @override
@@ -220,14 +217,24 @@ class _SendPageState extends State<SendPage> {
                           ),
                           onPressed: () {
                             showSelectAccountModal("Select account",
-                                (selectedAddress) {
+                                (selectedAddress) async {
                               setState(() {
                                 address = selectedAddress;
                                 valueController.text = selectedAddress;
                               });
+                              setState(() async {
+                                valError =
+                                    await _validate(address, selectedToken);
+                              });
                             }, isTokenReef);
                           },
-                          color: const Color(0xffDFDAED),
+                          //color: const Color(0xffDFDAED),
+                          child: RotatedBox(
+                              quarterTurns: 1,
+                              child: Icon(
+                                Icons.chevron_right_rounded,
+                                color: Styles.textColor,
+                              )),
                         ),
                       ),
                       Expanded(
@@ -466,12 +473,12 @@ class _SendPageState extends State<SendPage> {
                           borderRadius: BorderRadius.circular(14)),
                       shadowColor: const Color(0x559d6cff),
                       elevation: 0,
-                      backgroundColor: (address.isEmpty || amount.isEmpty)
+                      backgroundColor: (valError == ValidationError.OK)
                           ? const Color(0xffe6e2f1)
                           : Colors.transparent,
                       padding: const EdgeInsets.all(0),
                     ),
-                    onPressed: () => _onConfirmSend(selectedToken),
+                    onPressed: () => {_onConfirmSend(selectedToken)},
                     child: Ink(
                       width: double.infinity,
                       padding: const EdgeInsets.symmetric(
