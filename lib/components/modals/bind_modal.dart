@@ -56,7 +56,7 @@ class _BindEvmState extends State<BindEvm> {
     return _availableTxAccounts;
   }
 
-  transfer() async {
+  Future<void> transfer() async {
     TokenWithAmount reefToken = TokenWithAmount(
         name: 'Reef',
         address: Constants.REEF_TOKEN_ADDRESS,
@@ -128,7 +128,7 @@ class _BindEvmState extends State<BindEvm> {
     );
   }
 
-  Widget buildButton(Function func) {
+  Widget buildButton(Future<void> Function() func) {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
@@ -143,8 +143,8 @@ class _BindEvmState extends State<BindEvm> {
           backgroundColor: Styles.primaryAccentColorDark,
           padding: const EdgeInsets.symmetric(vertical: 16),
         ),
-        onPressed: () {
-          func();
+        onPressed: () async {
+          await func();
         },
         child: const Text(
           'Continue',
@@ -204,7 +204,7 @@ class _BindEvmState extends State<BindEvm> {
       const Gap(16),
       if (hasBalanceForBinding(widget.bindFor)) ...[
         // Bind button
-        buildButton(() {
+        buildButton(() async {
           ReefAppState.instance.accountCtrl
               .bindEvmAccount(widget.bindFor.address);
           Navigator.pop(context);
@@ -237,7 +237,7 @@ class _BindEvmState extends State<BindEvm> {
               },
               child: (buildAccount(transferBalanceFrom))),
           const Gap(16),
-          buildButton(() {
+          buildButton(() async {
             Navigator.pop(context);
             transfer();
           }),
