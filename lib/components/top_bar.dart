@@ -59,6 +59,7 @@ Widget topBar(BuildContext context) {
                   ? Padding(
                       padding: EdgeInsets.only(top: 4, left: 8),
                       child: Wrap(
+                        alignment: WrapAlignment.end,
                         children: [
                           accountPill(context, selSignerList.first.name)
                         ],
