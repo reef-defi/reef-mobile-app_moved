@@ -39,7 +39,7 @@ class SelectAccount extends StatelessWidget {
         child: Padding(
             padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
             child: accountList.isEmpty
-                ? const Text(
+                ? Text(
                     AppLocalizations.of(context)!.no_other_accounts,
                   )
                 : ListView(
