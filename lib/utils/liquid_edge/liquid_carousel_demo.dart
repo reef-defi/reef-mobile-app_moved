@@ -19,6 +19,7 @@ class _GooeyEdgeDemoState extends State<GooeyEdgeDemo> {
     final carouselKey = GlobalKey<LiquidCarouselState>();
     return Scaffold(
       body: LiquidCarousel(
+        parentContext: context,
         key: carouselKey,
         children: <Widget>[
           ContentCard(

@@ -10,7 +10,8 @@ import 'package:reef_mobile_app/utils/icon_url.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import '../../model/feedback-data-model/FeedbackDataModel.dart';
+import '../../model/status-data-object/StatusDataObject.dart';
+import '../BlurContent.dart';
 
 class ActivityView extends StatefulWidget {
   const ActivityView({Key? key}) : super(key: key);
@@ -40,15 +41,26 @@ class _ActivityViewState extends State<ActivityView> {
 
     switch (type) {
       case "received":
-        amountText =
-            "+ ${amount != null ? toAmountDisplayBigInt(amount!, fractionDigits: 2) : 0}";
+        if (amount != null) {
+          amountText =
+              "+ ${formatAmountToDisplayBigInt(amount, fractionDigits: 2)}";
+        } else {
+          amountText = "0";
+        }
+        // amountText =
+        //     "+ ${amount != null ? toAmountDisplayBigInt(amount!, fractionDigits: 2) : 0}";
         icon = CupertinoIcons.arrow_down_left;
         bgColor = const Color(0x3335c57d);
         iconColor = const Color(0xff35c57d);
         break;
       case "sent":
-        amountText =
-            "- ${amount != null ? toAmountDisplayBigInt(amount!, fractionDigits: 2) : 0}";
+        if (amount != null) {
+          amountText = "- ${formatAmountToDisplayBigInt(amount)}";
+        } else {
+          amountText = "0";
+        }
+        // amountText =
+        //     "- ${amount != null ? toAmountDisplayBigInt(amount!, fractionDigits: 2) : 0}";
         icon = CupertinoIcons.arrow_up_right;
         bgColor = const Color(0x8cd8dce6);
         iconColor = const Color(0xffb2b0c8);
@@ -103,13 +115,17 @@ class _ActivityViewState extends State<ActivityView> {
                 ],
               ),
               Row(children: [
-                Text(
-                  amountText,
-                  style: GoogleFonts.spaceGrotesk(
-                      fontWeight: FontWeight.w700,
-                      color: isReceived ? Color(0xff35c57d) : iconColor,
-                      fontSize: 18),
-                ),
+                Observer(builder: (context) {
+                  return BlurableContent(
+                      Text(
+                        amountText,
+                        style: GoogleFonts.spaceGrotesk(
+                            fontWeight: FontWeight.w700,
+                            color: isReceived ? Color(0xff35c57d) : iconColor,
+                            fontSize: 18),
+                      ),
+                      ReefAppState.instance.model.appConfig.displayBalance);
+                }),
                 const SizedBox(width: 4),
                 IconFromUrl(
                   iconUrl,

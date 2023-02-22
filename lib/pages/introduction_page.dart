@@ -45,6 +45,7 @@ class IntroductionPage extends StatelessWidget {
     final carouselKey = GlobalKey<LiquidCarouselState>();
     return Scaffold(
       body: LiquidCarousel(
+        parentContext: context,
         key: carouselKey,
         children: <Widget>[
           IntroductionSlide(
@@ -66,7 +67,8 @@ class IntroductionPage extends StatelessWidget {
                     ),
                   ),
                   Flexible(
-                      child: Column(
+                      child: FittedBox(
+                          child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
@@ -105,7 +107,7 @@ class IntroductionPage extends StatelessWidget {
                             style: TextStyle(fontSize: 16),
                           )),
                     ],
-                  ))
+                  )))
                 ],
               )),
           IntroductionSlide(
@@ -128,9 +130,10 @@ class IntroductionPage extends StatelessWidget {
                       width: 240.0,
                     ),
                   ),
-                  Flexible(
+                  Expanded(
                       flex: 5,
-                      child: Column(
+                      child: Flex(
+                        direction: Axis.vertical,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Padding(
@@ -143,16 +146,22 @@ class IntroductionPage extends StatelessWidget {
                             ),
                           ),
                           SizedBox(height: 35),
-                          Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 4),
-                              child: Text(
-                                AppLocalizations.of(context)!.reef_chain_desc,
-                                style: TextStyle(
-                                    fontSize: 16,
-                                    height: 2,
-                                    color: Colors.white),
-                                textAlign: TextAlign.center,
-                              )),
+                          Flexible(
+                              child: Scrollbar(
+                                  child: Padding(
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 4),
+                                      child: SizedBox(
+                                          child: (SingleChildScrollView(
+                                        child: Text(
+                                            AppLocalizations.of(context)!.reef_chain_desc,
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              height: 2,
+                                              color: Colors.white),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      )))))),
                         ],
                       ))
                 ],

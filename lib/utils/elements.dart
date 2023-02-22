@@ -1,6 +1,5 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:reef_mobile_app/utils/gradient_text.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
@@ -68,6 +67,58 @@ class ViewBoxContainer extends StatelessWidget {
             ],
             borderRadius: BorderRadius.circular(15)),
         child: child);
+  }
+}
+
+class ImageBoxContainer extends StatelessWidget {
+  final Color color;
+  final Widget child;
+  final String imageUrl;
+
+  const ImageBoxContainer(
+      {Key? key,
+      required this.child,
+      this.color = Styles.boxBackgroundColor,
+      this.imageUrl = ''})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(children: [
+      Container(
+          width: double.infinity,
+          height: this.imageUrl != '' ? 150 : null,
+          decoration: BoxDecoration(
+            shape: BoxShape.rectangle,
+            image: this.imageUrl != ''
+                ? DecorationImage(
+                    image: NetworkImage(imageUrl), fit: BoxFit.cover)
+                : null,
+            color: color,
+            boxShadow: const [
+              const BoxShadow(
+                color: Color(0x12000000),
+                offset: Offset(0, 3),
+                blurRadius: 30,
+              )
+            ],
+            borderRadius: new BorderRadius.vertical(
+              top: new Radius.circular(15.0),
+              //right: new Radius.circular(20.0),
+            ),
+            // borderRadius: BorderRadius.circular(15)
+          )),
+      Container(
+          width: double.infinity,
+          height: 50,
+          decoration: BoxDecoration(
+              shape: BoxShape.rectangle,
+              color: Colors.white,
+              borderRadius: new BorderRadius.vertical(
+                bottom: new Radius.circular(15.0),
+              )),
+          child: child)
+    ]);
   }
 }
 
@@ -150,18 +201,15 @@ class GradientRectSliderTrackShape extends SliderTrackShape
       this.darkenInactive: true});
 
   @override
-  void paint(
-    PaintingContext context,
-    Offset offset, {
-    required RenderBox parentBox,
-    required SliderThemeData sliderTheme,
-    required Animation<double> enableAnimation,
-    required TextDirection textDirection,
-    required Offset thumbCenter,
-    bool isDiscrete = false,
-    bool isEnabled = false,
-    double additionalActiveTrackHeight = 2,
-  }) {
+  void paint(PaintingContext context, Offset offset,
+      {required RenderBox parentBox,
+      required SliderThemeData sliderTheme,
+      required Animation<double> enableAnimation,
+      required Offset thumbCenter,
+      Offset? secondaryOffset,
+      bool isEnabled = false,
+      bool isDiscrete = false,
+      required TextDirection textDirection}) {
     assert(context != null);
     assert(offset != null);
     assert(parentBox != null);
@@ -224,11 +272,11 @@ class GradientRectSliderTrackShape extends SliderTrackShape
       RRect.fromLTRBAndCorners(
         trackRect.left,
         (textDirection == TextDirection.ltr)
-            ? trackRect.top - (additionalActiveTrackHeight / 2)
+            ? trackRect.top // - (additionalActiveTrackHeight / 2)
             : trackRect.top,
         thumbCenter.dx,
         (textDirection == TextDirection.ltr)
-            ? trackRect.bottom + (additionalActiveTrackHeight / 2)
+            ? trackRect.bottom // + (additionalActiveTrackHeight / 2)
             : trackRect.bottom,
         topLeft: (textDirection == TextDirection.ltr)
             ? activeTrackRadius
@@ -243,11 +291,11 @@ class GradientRectSliderTrackShape extends SliderTrackShape
       RRect.fromLTRBAndCorners(
         thumbCenter.dx,
         (textDirection == TextDirection.rtl)
-            ? trackRect.top - (additionalActiveTrackHeight / 2)
+            ? trackRect.top // - (additionalActiveTrackHeight / 2)
             : trackRect.top,
         trackRect.right,
         (textDirection == TextDirection.rtl)
-            ? trackRect.bottom + (additionalActiveTrackHeight / 2)
+            ? trackRect.bottom // + (additionalActiveTrackHeight / 2)
             : trackRect.bottom,
         topRight: (textDirection == TextDirection.rtl)
             ? activeTrackRadius

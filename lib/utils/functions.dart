@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 T? cast<T>(x) => x is T ? x : null;
 
 double getBalanceValue(double balance, price) {
@@ -5,6 +7,18 @@ double getBalanceValue(double balance, price) {
     return 0.0;
   }
   return balance * price;
+}
+
+double getBalanceValueBI(BigInt? balance, double? price) {
+  if (price == null || balance == null) {
+    return 0.0;
+  }
+  var priceSplit = price.toString().split('.');
+  var decimalPlaces = priceSplit.length == 2 ? priceSplit[1].length : 0;
+  var res = ((balance * BigInt.parse(priceSplit[0] + (priceSplit[1] ?? ''))) /
+          BigInt.from(10).pow(decimalPlaces)) /
+      BigInt.from(10).pow(18).toDouble();
+  return res;
 }
 
 extension CapitalizeExtension on String {
@@ -21,6 +35,19 @@ extension ShortenExtension on String {
       return toString();
     }
   }
+}
+
+String formatAmountToDisplayBigInt(BigInt decimalsVal,
+    {int decimals = 18, int fractionDigits = 0}) {
+  double value = decimalsVal /
+      (BigInt.from(10)
+          .pow(decimals > fractionDigits ? decimals - fractionDigits : 0));
+  return NumberFormat.compact()
+      .format(value /
+          (decimals <= fractionDigits || fractionDigits == 0
+              ? 1
+              : BigInt.from(10).pow(fractionDigits).toDouble()))
+      .toString();
 }
 
 String toAmountDisplayBigInt(BigInt decimalsVal,

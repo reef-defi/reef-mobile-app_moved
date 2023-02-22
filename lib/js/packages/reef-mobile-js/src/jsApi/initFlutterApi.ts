@@ -42,9 +42,9 @@ export const initFlutterApi = async (flutterJS: FlutterJS) => {
             }
         };
         // testReefObservables();
-        accountApi.innitApi();
+        accountApi.innitApi(signingKey);
         transferApi.initApi(signingKey);
-        swapApi.initApi();
+        swapApi.initApi(signingKey);
         signApi.initApi(signingKey);
         utilsApi.initApi();
         metadataApi.initApi();

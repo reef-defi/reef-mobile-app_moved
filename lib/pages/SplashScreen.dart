@@ -171,6 +171,7 @@ class _SplashAppState extends State<SplashApp> {
           ));
     }
     //TODO: Initialise the widget back
+
     return Stack(children: <Widget>[
       widget.reefJsApiService.widget,
       if ((loaded == false || _isAuthenticated == false) ||

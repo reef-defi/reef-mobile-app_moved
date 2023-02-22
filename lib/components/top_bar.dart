@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
-import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/navigation/navigation_model.dart';
 import 'package:reef_mobile_app/utils/size_config.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
@@ -41,7 +41,8 @@ Widget topBar(BuildContext context) {
               var selAddr =
                   ReefAppState.instance.model.accounts.selectedAddress;
 
-              var selSignerList = ReefAppState.instance.model.accounts.accountsList
+              var selSignerList = ReefAppState
+                  .instance.model.accounts.accountsList
                   .where((element) => element.address == selAddr);
 
               return selSignerList.length > 0
@@ -61,7 +62,7 @@ Widget accountPill(BuildContext context, String title) {
 
   return GestureDetector(
       onTap: () {
-        ReefAppState.instance.navigation.navigate(NavigationPage.accounts);
+        ReefAppState.instance.navigationCtrl.navigate(NavigationPage.accounts);
       },
       child: Container(
           decoration: BoxDecoration(
@@ -74,10 +75,11 @@ Widget accountPill(BuildContext context, String title) {
           child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 14, vertical: 6),
               child: Row(children: [
-                Icon(Icons.account_balance_wallet_rounded, color:Styles.blueColor),
+                Icon(Icons.account_balance_wallet_rounded,
+                    color: Styles.blueColor),
                 Padding(
                   padding: EdgeInsets.only(left: 10),
-                  child: Text((title ?? ''),
+                  child: Text((title),
                       style: GoogleFonts.spaceGrotesk(
                           color: Colors.white,
                           fontSize: 18,

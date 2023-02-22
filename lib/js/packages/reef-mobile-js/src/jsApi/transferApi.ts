@@ -1,10 +1,10 @@
 import {reefState, ReefAccount, network, tokenUtil, getAccountSigner} from '@reef-chain/util-lib';
-import {combineLatest, map, switchMap, take} from "rxjs/operators";
+import {combineLatest, map, switchMap, take, tap} from "rxjs/operators";
 import {Contract} from "ethers";
 import { Provider , Signer as EvmSigner} from "@reef-defi/evm-provider";
 import { ERC20 } from "./abi/ERC20";
 import { firstValueFrom, of } from "rxjs";
-import {findSigner} from "./signApi";
+import {findAccount} from "./signApi";
 import Signer from "@reef-defi/extension-base/page/Signer";
 
 const nativeTransfer = async (amount: string, destinationAddress: string, provider: Provider, signer: ReefAccount, signingKey: Signer): Promise<void> => {
@@ -34,11 +34,11 @@ export const initApi = (signingKey: Signer) => {
     (window as any).transfer = {
         send: async (from: string, to: string, tokenAmount: string, tokenDecimals: number, tokenAddress: string) => {
         console.log('making transfer tx')
-        console.log(`From: ${from} | To: ${to} | Token Amount: ${tokenAmount} | Token Decimals: ${tokenDecimals} | Token Address: ${tokenDecimals}`)
+        console.log(`From: ${from} | To: ${to} | Token Amount: ${tokenAmount} | Token Decimals: ${tokenDecimals} | Token Address: ${tokenAddress}`)
             return firstValueFrom(reefState.accounts$.pipe(
                 combineLatest([of(from)]),
                 take(1),
-                map(([sgnrs, addr]: [ReefAccount[], string]) => findSigner(sgnrs, addr)),
+                map(([sgnrs, addr]: [ReefAccount[], string]) => findAccount(sgnrs, addr)),
                 combineLatest([reefState.selectedProvider$]),
                 switchMap(async ([signer, provider]: [ReefAccount | undefined, Provider]) => {
                     if (!signer) {

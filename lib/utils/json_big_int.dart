@@ -18,7 +18,7 @@ class JsonBigInt {
   }
 
   static JsonBigInt _fromJson(dynamic jsonVal) {
-    if (jsonVal is int) {
+    if (jsonVal is int || _isNumeric(jsonVal)) {
       return JsonBigInt('Int', jsonVal.toString());
     }
     if (jsonVal is double) {
@@ -29,5 +29,13 @@ class JsonBigInt {
 
   static BigInt? toBigInt(dynamic jsonVal) {
     return jsonVal != null ? _fromJson(jsonVal)._toBigInt() : null;
+  }
+
+  static bool _isNumeric(dynamic s) {
+    if (s == null || s is! String) {
+      return false;
+    }
+    return int.tryParse(s.trim(), radix: 10) != null ||
+        BigInt.tryParse(s, radix: 10) != null;
   }
 }

@@ -5,6 +5,7 @@ import 'package:reef_mobile_app/model/appConfig/app_config_model.dart';
 import 'package:reef_mobile_app/model/locale/locale_model.dart';
 
 import 'account/account_model.dart';
+import 'navigation/navigation_model.dart';
 
 class ViewModel {
   final tokens = TokenModel();
@@ -13,4 +14,5 @@ class ViewModel {
   final network = NetworkModel();
   final appConfig = AppConfigModel();
   final locale = LocaleModel();
+  final navigationModel = NavigationModel();
 }

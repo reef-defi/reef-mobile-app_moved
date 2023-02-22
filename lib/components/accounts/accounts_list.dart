@@ -2,7 +2,7 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:reef_mobile_app/model/account/ReefAccount.dart';
-import 'package:reef_mobile_app/model/feedback-data-model/FeedbackDataModel.dart';
+import 'package:reef_mobile_app/model/status-data-object/StatusDataObject.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../utils/styles.dart';
@@ -10,7 +10,7 @@ import '../account_box.dart';
 import '../modals/account_modals.dart';
 
 class AccountsList extends StatelessWidget {
-  final List<FeedbackDataModel<ReefAccount>> accounts;
+  final List<StatusDataObject<ReefAccount>> accounts;
   final void Function(String) selectAddress;
   final String? selectedAddress;
   const AccountsList(this.accounts, this.selectedAddress, this.selectAddress,
@@ -77,41 +77,42 @@ class AccountsList extends StatelessWidget {
     );
   }
 
-Widget toAccountBoxList(List<FeedbackDataModel<ReefAccount>> signers) {
+  Widget toAccountBoxList(List<StatusDataObject<ReefAccount>> signers) {
     signers.removeWhere((sig) => sig == null);
 
     Widget selectedWidget = Container();
     List<Widget> modifiedList = [];
 
     for (var acc in signers) {
-        if (selectedAddress != null && selectedAddress == acc.data.address) {
-            selectedWidget = Column(
-                children: [
-                    AccountBox(
-                        reefAccountFDM: acc,
-                        selected: true,
-                        onSelected: () => {},
-                        showOptions: true),
-                    const Gap(12)
-                ],
-            );
-        } else {
-            modifiedList.add(Column(
-                children: [
-                    AccountBox(
-                        reefAccountFDM: acc,
-                        selected: false,
-                        onSelected: () => selectAddress(acc.data.address),
-                        showOptions: true),
-                    const Gap(12)
-                ],
-            ));
-        }
+      if (selectedAddress != null && selectedAddress == acc.data.address) {
+        selectedWidget = Column(
+          children: [
+            AccountBox(
+                reefAccountFDM: acc,
+                selected: true,
+                onSelected: () => {},
+                showOptions: true),
+            const Gap(12)
+          ],
+        );
+      } else {
+        modifiedList.add(Column(
+          children: [
+            AccountBox(
+                reefAccountFDM: acc,
+                selected: false,
+                onSelected: () => selectAddress(acc.data.address),
+                showOptions: true),
+            const Gap(12)
+          ],
+        ));
+      }
     }
 
-    modifiedList.insert(
-        0,
-        Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+    if (signers.length > 1) {
+      modifiedList.insert(
+          0,
+          Row(mainAxisAlignment: MainAxisAlignment.start, children: [
             Padding(
                 padding: const EdgeInsets.only(bottom: 8.0),
                 child: Builder(
@@ -123,12 +124,12 @@ Widget toAccountBoxList(List<FeedbackDataModel<ReefAccount>> signers) {
                   }
                 ),
             ),
-        ]));
-
+          ]));
+    }
     if (selectedWidget != null) {
-        modifiedList.insert(0, selectedWidget);
+      modifiedList.insert(0, selectedWidget);
     }
 
     return Wrap(spacing: 24, children: modifiedList);
-}
+  }
 }

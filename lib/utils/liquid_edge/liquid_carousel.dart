@@ -11,10 +11,15 @@ import 'liquid_edge_clipper.dart';
 class LiquidCarousel extends StatefulWidget {
   final List<Widget> children;
   final bool cyclic;
+  final BuildContext parentContext;
   final void Function(int)? onSwipe;
 
   const LiquidCarousel(
-      {super.key, required this.children, this.cyclic = false, this.onSwipe});
+      {super.key,
+      required this.parentContext,
+      required this.children,
+      this.cyclic = false,
+      this.onSwipe});
 
   @override
   LiquidCarouselState createState() => LiquidCarouselState();
@@ -52,12 +57,15 @@ class LiquidCarouselState extends State<LiquidCarousel>
         vsync: this,
         duration: const Duration(milliseconds: 700),
         animationBehavior: AnimationBehavior.preserve);
-    _nextSwipeDragAnimation =
-        Tween<double>(begin: 400, end: 0).animate(_nextSwipeController);
+    _nextSwipeDragAnimation = Tween<double>(
+            begin: MediaQuery.of(widget.parentContext).size.width, end: 0)
+        .animate(_nextSwipeController);
   }
 
   @override
   void dispose() {
+    _previousSwipeController.dispose();
+    _nextSwipeController.dispose();
     _ticker.dispose();
     super.dispose();
   }
@@ -185,12 +193,12 @@ class LiquidCarouselState extends State<LiquidCarousel>
   }
 
   Future<bool> swipeToNext() async {
-    final verticalOffset = Random().nextDouble() * context.size!.height;
+    final verticalOffset =
+        ((context.size!.height / 2) - Random().nextInt(400)) + 200;
 
     _handlePanDown(
         DragStartDetails(
-            globalPosition:
-                Offset(MediaQuery.of(context).size.width, verticalOffset)),
+            globalPosition: Offset(context.size!.width, verticalOffset)),
         _getSize());
     _nextSwipeDragAnimation.addListener(() {
       final d = DragUpdateDetails(
@@ -206,7 +214,8 @@ class LiquidCarouselState extends State<LiquidCarousel>
   }
 
   Future<bool> swipeToPrevious() async {
-    final verticalOffset = Random().nextDouble() * context.size!.height;
+    final verticalOffset =
+        ((context.size!.height / 2) - Random().nextInt(400)) + 200;
 
     _handlePanDown(DragStartDetails(globalPosition: Offset(0, verticalOffset)),
         _getSize());

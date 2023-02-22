@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:reef_mobile_app/components/SignatureContentToggle.dart';
 import 'package:reef_mobile_app/components/home/NFT_view.dart';
 import 'package:reef_mobile_app/components/home/activity_view.dart';
 import 'package:reef_mobile_app/components/home/token_view.dart';
+import 'package:reef_mobile_app/components/modal.dart';
+import 'package:reef_mobile_app/components/modals/account_modals.dart';
+import 'package:reef_mobile_app/components/modals/add_account_modal.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/tokens/TokenWithAmount.dart';
 import 'package:reef_mobile_app/pages/test_page.dart';
@@ -148,7 +152,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-
     SizeConfig.init(context);
 
     return SignatureContentToggle(Container(
@@ -187,11 +190,24 @@ class _HomePageState extends State<HomePage> {
                 //       duration: const Duration(milliseconds: 200),
                 //       height: _isScrolling ? 16 : 0),
                 // ),
-                SliverClip(
-                  child: _viewsMap
-                      .where((option) => option["active"])
-                      .toList()[0]["component"],
-                )
+                Observer(builder: (_) {
+                  final accsFeedbackDataModel =
+                      ReefAppState.instance.model.accounts.accountsFDM;
+                  if (accsFeedbackDataModel.data.isEmpty) {
+                    return SliverPadding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 40, vertical: 12),
+                        sliver: SliverToBoxAdapter(
+                          child: createAccountBox(context),
+                        ));
+                  }
+                  // return Text('len=${accsFeedbackDataModel.data.length}');
+                  return SliverClip(
+                    child: _viewsMap
+                        .where((option) => option["active"])
+                        .toList()[0]["component"],
+                  );
+                }),
 
                 // height: ((size.height + 64) / 2),
                 // width: double.infinity,
@@ -200,6 +216,57 @@ class _HomePageState extends State<HomePage> {
                 // test()
               ],
             ))));
+  }
+
+  Widget createAccountBox(BuildContext context) => Flex(
+        direction: Axis.vertical,
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const SizedBox(height: 20),
+          const Text(
+            "No Account currently available, create or import an account to view your assets.",
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 20),
+          ElevatedButton.icon(
+              style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.resolveWith(
+                      (states) => Styles.purpleColor)),
+              onPressed: () {
+                showAddAccountModal('Add account', openModal,
+                    parentContext: context);
+              },
+              icon: const Icon(Icons.account_balance_wallet_outlined),
+              label: const Text("Create New Account")),
+        ],
+      );
+
+  void showAddAccountModal(String title, Function(String) callback,
+      {BuildContext? parentContext}) {
+    showModal(parentContext ?? context,
+        child: AddAccount(callback: callback), headText: title);
+  }
+
+  void openModal(String modalName) {
+    switch (modalName) {
+      case 'addAccount':
+        showCreateAccountModal(context);
+        break;
+      case 'importAccount':
+        showCreateAccountModal(context, fromMnemonic: true);
+        break;
+      default:
+        break;
+    }
+  }
+
+  void showCreateAccountModal(BuildContext context,
+      {bool fromMnemonic = false}) {
+    showModal(context,
+        headText: fromMnemonic ? "Import Account" : "Create Account",
+        dismissible: true,
+        child: CurrentScreen(fromMnemonic: fromMnemonic));
   }
 }
 
@@ -225,7 +292,6 @@ class _BalanceHeaderDelegate extends SliverPersistentHeaderDelegate {
   }
 
   Widget balanceSection(double size) {
-
     return AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeInOutCirc,
@@ -261,9 +327,17 @@ class _BalanceHeaderDelegate extends SliverPersistentHeaderDelegate {
                   ),
                   Center(
                     child: Observer(builder: (_) {
-                     return BlurableContent(
-                        GradientText("\$${_sumTokenBalances(ReefAppState.instance.model.tokens.selectedErc20List.toList()).toStringAsFixed(0)}",gradient: textGradient(),style: GoogleFonts.poppins(color: Styles.textColor,fontSize: 68,fontWeight: FontWeight.w800,letterSpacing: 3),),
-                        ReefAppState.instance.model.appConfig.displayBalance);
+                      return BlurableContent(
+                          GradientText(
+                            "\$${NumberFormat.compact().format(_sumTokenBalances(ReefAppState.instance.model.tokens.selectedErc20List.toList()))}",
+                            gradient: textGradient(),
+                            style: GoogleFonts.poppins(
+                                color: Styles.textColor,
+                                fontSize: 68,
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: 3),
+                          ),
+                          ReefAppState.instance.model.appConfig.displayBalance);
                     }),
                   ),
                 ]),
@@ -274,8 +348,7 @@ class _BalanceHeaderDelegate extends SliverPersistentHeaderDelegate {
   double _sumTokenBalances(List<TokenWithAmount> list) {
     var sum = 0.0;
     for (final token in list) {
-      double balValue =
-          getBalanceValue(decimalsToDouble(token.balance), token.price);
+      double balValue = getBalanceValueBI(token.balance, token.price);
       if (balValue > 0) {
         sum = sum + balValue;
       }

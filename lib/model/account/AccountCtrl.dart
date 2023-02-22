@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:reef_mobile_app/model/StorageKey.dart';
 import 'package:reef_mobile_app/model/account/ReefAccount.dart';
 import 'package:reef_mobile_app/model/account/stored_account.dart';
-import 'package:reef_mobile_app/model/feedback-data-model/FeedbackDataModel.dart';
+import 'package:reef_mobile_app/model/status-data-object/StatusDataObject.dart';
 import 'package:reef_mobile_app/service/JsApiService.dart';
 import 'package:reef_mobile_app/service/StorageService.dart';
 import 'package:reef_mobile_app/utils/constants.dart';
@@ -49,6 +49,11 @@ class AccountCtrl {
     var isValid = await _jsApi
         .jsPromise('window.keyring.checkMnemonicValid("$mnemonic")');
     return isValid == 'true';
+  }
+
+  Future<dynamic> resolveEvmAddress(String nativeAddress) async {
+    return await _jsApi
+        .jsPromise('window.account.resolveEvmAddress("$nativeAddress")');
   }
 
   Future<String> accountFromMnemonic(String mnemonic) async {
@@ -113,12 +118,15 @@ class AccountCtrl {
       _accountModel.setSelectedAddress(address);
     });
 
-    jsApi.jsObservable('window.reefState.accounts\$').listen((accs) async {
+    jsApi
+        .jsObservable('window.reefState.accounts_status\$')
+        .listen((accs) async {
+      ParseListFn<StatusDataObject<ReefAccount>> parsableListFn =
+          getParsableListFn(ReefAccount.fromJson);
+      var accsListFdm = StatusDataObject.fromJsonList(accs, parsableListFn);
 
-      ParseListFn<FeedbackDataModel<ReefAccount>> parsableListFn = getParsableListFn(ReefAccount.fromJson);
-      var accsListFdm = FeedbackDataModel.fromJsonList(accs, parsableListFn);
-
-      print('GOT ACCOUNTS ${accsListFdm.hasStatus(StatusCode.completeData)} ${accsListFdm.statusList[0].message} len =${accsListFdm.data.length}');
+      print(
+          'GOT ACCOUNTS ${accsListFdm.hasStatus(StatusCode.completeData)} ${accsListFdm.statusList[0].message} len =${accsListFdm.data.length}');
 
       _setAccountIconsFromStorage(accsListFdm);
 
@@ -148,17 +156,19 @@ class AccountCtrl {
         'window.account.toReefEVMAddressWithNotification("$evmAddress")');
   }
 
-  void _setAccountIconsFromStorage(FeedbackDataModel<List<FeedbackDataModel<ReefAccount>>> accsListFdm) async {
+  void _setAccountIconsFromStorage(
+      StatusDataObject<List<StatusDataObject<ReefAccount>>> accsListFdm) async {
     var accIcons = [];
 
     (await _storage.getAllAccounts()).forEach(((account) => {
-    accIcons.add({"address": account.address, "svg": account.svg})
-    }));
+          accIcons.add({"address": account.address, "svg": account.svg})
+        }));
 
     accsListFdm.data.forEach((accFdm) {
-      var accIcon = accIcons.firstWhere((accIcon) => accIcon['address'] == accFdm.data.address, orElse: ()=>null);
+      var accIcon = accIcons.firstWhere(
+          (accIcon) => accIcon['address'] == accFdm.data.address,
+          orElse: () => null);
       accFdm.data.iconSVG = accIcon?['svg'];
     });
-
   }
 }

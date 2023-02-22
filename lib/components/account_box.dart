@@ -7,14 +7,14 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:reef_mobile_app/components/modals/bind_modal.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/account/ReefAccount.dart';
-import 'package:reef_mobile_app/model/feedback-data-model/FeedbackDataModel.dart';
+import 'package:reef_mobile_app/model/status-data-object/StatusDataObject.dart';
 import 'package:reef_mobile_app/utils/functions.dart';
 
 import '../utils/styles.dart';
 import 'BlurableContent.dart';
 
 class AccountBox extends StatefulWidget {
-  final FeedbackDataModel<ReefAccount> reefAccountFDM;
+  final StatusDataObject<ReefAccount> reefAccountFDM;
   final bool selected;
   final VoidCallback onSelected;
   final bool showOptions;
@@ -47,15 +47,16 @@ class _AccountBoxState extends State<AccountBox> {
             decoration: BoxDecoration(
                 gradient: const LinearGradient(
                     begin: Alignment(0, 0.2),
-                     end: Alignment(0.1, 1.3),
+                    end: Alignment(0.1, 1.3),
                     colors: [
                       Color.fromARGB(198, 93, 59, 173),
-                       Color.fromARGB(53, 185, 25, 197),
+                      Color.fromARGB(53, 185, 25, 197),
                     ]),
                 border: Border.all(
-                  color:   !widget.selected?Color(Styles.purpleColor.value): Color(Styles.blueColor.value),
-                  width: widget.selected?3:1
-                ),
+                    color: !widget.selected
+                        ? Color(Styles.purpleColor.value)
+                        : Color(Styles.blueColor.value),
+                    width: widget.selected ? 3 : 1),
                 borderRadius: BorderRadius.circular(15)),
             child: Stack(
               children: [
@@ -82,7 +83,8 @@ class _AccountBoxState extends State<AccountBox> {
                 Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 24.0),
-                  child: Row(
+                  child: Flex(
+                    direction: Axis.horizontal,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Column(children: [
@@ -145,103 +147,115 @@ class _AccountBoxState extends State<AccountBox> {
     );
   }
 
-  Widget buildCentralColumn(FeedbackDataModel<ReefAccount> reefAccount) {
-    return Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  Widget buildCentralColumn(StatusDataObject<ReefAccount> reefAccount) {
+    return Flex(
+        direction: Axis.vertical,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Flexible(
-              child: Text(reefAccount.data.name,
-                  style: GoogleFonts.poppins(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                  ))),
-          Row(children: [
-            const Image(
-                image: AssetImage("./assets/images/reef.png"),
-                width: 18,
-                height: 18),
-            Gap(4),
-             Observer(builder:(_){
-              return BlurableContent(Text(
-              '${toAmountDisplayBigInt(reefAccount.data.balance)} REEF',
-              style: GoogleFonts.poppins(
-                color: Styles.blueColor,
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-              ),
-            ), ReefAppState.instance.model.appConfig.displayBalance);
-            } )
-          ])
-        ],
-      ),
-      Gap(6),
-      Container(color: Colors.purpleAccent.shade100.withAlpha(44), height: 1),
-      Gap(6),
-      Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Text.rich(
-              TextSpan(
-                text: "Address:",
-                style: TextStyle(fontSize: 10, color: Colors.grey.shade300),
-                children: <TextSpan>[
-                  TextSpan(
-                      text: " ${widget.reefAccountFDM.data.address.shorten()} ",
-                      style: const TextStyle(
-                          fontSize: 14, fontWeight: FontWeight.bold)),
-                ],
-              ),
-            ),
-            if (widget.reefAccountFDM.hasStatus(StatusCode.completeData) &&
-                widget.reefAccountFDM.data.isEvmClaimed)
-              Text.rich(
-                TextSpan(
-                  text: "EVM:",
-                  style: const TextStyle(fontSize: 10),
-                  children: <TextSpan>[
-                    TextSpan(
-                      text:
-                          " ${widget.reefAccountFDM.data.evmAddress?.shorten()}",
-                      style: const TextStyle(
-                          fontSize: 14, fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
-              ),
-            if (widget.showOptions &&
-                widget.reefAccountFDM.hasStatus(StatusCode.completeData) &&
-                !widget.reefAccountFDM.data.isEvmClaimed)
-              DecoratedBox(
-                decoration: BoxDecoration(
-                    color: Styles.primaryAccentColor,
-                    // gradient: textGradient(),
-                    borderRadius: BorderRadius.circular(12)),
-                child: TextButton(
-                    onPressed: () {
-                      showBindEvmModal(context,
-                          bindFor: widget.reefAccountFDM.data);
-                    },
-                    style: TextButton.styleFrom(
-                      backgroundColor: Colors.black12,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
-                      padding: EdgeInsets.zero,
-                      minimumSize: const Size(82, 30),
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    ),
-                    child: Text(
-                      "Connect EVM",
-                      style: TextStyle(
-                          color: Styles.whiteColor,
+          Flex(
+            direction: Axis.horizontal,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Flexible(
+                  child: Text(reefAccount.data.name,
+                      style: GoogleFonts.poppins(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                      ))),
+              Flexible(
+                  child: Flex(direction: Axis.horizontal, children: [
+                const Image(
+                    image: AssetImage("./assets/images/reef.png"),
+                    width: 18,
+                    height: 18),
+                const Gap(4),
+                Observer(builder: (_) {
+                  return BlurableContent(
+                      Text(
+                        '${formatAmountToDisplayBigInt(reefAccount.data.balance)} REEF',
+                        style: GoogleFonts.poppins(
+                          color: Styles.blueColor,
+                          fontSize: 14,
                           fontWeight: FontWeight.w600,
-                          fontSize: 10),
-                    )),
-              ),
-          ]),
-    ]);
+                        ),
+                      ),
+                      ReefAppState.instance.model.appConfig.displayBalance);
+                })
+              ]))
+            ],
+          ),
+          Gap(6),
+          Container(
+              color: Colors.purpleAccent.shade100.withAlpha(44), height: 1),
+          Gap(6),
+          Flex(
+              direction: Axis.horizontal,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Flexible(
+                    child: Text.rich(
+                  TextSpan(
+                    text: "Address:",
+                    style: TextStyle(fontSize: 10, color: Colors.grey.shade300),
+                    children: <TextSpan>[
+                      TextSpan(
+                          text:
+                              " ${widget.reefAccountFDM.data.address.shorten()} ",
+                          style: const TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.bold)),
+                    ],
+                  ),
+                )),
+                if (widget.reefAccountFDM.hasStatus(StatusCode.completeData) &&
+                    widget.reefAccountFDM.data.isEvmClaimed)
+                  Flexible(
+                      child: Text.rich(
+                    TextSpan(
+                      text: "EVM:",
+                      style: const TextStyle(fontSize: 10),
+                      children: <TextSpan>[
+                        TextSpan(
+                          text:
+                              " ${widget.reefAccountFDM.data.evmAddress.shorten()}",
+                          style: const TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                  )),
+                if (widget.showOptions &&
+                    widget.reefAccountFDM.hasStatus(StatusCode.completeData) &&
+                    !widget.reefAccountFDM.data.isEvmClaimed)
+                  DecoratedBox(
+                    decoration: BoxDecoration(
+                        color: Styles.primaryAccentColor,
+                        // gradient: textGradient(),
+                        borderRadius: BorderRadius.circular(12)),
+                    child: TextButton(
+                        onPressed: () {
+                          showBindEvmModal(context,
+                              bindFor: widget.reefAccountFDM.data);
+                        },
+                        style: TextButton.styleFrom(
+                          backgroundColor: Colors.black12,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12)),
+                          padding: EdgeInsets.zero,
+                          minimumSize: const Size(82, 30),
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
+                        child: Text(
+                          "Connect EVM",
+                          style: TextStyle(
+                              color: Styles.whiteColor,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 10),
+                        )),
+                  ),
+              ]),
+        ]);
   }
 }
 
@@ -277,7 +291,7 @@ showAlertDialog(BuildContext context, ReefAccount signer) {
   AlertDialog alert = AlertDialog(
     title: const Text("Delete Account"),
     content: Text(
-        "You will delete account with name ${signer.name} ${signer.address?.shorten()}. Continue?"),
+        "You will delete account with name ${signer.name} ${signer.address.shorten()}. Continue?"),
     actions: [
       cancelButton,
       continueButton,

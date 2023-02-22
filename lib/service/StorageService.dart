@@ -1,13 +1,14 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:hive/hive.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:hive/hive.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:reef_mobile_app/model/account/stored_account.dart';
-import 'package:reef_mobile_app/model/metadata/metadata.dart';
 import 'package:reef_mobile_app/model/auth_url/auth_url.dart';
+import 'package:reef_mobile_app/model/metadata/metadata.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class StorageService {
   Completer<Box<dynamic>> mainBox = Completer();
@@ -17,7 +18,6 @@ class StorageService {
   Completer<Box<dynamic>> jwtsBox = Completer();
 
   StorageService() {
-    _checkPermission();
     _initAsync();
   }
 
@@ -75,15 +75,16 @@ class StorageService {
   Future<dynamic> deleteJwt(String address) =>
       jwtsBox.future.then((Box<dynamic> box) => box.delete(address));
 
-  _initAsync() async {
+  Future<void> _initAsync() async {
     if (await _checkPermission()) {
       _initHive();
     }
   }
 
-  _initHive() async {
+  Future<void> _initHive() async {
+    final prefs = await SharedPreferences.getInstance();
     var dir = await getApplicationDocumentsDirectory();
-    var path = dir.path + "/hive_store";
+    var path = "${dir.path}/hive_store";
     Hive
       ..init(path)
       ..registerAdapter(StoredAccountAdapter())
@@ -97,6 +98,11 @@ class StorageService {
 
     // Encryption
     const secureStorage = FlutterSecureStorage();
+    if (prefs.getBool('first_run') ?? true) {
+      await secureStorage.deleteAll();
+
+      prefs.setBool('first_run', false);
+    }
     var key = await secureStorage.read(key: 'encryptionKey');
     if (key == null) {
       var key = Hive.generateSecureKey();
@@ -111,16 +117,18 @@ class StorageService {
   }
 
   Future<bool> _checkPermission() async {
-    var status = await Permission.storage.status;
+    final status = await Permission.storage.status;
     print('PERMISSION STORAGE=$status');
     if (status.isDenied) {
       // We didn't ask for permission yet or the permission has been denied before but not permanently.
       if (await Permission.storage.request().isGranted) {
         print("PERMISSION GRANTED");
+        return true;
       } else {
         print("PERMISSION DENIED");
+        return true;
       }
     }
-    return status.isGranted;
+    return await Permission.storage.status.isGranted;
   }
 }
