@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:gap/gap.dart';
 import 'package:reef_mobile_app/components/account_box.dart';
 import 'package:reef_mobile_app/components/modal.dart';
@@ -7,7 +8,6 @@ import 'package:reef_mobile_app/model/StorageKey.dart';
 import 'package:reef_mobile_app/model/account/ReefAccount.dart';
 import 'package:reef_mobile_app/model/status-data-object/StatusDataObject.dart';
 import 'package:reef_mobile_app/pages/SplashScreen.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 
 class SelectAccount extends StatelessWidget {
@@ -40,7 +40,7 @@ class SelectAccount extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
             child: accountList.isEmpty
                 ? const Text(
-                  AppLocalizations.of(context)!.no_other_accounts,
+                    AppLocalizations.of(context)!.no_other_accounts,
                   )
                 : ListView(
                     physics: const BouncingScrollPhysics(),

@@ -2,15 +2,15 @@ import 'dart:convert';
 
 import 'package:reef_mobile_app/model/StorageKey.dart';
 import 'package:reef_mobile_app/model/ViewModel.dart';
-import 'package:reef_mobile_app/model/metadata/MetadataCtrl.dart';
 import 'package:reef_mobile_app/model/appConfig/AppConfigCtrl.dart';
+import 'package:reef_mobile_app/model/locale/LocaleCtrl.dart';
+import 'package:reef_mobile_app/model/metadata/MetadataCtrl.dart';
 import 'package:reef_mobile_app/model/navigation/NavigationCtrl.dart';
 import 'package:reef_mobile_app/model/navigation/navigation_model.dart';
 import 'package:reef_mobile_app/model/network/NetworkCtrl.dart';
 import 'package:reef_mobile_app/model/signing/SigningCtrl.dart';
 import 'package:reef_mobile_app/model/swap/SwapCtrl.dart';
 import 'package:reef_mobile_app/model/tokens/TokensCtrl.dart';
-import 'package:reef_mobile_app/model/locale/LocaleCtrl.dart';
 import 'package:reef_mobile_app/model/transfer/TransferCtrl.dart';
 import 'package:reef_mobile_app/service/JsApiService.dart';
 import 'package:reef_mobile_app/service/StorageService.dart';
@@ -55,7 +55,7 @@ class ReefAppState {
     networkCtrl = NetworkCtrl(storage, jsApi, model.network);
     await _initReefState(jsApi, currentNetwork);
     appConfigCtrl = AppConfigCtrl(storage, model.appConfig);
-    localeCtrl = LocaleCtrl(storage,model.locale);
+    localeCtrl = LocaleCtrl(storage, model.locale);
     navigation = NavigationModel();
   }
 

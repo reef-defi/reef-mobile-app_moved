@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:reef_mobile_app/components/introduction_page/introduction_slide.dart';
 import 'package:reef_mobile_app/utils/liquid_edge/liquid_carousel.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 typedef ShouldRebuildFunction<T> = bool Function(T oldWidget, T newWidget);
 
@@ -139,7 +139,8 @@ class IntroductionPage extends StatelessWidget {
                           Padding(
                             padding: EdgeInsets.all(4),
                             child: Text(
-                              AppLocalizations.of(context)!.introducing_reef_chain,
+                              AppLocalizations.of(context)!
+                                  .introducing_reef_chain,
                               textAlign: TextAlign.center,
                               style:
                                   TextStyle(fontSize: 30, color: Colors.white),
@@ -154,7 +155,8 @@ class IntroductionPage extends StatelessWidget {
                                       child: SizedBox(
                                           child: (SingleChildScrollView(
                                         child: Text(
-                                            AppLocalizations.of(context)!.reef_chain_desc,
+                                          AppLocalizations.of(context)!
+                                              .reef_chain_desc,
                                           style: TextStyle(
                                               fontSize: 16,
                                               height: 2,

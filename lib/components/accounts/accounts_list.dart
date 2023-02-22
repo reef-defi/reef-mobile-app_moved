@@ -1,9 +1,9 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:gap/gap.dart';
 import 'package:reef_mobile_app/model/account/ReefAccount.dart';
 import 'package:reef_mobile_app/model/status-data-object/StatusDataObject.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../utils/styles.dart';
 import '../account_box.dart';
@@ -114,15 +114,13 @@ class AccountsList extends StatelessWidget {
           0,
           Row(mainAxisAlignment: MainAxisAlignment.start, children: [
             Padding(
-                padding: const EdgeInsets.only(bottom: 8.0),
-                child: Builder(
-                  builder: (context) {
-                    return Text(
-                        AppLocalizations.of(context)!.available,
-                        style: TextStyle(color: Styles.whiteColor, fontSize: 20.0),
-                    );
-                  }
-                ),
+              padding: const EdgeInsets.only(bottom: 8.0),
+              child: Builder(builder: (context) {
+                return Text(
+                  AppLocalizations.of(context)!.available,
+                  style: TextStyle(color: Styles.whiteColor, fontSize: 20.0),
+                );
+              }),
             ),
           ]));
     }
