@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:mobx/src/api/store.dart';
 import 'package:reef_mobile_app/components/modals/signing_modals.dart';
 import 'package:reef_mobile_app/model/signing/signature_request.dart';
 import 'package:reef_mobile_app/model/signing/signer_payload_json.dart';
@@ -29,13 +30,14 @@ class SigningCtrl {
       jsApi.jsPromise(
           'window.signApi.signPayloadPromise(`$address`, ${jsonEncode(payload)})');
 
-  Future<dynamic> decodeMethod(String data, dynamic types) =>
-      jsApi.jsPromise('window.utils.decodeMethod(`$data`, ${jsonEncode(types)})');
+  Future<dynamic> decodeMethod(String data, dynamic types) => jsApi
+      .jsPromise('window.utils.decodeMethod(`$data`, ${jsonEncode(types)})');
 
   Future<dynamic> bytesString(String bytes) =>
       jsApi.jsPromise('window.utils.bytesString("$bytes")');
 
-  confirmSignature(String sigConfirmationIdent, String address) async {
+  Future<void> confirmSignature(
+      String sigConfirmationIdent, String address) async {
     var account = await storage.getAccount(address);
     if (account == null) {
       print("ERROR: confirmSignature - Account not found.");
@@ -48,7 +50,7 @@ class SigningCtrl {
 
   _buildSignatureRequest(JsApiMessage jsApiMessage) {
     var signatureIdent = jsApiMessage.reqId;
-    var payload;
+    Store payload;
 
     if (jsApiMessage.value["data"] != null) {
       payload = SignerPayloadRaw(jsApiMessage.value["address"],

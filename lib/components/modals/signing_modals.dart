@@ -10,6 +10,7 @@ import 'package:reef_mobile_app/components/modals/bind_modal.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/StorageKey.dart';
 import 'package:reef_mobile_app/model/account/ReefAccount.dart';
+import 'package:reef_mobile_app/model/navigation/navigation_model.dart';
 import 'package:reef_mobile_app/model/signing/signature_request.dart';
 import 'package:reef_mobile_app/model/signing/tx_decoded_data.dart';
 import 'package:reef_mobile_app/utils/elements.dart';
@@ -186,6 +187,7 @@ class _SignModalState extends State<SignModal> {
     if (storedPassword == value) {
       setState(() {
         _wrongPassword = false;
+        ReefAppState.instance.navigationCtrl.navigate(NavigationPage.home);
         Navigator.pop(context);
         ReefAppState.instance.signingCtrl.confirmSignature(
           widget.signatureIdent,
@@ -207,6 +209,7 @@ class _SignModalState extends State<SignModal> {
     if (isValid) {
       setState(() {
         _wrongPassword = false;
+        ReefAppState.instance.navigationCtrl.navigate(NavigationPage.home);
         Navigator.pop(context);
         ReefAppState.instance.signingCtrl.confirmSignature(
           widget.signatureIdent,
