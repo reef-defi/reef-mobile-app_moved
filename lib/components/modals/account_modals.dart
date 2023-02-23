@@ -117,7 +117,7 @@ class _AccountImportContentState extends State<AccountImportContent> {
           Builder(
             builder: (context) {
               return Text(
-                AppLocalizations.of(context)!.existing,
+                AppLocalizations.of(context)!.existing_seed,
                 style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
@@ -163,7 +163,7 @@ class _AccountImportContentState extends State<AccountImportContent> {
                 Flexible(
                   child: Text(
                     errorDuplicated
-                        ? AppLocalizations.of(context)!.already_added
+                        ? AppLocalizations.of(context)!.account_already_added
                         : "Invalid mnemonic seed",
                     style: TextStyle(color: Colors.grey[600], fontSize: 13),
                   ),
@@ -363,7 +363,7 @@ class _AccountCreationContentState extends State<AccountCreationContent> {
               const Gap(8),
               Flexible(
                 child: Text(
-                 AppLocalizations.of(context)!.i_have_saved_my,
+                 AppLocalizations.of(context)!.i_saved_mnemonic,
                   style: TextStyle(color: Colors.grey[600]!, fontSize: 14),
                 ),
               )
@@ -517,7 +517,7 @@ class _AccountCreationConfirmContentState
           buildAccountBox(widget.account, name: name),
           const Gap(12),
           Text(
-            AppLocalizations.of(context)!.descriptive,
+            AppLocalizations.of(context)!.descriptive_account_name,
             style: TextStyle(
                 fontSize: 10,
                 fontWeight: FontWeight.w500,

@@ -26,13 +26,13 @@ class _AuthUrlListState extends State<AuthUrlList> {
   showAlertDialog(BuildContext context, AuthUrl authUrl) {
     // set up the buttons
     Widget cancelButton = TextButton(
-      child: Text(AppLocalizations.of(context)!.auth_url_list_cancel),
+      child: Text(AppLocalizations.of(context)!.cancel),
       onPressed: () {
         Navigator.of(context).pop();
       },
     );
     Widget continueButton = TextButton(
-      child: Text(AppLocalizations.of(context)!.auth_url_list_yes),
+      child: Text(AppLocalizations.of(context)!.yes),
       onPressed: () {
         authUrl.delete();
         setState(() {

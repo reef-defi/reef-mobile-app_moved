@@ -149,7 +149,7 @@ class _BindEvmState extends State<BindEvm> {
           func();
         },
         child: Text(
-          AppLocalizations.of(context)!.bind_modal_continue,
+          AppLocalizations.of(context)!.continue_,
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w700,
@@ -186,7 +186,7 @@ class _BindEvmState extends State<BindEvm> {
 
   Widget buildBound() {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text(AppLocalizations.of(context)!.bind_modal_selected),
+      Text(AppLocalizations.of(context)!.bind_modal_connected),
       Text(widget.bindFor.evmAddress.shorten(),
           style: const TextStyle(fontWeight: FontWeight.bold)),
       const Gap(48),
