@@ -461,17 +461,17 @@ class _SwapPageState extends State<SwapPage> {
                       width: double.infinity,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(40)),
-                          shadowColor: const Color(0x559d6cff),
-                          elevation: 5,
-                          primary: (selectedTopToken == null ||
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14)),
+                      shadowColor: const Color(0x559d6cff),
+                      elevation: 0,
+                      backgroundColor: (selectedTopToken == null ||
                                   selectedTopToken!.amount <= BigInt.zero ||
                                   selectedBottomToken == null ||
                                   selectedBottomToken!.amount <= BigInt.zero)
-                              ? const Color(0xff9d6cff)
-                              : Styles.secondaryAccentColor,
-                          padding: const EdgeInsets.symmetric(vertical: 16),
+? const Color(0xffe6e2f1)
+                          : Colors.transparent,
+                         padding: const EdgeInsets.all(0),
                         ),
                         onPressed: () {
                           if (selectedTopToken == null ||
@@ -482,20 +482,41 @@ class _SwapPageState extends State<SwapPage> {
                           }
                           _executeSwap();
                         },
-                        child: Text(
-                          // TODO changes not reflected in UI
-                          (selectedTopToken == null
-                              ? "Select sell token"
-                              : selectedBottomToken == null
-                                  ? "Select buy token"
-                                  : selectedTopToken!.amount <= BigInt.zero ||
-                                          selectedBottomToken!.amount <=
-                                              BigInt.zero
-                                      ? "Insert amount"
-                                      : "Swap"),
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
+                        child: Ink(
+                         width: double.infinity,
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 15, horizontal: 22),
+                      decoration: BoxDecoration(
+                        color: const Color(0xffe6e2f1),
+                        gradient: (selectedTopToken == null ||
+                              selectedTopToken!.amount <= BigInt.zero ||
+                              selectedBottomToken == null ||
+                              selectedBottomToken!.amount <= BigInt.zero)
+                            ? null
+                            : const LinearGradient(colors: [
+                                Color(0xffae27a5),
+                                Color(0xff742cb2),
+                              ]),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(14.0)),
+                      ),
+                          child: Center(
+                            child: Text(
+                              // TODO changes not reflected in UI
+                              (selectedTopToken == null
+                                  ? "Select sell token"
+                                  : selectedBottomToken == null
+                                      ? "Select buy token"
+                                      : selectedTopToken!.amount <= BigInt.zero ||
+                                              selectedBottomToken!.amount <=
+                                                  BigInt.zero
+                                          ? "Insert amount"
+                                          : "Swap"),
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
                           ),
                         ),
                       ),
