@@ -36,8 +36,8 @@ export const initApi = () => {
                 )
             );
         },
-        isValidEvmAddress: (address: string) => {
-            return ethers.utils.isAddress(address);
-        }
+//         isValidEvmAddress: (address: string) => {
+//             return ethers.utils.isAddress(address);
+//         }
     }
 }

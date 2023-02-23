@@ -27,9 +27,10 @@ export const initApi = () => {
                 )
             );
         },
-        isValidEvmAddress: (address: string) => {
-            return ethers.utils.isAddress(address);
-        },
+//         isValidEvmAddress: (address: string) => {
+//             return ethers.utils.isAddress(address);
+//         },
+
         decodeMethod: (data: string, types: any) => {
             return firstValueFrom(reefState.selectedProvider$.pipe(
                 take(1),

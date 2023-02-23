@@ -319,9 +319,11 @@ void choiceAction(
           const SnackBar(content: Text("Native Address copied to clipboard")));
     });
   } else if (choice == Constants.copyEvmAddress) {
+    var address = await ReefAppState.instance.accountCtrl
+                .toReefEVMAddressWithNotificationString(account.evmAddress);
+    print('AAAAdd $address');
     Clipboard.setData(ClipboardData(
-            text: await ReefAppState.instance.accountCtrl
-                .toReefEVMAddressWithNotificationString(account.evmAddress)))
+            text: address))
         .then((_) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text(
