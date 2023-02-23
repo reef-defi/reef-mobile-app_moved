@@ -4,6 +4,7 @@ import 'package:gap/gap.dart';
 import 'package:reef_mobile_app/components/modal.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/account/ReefAccount.dart';
+import 'package:reef_mobile_app/model/navigation/navigation_model.dart';
 import 'package:reef_mobile_app/model/tokens/TokenWithAmount.dart';
 import 'package:reef_mobile_app/utils/constants.dart';
 import 'package:reef_mobile_app/utils/elements.dart';
@@ -56,7 +57,7 @@ class _BindEvmState extends State<BindEvm> {
     return _availableTxAccounts;
   }
 
-  transfer() async {
+  Future<void> transfer() async {
     TokenWithAmount reefToken = TokenWithAmount(
         name: 'Reef',
         address: Constants.REEF_TOKEN_ADDRESS,
@@ -105,7 +106,7 @@ class _BindEvmState extends State<BindEvm> {
                     children: [
                       Text(
                         signer.name,
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
                             color: Styles.textColor),
@@ -128,7 +129,7 @@ class _BindEvmState extends State<BindEvm> {
     );
   }
 
-  Widget buildButton(Function func) {
+  Widget buildButton(Future<void> Function() func) {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
@@ -143,8 +144,8 @@ class _BindEvmState extends State<BindEvm> {
           backgroundColor: Styles.primaryAccentColorDark,
           padding: const EdgeInsets.symmetric(vertical: 16),
         ),
-        onPressed: () {
-          func();
+        onPressed: () async {
+          await func();
         },
         child: const Text(
           'Continue',
@@ -204,10 +205,11 @@ class _BindEvmState extends State<BindEvm> {
       const Gap(16),
       if (hasBalanceForBinding(widget.bindFor)) ...[
         // Bind button
-        buildButton(() {
+        buildButton(() async {
+          final navigator = Navigator.of(context);
           ReefAppState.instance.accountCtrl
               .bindEvmAccount(widget.bindFor.address);
-          Navigator.pop(context);
+          navigator.pop();
         })
       ] else ...[
         // Insufficient balance
@@ -237,9 +239,10 @@ class _BindEvmState extends State<BindEvm> {
               },
               child: (buildAccount(transferBalanceFrom))),
           const Gap(16),
-          buildButton(() {
-            Navigator.pop(context);
+          buildButton(() async {
+            final navigator = Navigator.of(context);
             transfer();
+            navigator.pop();
           }),
         ],
       ]

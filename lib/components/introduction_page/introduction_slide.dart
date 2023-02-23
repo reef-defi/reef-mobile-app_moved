@@ -62,7 +62,7 @@ class IntroductionSlide extends StatelessWidget {
                               ? null
                               : () {
                                   liquidCarouselKey.currentState
-                                      ?.swipeToPrevious();
+                                      ?.swipeXPrevious();
                                 },
                           child: const Padding(
                             padding: EdgeInsets.symmetric(vertical: 0),
@@ -85,7 +85,7 @@ class IntroductionSlide extends StatelessWidget {
                           if (done != null) {
                             await done!();
                           }
-                          liquidCarouselKey.currentState?.swipeToNext();
+                          liquidCarouselKey.currentState?.swipeXNext();
                         },
                         child: Padding(
                           padding: const EdgeInsets.symmetric(vertical: 0),

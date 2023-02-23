@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:reef_mobile_app/components/modals/select_account_modal.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/StorageKey.dart';
+import 'package:reef_mobile_app/model/navigation/navigation_model.dart';
 import 'package:reef_mobile_app/model/tokens/TokenWithAmount.dart';
 import 'package:reef_mobile_app/utils/constants.dart';
 import 'package:reef_mobile_app/utils/elements.dart';
@@ -124,12 +125,12 @@ class _SendPageState extends State<SendPage> {
     return ValidationError.OK;
   }
 
-  void _onConfirmSend(TokenWithAmount sendToken) async {
+  Future<void> _onConfirmSend(TokenWithAmount sendToken) async {
     if (address.isEmpty || amount.isEmpty || sendToken.balance <= BigInt.zero) {
       return;
     }
-
-    var signerAddress = await ReefAppState.instance.storage
+    final navigator = Navigator.of(context);
+    final signerAddress = await ReefAppState.instance.storage
         .getValue(StorageKey.selected_address.name);
     TokenWithAmount tokenToTransfer = TokenWithAmount(
         name: sendToken.name,
@@ -146,6 +147,8 @@ class _SendPageState extends State<SendPage> {
         signerAddress, resolvedEvmAddress ?? address, tokenToTransfer);
     amountController.clear();
     valueController.clear();
+    navigator.pop();
+    ReefAppState.instance.navigationCtrl.navigate(NavigationPage.home);
   }
 
   getSendBtnLabel(ValidationError validation) {
@@ -163,7 +166,6 @@ class _SendPageState extends State<SendPage> {
       default:
         return "Not Valid";
     }
-
   }
 
   @override

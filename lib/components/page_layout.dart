@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:reef_mobile_app/components/navigation/liquid_carousel_wrapper.dart';
 import 'package:reef_mobile_app/components/top_bar.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/navigation/navigation_model.dart';
@@ -63,6 +64,9 @@ class _BottomNavState extends State<BottomNav> {
   }
 
   void _onItemTapped(int index) async {
+    print(index);
+    print(bottomNavigationBarItems[index].page);
+    print(bottomNavigationBarItems[index].label);
     ReefAppState.instance.navigationCtrl
         .navigate(bottomNavigationBarItems[index].page);
   }
@@ -140,15 +144,17 @@ class _BottomNavState extends State<BottomNav> {
                         child: LiquidCarousel(
                       parentContext: context,
                       key: _liquidCarouselKey,
-                      cyclic: true,
+                      cyclic: false,
                       onSwipe: (int index) {
                         ReefAppState.instance.model.navigationModel
-                            .navigate(bottomNavigationBarItems[index].page);
+                            .navigate(bottomNavigationBarItems[index - 1].page);
                       },
                       children: [
+                        const LiquidCarouselWrapper(),
                         const HomePage(key: PageStorageKey("homepage")),
                         AccountsPage(key: const PageStorageKey("accountPage")),
                         const SettingsPage(key: PageStorageKey("settingsPage")),
+                        const LiquidCarouselWrapper()
                       ],
                     )),
                     // Expanded(
