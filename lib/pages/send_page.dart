@@ -40,8 +40,6 @@ class _SendPageState extends State<SendPage> {
   FocusNode _focus = FocusNode();
   FocusNode _focusSecond = FocusNode();
 
-  bool isInProgress = false;
-
   @override
   void initState() {
     super.initState();
@@ -144,9 +142,8 @@ class _SendPageState extends State<SendPage> {
         valError != ValidationError.OK) {
       return;
     }
-    print('VVV=${await _validate(address, sendToken, amount)}');
     setState(() {
-      isInProgress = true;
+      valError = ValidationError.SENDING;
     });
     var signerAddress = await ReefAppState.instance.storage
         .getValue(StorageKey.selected_address.name);
@@ -161,21 +158,23 @@ class _SendPageState extends State<SendPage> {
             BigInt.parse(toStringWithoutDecimals(amount, sendToken.decimals)),
         price: 0);
 
-    var result = await ReefAppState.instance.transferCtrl.transferTokens(
+    dynamic result = await ReefAppState.instance.transferCtrl.transferTokens(
         signerAddress, resolvedEvmAddress ?? address, tokenToTransfer);
     print('RESULT=$result');
-    if (result == null || result?.success == false) {}
-    resetState();
+    if (result == null || result['success'] == false) {}
+
+    Navigator.of(context).pop();
   }
 
-  void resetState() {
-    amountController.clear();
-    valueController.clear();
-    setState(() {
-      rating = 0;
-      isInProgress = false;
-    });
-  }
+  // void resetState() {
+  //   amountController.clear();
+  //   valueController.clear();
+  //   setState(() {
+  //     rating = 0;
+  //     isInProgress = false;
+  //      valError=ValErr.OK
+  //   });
+  // }
 
   getSendBtnLabel(ValidationError validation) {
     switch (validation) {
@@ -191,6 +190,8 @@ class _SendPageState extends State<SendPage> {
         return "Enter a valid address";
       case ValidationError.ADDR_NOT_EXIST:
         return "Unknown address";
+      case ValidationError.SENDING:
+        return "Sending ...";
       case ValidationError.OK:
         return "Confirm Send";
       default:
@@ -205,8 +206,7 @@ class _SendPageState extends State<SendPage> {
         buildHeader(context),
         Gap(16),
         Observer(builder: (_) {
-          var tokens =
-              ReefAppState.instance.model.tokens.selectedErc20List ?? [];
+          var tokens = ReefAppState.instance.model.tokens.selectedErc20List;
           var selectedToken =
               tokens.firstWhere((tkn) => tkn.address == selectedTokenAddress);
           if (selectedToken == null && !tokens.isEmpty) {
@@ -368,7 +368,7 @@ class _SendPageState extends State<SendPage> {
                               focusNode: _focusSecond,
                               inputFormatters: [
                                 FilteringTextInputFormatter.allow(
-                                    RegExp(r'[\.0-9]'))
+                                    RegExp(r'[0-9]'))
                               ],
                               keyboardType: TextInputType.number,
                               controller: amountController,
@@ -392,17 +392,16 @@ class _SendPageState extends State<SendPage> {
                                   rating = calcRating > 1 ? 1 : calcRating;
                                 });
                               },
-                              decoration: InputDecoration(
-                                  constraints:
-                                      const BoxConstraints(maxHeight: 32),
-                                  contentPadding: const EdgeInsets.symmetric(
+                              decoration: const InputDecoration(
+                                  constraints: BoxConstraints(maxHeight: 32),
+                                  contentPadding: EdgeInsets.symmetric(
                                       horizontal: 12, vertical: 8),
-                                  enabledBorder: const OutlineInputBorder(
+                                  enabledBorder: OutlineInputBorder(
                                     borderSide:
                                         BorderSide(color: Colors.transparent),
                                   ),
-                                  border: const OutlineInputBorder(),
-                                  focusedBorder: const OutlineInputBorder(
+                                  border: OutlineInputBorder(),
+                                  focusedBorder: OutlineInputBorder(
                                     borderSide: BorderSide(
                                       color: Colors.transparent,
                                     ),
@@ -533,9 +532,7 @@ class _SendPageState extends State<SendPage> {
                       ),
                       child: Center(
                         child: Text(
-                          isInProgress
-                              ? 'Sending ...'
-                              : getSendBtnLabel(valError),
+                          getSendBtnLabel(valError),
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
@@ -616,4 +613,5 @@ enum ValidationError {
   AMT_TOO_HIGH,
   ADDR_NOT_VALID,
   ADDR_NOT_EXIST,
+  SENDING,
 }
