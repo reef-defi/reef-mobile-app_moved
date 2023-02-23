@@ -20,8 +20,6 @@ class LocaleCtrl {
   changeSelectedLanguage(String newLang)async{
     SharedPreferences _prefs = await SharedPreferences.getInstance();
     await _prefs.setString('languageCode', newLang);
-    storage.setValue("selectedLanguage", newLang);
     localeModel.setSelectedLanguage(newLang);
-    localeModel.selectedLanguage;
   }
 }
