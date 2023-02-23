@@ -228,21 +228,25 @@ class _HomePageState extends State<HomePage> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const SizedBox(height: 20),
-          const Text(
-            "No Account currently available, create or import an account to view your assets.",
+          Text(
+            AppLocalizations.of(context)!.no_account_currently,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 20),
-          ElevatedButton.icon(
-              style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.resolveWith(
-                      (states) => Styles.purpleColor)),
-              onPressed: () {
-                showAddAccountModal('Add account', openModal,
-                    parentContext: context);
-              },
-              icon: const Icon(Icons.account_balance_wallet_outlined),
-              label: const Text("Create New Account")),
+          Builder(
+            builder: (context) {
+              return ElevatedButton.icon(
+                  style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.resolveWith(
+                          (states) => Styles.purpleColor)),
+                  onPressed: () {
+                    showAddAccountModal(AppLocalizations.of(context)!.add_account, openModal,
+                        parentContext: context);
+                  },
+                  icon: const Icon(Icons.account_balance_wallet_outlined),
+                  label: Text(AppLocalizations.of(context)!.create_new_account));
+            }
+          ),
         ],
       );
 

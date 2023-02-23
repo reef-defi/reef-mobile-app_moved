@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:reef_mobile_app/model/StorageKey.dart';
 import 'package:reef_mobile_app/model/ViewModel.dart';
 import 'package:reef_mobile_app/model/appConfig/AppConfigCtrl.dart';
@@ -31,9 +32,9 @@ class ReefAppState {
   late MetadataCtrl metadataCtrl;
   late NetworkCtrl networkCtrl;
   late NavigationCtrl navigationCtrl;
+  late LocaleCtrl localeCtrl;
   late AppConfigCtrl appConfigCtrl;
   late NavigationModel navigation;
-  late LocaleCtrl localeCtrl;
 
   ReefAppState._();
 
