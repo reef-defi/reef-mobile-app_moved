@@ -100,18 +100,17 @@ class _SendPageState extends State<SendPage> {
   }
 
   Future<ValidationError> _validate(
-      String addr, TokenWithAmount token, String amt) async {
+      String addr, TokenWithAmount token, String amt,
+      [bool skipAsync = false]) async {
     var isValidAddr = await _isValidAddress(addr);
     var balance = getSelectedTokenBalance(token);
     if (amt == '') {
       amt = '0';
     }
     var amtVal = double.parse(amt);
-    print('AAAAAA $amtVal  a=$amt');
     if (addr.isEmpty) {
       return ValidationError.NO_ADDRESS;
     } else if (amtVal <= 0) {
-      print('NO AAAA');
       return ValidationError.NO_AMT;
     } else if (amtVal > getMaxTransferAmount(token, balance)) {
       return ValidationError.AMT_TOO_HIGH;
@@ -119,8 +118,10 @@ class _SendPageState extends State<SendPage> {
         token.address != Constants.REEF_TOKEN_ADDRESS &&
         !addr.startsWith('0x')) {
       try {
-        resolvedEvmAddress =
-            await ReefAppState.instance.accountCtrl.resolveEvmAddress(addr);
+        if (skipAsync == false) {
+          resolvedEvmAddress =
+              await ReefAppState.instance.accountCtrl.resolveEvmAddress(addr);
+        }
       } catch (e) {
         resolvedEvmAddress = null;
       }
@@ -129,12 +130,11 @@ class _SendPageState extends State<SendPage> {
       }
     } else if (!isValidAddr) {
       return ValidationError.ADDR_NOT_VALID;
-    } else if (amt.isNotEmpty &&
+    } else if (skipAsync == false &&
         addr.startsWith('0x') &&
         !(await ReefAppState.instance.accountCtrl.isEvmAddressExist(addr))) {
       return ValidationError.ADDR_NOT_EXIST;
     }
-
     return ValidationError.OK;
   }
 
@@ -448,14 +448,11 @@ class _SendPageState extends State<SendPage> {
                     onChanged: (newRating) async {
                       String amountStr =
                           getSliderValues(newRating, selectedToken);
-
-                      amount = amountStr;
-                      amountController.text = amountStr;
-                      var status =
-                          await _validate(address, selectedToken, amount);
-                      print('000STATTT=$status a=$amount');
+                      var status = await _validate(
+                          address, selectedToken, amountStr, true);
                       setState(() {
-                        print('STATTT=$status a=$amount');
+                        amount = amountStr;
+                        amountController.text = amountStr;
                         valError = status;
                       });
                     },
@@ -467,9 +464,7 @@ class _SendPageState extends State<SendPage> {
                       amountController.text = amountStr;
                       var status =
                           await _validate(address, selectedToken, amount);
-                      print('000STATTT=$status a=$amount');
                       setState(() {
-                        print('STATTT=$status a=$amount');
                         valError = status;
                       });
                     },
