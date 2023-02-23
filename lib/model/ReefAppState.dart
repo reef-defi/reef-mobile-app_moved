@@ -34,7 +34,6 @@ class ReefAppState {
   late NavigationCtrl navigationCtrl;
   late LocaleCtrl localeCtrl;
   late AppConfigCtrl appConfigCtrl;
-  late NavigationModel navigation;
 
   ReefAppState._();
 
@@ -58,7 +57,6 @@ class ReefAppState {
     await _initReefState(jsApi, currentNetwork);
     appConfigCtrl = AppConfigCtrl(storage, model.appConfig);
     localeCtrl = LocaleCtrl(storage, model.locale);
-    navigation = NavigationModel();
   }
 
   _initReefState(JsApiService jsApiService, Network currentNetwork) async {
