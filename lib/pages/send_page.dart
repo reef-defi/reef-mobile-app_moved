@@ -40,6 +40,8 @@ class _SendPageState extends State<SendPage> {
   FocusNode _focus = FocusNode();
   FocusNode _focusSecond = FocusNode();
 
+  bool isInProgress = false;
+
   @override
   void initState() {
     super.initState();
@@ -88,19 +90,31 @@ class _SendPageState extends State<SendPage> {
     //checking if selected address is not evm
     if (address.startsWith("5")) {
       //if length of address == native address length
-      return address.length == 48;
+      return address.length == 48 &&
+          await ReefAppState.instance.accountCtrl
+              .isValidSubstrateAddress(address);
     } else if (address.startsWith("0x")) {
       return await ReefAppState.instance.accountCtrl.isValidEvmAddress(address);
     }
     return false;
   }
 
-  Future<ValidationError> _validate(String addr, TokenWithAmount token) async {
+  Future<ValidationError> _validate(
+      String addr, TokenWithAmount token, String amt) async {
     var isValidAddr = await _isValidAddress(addr);
+    var balance = getSelectedTokenBalance(token);
+    if (amt == '') {
+      amt = '0';
+    }
+    var amtVal = double.parse(amt);
+    print('AAAAAA $amtVal  a=$amt');
     if (addr.isEmpty) {
       return ValidationError.NO_ADDRESS;
-    } else if (amount.isEmpty || amount == "0.00") {
+    } else if (amtVal <= 0) {
+      print('NO AAAA');
       return ValidationError.NO_AMT;
+    } else if (amtVal > getMaxTransferAmount(token, balance)) {
+      return ValidationError.AMT_TOO_HIGH;
     } else if (isValidAddr &&
         token.address != Constants.REEF_TOKEN_ADDRESS &&
         !addr.startsWith('0x')) {
@@ -113,8 +127,12 @@ class _SendPageState extends State<SendPage> {
       if (resolvedEvmAddress == null) {
         return ValidationError.NO_EVM_CONNECTED;
       }
-    } else if (!isValidAddr && !amount.isNotEmpty) {
+    } else if (!isValidAddr) {
       return ValidationError.ADDR_NOT_VALID;
+    } else if (amt.isNotEmpty &&
+        addr.startsWith('0x') &&
+        !(await ReefAppState.instance.accountCtrl.isEvmAddressExist(addr))) {
+      return ValidationError.ADDR_NOT_EXIST;
     }
 
     return ValidationError.OK;
@@ -126,7 +144,10 @@ class _SendPageState extends State<SendPage> {
         valError != ValidationError.OK) {
       return;
     }
-
+    print('VVV=${await _validate(address, sendToken, amount)}');
+    setState(() {
+      isInProgress = true;
+    });
     var signerAddress = await ReefAppState.instance.storage
         .getValue(StorageKey.selected_address.name);
     TokenWithAmount tokenToTransfer = TokenWithAmount(
@@ -140,10 +161,20 @@ class _SendPageState extends State<SendPage> {
             BigInt.parse(toStringWithoutDecimals(amount, sendToken.decimals)),
         price: 0);
 
-    await ReefAppState.instance.transferCtrl.transferTokens(
+    var result = await ReefAppState.instance.transferCtrl.transferTokens(
         signerAddress, resolvedEvmAddress ?? address, tokenToTransfer);
+    print('RESULT=$result');
+    if (result == null || result?.success == false) {}
+    resetState();
+  }
+
+  void resetState() {
     amountController.clear();
     valueController.clear();
+    setState(() {
+      rating = 0;
+      isInProgress = false;
+    });
   }
 
   getSendBtnLabel(ValidationError validation) {
@@ -152,10 +183,14 @@ class _SendPageState extends State<SendPage> {
         return "Missing destination address";
       case ValidationError.NO_AMT:
         return "Insert amount";
+      case ValidationError.AMT_TOO_HIGH:
+        return "Amount too high";
       case ValidationError.NO_EVM_CONNECTED:
         return "Target not EVM";
       case ValidationError.ADDR_NOT_VALID:
         return "Enter a valid address";
+      case ValidationError.ADDR_NOT_EXIST:
+        return "Unknown address";
       case ValidationError.OK:
         return "Confirm Send";
       default:
@@ -170,11 +205,15 @@ class _SendPageState extends State<SendPage> {
         buildHeader(context),
         Gap(16),
         Observer(builder: (_) {
-          var tokens = ReefAppState.instance.model.tokens.selectedErc20List;
+          var tokens =
+              ReefAppState.instance.model.tokens.selectedErc20List ?? [];
           var selectedToken =
               tokens.firstWhere((tkn) => tkn.address == selectedTokenAddress);
           if (selectedToken == null && !tokens.isEmpty) {
             selectedToken = tokens[0];
+          }
+          if (selectedToken == null) {
+            return Text('Tokens error');
           }
           return Container(
             decoration: BoxDecoration(
@@ -222,9 +261,10 @@ class _SendPageState extends State<SendPage> {
                                 address = selectedAddress;
                                 valueController.text = selectedAddress;
                               });
-                              setState(() async {
-                                valError =
-                                    await _validate(address, selectedToken);
+                              var state = await _validate(
+                                  address, selectedToken, amount);
+                              setState(() {
+                                valError = state;
                               });
                             }, isTokenReef);
                           },
@@ -246,9 +286,10 @@ class _SendPageState extends State<SendPage> {
                               address = valueController.text;
                             });
 
-                            setState(() async {
-                              valError =
-                                  await _validate(address, selectedToken);
+                            var state =
+                                await _validate(address, selectedToken, amount);
+                            setState(() {
+                              valError = state;
                             });
                           },
                           style: const TextStyle(
@@ -332,10 +373,23 @@ class _SendPageState extends State<SendPage> {
                               keyboardType: TextInputType.number,
                               controller: amountController,
                               onChanged: (text) async {
+                                amount = amountController.text;
+                                var status = await _validate(
+                                    address, selectedToken, amount);
                                 setState(() {
-                                  //you can access nameController in its scope to get
-                                  // the value of text entered as shown below
-                                  amount = amountController.text;
+                                  valError = status;
+                                  var balance =
+                                      getSelectedTokenBalance(selectedToken);
+
+                                  var amt =
+                                      amount != '' ? double.parse(amount) : 0;
+                                  var calcRating = (amt /
+                                      getMaxTransferAmount(
+                                          selectedToken, balance));
+                                  if (calcRating < 0) {
+                                    calcRating = 0;
+                                  }
+                                  rating = calcRating > 1 ? 1 : calcRating;
                                 });
                               },
                               decoration: InputDecoration(
@@ -367,31 +421,6 @@ class _SendPageState extends State<SendPage> {
                           ),
                         ],
                       ),
-                      // SizedBox(
-                      //   width: double.infinity,
-                      //   child: Row(
-                      //     children: [
-                      //       Text(
-                      //         "Balance: ${toAmountDisplayBigInt(selectedToken.balance)} ${selectedToken.name.toUpperCase()}",
-                      //         style: TextStyle(
-                      //             color: Styles.textLightColor, fontSize: 12),
-                      //       ),
-                      //       /*TextButton(
-                      //               onPressed: () {},
-                      //               style: TextButton.styleFrom(
-                      //                   padding: EdgeInsets.zero,
-                      //                   minimumSize: const Size(30, 10),
-                      //                   tapTargetSize:
-                      //                       MaterialTapTargetSize.shrinkWrap),
-                      //               child: Text(
-                      //                 "(Max)",
-                      //                 style: TextStyle(
-                      //                     color: Styles.blueColor,
-                      //                     fontSize: 12),
-                      //               ))*/
-                      //     ],
-                      //   ),
-                      // )
                     ],
                   ),
                 ),
@@ -417,18 +446,31 @@ class _SendPageState extends State<SendPage> {
                   child: Slider(
                     value: rating,
                     onChanged: (newRating) async {
+                      String amountStr =
+                          getSliderValues(newRating, selectedToken);
+
+                      amount = amountStr;
+                      amountController.text = amountStr;
+                      var status =
+                          await _validate(address, selectedToken, amount);
+                      print('000STATTT=$status a=$amount');
                       setState(() {
-                        rating = newRating;
-                        String amountValue = (double.parse(
-                                    toAmountDisplayBigInt(
-                                        selectedToken.balance)) *
-                                rating)
-                            .toStringAsFixed(2);
-                        amount = amountValue;
-                        amountController.text = amountValue;
+                        print('STATTT=$status a=$amount');
+                        valError = status;
                       });
-                      setState(() async {
-                        valError = await _validate(address, selectedToken);
+                    },
+                    onChangeEnd: (newRating) async {
+                      String amountStr =
+                          getSliderValues(newRating, selectedToken);
+
+                      amount = amountStr;
+                      amountController.text = amountStr;
+                      var status =
+                          await _validate(address, selectedToken, amount);
+                      print('000STATTT=$status a=$amount');
+                      setState(() {
+                        print('STATTT=$status a=$amount');
+                        valError = status;
                       });
                     },
                     divisions: 100,
@@ -496,7 +538,9 @@ class _SendPageState extends State<SendPage> {
                       ),
                       child: Center(
                         child: Text(
-                          getSendBtnLabel(valError),
+                          isInProgress
+                              ? 'Sending ...'
+                              : getSendBtnLabel(valError),
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
@@ -515,6 +559,29 @@ class _SendPageState extends State<SendPage> {
         }),
       ],
     ));
+  }
+
+  String getSliderValues(double newRating, TokenWithAmount selectedToken) {
+    rating = newRating;
+    var balance = getSelectedTokenBalance(selectedToken);
+    double? amountValue = (balance * rating);
+    if (amountValue != null && amountValue <= 0) {
+      amountValue = null;
+    }
+    var maxTransferAmount = getMaxTransferAmount(selectedToken, balance);
+    if (amountValue != null && amountValue > maxTransferAmount) {
+      amountValue = maxTransferAmount;
+    }
+
+    var amountStr = amountValue?.toStringAsFixed(2) ?? '';
+    return amountStr;
+  }
+
+  double getMaxTransferAmount(TokenWithAmount token, double balance) =>
+      token.address == Constants.REEF_TOKEN_ADDRESS ? balance - 3 : balance;
+
+  double getSelectedTokenBalance(TokenWithAmount selectedToken) {
+    return double.parse(toAmountDisplayBigInt(selectedToken.balance));
   }
 
   Padding buildHeader(BuildContext context) {
@@ -551,5 +618,7 @@ enum ValidationError {
   NO_EVM_CONNECTED,
   NO_ADDRESS,
   NO_AMT,
+  AMT_TOO_HIGH,
   ADDR_NOT_VALID,
+  ADDR_NOT_EXIST,
 }
