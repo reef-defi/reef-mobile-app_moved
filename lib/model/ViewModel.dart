@@ -1,3 +1,4 @@
+import 'package:reef_mobile_app/model/navigation/homepage_navigation_model.dart';
 import 'package:reef_mobile_app/model/network/network_model.dart';
 import 'package:reef_mobile_app/model/signing/signature_requests.dart';
 import 'package:reef_mobile_app/model/tokens/token_model.dart';
@@ -13,4 +14,5 @@ class ViewModel {
   final network = NetworkModel();
   final appConfig = AppConfigModel();
   final navigationModel = NavigationModel();
+  final homeNavigationModel = HomePageNavigationModel();
 }
