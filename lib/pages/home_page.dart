@@ -46,72 +46,68 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  double _textSize = 120.0;
-  bool _isScrolling = false;
+  final double _textSize = 120.0;
+  final bool _isScrolling = false;
 
-  List _viewsMap = [
-    {
-      "key": 0,
-      "name": "Tokens",
-      "active": true,
-      "component": const TokenView()
-    },
+  final List _viewsMap = const [
+    {"key": 0, "name": "Tokens", "component": TokenView()},
     /*{
       "key": 1,
       "name": "Stakings",
       "active": false,
       "component": const StakingView()
     },*/
-    {"key": 1, "name": "NFTs", "active": false, "component": const NFTView()},
-    {
-      "key": 2,
-      "name": "Activity",
-      "active": false,
-      "component": const ActivityView()
-    }
+    {"key": 1, "name": "NFTs", "component": NFTView()},
+    {"key": 2, "name": "Activity", "component": ActivityView()}
   ];
 
   Widget rowMember(Map member) {
     return InkWell(
       onTap: () {
         HapticFeedback.selectionClick();
-        List temp = _viewsMap;
-        for (var element in temp) {
-          element["active"] = (element["name"] == member["name"]);
-        }
-        setState(() {
-          _viewsMap = temp;
-        });
+        ReefAppState.instance.navigationCtrl
+            .navigateHomePage(member["key"] as int);
+        // List temp = _viewsMap;
+        // for (var element in temp) {
+        //   element["active"] = (element["name"] == member["name"]);
+        // }
+        // setState(() {
+        //   _viewsMap = temp;
+        // });
       },
-      child: (AnimatedContainer(
-          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(9),
-            color: member["active"]
-                ? Styles.whiteColor
-                : Styles.primaryBackgroundColor,
-            boxShadow: member["active"]
-                ? [
-                    const BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 5,
-                      offset: Offset(0, 2.5),
-                    )
-                  ]
-                : [],
-          ),
-          duration: const Duration(milliseconds: 200),
-          child: Opacity(
-            opacity: member["active"] ? 1 : 0.5,
-            child: Text(
-              member["name"],
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-                color: Styles.textColor,
-              ),
+      child: Observer(builder: (_) {
+        final index =
+            ReefAppState.instance.model.homeNavigationModel.currentIndex;
+        return AnimatedContainer(
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(9),
+              color: member["key"] == index
+                  ? Styles.whiteColor
+                  : Styles.primaryBackgroundColor,
+              boxShadow: member["key"] == index
+                  ? [
+                      const BoxShadow(
+                        color: Colors.black12,
+                        blurRadius: 5,
+                        offset: Offset(0, 2.5),
+                      )
+                    ]
+                  : [],
             ),
-          ))),
+            duration: const Duration(milliseconds: 200),
+            child: Opacity(
+              opacity: member["key"] == index ? 1 : 0.5,
+              child: Text(
+                member["name"],
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  color: Styles.textColor,
+                ),
+              ),
+            ));
+      }),
     );
   }
 
@@ -201,10 +197,10 @@ class _HomePageState extends State<HomePage> {
                         ));
                   }
                   // return Text('len=${accsFeedbackDataModel.data.length}');
+                  final index = ReefAppState
+                      .instance.model.homeNavigationModel.currentIndex;
                   return SliverClip(
-                    child: _viewsMap
-                        .where((option) => option["active"])
-                        .toList()[0]["component"],
+                    child: _viewsMap[index]["component"],
                   );
                 }),
 

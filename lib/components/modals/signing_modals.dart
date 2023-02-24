@@ -10,6 +10,7 @@ import 'package:reef_mobile_app/components/modals/bind_modal.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/StorageKey.dart';
 import 'package:reef_mobile_app/model/account/ReefAccount.dart';
+import 'package:reef_mobile_app/model/navigation/navigation_model.dart';
 import 'package:reef_mobile_app/model/signing/signature_request.dart';
 import 'package:reef_mobile_app/model/signing/tx_decoded_data.dart';
 import 'package:reef_mobile_app/utils/elements.dart';
@@ -186,6 +187,7 @@ class _SignModalState extends State<SignModal> {
     if (storedPassword == value) {
       setState(() {
         _wrongPassword = false;
+        ReefAppState.instance.navigationCtrl.navigate(NavigationPage.home);
         Navigator.pop(context);
         ReefAppState.instance.signingCtrl.confirmSignature(
           widget.signatureIdent,
@@ -207,6 +209,7 @@ class _SignModalState extends State<SignModal> {
     if (isValid) {
       setState(() {
         _wrongPassword = false;
+        ReefAppState.instance.navigationCtrl.navigate(NavigationPage.home);
         Navigator.pop(context);
         ReefAppState.instance.signingCtrl.confirmSignature(
           widget.signatureIdent,
@@ -242,12 +245,12 @@ class _SignModalState extends State<SignModal> {
           //Password Section
           // TODO: Allow choosing between password and biometrics
           if (!_biometricsIsAvailable) ...[
-            Divider(
+            const Divider(
               color: Styles.textLightColor,
               thickness: 1,
             ),
             const Gap(12),
-            Text(
+            const Text(
               "PASSWORD FOR REEF APP",
               style: TextStyle(
                   fontSize: 14,
@@ -345,7 +348,7 @@ Future<TxDecodedData> _getTxDecodedData(SignatureRequest request) async {
   );
 
   // Chain or genesis hash
-  var metadata = await ReefAppState.instance.storage
+  final metadata = await ReefAppState.instance.storage
       .getMetadata(request.payload.genesisHash);
   if (metadata != null) {
     txDecodedData.chainName = metadata.chain;
@@ -359,10 +362,10 @@ Future<TxDecodedData> _getTxDecodedData(SignatureRequest request) async {
       metadata.specVersion ==
           int.parse(request.payload.specVersion.substring(2), radix: 16)) {
     types = metadata.types;
-    var decodedMethod = await ReefAppState.instance.signingCtrl
+    final decodedMethod = await ReefAppState.instance.signingCtrl
         .decodeMethod(request.payload.method, types);
     txDecodedData.methodName = decodedMethod["methodName"];
-    var jsonEncoder = const JsonEncoder.withIndent("  ");
+    const jsonEncoder = JsonEncoder.withIndent("  ");
     txDecodedData.args = jsonEncoder.convert(decodedMethod["args"]);
     txDecodedData.info = decodedMethod["info"];
   } else {
@@ -381,15 +384,15 @@ Future<TxDecodedData> _getTxDecodedData(SignatureRequest request) async {
 }
 
 void showSigningModal(context, SignatureRequest signatureRequest) async {
-  var account = ReefAppState.instance.model.accounts.accountsFDM.data
+  final account = ReefAppState.instance.model.accounts.accountsFDM.data
       .firstWhere((acc) => acc.data.address == signatureRequest.payload.address,
           orElse: () => throw Exception("Signer not found"));
 
-  var signatureIdent = signatureRequest.signatureIdent;
+  final signatureIdent = signatureRequest.signatureIdent;
 
-  var type = signatureRequest.payload.type;
+  final type = signatureRequest.payload.type;
   if (type == "bytes") {
-    var bytes = await ReefAppState.instance.signingCtrl
+    final bytes = await ReefAppState.instance.signingCtrl
         .bytesString(signatureRequest.payload.data);
     List<TableRow> detailsTable = createTable(keyTexts: [
       "bytes",
@@ -401,7 +404,7 @@ void showSigningModal(context, SignatureRequest signatureRequest) async {
         dismissible: true,
         headText: "Sign Message");
   } else {
-    var txDecodedData = await _getTxDecodedData(signatureRequest);
+    final txDecodedData = await _getTxDecodedData(signatureRequest);
     if (txDecodedData.methodName != null &&
         txDecodedData.methodName!.startsWith("evm.") &&
         !account.data.isEvmClaimed) {

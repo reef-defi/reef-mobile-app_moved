@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:reef_mobile_app/components/introduction_page/introduction_slide.dart';
+import 'package:reef_mobile_app/components/navigation/liquid_carousel_wrapper.dart';
 import 'package:reef_mobile_app/utils/liquid_edge/liquid_carousel.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 
@@ -47,6 +48,7 @@ class IntroductionPage extends StatelessWidget {
         parentContext: context,
         key: carouselKey,
         children: <Widget>[
+          const LiquidCarouselWrapper(),
           IntroductionSlide(
               key: const ValueKey(1),
               isFirst: true,
@@ -165,6 +167,7 @@ class IntroductionPage extends StatelessWidget {
                       ))
                 ],
               )),
+          const LiquidCarouselWrapper()
         ],
       ),
     );
