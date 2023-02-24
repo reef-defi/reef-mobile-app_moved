@@ -4,8 +4,10 @@ import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:reef_mobile_app/components/modals/auth_url_list_modal.dart';
 import 'package:reef_mobile_app/components/modals/change_password_modal.dart';
+import 'package:reef_mobile_app/components/modals/language_selection_modal.dart';
 import 'package:reef_mobile_app/components/switch_network.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({Key? key}) : super(key: key);
@@ -25,12 +27,16 @@ class _SettingsPageState extends State<SettingsPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              "Settings",
-              style: GoogleFonts.spaceGrotesk(
-                  fontWeight: FontWeight.w500,
-                  fontSize: 32,
-                  color: Colors.grey[800]),
+            Builder(
+              builder: (context) {
+                return Text(
+                  AppLocalizations.of(context)!.settings,
+                  style: GoogleFonts.spaceGrotesk(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 32,
+                      color: Colors.grey[800]),
+                );
+              }
             ),
             /*Divider(
               color: Styles.textLightColor,
@@ -58,7 +64,7 @@ class _SettingsPageState extends State<SettingsPage> {
             MaterialButton(
               materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
               onPressed: () =>
-                  showChangePasswordModal("Change password", context: context),
+                  showChangePasswordModal(AppLocalizations.of(context)!.change_password, context: context),
               padding: const EdgeInsets.all(2),
               child: Row(
                 children: [
@@ -68,8 +74,35 @@ class _SettingsPageState extends State<SettingsPage> {
                     size: 22,
                   ),
                   const Gap(8),
-                  Text('Change password',
-                      style: Theme.of(context).textTheme.bodyText1),
+                  Builder(
+                    builder: (context) {
+                      return Text(AppLocalizations.of(context)!.change_password,
+                          style: Theme.of(context).textTheme.bodyText1);
+                    }
+                  ),
+                ],
+              ),
+            ),
+            const Gap(24),
+            MaterialButton(
+              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              onPressed: () =>
+                  showSelectLanguageModal(AppLocalizations.of(context)!.select_language, context: context),
+              padding: const EdgeInsets.all(2),
+              child: Row(
+                children: [
+                  Icon(
+                    CupertinoIcons.globe,
+                    color: Styles.textLightColor,
+                    size: 22,
+                  ),
+                  const Gap(8),
+                  Builder(
+                    builder: (context) {
+                      return Text(AppLocalizations.of(context)!.select_language,
+                          style: Theme.of(context).textTheme.bodyText1);
+                    }
+                  ),
                 ],
               ),
             ),
@@ -89,9 +122,13 @@ class _SettingsPageState extends State<SettingsPage> {
                 children: [
                   Icon(Icons.code, color: Styles.textLightColor),
                   const Gap(8),
-                  Text(
-                    "Developer Settings",
-                    style: Theme.of(context).textTheme.bodyText1,
+                  Builder(
+                    builder: (context) {
+                      return Text(
+                        AppLocalizations.of(context)!.developer_settings,
+                        style: Theme.of(context).textTheme.bodyText1,
+                      );
+                    }
                   ),
                   Expanded(child: Container()),
                   Icon(_showDeveloperSettings
@@ -109,7 +146,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     MaterialButton(
                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 onPressed: () =>
-                    showSwitchNetworkModal("Switch Network", context: context),
+                    showSwitchNetworkModal(AppLocalizations.of(context)!.switch_network, context: context),
                 padding: const EdgeInsets.all(2),
                 child: Row(
                   children: [
@@ -119,7 +156,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       size: 22,
                     ),
                     const Gap(8),
-                    Text('Switch Network',
+                    Text(AppLocalizations.of(context)!.switch_network,
                         style: Theme.of(context).textTheme.bodyText1),
                   ],
                 ),

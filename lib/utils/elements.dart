@@ -9,8 +9,8 @@ LinearGradient textGradient() {
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
     colors: [
-      Styles.blueColor,
-      Styles.secondaryAccentColor,
+      Styles.purpleColor,
+      Styles.primaryAccentColor,
     ],
   );
 }

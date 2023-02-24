@@ -98,8 +98,25 @@ class AccountCtrl {
   }
 
   Future<bool> isValidEvmAddress(String address) async {
-    var res = await _jsApi.jsCall('window.utils.isValidEvmAddress("$address")');
+    var res =
+        await _jsApi.jsCall('window.account.isValidEvmAddress("$address")');
     return res == 'true';
+  }
+
+  Future<bool> isValidSubstrateAddress(String address) async {
+    var res = await _jsApi
+        .jsCall('window.account.isValidSubstrateAddress("$address")');
+    return res == 'true';
+  }
+
+  Future<String?> resolveToNativeAddress(String evmAddress) async {
+    return await _jsApi
+        .jsPromise('window.account.resolveFromEvmAddress("$evmAddress")');
+  }
+
+  Future<bool> isEvmAddressExist(String address) async {
+    var res = await this.resolveToNativeAddress(address);
+    return res != null;
   }
 
   Stream availableSignersStream() {
@@ -154,6 +171,11 @@ class AccountCtrl {
   toReefEVMAddressWithNotificationString(String evmAddress) async {
     return await _jsApi.jsCall(
         'window.account.toReefEVMAddressWithNotification("$evmAddress")');
+  }
+
+  toReefEVMAddressNoNotificationString(String evmAddress) async {
+    return await _jsApi
+        .jsCall('window.account.toReefEVMAddressNoNotification("$evmAddress")');
   }
 
   void _setAccountIconsFromStorage(

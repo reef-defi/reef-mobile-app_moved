@@ -3,9 +3,10 @@ import {combineLatest, map, switchMap, take} from "rxjs/operators";
 import type {InjectedAccountWithMeta} from "@reef-defi/extension-inject/types";
 import {firstValueFrom} from 'rxjs';
 import {REEF_EXTENSION_IDENT} from "@reef-defi/extension-inject";
-import { resolveEvmAddress as utilsResolveEvmAddr} from "@reef-defi/evm-provider/utils";
+import { resolveEvmAddress as utilsResolveEvmAddr, resolveAddress as utilsResolveToNativeAddress, isSubstrateAddress } from "@reef-defi/evm-provider/utils";
 import {Provider} from "@reef-defi/evm-provider";
 import Signer from "@reef-defi/extension-base/page/Signer";
+import {ethers} from 'ethers';
 
 export const buildAccountWithMeta = async (name: string, address: string): Promise<InjectedAccountWithMeta> => {
     const acountWithMeta: InjectedAccountWithMeta = {
@@ -81,11 +82,28 @@ export const innitApi = (signingKey: Signer) => {
             return addressUtils.addReefSpecificStringFromAddress(evmAddress);
         },
 
+        toReefEVMAddressNoNotification: (evmAddressMsg: string)=>{
+            return addressUtils.removeReefSpecificStringFromAddress(evmAddressMsg);
+        },
+
         resolveEvmAddress:async(nativeAddress:string)=>{
             const provider = await firstValueFrom(reefState.selectedProvider$);
             return utilsResolveEvmAddr(provider,nativeAddress);
-        }
+        },
 
+        resolveFromEvmAddress:async(evmAddress:string)=>{
+            const provider = await firstValueFrom(reefState.selectedProvider$);
+            const nativeAddress=await utilsResolveToNativeAddress(provider,evmAddress);
+            return nativeAddress||null;
+        },
+
+        isValidEvmAddress: (address: string) => {
+            return ethers.utils.isAddress(address);
+        },
+
+        isValidSubstrateAddress: (address: string) => {
+            return isSubstrateAddress(address);
+        },
     };
 }
 

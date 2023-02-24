@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -99,7 +100,11 @@ class _HomePageState extends State<HomePage> {
             child: Opacity(
               opacity: member["key"] == index ? 1 : 0.5,
               child: Text(
-                member["name"],
+                member["name"] == "Tokens"
+                    ? AppLocalizations.of(context)!.balance
+                    : member["name"] == "Activity"
+                    ? AppLocalizations.of(context)!.activity
+                    : AppLocalizations.of(context)!.nfts,
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
@@ -219,21 +224,25 @@ class _HomePageState extends State<HomePage> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const SizedBox(height: 20),
-          const Text(
-            "No Account currently available, create or import an account to view your assets.",
+          Text(
+            AppLocalizations.of(context)!.no_account_currently,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 20),
-          ElevatedButton.icon(
-              style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.resolveWith(
-                      (states) => Styles.purpleColor)),
-              onPressed: () {
-                showAddAccountModal('Add account', openModal,
-                    parentContext: context);
-              },
-              icon: const Icon(Icons.account_balance_wallet_outlined),
-              label: const Text("Create New Account")),
+          Builder(
+            builder: (context) {
+              return ElevatedButton.icon(
+                  style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.resolveWith(
+                          (states) => Styles.purpleColor)),
+                  onPressed: () {
+                    showAddAccountModal(AppLocalizations.of(context)!.add_account, openModal,
+                        parentContext: context);
+                  },
+                  icon: const Icon(Icons.account_balance_wallet_outlined),
+                  label: Text(AppLocalizations.of(context)!.create_new_account));
+            }
+          ),
         ],
       );
 
@@ -301,11 +310,13 @@ class _BalanceHeaderDelegate extends SliverPersistentHeaderDelegate {
                 children: [
                   Row(
                     children: [
-                      Text("Balance",
-                          style: TextStyle(
-                              fontSize: 38,
-                              fontWeight: FontWeight.w700,
-                              color: Styles.primaryColor)),
+                      Builder(builder: (context) {
+                        return Text(AppLocalizations.of(context)!.balance,
+                            style: TextStyle(
+                                fontSize: 38,
+                                fontWeight: FontWeight.w700,
+                                color: Styles.primaryColor));
+                      }),
                       IconButton(
                           onPressed: () {
                             ReefAppState.instance.appConfigCtrl
