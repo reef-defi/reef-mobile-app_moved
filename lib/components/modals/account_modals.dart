@@ -13,6 +13,7 @@ import 'package:reef_mobile_app/service/StorageService.dart';
 import 'package:reef_mobile_app/utils/elements.dart';
 import 'package:reef_mobile_app/utils/functions.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AccountImportContent extends StatefulWidget {
   final VoidCallback next;
@@ -113,12 +114,16 @@ class _AccountImportContentState extends State<AccountImportContent> {
             buildAccountBox(account),
             const Gap(12),
           ],
-          Text(
-            "EXISTING 12 OR 24-WORD MNEMONIC SEED:",
-            style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-                color: Styles.textLightColor),
+          Builder(
+            builder: (context) {
+              return Text(
+                AppLocalizations.of(context)!.existing_seed,
+                style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: Styles.textLightColor),
+              );
+            }
           ),
           const Gap(8),
           Container(
@@ -158,7 +163,7 @@ class _AccountImportContentState extends State<AccountImportContent> {
                 Flexible(
                   child: Text(
                     errorDuplicated
-                        ? "This account has already been added"
+                        ? AppLocalizations.of(context)!.account_already_added
                         : "Invalid mnemonic seed",
                     style: TextStyle(color: Colors.grey[600], fontSize: 13),
                   ),
@@ -194,12 +199,16 @@ class _AccountImportContentState extends State<AccountImportContent> {
                       widget.next();
                     }
                   },
-                  child: const Text(
-                    'Next Step',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                    ),
+                  child: Builder(
+                    builder: (context) {
+                      return Text(
+                        AppLocalizations.of(context)!.next_step,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      );
+                    }
                   ),
                 ),
               ),
@@ -249,12 +258,16 @@ class _AccountCreationContentState extends State<AccountCreationContent> {
         children: [
           buildAccountBox(widget.account),
           const Gap(12),
-          Text(
-            "GENERATED 12-WORD MNEMONIC SEED:",
-            style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-                color: Styles.textLightColor),
+          Builder(
+            builder: (context) {
+              return Text(
+                AppLocalizations.of(context)!.generated_2_word,
+                style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: Styles.textLightColor),
+              );
+            }
           ),
           const Gap(8),
           Container(
@@ -276,7 +289,7 @@ class _AccountCreationContentState extends State<AccountCreationContent> {
             child: Padding(
               padding: const EdgeInsets.all(12.0),
               child: Text(
-                widget.account?.mnemonic ?? "Loading...",
+                widget.account?.mnemonic ?? AppLocalizations.of(context)!.loading + "...",
                 style: TextStyle(color: Styles.primaryAccentColorDark),
               ),
             ),
@@ -300,9 +313,13 @@ class _AccountCreationContentState extends State<AccountCreationContent> {
                     color: Styles.textLightColor,
                   ),
                   const Gap(2),
-                  Text(
-                    "Copy to clipboard",
-                    style: TextStyle(color: Styles.textColor, fontSize: 12),
+                  Builder(
+                    builder: (context) {
+                      return Text(
+                        AppLocalizations.of(context)!.copy_to_clipboard,
+                        style: TextStyle(color: Styles.textColor, fontSize: 12),
+                      );
+                    }
                   ),
                 ],
               )),
@@ -317,9 +334,13 @@ class _AccountCreationContentState extends State<AccountCreationContent> {
               ),
               const Gap(8),
               Flexible(
-                child: Text(
-                  "Please write down your wallet's mnemonic seed and keep it in a safe place. The mnemonic can be used to restore your wallet. Keep it carefully to not lose your assets.",
-                  style: TextStyle(color: Colors.grey[600], fontSize: 13),
+                child: Builder(
+                  builder: (context) {
+                    return Text(
+                       AppLocalizations.of(context)!.please_write_down,
+                      style: TextStyle(color: Colors.grey[600], fontSize: 13),
+                    );
+                  }
                 ),
               ),
             ],
@@ -342,7 +363,7 @@ class _AccountCreationContentState extends State<AccountCreationContent> {
               const Gap(8),
               Flexible(
                 child: Text(
-                  "I have saved my mnemonic seed safely.",
+                 AppLocalizations.of(context)!.i_saved_mnemonic,
                   style: TextStyle(color: Colors.grey[600]!, fontSize: 14),
                 ),
               )
@@ -376,12 +397,16 @@ class _AccountCreationContentState extends State<AccountCreationContent> {
                     if (_checkedValue && widget.account?.mnemonic != null)
                       widget.next();
                   },
-                  child: const Text(
-                    'Next Step',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                    ),
+                  child: Builder(
+                    builder: (context) {
+                      return Text(
+                        AppLocalizations.of(context)!.next_step,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      );
+                    }
                   ),
                 ),
               ),
@@ -492,7 +517,7 @@ class _AccountCreationConfirmContentState
           buildAccountBox(widget.account, name: name),
           const Gap(12),
           Text(
-            "A DESCRIPTIVE NAME FOR YOUR ACCOUNT",
+            AppLocalizations.of(context)!.descriptive_account_name,
             style: TextStyle(
                 fontSize: 10,
                 fontWeight: FontWeight.w500,
@@ -520,7 +545,7 @@ class _AccountCreationConfirmContentState
           const Gap(16),
           if (!_hasPassword) ...[
             Text(
-              "A PASSWORD FOR REEF APP",
+              AppLocalizations.of(context)!.password_for_reef_app,
               style: TextStyle(
                   fontSize: 10,
                   fontWeight: FontWeight.w500,
@@ -561,7 +586,7 @@ class _AccountCreationConfirmContentState
                   const Gap(8),
                   Flexible(
                     child: Text(
-                      "Password is too short",
+                      AppLocalizations.of(context)!.password_too_short,
                       style: TextStyle(color: Colors.grey[600], fontSize: 13),
                     ),
                   ),
@@ -571,7 +596,7 @@ class _AccountCreationConfirmContentState
             if (password.isNotEmpty && !_passwordError) ...[
               const Gap(16),
               Text(
-                "REPEAT PASSWORD FOR VERIFICATION",
+                AppLocalizations.of(context)!.repetitive_password,
                 style: TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.w500,
@@ -613,7 +638,7 @@ class _AccountCreationConfirmContentState
                     const Gap(8),
                     Flexible(
                       child: Text(
-                        "Passwords do not match",
+                        AppLocalizations.of(context)!.password_do_not_match,
                         style: TextStyle(color: Colors.grey[600], fontSize: 13),
                       ),
                     ),
@@ -696,8 +721,8 @@ class _AccountCreationConfirmContentState
                     },
                     child: Text(
                       widget.fromMnemonic
-                          ? 'Import the account'
-                          : 'Add the account',
+                          ? AppLocalizations.of(context)!.import_the_account
+                          : AppLocalizations.of(context)!.add_the_account,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
                         fontSize: 14,
@@ -862,7 +887,7 @@ Widget buildAccountBox(StoredAccount? account, {name = "<No Name>"}) {
 
 void showCreateAccountModal(BuildContext context, {bool fromMnemonic = false}) {
   showModal(context,
-      headText: fromMnemonic ? "Import Account" : "Create Account",
+      headText: fromMnemonic ? AppLocalizations.of(context)!.import_the_account : AppLocalizations.of(context)!.create_new_account,
       dismissible: true,
       child: CurrentScreen(fromMnemonic: fromMnemonic));
 }

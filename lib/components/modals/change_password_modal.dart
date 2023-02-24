@@ -6,6 +6,7 @@ import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/StorageKey.dart';
 import 'package:reef_mobile_app/pages/SplashScreen.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ChangePassword extends StatefulWidget {
   const ChangePassword({Key? key}) : super(key: key);
@@ -72,7 +73,7 @@ class _ChangePasswordState extends State<ChangePassword> {
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           if (hasPassword) ...[
             Text(
-              "CURRENT PASSWORD",
+              AppLocalizations.of(context)!.change_password_current_password,
               style: TextStyle(
                   fontSize: 10,
                   fontWeight: FontWeight.w500,
@@ -114,7 +115,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                   const Gap(8),
                   Flexible(
                     child: Text(
-                      "Password is incorrect",
+                      AppLocalizations.of(context)!.change_password_password_incorrect,
                       style: TextStyle(color: Colors.grey[600], fontSize: 13),
                     ),
                   ),
@@ -126,12 +127,16 @@ class _ChangePasswordState extends State<ChangePassword> {
               (confirmCurrPassword.isNotEmpty &&
                   !confirmCurrPasswordError)) ...[
             const Gap(12),
-            Text(
-              "NEW PASSWORD",
-              style: TextStyle(
-                  fontSize: 10,
-                  fontWeight: FontWeight.w500,
-                  color: Styles.textLightColor),
+            Builder(
+              builder: (context) {
+                return Text(
+                  AppLocalizations.of(context)!.new_password,
+                  style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w500,
+                      color: Styles.textLightColor),
+                );
+              }
             ),
             const Gap(8),
             Container(
@@ -168,7 +173,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                   const Gap(8),
                   Flexible(
                     child: Text(
-                      "Password is too short",
+                      AppLocalizations.of(context)!.password_too_short,
                       style: TextStyle(color: Colors.grey[600], fontSize: 13),
                     ),
                   ),
@@ -178,7 +183,7 @@ class _ChangePasswordState extends State<ChangePassword> {
             if (newPassword.isNotEmpty && !newPasswordError) ...[
               const Gap(16),
               Text(
-                "REPEAT PASSWORD FOR VERIFICATION",
+                AppLocalizations.of(context)!.repetitive_password,
                 style: TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.w500,
@@ -220,7 +225,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                     const Gap(8),
                     Flexible(
                       child: Text(
-                        "Passwords do not match",
+                        AppLocalizations.of(context)!.password_do_not_match,
                         style: TextStyle(color: Colors.grey[600], fontSize: 13),
                       ),
                     ),
@@ -261,13 +266,17 @@ class _ChangePasswordState extends State<ChangePassword> {
                           Navigator.of(context).pop();
                         }
                       },
-                      child: const Text(
-                        'Change Password',
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                        ),
+                      child: Builder(
+                        builder: (context) {
+                          return Text(
+                            AppLocalizations.of(context)!.change_password,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          );
+                        }
                       ),
                     ),
                   ),

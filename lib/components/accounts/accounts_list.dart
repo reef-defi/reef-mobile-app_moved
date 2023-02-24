@@ -1,5 +1,6 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:gap/gap.dart';
 import 'package:reef_mobile_app/model/account/ReefAccount.dart';
 import 'package:reef_mobile_app/model/status-data-object/StatusDataObject.dart';
@@ -40,7 +41,7 @@ class AccountsList extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            "Click on ",
+                            AppLocalizations.of(context)!.click_on,
                             style: TextStyle(color: Styles.textLightColor),
                           ),
                           const Gap(2),
@@ -64,7 +65,7 @@ class AccountsList extends StatelessWidget {
                           ),
                           const Gap(2),
                           Text(
-                            " to create a new account",
+                            AppLocalizations.of(context)!.to_create_account,
                             style: TextStyle(color: Styles.textLightColor),
                           ),
                         ],
@@ -114,10 +115,12 @@ class AccountsList extends StatelessWidget {
           Row(mainAxisAlignment: MainAxisAlignment.start, children: [
             Padding(
               padding: const EdgeInsets.only(bottom: 8.0, left: 8),
-              child: Text(
-                "Available",
-                style: TextStyle(color: Styles.textLightColor, fontSize: 20.0),
-              ),
+              child: Builder(builder: (context) {
+                return Text(
+                  AppLocalizations.of(context)!.available,
+                  style: TextStyle(color: Styles.textLightColor, fontSize: 20.0),
+                );
+              }),
             ),
           ]));
     }

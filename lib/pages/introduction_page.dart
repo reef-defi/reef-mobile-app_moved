@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:reef_mobile_app/components/introduction_page/introduction_slide.dart';
 import 'package:reef_mobile_app/components/navigation/liquid_carousel_wrapper.dart';
 import 'package:reef_mobile_app/utils/liquid_edge/liquid_carousel.dart';
@@ -71,32 +72,32 @@ class IntroductionPage extends StatelessWidget {
                       child: FittedBox(
                           child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
+                    children: [
                       Padding(
                         padding: EdgeInsets.all(4),
                         child: Text(
-                          "Reliable",
+                          AppLocalizations.of(context)!.reliable,
                           style: TextStyle(fontSize: 35),
                         ),
                       ),
                       Padding(
                         padding: EdgeInsets.all(4),
                         child: Text(
-                          "Extensible",
+                          AppLocalizations.of(context)!.extensible,
                           style: TextStyle(fontSize: 35),
                         ),
                       ),
                       Padding(
                         padding: EdgeInsets.all(4),
                         child: Text(
-                          "Efficient",
+                          AppLocalizations.of(context)!.efficient,
                           style: TextStyle(fontSize: 35),
                         ),
                       ),
                       Padding(
                         padding: EdgeInsets.all(4),
                         child: Text(
-                          "Fast.",
+                          AppLocalizations.of(context)!.fast,
                           style: TextStyle(fontSize: 35),
                         ),
                       ),
@@ -104,7 +105,7 @@ class IntroductionPage extends StatelessWidget {
                       Padding(
                           padding: EdgeInsets.symmetric(horizontal: 4),
                           child: Text(
-                            "Blockchain for DeFi, NFT and Gaming",
+                            AppLocalizations.of(context)!.blockchain_for_defi,
                             style: TextStyle(fontSize: 16),
                           )),
                     ],
@@ -136,11 +137,12 @@ class IntroductionPage extends StatelessWidget {
                       child: Flex(
                         direction: Axis.vertical,
                         crossAxisAlignment: CrossAxisAlignment.center,
-                        children: const [
+                        children: [
                           Padding(
                             padding: EdgeInsets.all(4),
                             child: Text(
-                              "Introducing Reef Chain",
+                              AppLocalizations.of(context)!
+                                  .introducing_reef_chain,
                               textAlign: TextAlign.center,
                               style:
                                   TextStyle(fontSize: 30, color: Colors.white),
@@ -155,7 +157,8 @@ class IntroductionPage extends StatelessWidget {
                                       child: SizedBox(
                                           child: (SingleChildScrollView(
                                         child: Text(
-                                          "Reef chain is an EVM compatible blockchain for DeFi. It is fast, scalable, has low transaction costs and does no wasteful mining. It is built with Substrate Framework and comes with on-chain governance.",
+                                          AppLocalizations.of(context)!
+                                              .reef_chain_desc,
                                           style: TextStyle(
                                               fontSize: 16,
                                               height: 2,

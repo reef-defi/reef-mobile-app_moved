@@ -6,6 +6,7 @@ import 'package:reef_mobile_app/model/status-data-object/StatusDataObject.dart';
 import 'package:reef_mobile_app/utils/elements.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 import 'package:sliver_tools/sliver_tools.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../model/ReefAppState.dart';
 import '../BlurContent.dart';
@@ -73,7 +74,7 @@ class _NFTViewState extends State<NFTView> {
       final selectedNFTs = ReefAppState.instance.model.tokens.selectedNFTs;
 
       String? message = getFdmListMessage(
-          ReefAppState.instance.model.tokens.selectedNFTs, 'NFT');
+          ReefAppState.instance.model.tokens.selectedNFTs, AppLocalizations.of(context)!.nfts, AppLocalizations.of(context)!.loading);
 
       return MultiSliver(children: [
         if (message != null)
