@@ -7,13 +7,14 @@ import { firstValueFrom, of } from "rxjs";
 import {findAccount} from "./signApi";
 import Signer from "@reef-defi/extension-base/page/Signer";
 
-const nativeTransfer = async (amount: string, destinationAddress: string, provider: Provider, signer: ReefAccount, signingKey: Signer): Promise<void> => {
+const nativeTransfer = async (amount: string, destinationAddress: string, provider: Provider, signer: ReefAccount, signingKey: Signer): Promise<any> => {
     try {
-        await provider.api.tx.balances
+        return await provider.api.tx.balances
             .transfer(destinationAddress, amount)
             .signAndSend(signer.address, { signer: signingKey });
     } catch (e) {
         console.log(e);
+        return Promise.resolve(null);
     }
 };
 
@@ -43,7 +44,7 @@ export const initApi = (signingKey: Signer) => {
                 switchMap(async ([signer, provider]: [ReefAccount | undefined, Provider]) => {
                     if (!signer) {
                         console.log(" transfer.send() - NO SIGNER FOUND",);
-                        return false
+                        return {success: false, data:null};
                     }
                     const STORAGE_LIMIT = 2000;
                     const evmSigner = await getAccountSigner(signer.address, provider, signingKey);
@@ -55,9 +56,9 @@ export const initApi = (signingKey: Signer) => {
                         if (tokenAddress === tokenUtil.REEF_ADDRESS && to.length === 48) {
                             console.log ('transfering native REEF');
                             console.log (tokenAmount);
-                            await nativeTransfer(tokenAmount, to, provider, signer, signingKey);
-                            console.log ('transfer success');
-                            return true;
+                            const res = await nativeTransfer(tokenAmount, to, provider, signer, signingKey);
+                            console.log ('transfer success', res);
+                            return {success: res!=null, data:res};
                         } else {
                             console.log ('transfering REEF20');
                             console.log (tokenAmount);
@@ -75,11 +76,11 @@ export const initApi = (signingKey: Signer) => {
                             const receipt = await tx.wait();
                             console.log("SIGN AND SEND RESULT=", receipt.transactionHash);
                             console.log ('transfer success');
-                            return receipt;
+                            return {success: true, data:receipt};
                         }
                     } catch (e) {
                         console.log('EEEEEE',e);
-                        return null;
+                        return {success: false, data:e.message};
                     }
                 }),
                 take(1)

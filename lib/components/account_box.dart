@@ -49,14 +49,14 @@ class _AccountBoxState extends State<AccountBox> {
                     begin: Alignment(0, 0.2),
                     end: Alignment(0.1, 1.3),
                     colors: [
-                      Color.fromARGB(198, 93, 59, 173),
-                      Color.fromARGB(53, 185, 25, 197),
+                      Color.fromARGB(198, 37, 19, 79),
+                      Color.fromARGB(53, 110, 27, 117),
                     ]),
                 border: Border.all(
                     color: !widget.selected
                         ? Color(Styles.purpleColor.value)
-                        : Color(Styles.blueColor.value),
-                    width: widget.selected ? 3 : 1),
+                        : Color(Styles.purpleColor.value),
+                    width: widget.selected ? 3 : 0),
                 borderRadius: BorderRadius.circular(15)),
             child: Stack(
               children: [
@@ -68,7 +68,7 @@ class _AccountBoxState extends State<AccountBox> {
                         padding: const EdgeInsets.only(
                             left: 12, bottom: 5, right: 10, top: 2),
                         decoration: BoxDecoration(
-                            color: Styles.blueColor,
+                            color: Styles.purpleColor,
                             borderRadius: const BorderRadius.only(
                                 bottomLeft: Radius.circular(15),
                                 topRight: Radius.circular(12))),
@@ -175,7 +175,7 @@ class _AccountBoxState extends State<AccountBox> {
                       Text(
                         '${formatAmountToDisplayBigInt(reefAccount.data.balance)} REEF',
                         style: GoogleFonts.poppins(
-                          color: Styles.blueColor,
+                          color: Styles.whiteColor,
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
                         ),
@@ -198,7 +198,8 @@ class _AccountBoxState extends State<AccountBox> {
                     child: Text.rich(
                   TextSpan(
                     text: "Address:",
-                    style: TextStyle(fontSize: 10, color: Colors.grey.shade300),
+                    style:
+                        TextStyle(fontSize: 10, color: Styles.textLightColor),
                     children: <TextSpan>[
                       TextSpan(
                           text:
@@ -213,8 +214,9 @@ class _AccountBoxState extends State<AccountBox> {
                   Flexible(
                       child: Text.rich(
                     TextSpan(
-                      text: "EVM:",
-                      style: const TextStyle(fontSize: 10),
+                      text: "Reef EVM:",
+                      style:
+                          TextStyle(fontSize: 10, color: Styles.textLightColor),
                       children: <TextSpan>[
                         TextSpan(
                           text:
@@ -317,9 +319,11 @@ void choiceAction(
           const SnackBar(content: Text("Native Address copied to clipboard")));
     });
   } else if (choice == Constants.copyEvmAddress) {
+    var address = await ReefAppState.instance.accountCtrl
+                .toReefEVMAddressWithNotificationString(account.evmAddress);
+    print('AAAAdd $address');
     Clipboard.setData(ClipboardData(
-            text: await ReefAppState.instance.accountCtrl
-                .toReefEVMAddressWithNotificationString(account.evmAddress)))
+            text: address))
         .then((_) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text(
