@@ -59,6 +59,7 @@ dependencies:
   sliver_tools: ^0.2.8
   flutter_localizations:
     sdk: flutter
+  video_player: ^2.5.1
   #freezed: ^2.0.3+1 #immutable classes
 
 dev_dependencies:

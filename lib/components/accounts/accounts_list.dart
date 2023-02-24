@@ -114,11 +114,11 @@ class AccountsList extends StatelessWidget {
           0,
           Row(mainAxisAlignment: MainAxisAlignment.start, children: [
             Padding(
-              padding: const EdgeInsets.only(bottom: 8.0),
+              padding: const EdgeInsets.only(bottom: 8.0, left: 8),
               child: Builder(builder: (context) {
                 return Text(
                   AppLocalizations.of(context)!.available,
-                  style: TextStyle(color: Styles.whiteColor, fontSize: 20.0),
+                  style: TextStyle(color: Styles.textLightColor, fontSize: 20.0),
                 );
               }),
             ),

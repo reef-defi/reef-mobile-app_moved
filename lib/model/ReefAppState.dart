@@ -48,7 +48,8 @@ class ReefAppState {
     transferCtrl = TransferCtrl(jsApi);
     swapCtrl = SwapCtrl(jsApi);
     metadataCtrl = MetadataCtrl(jsApi, storage);
-    navigationCtrl = NavigationCtrl(model.navigationModel);
+    navigationCtrl =
+        NavigationCtrl(model.navigationModel, model.homeNavigationModel);
     Network currentNetwork =
         await storage.getValue(StorageKey.network.name) == Network.testnet.name
             ? Network.testnet

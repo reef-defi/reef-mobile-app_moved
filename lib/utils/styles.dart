@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 class Styles {
   static Color primaryColor = const Color(0xFF0E225D);
   static const Color primaryBackgroundColor = Color(0xffeeebf6);
-  static const Color darkBackgroundColor = Color.fromARGB(255, 59, 31, 167);
+  static const Color darkBackgroundColor = Color.fromARGB(255, 48, 1, 87);
   static Color primaryAccentColor = const Color(0xffbf37a7);
   static Color primaryAccentColorDark = const Color(0xffba24c7);
-  static Color purpleColor = const Color(0xff76319b);
+  static const Color purpleColor = Color(0xffa93185);
   static Color secondaryAccentColor = const Color(0xff5531a9);
   static Color yellowColor = const Color(0xFFDFE94B);
   static Color greenColor = const Color(0xff26b686);

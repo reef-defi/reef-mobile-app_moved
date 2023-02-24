@@ -126,7 +126,7 @@ class StorageService {
         return true;
       } else {
         print("PERMISSION DENIED");
-        return true;
+        return false;
       }
     }
     return await Permission.storage.status.isGranted;

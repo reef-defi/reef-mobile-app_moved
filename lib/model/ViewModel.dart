@@ -1,3 +1,4 @@
+import 'package:reef_mobile_app/model/navigation/homepage_navigation_model.dart';
 import 'package:reef_mobile_app/model/appConfig/app_config_model.dart';
 import 'package:reef_mobile_app/model/locale/locale_model.dart';
 import 'package:reef_mobile_app/model/network/network_model.dart';
@@ -15,4 +16,5 @@ class ViewModel {
   final appConfig = AppConfigModel();
   final locale = LocaleModel();
   final navigationModel = NavigationModel();
+  final homeNavigationModel = HomePageNavigationModel();
 }
