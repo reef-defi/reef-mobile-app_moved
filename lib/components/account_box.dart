@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:reef_mobile_app/components/modals/bind_modal.dart';
+import 'package:reef_mobile_app/components/modals/show_qr_code.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/account/ReefAccount.dart';
 import 'package:reef_mobile_app/model/status-data-object/StatusDataObject.dart';
@@ -263,10 +264,14 @@ class Constants {
   static const String delete = 'Delete';
   static const String copyNativeAddress = "Copy Address";
   static const String copyEvmAddress = "Copy Reef EVM Address";
+  static const String shareAddressQr = "Share Address QR";
+  static const String shareEvmQr = "Share EVM Address QR";
 
   static const List<String> choices = <String>[
     copyNativeAddress,
+    shareAddressQr,
     copyEvmAddress,
+    shareEvmQr,
     delete,
   ];
 }
@@ -321,9 +326,15 @@ void choiceAction(
             text: await ReefAppState.instance.accountCtrl
                 .toReefEVMAddressWithNotificationString(account.evmAddress)))
         .then((_) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text(
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content:  Text(
               "EVM Address copied to clipboard.\nUse it ONLY on Reef Chain!")));
     });
+  } else if (choice == Constants.shareEvmQr) {
+      if(account.isEvmClaimed){
+        showQrCode('Share Reef EVM Address', account.evmAddress);
+      }
+  } else if(choice == Constants.shareAddressQr){
+    showQrCode('Share Address', account.address);
   }
 }
