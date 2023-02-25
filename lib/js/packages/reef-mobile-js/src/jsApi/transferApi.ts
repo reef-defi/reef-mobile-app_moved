@@ -18,7 +18,6 @@ const nativeTransfer$ = (amount: string, destinationAddress: string, provider: P
         const unsub = provider.api.tx.balances
             .transfer(destinationAddress, amount)
             .signAndSend(signer.address, {signer: signingKey}, (result) => {
-                console.log(`SSSS ${result.status.isBroadcast}`);
                 console.log(`Current status is ${result.status}`);
                 if(result.status.isBroadcast){
                     transferSubj.next({status:'broadcast'});
@@ -106,7 +105,7 @@ export const initApi = (signingKey: Signer) => {
                             map(data => ({
                                 success: true,
                                 type: 'native',
-                                data: data
+                                data
                             }))
                         );
                     } else {

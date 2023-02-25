@@ -179,30 +179,30 @@ class _SendPageState extends State<SendPage> {
         price: 0);
 
     ReefAppState.instance.transferCtrl.transferTokensStream(
-        signerAddress, resolvedEvmAddress ?? address, tokenToTransfer).listen((result) {
-      print('RESULTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT=$result');
-      if (result == null || result['success'] != true) {
+        signerAddress, resolvedEvmAddress ?? address, tokenToTransfer).listen((txResponse) {
+      print('TRANSACTION RESPONSE=$txResponse');
+      if (txResponse == null || txResponse['success'] != true) {
         setState(() {
-          statusValue = result['data']=='_canceled'?SendStatus.CANCELED:SendStatus.ERROR;
+          statusValue = txResponse['data']=='_canceled'?SendStatus.CANCELED:SendStatus.ERROR;
         });
         return;
       }
-      if(result.result['data']['type']=='native'){
-        if(result['data']['status']=='broadcast') {
+      if(txResponse['type']=='native'){
+        if(txResponse['data']['status']=='broadcast') {
           setState(() {
-            transactionData = result['data'];
+            transactionData = txResponse['data'];
             statusValue = SendStatus.SENT_TO_NETWORK;
           });
         }
-        if(result['data']['status']=='included-in-block') {
+        if(txResponse['data']['status']=='included-in-block') {
           setState(() {
-            transactionData = result['data'];
+            transactionData = txResponse['data'];
             statusValue = SendStatus.INCLUDED_IN_BLOCK;
           });
         }
-        if(result['data']['status']=='finalized') {
+        if(txResponse['data']['status']=='finalized') {
           setState(() {
-            transactionData = result['data'];
+            transactionData = txResponse['data'];
             statusValue = SendStatus.FINALIZED;
           });
         }
@@ -210,7 +210,7 @@ class _SendPageState extends State<SendPage> {
       }
 
       setState(() {
-        transactionData = result['data'];
+        transactionData = txResponse['data'];
         statusValue = SendStatus.SENT_TO_NETWORK;
       });
     });
