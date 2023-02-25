@@ -41,7 +41,7 @@ class _SendPageState extends State<SendPage> {
 
   bool isFormDisabled = false;
 
-  dynamic transactionReceipt;
+  dynamic transactionData;
 
   @override
   void initState() {
@@ -187,9 +187,31 @@ class _SendPageState extends State<SendPage> {
         });
         return;
       }
+      if(result.result['data']['type']=='native'){
+        if(result['data']['status']=='broadcast') {
+          setState(() {
+            transactionData = result['data'];
+            statusValue = SendStatus.SENT_TO_NETWORK;
+          });
+        }
+        if(result['data']['status']=='included-in-block') {
+          setState(() {
+            transactionData = result['data'];
+            statusValue = SendStatus.INCLUDED_IN_BLOCK;
+          });
+        }
+        if(result['data']['status']=='finalized') {
+          setState(() {
+            transactionData = result['data'];
+            statusValue = SendStatus.FINALIZED;
+          });
+        }
+        return;
+      }
+
       setState(() {
-        transactionReceipt = result['data'];
-        statusValue = SendStatus.WAITING_FINALIZATION;
+        transactionData = result['data'];
+        statusValue = SendStatus.SENT_TO_NETWORK;
       });
     });
 
@@ -202,7 +224,7 @@ class _SendPageState extends State<SendPage> {
       rating = 0;
       isFormDisabled = false;
       statusValue = SendStatus.NO_ADDRESS;
-      transactionReceipt=null;
+      transactionData=null;
     });
   }
 
@@ -681,10 +703,16 @@ buildFeedbackUI(SendStatus stat, void Function() onNew, void Function() onHome) 
     title = 'Transaction Canceled';
   }
   if(stat==SendStatus.SENDING) {
-    title = 'Accepting to blockchain';
+    title = 'Sending transaction';
   }
-  if(stat==SendStatus.WAITING_FINALIZATION) {
-    title = 'Waiting to be finalized';
+  if(stat==SendStatus.SENT_TO_NETWORK) {
+    title = 'Sent';
+  }
+  if(stat==SendStatus.INCLUDED_IN_BLOCK) {
+    title = 'Included in block';
+  }
+  if(stat==SendStatus.FINALIZED) {
+    title = 'Finalized!';
   }
 
   if(title==null){
@@ -705,5 +733,5 @@ enum SendStatus {
   ADDR_NOT_VALID,
   ADDR_NOT_EXIST,
   SIGNING,
-  SENDING, CANCELED, ERROR, WAITING_FINALIZATION,
+  SENDING, CANCELED, ERROR, WAITING_FINALIZATION, FINALIZED, SENT_TO_NETWORK, INCLUDED_IN_BLOCK,
 }

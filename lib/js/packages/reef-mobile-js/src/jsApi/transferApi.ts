@@ -3,7 +3,7 @@ import {catchError, combineLatest, map, switchMap, take, tap} from "rxjs/operato
 import {Contract} from "ethers";
 import {Provider, Signer as EvmSigner} from "@reef-defi/evm-provider";
 import {ERC20} from "./abi/ERC20";
-import {firstValueFrom, Observable, of} from "rxjs";
+import {firstValueFrom, Observable, of, Subject} from "rxjs";
 import {findAccount} from "./signApi";
 import Signer from "@reef-defi/extension-base/page/Signer";
 
@@ -14,25 +14,29 @@ const nativeTransfer = async (amount: string, destinationAddress: string, provid
 };
 
 const nativeTransfer$ = (amount: string, destinationAddress: string, provider: Provider, signer: ReefAccount, signingKey: Signer): Observable<any> => {
-    console.log('NATIVE TRRRRRRRR11')
-    return new Observable((observer) => {
+    const transferSubj = new Subject<any>();
         const unsub = provider.api.tx.balances
             .transfer(destinationAddress, amount)
             .signAndSend(signer.address, {signer: signingKey}, (result) => {
+                console.log(`SSSS ${result.status.isBroadcast}`);
                 console.log(`Current status is ${result.status}`);
-
-                if (result.status.isInBlock) {
+                if(result.status.isBroadcast){
+                    transferSubj.next({status:'broadcast'});
+                }else if (result.status.isInBlock) {
                     console.log(`Transaction included at blockHash ${result.status.asInBlock}`);
-                    observer.next(result.status.asInBlock);
+                    transferSubj.next({status:'included-in-block', blockHash:result.status.asInBlock.toString()});
+                    // transferSubj.next(result.status.asInBlock.toString());
                 } else if (result.status.isFinalized) {
                     console.log(`Transaction finalized at blockHash ${result.status.asFinalized}`);
-                    observer.next(result.status.asInBlock);
-                    unsub();
-                    observer.complete();
+                    transferSubj.next({status:'finalized', blockHash:result.status.asFinalized.toString()});
+                    // transferSubj.next(result.status.asInBlock.toString());
+                    setTimeout(() => {
+                        // unsub();
+                        transferSubj.complete();
+                    });
                 }
             });
-    })
-
+return transferSubj.asObservable();
 };
 
 const getSignerEvmAddress = async (address: string, provider: Provider): Promise<string> => {
@@ -83,25 +87,26 @@ export const initApi = (signingKey: Signer) => {
                 take(1),
                 map(([sgnrs, addr]: [ReefAccount[], string]) => findAccount(sgnrs, addr)),
                 combineLatest([reefState.selectedProvider$]),
-                switchMap(async ([signer, provider]: [ReefAccount | undefined, Provider]) => {
+                switchMap(([signer, provider]: [ReefAccount | undefined, Provider]) => {
                     console.log('START TRANSFERRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR')
                     if (!signer) {
                         console.log(" transfer.send() - NO SIGNER FOUND",);
                         return {success: false, data: null};
                     }
-                    const evmSigner = await getAccountSigner(signer.address, provider, signingKey);
+                    return getAccountSigner(signer.address, provider, signingKey).then((evmSigner) => [signer, provider, evmSigner]);
+                }),
+                switchMap(([signer, provider, evmSigner]: [ReefAccount | undefined, Provider, EvmSigner]) => {
                     if (!evmSigner) {
                         throw new Error('Signer not created');
                     }
                     // try {
                     if (tokenAddress === tokenUtil.REEF_ADDRESS && to.length === 48) {
-                        console.log('transfering native REEF');
-                        console.log(tokenAmount);
+                        console.log('transfering native REEF', tokenAmount);
                         return nativeTransfer$(tokenAmount, to, provider, signer, signingKey).pipe(
                             map(data => ({
                                 success: true,
                                 type: 'native',
-                                data
+                                data: data
                             }))
                         );
                     } else {
