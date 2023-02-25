@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:gap/gap.dart';
+import 'package:mobx/mobx.dart';
 import 'package:reef_mobile_app/components/modals/select_account_modal.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/StorageKey.dart';
@@ -12,8 +13,6 @@ import 'package:reef_mobile_app/utils/elements.dart';
 import 'package:reef_mobile_app/utils/functions.dart';
 import 'package:reef_mobile_app/utils/icon_url.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
-
-import '../components/SignatureContentToggle.dart';
 
 class SendPage extends StatefulWidget {
   final String preselected;
@@ -26,7 +25,7 @@ class SendPage extends StatefulWidget {
 
 class _SendPageState extends State<SendPage> {
   bool isTokenReef = false;
-  ValidationError valError = ValidationError.NO_ADDRESS;
+  SendStatus valError = SendStatus.NO_ADDRESS;
   TextEditingController valueController = TextEditingController();
   String address = "";
   String? resolvedEvmAddress;
@@ -41,9 +40,12 @@ class _SendPageState extends State<SendPage> {
   FocusNode _focus = FocusNode();
   FocusNode _focusSecond = FocusNode();
 
+  bool isFormDisabled = false;
+
   @override
   void initState() {
     super.initState();
+
     _focus.addListener(_onFocusChange);
     _focusSecond.addListener(_onFocusSecondChange);
     setState(() {
@@ -98,8 +100,7 @@ class _SendPageState extends State<SendPage> {
     return false;
   }
 
-  Future<ValidationError> _validate(
-      String addr, TokenWithAmount token, String amt,
+  Future<SendStatus> _validate(String addr, TokenWithAmount token, String amt,
       [bool skipAsync = false]) async {
     var isValidAddr = await _isValidAddress(addr);
     var balance = getSelectedTokenBalance(token);
@@ -108,11 +109,11 @@ class _SendPageState extends State<SendPage> {
     }
     var amtVal = double.parse(amt);
     if (addr.isEmpty) {
-      return ValidationError.NO_ADDRESS;
+      return SendStatus.NO_ADDRESS;
     } else if (amtVal <= 0) {
-      return ValidationError.NO_AMT;
+      return SendStatus.NO_AMT;
     } else if (amtVal > getMaxTransferAmount(token, balance)) {
-      return ValidationError.AMT_TOO_HIGH;
+      return SendStatus.AMT_TOO_HIGH;
     } else if (isValidAddr &&
         token.address != Constants.REEF_TOKEN_ADDRESS &&
         !addr.startsWith('0x')) {
@@ -125,28 +126,48 @@ class _SendPageState extends State<SendPage> {
         resolvedEvmAddress = null;
       }
       if (resolvedEvmAddress == null) {
-        return ValidationError.NO_EVM_CONNECTED;
+        return SendStatus.NO_EVM_CONNECTED;
       }
     } else if (!isValidAddr) {
-      return ValidationError.ADDR_NOT_VALID;
+      return SendStatus.ADDR_NOT_VALID;
     } else if (skipAsync == false &&
         addr.startsWith('0x') &&
         !(await ReefAppState.instance.accountCtrl.isEvmAddressExist(addr))) {
-      return ValidationError.ADDR_NOT_EXIST;
+      return SendStatus.ADDR_NOT_EXIST;
     }
-    return ValidationError.OK;
+    return SendStatus.OK;
   }
 
   Future<void> _onConfirmSend(TokenWithAmount sendToken) async {
     if (address.isEmpty ||
         sendToken.balance <= BigInt.zero ||
-        valError != ValidationError.OK) {
+        valError != SendStatus.OK) {
       return;
     }
     final navigator = Navigator.of(context);
     setState(() {
-      valError = ValidationError.SENDING;
+      isFormDisabled = true;
+      valError = SendStatus.SENDING;
     });
+    when(
+        (p0) =>
+            ReefAppState.instance.signingCtrl.signatureRequests.list.isNotEmpty,
+        () {
+      print('NEW SIGN DISPLAY');
+
+      // isFormDisabled = false;
+      when(
+          (p0) =>
+              ReefAppState.instance.signingCtrl.signatureRequests.list.isEmpty,
+          () {
+        print('REMOVED SIGN DISPLAY');
+        setState(() {
+          isFormDisabled = false;
+          valError = SendStatus.SENDING;
+        });
+      });
+    });
+
     final signerAddress = await ReefAppState.instance.storage
         .getValue(StorageKey.selected_address.name);
     TokenWithAmount tokenToTransfer = TokenWithAmount(
@@ -178,23 +199,23 @@ class _SendPageState extends State<SendPage> {
   //   });
   // }
 
-  getSendBtnLabel(ValidationError validation) {
+  getSendBtnLabel(SendStatus validation) {
     switch (validation) {
-      case ValidationError.NO_ADDRESS:
+      case SendStatus.NO_ADDRESS:
         return "Missing destination address";
-      case ValidationError.NO_AMT:
+      case SendStatus.NO_AMT:
         return "Insert amount";
-      case ValidationError.AMT_TOO_HIGH:
+      case SendStatus.AMT_TOO_HIGH:
         return "Amount too high";
-      case ValidationError.NO_EVM_CONNECTED:
+      case SendStatus.NO_EVM_CONNECTED:
         return "Target not EVM";
-      case ValidationError.ADDR_NOT_VALID:
+      case SendStatus.ADDR_NOT_VALID:
         return "Enter a valid address";
-      case ValidationError.ADDR_NOT_EXIST:
+      case SendStatus.ADDR_NOT_EXIST:
         return "Unknown address";
-      case ValidationError.SENDING:
+      case SendStatus.SENDING:
         return "Sending ...";
-      case ValidationError.OK:
+      case SendStatus.OK:
         return "Confirm Send";
       default:
         return "Not Valid";
@@ -203,7 +224,7 @@ class _SendPageState extends State<SendPage> {
 
   @override
   Widget build(BuildContext context) {
-    return SignatureContentToggle(Column(
+    return Column(
       children: [
         buildHeader(context),
         Gap(16),
@@ -257,6 +278,9 @@ class _SendPageState extends State<SendPage> {
                             borderRadius: BorderRadius.circular(10),
                           ),
                           onPressed: () {
+                            if (isFormDisabled) {
+                              return;
+                            }
                             showSelectAccountModal("Select account",
                                 (selectedAddress) async {
                               setState(() {
@@ -275,13 +299,16 @@ class _SendPageState extends State<SendPage> {
                               quarterTurns: 1,
                               child: Icon(
                                 Icons.chevron_right_rounded,
-                                color: Styles.textColor,
+                                color: isFormDisabled
+                                    ? Styles.textLightColor
+                                    : Styles.textColor,
                               )),
                         ),
                       ),
                       Expanded(
                         child: TextFormField(
                           focusNode: _focus,
+                          readOnly: isFormDisabled,
                           controller: valueController,
                           onChanged: (text) async {
                             setState(() {
@@ -294,8 +321,12 @@ class _SendPageState extends State<SendPage> {
                               valError = state;
                             });
                           },
-                          style: const TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.w500),
+                          style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: isFormDisabled
+                                  ? Styles.textLightColor
+                                  : Styles.textColor),
                           decoration: InputDecoration(
                               contentPadding: const EdgeInsets.symmetric(
                                   horizontal: 12, vertical: 2),
@@ -350,10 +381,12 @@ class _SendPageState extends State<SendPage> {
                                     selectedToken != null
                                         ? selectedToken.name
                                         : 'Select',
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                         fontWeight: FontWeight.w600,
                                         fontSize: 18,
-                                        color: Color(0xff19233c)),
+                                        color: isFormDisabled
+                                            ? Styles.textLightColor
+                                            : Styles.darkBackgroundColor),
                                   ),
                                   Text(
                                     "${toAmountDisplayBigInt(selectedToken.balance)} ${selectedToken.name.toUpperCase()}",
@@ -368,6 +401,7 @@ class _SendPageState extends State<SendPage> {
                           Expanded(
                             child: TextFormField(
                               focusNode: _focusSecond,
+                              readOnly: isFormDisabled,
                               inputFormatters: [
                                 FilteringTextInputFormatter.allow(
                                     RegExp(r'[0-9]'))
@@ -394,6 +428,12 @@ class _SendPageState extends State<SendPage> {
                                   rating = calcRating > 1 ? 1 : calcRating;
                                 });
                               },
+                              style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  color: isFormDisabled
+                                      ? Styles.textLightColor
+                                      : Styles.textColor),
                               decoration: const InputDecoration(
                                   constraints: BoxConstraints(maxHeight: 32),
                                   contentPadding: EdgeInsets.symmetric(
@@ -446,17 +486,19 @@ class _SendPageState extends State<SendPage> {
                       thumbShape: const ThumbShape()),
                   child: Slider(
                     value: rating,
-                    onChanged: (newRating) async {
-                      String amountStr =
-                          getSliderValues(newRating, selectedToken);
-                      var status = await _validate(
-                          address, selectedToken, amountStr, true);
-                      setState(() {
-                        amount = amountStr;
-                        amountController.text = amountStr;
-                        valError = status;
-                      });
-                    },
+                    onChanged: isFormDisabled
+                        ? null
+                        : (newRating) async {
+                            String amountStr =
+                                getSliderValues(newRating, selectedToken);
+                            var status = await _validate(
+                                address, selectedToken, amountStr, true);
+                            setState(() {
+                              amount = amountStr;
+                              amountController.text = amountStr;
+                              valError = status;
+                            });
+                          },
                     onChangeEnd: (newRating) async {
                       String amountStr =
                           getSliderValues(newRating, selectedToken);
@@ -469,6 +511,7 @@ class _SendPageState extends State<SendPage> {
                         valError = status;
                       });
                     },
+                    inactiveColor: Colors.white24,
                     divisions: 100,
                     label: "${(rating * 100).toInt()}%",
                   ),
@@ -511,7 +554,7 @@ class _SendPageState extends State<SendPage> {
                           borderRadius: BorderRadius.circular(14)),
                       shadowColor: const Color(0x559d6cff),
                       elevation: 0,
-                      backgroundColor: (valError == ValidationError.OK)
+                      backgroundColor: (valError == SendStatus.OK)
                           ? const Color(0xffe6e2f1)
                           : Colors.transparent,
                       padding: const EdgeInsets.all(0),
@@ -523,7 +566,7 @@ class _SendPageState extends State<SendPage> {
                           vertical: 15, horizontal: 22),
                       decoration: BoxDecoration(
                         color: const Color(0xffe6e2f1),
-                        gradient: (valError == ValidationError.OK)
+                        gradient: (valError == SendStatus.OK)
                             ? const LinearGradient(colors: [
                                 Color(0xffae27a5),
                                 Color(0xff742cb2),
@@ -538,7 +581,7 @@ class _SendPageState extends State<SendPage> {
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
-                            color: (valError != ValidationError.OK)
+                            color: (valError != SendStatus.OK)
                                 ? const Color(0x65898e9c)
                                 : Colors.white,
                           ),
@@ -552,7 +595,7 @@ class _SendPageState extends State<SendPage> {
           );
         }),
       ],
-    ));
+    );
   }
 
   String getSliderValues(double newRating, TokenWithAmount selectedToken) {
@@ -607,7 +650,7 @@ class _SendPageState extends State<SendPage> {
   }
 }
 
-enum ValidationError {
+enum SendStatus {
   OK,
   NO_EVM_CONNECTED,
   NO_ADDRESS,

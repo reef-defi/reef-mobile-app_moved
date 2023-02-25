@@ -9,6 +9,8 @@ import 'package:reef_mobile_app/pages/swap_page.dart';
 import 'package:reef_mobile_app/utils/liquid_edge/liquid_carousel.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 
+import '../../components/SignatureContentToggle.dart';
+
 class NavigationCtrl with NavSwipeCompute {
   final NavigationModel _navigationModel;
   final HomePageNavigationModel _homePageNavigationModel;
@@ -53,7 +55,7 @@ class NavigationCtrl with NavSwipeCompute {
   void navigateToSendPage(
       {required BuildContext context, required String preselected}) {
     Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => Scaffold(
+        builder: (context) => SignatureContentToggle(Scaffold(
               appBar: AppBar(
                 title: Text("Send Tokens",
                     style: GoogleFonts.spaceGrotesk(
@@ -68,7 +70,7 @@ class NavigationCtrl with NavSwipeCompute {
                 child: SendPage(preselected),
               ),
               backgroundColor: Styles.greyColor,
-            )));
+            ))));
   }
 
   void navigateToSwapPage({required BuildContext context}) {

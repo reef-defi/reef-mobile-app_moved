@@ -8,14 +8,14 @@ import {findAccount} from "./signApi";
 import Signer from "@reef-defi/extension-base/page/Signer";
 
 const nativeTransfer = async (amount: string, destinationAddress: string, provider: Provider, signer: ReefAccount, signingKey: Signer): Promise<any> => {
-    try {
+    // try {
         return await provider.api.tx.balances
             .transfer(destinationAddress, amount)
             .signAndSend(signer.address, { signer: signingKey });
-    } catch (e) {
-        console.log(e);
-        return Promise.resolve(null);
-    }
+    /*} catch (e) {
+        console.log('nativeTransfer ERROR=',e.message);
+        return Promise.reject(new Error(e.message));
+    }*/
 };
 
 const getSignerEvmAddress = async (address: string, provider: Provider): Promise<string> => {
@@ -57,7 +57,6 @@ export const initApi = (signingKey: Signer) => {
                             console.log ('transfering native REEF');
                             console.log (tokenAmount);
                             const res = await nativeTransfer(tokenAmount, to, provider, signer, signingKey);
-                            console.log ('transfer success', res);
                             return {success: res!=null, data:res};
                         } else {
                             console.log ('transfering REEF20');
@@ -79,7 +78,7 @@ export const initApi = (signingKey: Signer) => {
                             return {success: true, data:receipt};
                         }
                     } catch (e) {
-                        console.log('EEEEEE',e);
+                        console.log('EEEEEE',e.message);
                         return {success: false, data:e.message};
                     }
                 }),
