@@ -6,7 +6,6 @@ import 'package:mobx/mobx.dart';
 import 'package:reef_mobile_app/components/modals/select_account_modal.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/StorageKey.dart';
-import 'package:reef_mobile_app/model/navigation/navigation_model.dart';
 import 'package:reef_mobile_app/model/tokens/TokenWithAmount.dart';
 import 'package:reef_mobile_app/utils/constants.dart';
 import 'package:reef_mobile_app/utils/elements.dart';
@@ -17,7 +16,7 @@ import 'package:reef_mobile_app/utils/styles.dart';
 class SendPage extends StatefulWidget {
   final String preselected;
 
-  SendPage(this.preselected, {Key? key}) : super(key: key);
+  const SendPage(this.preselected, {Key? key}) : super(key: key);
 
   @override
   State<SendPage> createState() => _SendPageState();
@@ -25,7 +24,7 @@ class SendPage extends StatefulWidget {
 
 class _SendPageState extends State<SendPage> {
   bool isTokenReef = false;
-  SendStatus valError = SendStatus.NO_ADDRESS;
+  SendStatus statusValue = SendStatus.NO_ADDRESS;
   TextEditingController valueController = TextEditingController();
   String address = "";
   String? resolvedEvmAddress;
@@ -37,10 +36,12 @@ class _SendPageState extends State<SendPage> {
   bool _isValueSecondEditing = false;
   double rating = 0;
 
-  FocusNode _focus = FocusNode();
-  FocusNode _focusSecond = FocusNode();
+  final FocusNode _focus = FocusNode();
+  final FocusNode _focusSecond = FocusNode();
 
   bool isFormDisabled = false;
+
+  dynamic transactionReceipt;
 
   @override
   void initState() {
@@ -135,35 +136,31 @@ class _SendPageState extends State<SendPage> {
         !(await ReefAppState.instance.accountCtrl.isEvmAddressExist(addr))) {
       return SendStatus.ADDR_NOT_EXIST;
     }
-    return SendStatus.OK;
+    return SendStatus.READY;
   }
 
   Future<void> _onConfirmSend(TokenWithAmount sendToken) async {
     if (address.isEmpty ||
         sendToken.balance <= BigInt.zero ||
-        valError != SendStatus.OK) {
+        statusValue != SendStatus.READY) {
       return;
     }
-    final navigator = Navigator.of(context);
     setState(() {
       isFormDisabled = true;
-      valError = SendStatus.SENDING;
+      statusValue = SendStatus.SIGNING;
     });
     when(
         (p0) =>
             ReefAppState.instance.signingCtrl.signatureRequests.list.isNotEmpty,
         () {
-      print('NEW SIGN DISPLAY');
-
-      // isFormDisabled = false;
+      // NEW SIGNATURE DISPLAYED
       when(
           (p0) =>
               ReefAppState.instance.signingCtrl.signatureRequests.list.isEmpty,
           () {
         print('REMOVED SIGN DISPLAY');
         setState(() {
-          isFormDisabled = false;
-          valError = SendStatus.SENDING;
+          statusValue = SendStatus.SENDING;
         });
       });
     });
@@ -181,23 +178,33 @@ class _SendPageState extends State<SendPage> {
             BigInt.parse(toStringWithoutDecimals(amount, sendToken.decimals)),
         price: 0);
 
-    dynamic result = await ReefAppState.instance.transferCtrl.transferTokens(
-        signerAddress, resolvedEvmAddress ?? address, tokenToTransfer);
-    print('RESULT=$result');
-    //if (result == null || result['success'] == false) {}
-    navigator.pop();
-    ReefAppState.instance.navigationCtrl.navigate(NavigationPage.home);
+    ReefAppState.instance.transferCtrl.transferTokensStream(
+        signerAddress, resolvedEvmAddress ?? address, tokenToTransfer).listen((result) {
+      print('RESULTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT=$result');
+      if (result == null || result['success'] != true) {
+        setState(() {
+          statusValue = result['data']=='_canceled'?SendStatus.CANCELED:SendStatus.ERROR;
+        });
+        return;
+      }
+      setState(() {
+        transactionReceipt = result['data'];
+        statusValue = SendStatus.WAITING_FINALIZATION;
+      });
+    });
+
   }
 
-  // void resetState() {
-  //   amountController.clear();
-  //   valueController.clear();
-  //   setState(() {
-  //     rating = 0;
-  //     isInProgress = false;
-  //      valError=ValErr.OK
-  //   });
-  // }
+  void resetState() {
+    amountController.clear();
+    valueController.clear();
+    setState(() {
+      rating = 0;
+      isFormDisabled = false;
+      statusValue = SendStatus.NO_ADDRESS;
+      transactionReceipt=null;
+    });
+  }
 
   getSendBtnLabel(SendStatus validation) {
     switch (validation) {
@@ -213,9 +220,11 @@ class _SendPageState extends State<SendPage> {
         return "Enter a valid address";
       case SendStatus.ADDR_NOT_EXIST:
         return "Unknown address";
+      case SendStatus.SIGNING:
+        return "Signing transaction ...";
       case SendStatus.SENDING:
         return "Sending ...";
-      case SendStatus.OK:
+      case SendStatus.READY:
         return "Confirm Send";
       default:
         return "Not Valid";
@@ -224,7 +233,13 @@ class _SendPageState extends State<SendPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    
+    var feedbackUI = buildFeedbackUI(statusValue, resetState, (){
+      final navigator = Navigator.of(context);
+      navigator.pop();
+      // ReefAppState.instance.navigationCtrl.navigate(NavigationPage.home);
+    });
+    return feedbackUI ?? Column(
       children: [
         buildHeader(context),
         Gap(16),
@@ -290,7 +305,7 @@ class _SendPageState extends State<SendPage> {
                               var state = await _validate(
                                   address, selectedToken, amount);
                               setState(() {
-                                valError = state;
+                                statusValue = state;
                               });
                             }, isTokenReef);
                           },
@@ -318,7 +333,7 @@ class _SendPageState extends State<SendPage> {
                             var state =
                                 await _validate(address, selectedToken, amount);
                             setState(() {
-                              valError = state;
+                              statusValue = state;
                             });
                           },
                           style: TextStyle(
@@ -413,7 +428,7 @@ class _SendPageState extends State<SendPage> {
                                 var status = await _validate(
                                     address, selectedToken, amount);
                                 setState(() {
-                                  valError = status;
+                                  statusValue = status;
                                   var balance =
                                       getSelectedTokenBalance(selectedToken);
 
@@ -496,7 +511,7 @@ class _SendPageState extends State<SendPage> {
                             setState(() {
                               amount = amountStr;
                               amountController.text = amountStr;
-                              valError = status;
+                              statusValue = status;
                             });
                           },
                     onChangeEnd: (newRating) async {
@@ -508,7 +523,7 @@ class _SendPageState extends State<SendPage> {
                       var status =
                           await _validate(address, selectedToken, amount);
                       setState(() {
-                        valError = status;
+                        statusValue = status;
                       });
                     },
                     inactiveColor: Colors.white24,
@@ -554,7 +569,7 @@ class _SendPageState extends State<SendPage> {
                           borderRadius: BorderRadius.circular(14)),
                       shadowColor: const Color(0x559d6cff),
                       elevation: 0,
-                      backgroundColor: (valError == SendStatus.OK)
+                      backgroundColor: (statusValue == SendStatus.READY)
                           ? const Color(0xffe6e2f1)
                           : Colors.transparent,
                       padding: const EdgeInsets.all(0),
@@ -566,7 +581,7 @@ class _SendPageState extends State<SendPage> {
                           vertical: 15, horizontal: 22),
                       decoration: BoxDecoration(
                         color: const Color(0xffe6e2f1),
-                        gradient: (valError == SendStatus.OK)
+                        gradient: (statusValue == SendStatus.READY)
                             ? const LinearGradient(colors: [
                                 Color(0xffae27a5),
                                 Color(0xff742cb2),
@@ -577,11 +592,11 @@ class _SendPageState extends State<SendPage> {
                       ),
                       child: Center(
                         child: Text(
-                          getSendBtnLabel(valError),
+                          getSendBtnLabel(statusValue),
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
-                            color: (valError != SendStatus.OK)
+                            color: (statusValue != SendStatus.READY)
                                 ? const Color(0x65898e9c)
                                 : Colors.white,
                           ),
@@ -602,7 +617,7 @@ class _SendPageState extends State<SendPage> {
     rating = newRating;
     var balance = getSelectedTokenBalance(selectedToken);
     double? amountValue = (balance * rating);
-    if (amountValue != null && amountValue <= 0) {
+    if (amountValue <= 0) {
       amountValue = null;
     }
     var maxTransferAmount = getMaxTransferAmount(selectedToken, balance);
@@ -650,13 +665,45 @@ class _SendPageState extends State<SendPage> {
   }
 }
 
+buildFeedbackUI(SendStatus stat, void Function() onNew, void Function() onHome) {
+  String? title;
+  var buttons = ButtonBar(children: [
+    ElevatedButton(onPressed: onHome, child: const Text('Home')),
+    ElevatedButton(onPressed: onNew, child: const Text('New'))
+  ]);
+  // if(stat==SendStatus.ERROR ||stat==SendStatus.CANCELED || stat==SendStatus.CANCELED || ){
+  //   buttons.children.add(ElevatedButton(onPressed: onNew, child: const Text('New')));
+  // }
+  if(stat==SendStatus.ERROR) {
+    title='Transaction Error';
+  }
+  if(stat==SendStatus.CANCELED) {
+    title = 'Transaction Canceled';
+  }
+  if(stat==SendStatus.SENDING) {
+    title = 'Accepting to blockchain';
+  }
+  if(stat==SendStatus.WAITING_FINALIZATION) {
+    title = 'Waiting to be finalized';
+  }
+
+  if(title==null){
+    return null;
+  }
+  return Column(children:[
+    Text(title),
+    buttons
+  ]);
+}
+
 enum SendStatus {
-  OK,
+  READY,
   NO_EVM_CONNECTED,
   NO_ADDRESS,
   NO_AMT,
   AMT_TOO_HIGH,
   ADDR_NOT_VALID,
   ADDR_NOT_EXIST,
-  SENDING,
+  SIGNING,
+  SENDING, CANCELED, ERROR, WAITING_FINALIZATION,
 }
