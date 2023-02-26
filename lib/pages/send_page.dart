@@ -223,10 +223,16 @@ class _SendPageState extends State<SendPage> {
 
   bool handleEvmTransactionResponse(txResponse) {
     if (txResponse['type'] == 'reef20') {
-      // no broadcast for evm - if(txResponse['data']['status']=='broadcast') 
+      if(txResponse['data']['status']=='broadcast'){
+        setState(() {
+          transactionData = txResponse['data'];
+          statusValue = SendStatus.SENT_TO_NETWORK;
+        });
+      }
       if (txResponse['data']['status'] == 'included-in-block') {
         setState(() {
           transactionData = txResponse['data'];
+          print('TRANSSSSSS $transactionData');
           statusValue = SendStatus.INCLUDED_IN_BLOCK;
         });
       }
@@ -234,6 +240,12 @@ class _SendPageState extends State<SendPage> {
         setState(() {
           transactionData = txResponse['data'];
           statusValue = SendStatus.FINALIZED;
+        });
+      }
+      if (txResponse['data']['status'] == 'not-finalized') {
+        print('block was not finalized');
+        setState(() {
+          statusValue = SendStatus.NOT_FINALIZED;
         });
       }
       return true;
@@ -731,13 +743,7 @@ class _SendPageState extends State<SendPage> {
 buildFeedbackUI(
     SendStatus stat, void Function() onNew, void Function() onHome) {
   String? title;
-  var buttons = ButtonBar(children: [
-    ElevatedButton(onPressed: onHome, child: const Text('Home')),
-    ElevatedButton(onPressed: onNew, child: const Text('New'))
-  ]);
-  // if(stat==SendStatus.ERROR ||stat==SendStatus.CANCELED || stat==SendStatus.CANCELED || ){
-  //   buttons.children.add(ElevatedButton(onPressed: onNew, child: const Text('New')));
-  // }
+
   if (stat == SendStatus.ERROR) {
     title = 'Transaction Error';
   }
@@ -757,10 +763,17 @@ buildFeedbackUI(
     title = 'Finalized!';
   }
 
+  if (stat == SendStatus.NOT_FINALIZED) {
+    title = 'NOT finalized!';
+  }
+
   if (title == null) {
     return null;
   }
-  return Column(children: [Text(title), buttons]);
+  return Column(children: [Text(title), ButtonBar(children: [
+  ElevatedButton(onPressed: onHome, child: const Text('Home')),
+  ElevatedButton(onPressed: onNew, child: const Text('New'))
+  ])]);
 }
 
 enum SendStatus {
@@ -777,5 +790,5 @@ enum SendStatus {
   ERROR,
   SENT_TO_NETWORK,
   INCLUDED_IN_BLOCK,
-  FINALIZED,
+  FINALIZED, NOT_FINALIZED,
 }
