@@ -14,28 +14,30 @@ const nativeTransfer = async (amount: string, destinationAddress: string, provid
 };
 
 const nativeTransfer$ = (amount: string, destinationAddress: string, provider: Provider, signer: ReefAccount, signingKey: Signer): Observable<any> => {
-    const transferSubj = new Subject<any>();
+    return new Observable((observer) => {
         const unsub = provider.api.tx.balances
             .transfer(destinationAddress, amount)
             .signAndSend(signer.address, {signer: signingKey}, (result) => {
-                console.log(`Current status is ${result.status}`);
-                if(result.status.isBroadcast){
-                    transferSubj.next({status:'broadcast'});
-                }else if (result.status.isInBlock) {
-                    console.log(`Transaction included at blockHash ${result.status.asInBlock}`);
-                    transferSubj.next({status:'included-in-block', blockHash:result.status.asInBlock.toString()});
+                // console.log(`Current status is ${result.status}`);
+                if (result.status.isBroadcast) {
+                    observer.next({status: 'broadcast'});
+                } else if (result.status.isInBlock) {
+                    // console.log(`Transaction included at blockHash ${result.status.asInBlock}`);
+                    observer.next({status: 'included-in-block', blockHash: result.status.asInBlock.toString()});
                     // transferSubj.next(result.status.asInBlock.toString());
                 } else if (result.status.isFinalized) {
-                    console.log(`Transaction finalized at blockHash ${result.status.asFinalized}`);
-                    transferSubj.next({status:'finalized', blockHash:result.status.asFinalized.toString()});
+                    // console.log(`Transaction finalized at blockHash ${result.status.asFinalized}`);
+                    observer.next({status: 'finalized', blockHash: result.status.asFinalized.toString()});
                     // transferSubj.next(result.status.asInBlock.toString());
                     setTimeout(() => {
                         // unsub();
-                        transferSubj.complete();
+                        observer.complete();
                     });
                 }
+            }).catch((err) => {
+                observer.error(err)
             });
-return transferSubj.asObservable();
+    });
 };
 
 const getSignerEvmAddress = async (address: string, provider: Provider): Promise<string> => {
@@ -51,27 +53,34 @@ const getSignerEvmAddress = async (address: string, provider: Provider): Promise
     return addr;
 };
 
-async function reef20Transfer$(to: string, provider, tokenAmount: string, tokenContract) {
+function reef20Transfer$(to: string, provider, tokenAmount: string, tokenContract) {
     const STORAGE_LIMIT = 2000;
-    const toAddress = to.length === 48
-        ? await getSignerEvmAddress(to, provider)
-        : to;
-    const ARGS = [toAddress, tokenAmount];
-    return new Observable((observer) => {
 
-        tokenContract ['transfer'](...ARGS, {
-            customData: {
-                storageLimit: STORAGE_LIMIT
-            }
-        }).then((tx) => {
-            observer.next(tx);
-            console.log('tx in progress =', tx.hash);
-            tx.wait().then((receipt) => {
-                console.log("SIGN AND SEND RESULT=", JSON.stringify(receipt));
-                observer.next(receipt);
-                observer.complete();
-            });
-        });
+    return new Observable( (observer) => {
+        (async()=>{
+            const toAddress = to.length === 48
+                ? await getSignerEvmAddress(to, provider)
+                : to;
+
+            const ARGS = [toAddress, tokenAmount];
+            tokenContract ['transfer'](...ARGS, {
+                customData: {
+                    storageLimit: STORAGE_LIMIT
+                }
+            }).then((tx) => {
+                observer.next({status: 'included-in-block', transactionResponse: tx});
+                //console.log('tx in progress =', tx.hash);
+                tx.wait().then((receipt) => {
+                    console.log("transfer finalized=", JSON.stringify(receipt));
+                    observer.next({status: 'finalized', transactionReceipt: receipt});
+                    observer.complete();
+                }).catch((err)=>{
+                    console.log('transfer tx.wait ERROR=',err.message)
+                    observer.error(err)});
+            }).catch((err)=>{
+                console.log('transfer ERROR=',err.message)
+                observer.error(err)});
+        })();
 
     });
 }
@@ -79,15 +88,12 @@ async function reef20Transfer$(to: string, provider, tokenAmount: string, tokenC
 export const initApi = (signingKey: Signer) => {
     (window as any).transfer = {
         sendObs: (from: string, to: string, tokenAmount: string, tokenDecimals: number, tokenAddress: string) => {
-            console.log('making transfer tx')
-
             return reefState.accounts$.pipe(
                 combineLatest([of(from)]),
                 take(1),
                 map(([sgnrs, addr]: [ReefAccount[], string]) => findAccount(sgnrs, addr)),
                 combineLatest([reefState.selectedProvider$]),
                 switchMap(([signer, provider]: [ReefAccount | undefined, Provider]) => {
-                    console.log('START TRANSFERRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR')
                     if (!signer) {
                         console.log(" transfer.send() - NO SIGNER FOUND",);
                         return {success: false, data: null};
@@ -111,7 +117,13 @@ export const initApi = (signingKey: Signer) => {
                     } else {
                         const tokenContract = new Contract(tokenAddress, ERC20, evmSigner as EvmSigner);
                         console.log('transfering REEF20');
-                        return reef20Transfer$(to, provider, tokenAmount, tokenContract);
+                        return reef20Transfer$(to, provider, tokenAmount, tokenContract).pipe(
+                            map(data => ({
+                                success: true,
+                                type: 'reef20',
+                                data
+                            }))
+                        );
                     }
                 }),
                 catchError(err => of({success: false, data: err.message}))

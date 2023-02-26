@@ -209,6 +209,28 @@ class _SendPageState extends State<SendPage> {
         return;
       }
 
+      if(txResponse['type']=='reef20'){
+        if(txResponse['data']['status']=='broadcast') {
+          setState(() {
+            transactionData = txResponse['data'];
+            statusValue = SendStatus.SENT_TO_NETWORK;
+          });
+        }
+        if(txResponse['data']['status']=='included-in-block') {
+          setState(() {
+            transactionData = txResponse['data'];
+            statusValue = SendStatus.INCLUDED_IN_BLOCK;
+          });
+        }
+        if(txResponse['data']['status']=='finalized') {
+          setState(() {
+            transactionData = txResponse['data'];
+            statusValue = SendStatus.FINALIZED;
+          });
+        }
+        return;
+      }
+
       setState(() {
         transactionData = txResponse['data'];
         statusValue = SendStatus.SENT_TO_NETWORK;
