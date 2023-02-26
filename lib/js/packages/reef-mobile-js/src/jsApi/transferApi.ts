@@ -68,12 +68,27 @@ function reef20Transfer$(to: string, provider, tokenAmount: string, tokenContrac
                     storageLimit: STORAGE_LIMIT
                 }
             }).then((tx) => {
-                observer.next({status: 'included-in-block', transactionResponse: tx});
-                //console.log('tx in progress =', tx.hash);
-                tx.wait().then((receipt) => {
-                    console.log("transfer finalized=", JSON.stringify(receipt));
-                    observer.next({status: 'finalized', transactionReceipt: receipt});
-                    observer.complete();
+                observer.next({status: 'broadcast', transactionResponse: tx});
+                console.log('tx in progress =', tx.hash);
+                tx.wait().then(async (receipt) => {
+                    console.log("transfer included in block=", receipt.blockHash);
+                    observer.next({status: 'included-in-block', transactionReceipt: receipt});
+                    let count=10;
+                    const finalizedCount=-111;
+                    const unsubHeads = await provider.api.rpc.chain.subscribeFinalizedHeads((lastHeader) => {
+                        if(receipt.blockHash.toString() === lastHeader.hash.toString()){
+                            observer.next({status: 'finalized', transactionReceipt: receipt});
+                            count=finalizedCount;
+                        }
+
+                        if (--count < 0) {
+                            if(count>finalizedCount){
+                                observer.next({status: 'not-finalized', transactionReceipt: receipt});
+                            }
+                            unsubHeads();
+                            observer.complete();
+                        }
+                    });
                 }).catch((err)=>{
                     console.log('transfer tx.wait ERROR=',err.message)
                     observer.error(err)});
@@ -104,7 +119,7 @@ export const initApi = (signingKey: Signer) => {
                     if (!evmSigner) {
                         throw new Error('Signer not created');
                     }
-                    // try {
+                    // TODO use util method don't check length
                     if (tokenAddress === tokenUtil.REEF_ADDRESS && to.length === 48) {
                         console.log('transfering native REEF', tokenAmount);
                         return nativeTransfer$(tokenAmount, to, provider, signer, signingKey).pipe(

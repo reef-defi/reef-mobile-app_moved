@@ -149,6 +149,49 @@ class _SendPageState extends State<SendPage> {
       isFormDisabled = true;
       statusValue = SendStatus.SIGNING;
     });
+
+    setStatusOnSignatureClosed();
+
+    Stream<dynamic> transferTransactionFeedbackStream =
+        await executeTransferTransaction(sendToken);
+
+    transferTransactionFeedbackStream.listen((txResponse) {
+      print('TRANSACTION RESPONSE=$txResponse');
+      if (handleExceptionResponse(txResponse)) {
+        return;
+      }
+      if (handleNativeTransferResponse(txResponse)) {
+        return;
+      }
+      if (handleEvmTransactionResponse(txResponse)) {
+        return;
+      }
+    });
+  }
+
+  Future<Stream<dynamic>> executeTransferTransaction(
+      TokenWithAmount sendToken) async {
+    final signerAddress = await ReefAppState.instance.storage
+        .getValue(StorageKey.selected_address.name);
+    TokenWithAmount tokenToTransfer = TokenWithAmount(
+        name: sendToken.name,
+        address: sendToken.address,
+        iconUrl: sendToken.iconUrl,
+        symbol: sendToken.name,
+        balance: sendToken.balance,
+        decimals: sendToken.decimals,
+        amount:
+            BigInt.parse(toStringWithoutDecimals(amount, sendToken.decimals)),
+        price: 0);
+
+    var toAddress = resolvedEvmAddress ?? address;
+    print('SENDDDDD aaa=$address to=$toAddress');
+    return ReefAppState.instance.transferCtrl
+        .transferTokensStream(
+            signerAddress, toAddress, tokenToTransfer);
+  }
+
+  void setStatusOnSignatureClosed() {
     when(
         (p0) =>
             ReefAppState.instance.signingCtrl.signatureRequests.list.isNotEmpty,
@@ -164,89 +207,89 @@ class _SendPageState extends State<SendPage> {
         });
       });
     });
+  }
 
-    final signerAddress = await ReefAppState.instance.storage
-        .getValue(StorageKey.selected_address.name);
-    TokenWithAmount tokenToTransfer = TokenWithAmount(
-        name: sendToken.name,
-        address: sendToken.address,
-        iconUrl: sendToken.iconUrl,
-        symbol: sendToken.name,
-        balance: sendToken.balance,
-        decimals: sendToken.decimals,
-        amount:
-            BigInt.parse(toStringWithoutDecimals(amount, sendToken.decimals)),
-        price: 0);
-
-    ReefAppState.instance.transferCtrl.transferTokensStream(
-        signerAddress, resolvedEvmAddress ?? address, tokenToTransfer).listen((txResponse) {
-      print('TRANSACTION RESPONSE=$txResponse');
-      if (txResponse == null || txResponse['success'] != true) {
-        setState(() {
-          statusValue = txResponse['data']=='_canceled'?SendStatus.CANCELED:SendStatus.ERROR;
-        });
-        return;
-      }
-      if(txResponse['type']=='native'){
-        if(txResponse['data']['status']=='broadcast') {
-          setState(() {
-            transactionData = txResponse['data'];
-            statusValue = SendStatus.SENT_TO_NETWORK;
-          });
-        }
-        if(txResponse['data']['status']=='included-in-block') {
-          setState(() {
-            transactionData = txResponse['data'];
-            statusValue = SendStatus.INCLUDED_IN_BLOCK;
-          });
-        }
-        if(txResponse['data']['status']=='finalized') {
-          setState(() {
-            transactionData = txResponse['data'];
-            statusValue = SendStatus.FINALIZED;
-          });
-        }
-        return;
-      }
-
-      if(txResponse['type']=='reef20'){
-        if(txResponse['data']['status']=='broadcast') {
-          setState(() {
-            transactionData = txResponse['data'];
-            statusValue = SendStatus.SENT_TO_NETWORK;
-          });
-        }
-        if(txResponse['data']['status']=='included-in-block') {
-          setState(() {
-            transactionData = txResponse['data'];
-            statusValue = SendStatus.INCLUDED_IN_BLOCK;
-          });
-        }
-        if(txResponse['data']['status']=='finalized') {
-          setState(() {
-            transactionData = txResponse['data'];
-            statusValue = SendStatus.FINALIZED;
-          });
-        }
-        return;
-      }
-
+  bool handleExceptionResponse(txResponse) {
+    if (txResponse == null || txResponse['success'] != true) {
       setState(() {
-        transactionData = txResponse['data'];
-        statusValue = SendStatus.SENT_TO_NETWORK;
+        statusValue = txResponse['data'] == '_canceled'
+            ? SendStatus.CANCELED
+            : SendStatus.ERROR;
       });
-    });
+      return true;
+    }
+    return false;
+  }
 
+  bool handleEvmTransactionResponse(txResponse) {
+    if (txResponse['type'] == 'reef20') {
+      if(txResponse['data']['status']=='broadcast'){
+        setState(() {
+          transactionData = txResponse['data'];
+          statusValue = SendStatus.SENT_TO_NETWORK;
+        });
+      }
+      if (txResponse['data']['status'] == 'included-in-block') {
+        setState(() {
+          transactionData = txResponse['data'];
+          print('TRANSSSSSS $transactionData');
+          statusValue = SendStatus.INCLUDED_IN_BLOCK;
+        });
+      }
+      if (txResponse['data']['status'] == 'finalized') {
+        setState(() {
+          transactionData = txResponse['data'];
+          statusValue = SendStatus.FINALIZED;
+        });
+      }
+      if (txResponse['data']['status'] == 'not-finalized') {
+        print('block was not finalized');
+        setState(() {
+          statusValue = SendStatus.NOT_FINALIZED;
+        });
+      }
+      return true;
+    }
+    return false;
+  }
+
+  bool handleNativeTransferResponse(txResponse) {
+    if (txResponse['type'] == 'native') {
+      if (txResponse['data']['status'] == 'broadcast') {
+        setState(() {
+          transactionData = txResponse['data'];
+          statusValue = SendStatus.SENT_TO_NETWORK;
+        });
+      }
+      if (txResponse['data']['status'] == 'included-in-block') {
+        setState(() {
+          transactionData = txResponse['data'];
+          statusValue = SendStatus.INCLUDED_IN_BLOCK;
+        });
+      }
+      if (txResponse['data']['status'] == 'finalized') {
+        setState(() {
+          transactionData = txResponse['data'];
+          statusValue = SendStatus.FINALIZED;
+        });
+      }
+      return true;
+    }
+    return false;
   }
 
   void resetState() {
     amountController.clear();
     valueController.clear();
     setState(() {
+      amount = '';
+      resolvedEvmAddress = null;
+      transactionData = null;
+      address = '';
       rating = 0;
       isFormDisabled = false;
       statusValue = SendStatus.NO_ADDRESS;
-      transactionData=null;
+      transactionData = null;
     });
   }
 
@@ -277,384 +320,399 @@ class _SendPageState extends State<SendPage> {
 
   @override
   Widget build(BuildContext context) {
-    
-    var feedbackUI = buildFeedbackUI(statusValue, resetState, (){
+    var transferStatusUI = buildFeedbackUI(statusValue, resetState, () {
       final navigator = Navigator.of(context);
       navigator.pop();
       // ReefAppState.instance.navigationCtrl.navigate(NavigationPage.home);
     });
-    return feedbackUI ?? Column(
-      children: [
-        buildHeader(context),
-        Gap(16),
-        Observer(builder: (_) {
-          var tokens = ReefAppState.instance.model.tokens.selectedErc20List;
-          var selectedToken =
-              tokens.firstWhere((tkn) => tkn.address == selectedTokenAddress);
-          if (selectedToken == null && !tokens.isEmpty) {
-            selectedToken = tokens[0];
-          }
-          if (selectedToken == null) {
-            return Text('Tokens error');
-          }
-          return Container(
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15),
-                color: Styles.primaryBackgroundColor,
-                boxShadow: neumorphicShadow()),
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              children: <Widget>[
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    border: _isValueEditing
-                        ? Border.all(color: const Color(0xffa328ab))
-                        : Border.all(color: const Color(0x00d7d1e9)),
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      if (_isValueEditing)
-                        const BoxShadow(
-                            blurRadius: 15,
-                            spreadRadius: -8,
-                            offset: Offset(0, 10),
-                            color: Color(0x40a328ab))
-                    ],
-                    color: _isValueEditing
-                        ? const Color(0xffeeebf6)
-                        : const Color(0xffE7E2F2),
-                  ),
-                  child: Row(
-                    children: [
-                      SizedBox(
-                        width: 48,
-                        child: MaterialButton(
-                          elevation: 0,
-                          height: 48,
-                          padding: EdgeInsets.zero,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
+    return transferStatusUI ??
+        Column(
+          children: [
+            // Gap(16),
+            Observer(builder: (_) {
+              var tokens = ReefAppState.instance.model.tokens.selectedErc20List;
+              var selectedToken = tokens
+                  .firstWhere((tkn) => tkn.address == selectedTokenAddress);
+              if (selectedToken == null && !tokens.isEmpty) {
+                selectedToken = tokens[0];
+              }
+              if (selectedToken == null) {
+                return Text('No token selected');
+              }
+              return Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    color: Styles.primaryBackgroundColor,
+                    boxShadow: neumorphicShadow()),
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  children: <Widget>[
+                    ...buildInputElements(selectedToken),
+                    const Gap(36),
+                    ...buildSliderWidgets(selectedToken),
+                    const Gap(36),
+                    buildSendStatusButton(selectedToken),
+                  ],
+                ),
+              );
+            }),
+          ],
+        );
+  }
+
+  List<Widget> buildInputElements(TokenWithAmount selectedToken) {
+    return [Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      border: _isValueEditing
+                          ? Border.all(color: const Color(0xffa328ab))
+                          : Border.all(color: const Color(0x00d7d1e9)),
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        if (_isValueEditing)
+                          const BoxShadow(
+                              blurRadius: 15,
+                              spreadRadius: -8,
+                              offset: Offset(0, 10),
+                              color: Color(0x40a328ab))
+                      ],
+                      color: _isValueEditing
+                          ? const Color(0xffeeebf6)
+                          : const Color(0xffE7E2F2),
+                    ),
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          width: 48,
+                          child: MaterialButton(
+                            elevation: 0,
+                            height: 48,
+                            padding: EdgeInsets.zero,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            onPressed: () {
+                              if (isFormDisabled) {
+                                return;
+                              }
+                              showSelectAccountModal("Select account",
+                                  (selectedAddress) async {
+                                setState(() {
+                                  address = selectedAddress;
+                                  valueController.text = selectedAddress;
+                                });
+                                var state = await _validate(
+                                    address, selectedToken, amount);
+                                setState(() {
+                                  statusValue = state;
+                                });
+                              }, isTokenReef);
+                            },
+                            //color: const Color(0xffDFDAED),
+                            child: RotatedBox(
+                                quarterTurns: 1,
+                                child: Icon(
+                                  Icons.chevron_right_rounded,
+                                  color: isFormDisabled
+                                      ? Styles.textLightColor
+                                      : Styles.textColor,
+                                )),
                           ),
-                          onPressed: () {
-                            if (isFormDisabled) {
-                              return;
-                            }
-                            showSelectAccountModal("Select account",
-                                (selectedAddress) async {
+                        ),
+                        Expanded(
+                          child: TextFormField(
+                            focusNode: _focus,
+                            readOnly: isFormDisabled,
+                            controller: valueController,
+                            onChanged: (text) async {
                               setState(() {
-                                address = selectedAddress;
-                                valueController.text = selectedAddress;
+                                address = valueController.text;
                               });
+
                               var state = await _validate(
                                   address, selectedToken, amount);
                               setState(() {
                                 statusValue = state;
                               });
-                            }, isTokenReef);
-                          },
-                          //color: const Color(0xffDFDAED),
-                          child: RotatedBox(
-                              quarterTurns: 1,
-                              child: Icon(
-                                Icons.chevron_right_rounded,
+                            },
+                            style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
                                 color: isFormDisabled
                                     ? Styles.textLightColor
-                                    : Styles.textColor,
-                              )),
-                        ),
-                      ),
-                      Expanded(
-                        child: TextFormField(
-                          focusNode: _focus,
-                          readOnly: isFormDisabled,
-                          controller: valueController,
-                          onChanged: (text) async {
-                            setState(() {
-                              address = valueController.text;
-                            });
-
-                            var state =
-                                await _validate(address, selectedToken, amount);
-                            setState(() {
-                              statusValue = state;
-                            });
-                          },
-                          style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              color: isFormDisabled
-                                  ? Styles.textLightColor
-                                  : Styles.textColor),
-                          decoration: InputDecoration(
-                              contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 2),
-                              border: InputBorder.none,
-                              hintText: 'Send to address',
-                              hintStyle:
-                                  TextStyle(color: Styles.textLightColor)),
-                          validator: (String? value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Address cannot be empty';
-                            }
-                            return null;
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const Gap(10),
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    border: _isValueSecondEditing
-                        ? Border.all(color: const Color(0xffa328ab))
-                        : Border.all(color: const Color(0x00d7d1e9)),
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      if (_isValueSecondEditing)
-                        const BoxShadow(
-                            blurRadius: 15,
-                            spreadRadius: -8,
-                            offset: Offset(0, 10),
-                            color: Color(0x40a328ab))
-                    ],
-                    color: _isValueSecondEditing
-                        ? const Color(0xffeeebf6)
-                        : const Color(0xffE7E2F2),
-                  ),
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          Row(
-                            children: [
-                              IconFromUrl(selectedToken.iconUrl, size: 48),
-                              const Gap(13),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    selectedToken != null
-                                        ? selectedToken.name
-                                        : 'Select',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 18,
-                                        color: isFormDisabled
-                                            ? Styles.textLightColor
-                                            : Styles.darkBackgroundColor),
-                                  ),
-                                  Text(
-                                    "${toAmountDisplayBigInt(selectedToken.balance)} ${selectedToken.name.toUpperCase()}",
-                                    style: TextStyle(
-                                        color: Styles.textLightColor,
-                                        fontSize: 12),
-                                  )
-                                ],
-                              ),
-                            ],
+                                    : Styles.textColor),
+                            decoration: InputDecoration(
+                                contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 2),
+                                border: InputBorder.none,
+                                hintText: 'Send to address',
+                                hintStyle:
+                                    TextStyle(color: Styles.textLightColor)),
+                            validator: (String? value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Address cannot be empty';
+                              }
+                              return null;
+                            },
                           ),
-                          Expanded(
-                            child: TextFormField(
-                              focusNode: _focusSecond,
-                              readOnly: isFormDisabled,
-                              inputFormatters: [
-                                FilteringTextInputFormatter.allow(
-                                    RegExp(r'[0-9]'))
-                              ],
-                              keyboardType: TextInputType.number,
-                              controller: amountController,
-                              onChanged: (text) async {
-                                amount = amountController.text;
-                                var status = await _validate(
-                                    address, selectedToken, amount);
-                                setState(() {
-                                  statusValue = status;
-                                  var balance =
-                                      getSelectedTokenBalance(selectedToken);
-
-                                  var amt =
-                                      amount != '' ? double.parse(amount) : 0;
-                                  var calcRating = (amt /
-                                      getMaxTransferAmount(
-                                          selectedToken, balance));
-                                  if (calcRating < 0) {
-                                    calcRating = 0;
-                                  }
-                                  rating = calcRating > 1 ? 1 : calcRating;
-                                });
-                              },
-                              style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                  color: isFormDisabled
-                                      ? Styles.textLightColor
-                                      : Styles.textColor),
-                              decoration: const InputDecoration(
-                                  constraints: BoxConstraints(maxHeight: 32),
-                                  contentPadding: EdgeInsets.symmetric(
-                                      horizontal: 12, vertical: 8),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderSide:
-                                        BorderSide(color: Colors.transparent),
-                                  ),
-                                  border: OutlineInputBorder(),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: Colors.transparent,
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Gap(10),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      border: _isValueSecondEditing
+                          ? Border.all(color: const Color(0xffa328ab))
+                          : Border.all(color: const Color(0x00d7d1e9)),
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        if (_isValueSecondEditing)
+                          const BoxShadow(
+                              blurRadius: 15,
+                              spreadRadius: -8,
+                              offset: Offset(0, 10),
+                              color: Color(0x40a328ab))
+                      ],
+                      color: _isValueSecondEditing
+                          ? const Color(0xffeeebf6)
+                          : const Color(0xffE7E2F2),
+                    ),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Row(
+                              children: [
+                                IconFromUrl(selectedToken.iconUrl, size: 48),
+                                const Gap(13),
+                                Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      selectedToken != null
+                                          ? selectedToken.name
+                                          : 'Select',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 18,
+                                          color: isFormDisabled
+                                              ? Styles.textLightColor
+                                              : Styles.darkBackgroundColor),
                                     ),
-                                  ),
-                                  hintText: '0.0',
-                                  hintStyle:
-                                      TextStyle(color: Styles.textLightColor)),
-                              textAlign: TextAlign.right,
-                              validator: (String? value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Address cannot be empty';
-                                }
-                                return null;
-                              },
+                                    Text(
+                                      "${toAmountDisplayBigInt(selectedToken.balance)} ${selectedToken.name.toUpperCase()}",
+                                      style: TextStyle(
+                                          color: Styles.textLightColor,
+                                          fontSize: 12),
+                                    )
+                                  ],
+                                ),
+                              ],
+                            ),
+                            Expanded(
+                              child: TextFormField(
+                                focusNode: _focusSecond,
+                                readOnly: isFormDisabled,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.allow(
+                                      RegExp(r'[0-9]'))
+                                ],
+                                keyboardType: TextInputType.number,
+                                controller: amountController,
+                                onChanged: (text) async {
+                                  amount = amountController.text;
+                                  var status = await _validate(
+                                      address, selectedToken, amount);
+                                  setState(() {
+                                    statusValue = status;
+                                    var balance = getSelectedTokenBalance(
+                                        selectedToken);
+
+                                    var amt = amount != ''
+                                        ? double.parse(amount)
+                                        : 0;
+                                    var calcRating = (amt /
+                                        getMaxTransferAmount(
+                                            selectedToken, balance));
+                                    if (calcRating < 0) {
+                                      calcRating = 0;
+                                    }
+                                    rating = calcRating > 1 ? 1 : calcRating;
+                                  });
+                                },
+                                style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                    color: isFormDisabled
+                                        ? Styles.textLightColor
+                                        : Styles.textColor),
+                                decoration: const InputDecoration(
+                                    constraints:
+                                        BoxConstraints(maxHeight: 32),
+                                    contentPadding: EdgeInsets.symmetric(
+                                        horizontal: 12, vertical: 8),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Colors.transparent),
+                                    ),
+                                    border: OutlineInputBorder(),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: Colors.transparent,
+                                      ),
+                                    ),
+                                    hintText: '0.0',
+                                    hintStyle: TextStyle(
+                                        color: Styles.textLightColor)),
+                                textAlign: TextAlign.right,
+                                validator: (String? value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Address cannot be empty';
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  )];
+  }
+
+  List<Widget> buildSliderWidgets(TokenWithAmount selectedToken) {
+    return [SliderTheme(
+                    data: SliderThemeData(
+                        showValueIndicator: ShowValueIndicator.never,
+                        overlayShape: SliderComponentShape.noOverlay,
+                        valueIndicatorShape:
+                            PaddleSliderValueIndicatorShape(),
+                        valueIndicatorColor: Color(0xff742cb2),
+                        thumbColor: const Color(0xff742cb2),
+                        inactiveTickMarkColor: Color(0xffc0b8dc),
+                        trackShape: const GradientRectSliderTrackShape(
+                            gradient: LinearGradient(colors: <Color>[
+                              Color(0xffae27a5),
+                              Color(0xff742cb2),
+                            ]),
+                            darkenInactive: true),
+                        activeTickMarkColor: const Color(0xffffffff),
+                        tickMarkShape:
+                            const RoundSliderTickMarkShape(tickMarkRadius: 4),
+                        thumbShape: const ThumbShape()),
+                    child: Slider(
+                      value: rating,
+                      onChanged: isFormDisabled
+                          ? null
+                          : (newRating) async {
+                              String amountStr =
+                                  getSliderValues(newRating, selectedToken);
+                              var status = await _validate(
+                                  address, selectedToken, amountStr, true);
+                              setState(() {
+                                amount = amountStr;
+                                amountController.text = amountStr;
+                                statusValue = status;
+                              });
+                            },
+                      onChangeEnd: (newRating) async {
+                        String amountStr =
+                            getSliderValues(newRating, selectedToken);
+
+                        amount = amountStr;
+                        amountController.text = amountStr;
+                        var status =
+                            await _validate(address, selectedToken, amount);
+                        setState(() {
+                          statusValue = status;
+                        });
+                      },
+                      inactiveColor: Colors.white24,
+                      divisions: 100,
+                      label: "${(rating * 100).toInt()}%",
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "0%",
+                          style: TextStyle(
+                              color: Styles.textLightColor,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 12),
+                        ),
+                        Text(
+                          "50%",
+                          style: TextStyle(
+                              color: Styles.textLightColor,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 12),
+                        ),
+                        Text(
+                          "100%",
+                          style: TextStyle(
+                              color: Styles.textLightColor,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 12),
+                        ),
+                      ],
+                    ),
+                  )];
+  }
+
+  SizedBox buildSendStatusButton(TokenWithAmount selectedToken) {
+    return SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14)),
+                        shadowColor: const Color(0x559d6cff),
+                        elevation: 0,
+                        backgroundColor: (statusValue == SendStatus.READY)
+                            ? const Color(0xffe6e2f1)
+                            : Colors.transparent,
+                        padding: const EdgeInsets.all(0),
+                      ),
+                      onPressed: () => {_onConfirmSend(selectedToken)},
+                      child: Ink(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 15, horizontal: 22),
+                        decoration: BoxDecoration(
+                          color: const Color(0xffe6e2f1),
+                          gradient: (statusValue == SendStatus.READY)
+                              ? const LinearGradient(colors: [
+                                  Color(0xffae27a5),
+                                  Color(0xff742cb2),
+                                ])
+                              : null,
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(14.0)),
+                        ),
+                        child: Center(
+                          child: Text(
+                            getSendBtnLabel(statusValue),
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
+                              color: (statusValue != SendStatus.READY)
+                                  ? const Color(0x65898e9c)
+                                  : Colors.white,
                             ),
                           ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                const Gap(36),
-                SliderTheme(
-                  data: SliderThemeData(
-                      showValueIndicator: ShowValueIndicator.never,
-                      overlayShape: SliderComponentShape.noOverlay,
-                      valueIndicatorShape: PaddleSliderValueIndicatorShape(),
-                      valueIndicatorColor: Color(0xff742cb2),
-                      thumbColor: const Color(0xff742cb2),
-                      inactiveTickMarkColor: Color(0xffc0b8dc),
-                      trackShape: const GradientRectSliderTrackShape(
-                          gradient: LinearGradient(colors: <Color>[
-                            Color(0xffae27a5),
-                            Color(0xff742cb2),
-                          ]),
-                          darkenInactive: true),
-                      activeTickMarkColor: const Color(0xffffffff),
-                      tickMarkShape:
-                          const RoundSliderTickMarkShape(tickMarkRadius: 4),
-                      thumbShape: const ThumbShape()),
-                  child: Slider(
-                    value: rating,
-                    onChanged: isFormDisabled
-                        ? null
-                        : (newRating) async {
-                            String amountStr =
-                                getSliderValues(newRating, selectedToken);
-                            var status = await _validate(
-                                address, selectedToken, amountStr, true);
-                            setState(() {
-                              amount = amountStr;
-                              amountController.text = amountStr;
-                              statusValue = status;
-                            });
-                          },
-                    onChangeEnd: (newRating) async {
-                      String amountStr =
-                          getSliderValues(newRating, selectedToken);
-
-                      amount = amountStr;
-                      amountController.text = amountStr;
-                      var status =
-                          await _validate(address, selectedToken, amount);
-                      setState(() {
-                        statusValue = status;
-                      });
-                    },
-                    inactiveColor: Colors.white24,
-                    divisions: 100,
-                    label: "${(rating * 100).toInt()}%",
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "0%",
-                        style: TextStyle(
-                            color: Styles.textLightColor,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 12),
-                      ),
-                      Text(
-                        "50%",
-                        style: TextStyle(
-                            color: Styles.textLightColor,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 12),
-                      ),
-                      Text(
-                        "100%",
-                        style: TextStyle(
-                            color: Styles.textLightColor,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 12),
-                      ),
-                    ],
-                  ),
-                ),
-                const Gap(36),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14)),
-                      shadowColor: const Color(0x559d6cff),
-                      elevation: 0,
-                      backgroundColor: (statusValue == SendStatus.READY)
-                          ? const Color(0xffe6e2f1)
-                          : Colors.transparent,
-                      padding: const EdgeInsets.all(0),
-                    ),
-                    onPressed: () => {_onConfirmSend(selectedToken)},
-                    child: Ink(
-                      width: double.infinity,
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 15, horizontal: 22),
-                      decoration: BoxDecoration(
-                        color: const Color(0xffe6e2f1),
-                        gradient: (statusValue == SendStatus.READY)
-                            ? const LinearGradient(colors: [
-                                Color(0xffae27a5),
-                                Color(0xff742cb2),
-                              ])
-                            : null,
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(14.0)),
-                      ),
-                      child: Center(
-                        child: Text(
-                          getSendBtnLabel(statusValue),
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                            color: (statusValue != SendStatus.READY)
-                                ? const Color(0x65898e9c)
-                                : Colors.white,
-                          ),
                         ),
                       ),
                     ),
-                  ),
-                ),
-              ],
-            ),
-          );
-        }),
-      ],
-    );
+                  );
   }
 
   String getSliderValues(double newRating, TokenWithAmount selectedToken) {
@@ -680,70 +738,42 @@ class _SendPageState extends State<SendPage> {
     return double.parse(toAmountDisplayBigInt(selectedToken.balance));
   }
 
-  Padding buildHeader(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              // const Image(
-              //   image: AssetImage("./assets/images/reef.png"),
-              //   width: 24,
-              //   height: 24,
-              // ),
-              // const Gap(8),
-              // Text(
-              //   "Send Tokens",
-              //   style: GoogleFonts.spaceGrotesk(
-              //       fontWeight: FontWeight.w500,
-              //       fontSize: 32,
-              //       color: Colors.grey[800]),
-              // ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
 }
 
-buildFeedbackUI(SendStatus stat, void Function() onNew, void Function() onHome) {
+buildFeedbackUI(
+    SendStatus stat, void Function() onNew, void Function() onHome) {
   String? title;
-  var buttons = ButtonBar(children: [
-    ElevatedButton(onPressed: onHome, child: const Text('Home')),
-    ElevatedButton(onPressed: onNew, child: const Text('New'))
-  ]);
-  // if(stat==SendStatus.ERROR ||stat==SendStatus.CANCELED || stat==SendStatus.CANCELED || ){
-  //   buttons.children.add(ElevatedButton(onPressed: onNew, child: const Text('New')));
-  // }
-  if(stat==SendStatus.ERROR) {
-    title='Transaction Error';
+
+  if (stat == SendStatus.ERROR) {
+    title = 'Transaction Error';
   }
-  if(stat==SendStatus.CANCELED) {
+  if (stat == SendStatus.CANCELED) {
     title = 'Transaction Canceled';
   }
-  if(stat==SendStatus.SENDING) {
+  if (stat == SendStatus.SENDING) {
     title = 'Sending transaction';
   }
-  if(stat==SendStatus.SENT_TO_NETWORK) {
+  if (stat == SendStatus.SENT_TO_NETWORK) {
     title = 'Sent';
   }
-  if(stat==SendStatus.INCLUDED_IN_BLOCK) {
+  if (stat == SendStatus.INCLUDED_IN_BLOCK) {
     title = 'Included in block';
   }
-  if(stat==SendStatus.FINALIZED) {
+  if (stat == SendStatus.FINALIZED) {
     title = 'Finalized!';
   }
 
-  if(title==null){
+  if (stat == SendStatus.NOT_FINALIZED) {
+    title = 'NOT finalized!';
+  }
+
+  if (title == null) {
     return null;
   }
-  return Column(children:[
-    Text(title),
-    buttons
-  ]);
+  return Column(children: [Text(title), ButtonBar(children: [
+  ElevatedButton(onPressed: onHome, child: const Text('Home')),
+  ElevatedButton(onPressed: onNew, child: const Text('New'))
+  ])]);
 }
 
 enum SendStatus {
@@ -755,5 +785,10 @@ enum SendStatus {
   ADDR_NOT_VALID,
   ADDR_NOT_EXIST,
   SIGNING,
-  SENDING, CANCELED, ERROR, WAITING_FINALIZATION, FINALIZED, SENT_TO_NETWORK, INCLUDED_IN_BLOCK,
+  SENDING,
+  CANCELED,
+  ERROR,
+  SENT_TO_NETWORK,
+  INCLUDED_IN_BLOCK,
+  FINALIZED, NOT_FINALIZED,
 }

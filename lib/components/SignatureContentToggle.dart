@@ -37,7 +37,7 @@ class SignatureContentToggle extends StatelessObserverWidget {
               appBar: AppBar(
                 title: Text(AppLocalizations.of(context)!.sign_transaction),
                 leading: IconButton(
-                  icon: const Icon(Icons.ac_unit_outlined),
+                  icon: const Icon(Icons.arrow_back),
                   onPressed: () {
                     _cancel(signatureRequest);
                   },

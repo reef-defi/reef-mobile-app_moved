@@ -75,7 +75,7 @@ class NavigationCtrl with NavSwipeCompute {
 
   void navigateToSwapPage({required BuildContext context}) {
     Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => Scaffold(
+        builder: (context) => SignatureContentToggle(Scaffold(
             appBar: AppBar(
               title: const Text("Swap Tokens"),
               backgroundColor: Colors.deepPurple.shade700,
@@ -83,12 +83,12 @@ class NavigationCtrl with NavSwipeCompute {
             body: const Padding(
               padding: EdgeInsets.symmetric(vertical: 0, horizontal: 20),
               child: SwapPage(),
-            ))));
+            )))));
   }
 
-  void navigateToPage({required BuildContext context, required Widget child}) {
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) => child));
-  }
+  // void navigateToPage({required BuildContext context, required Widget child}) {
+  //   Navigator.of(context).push(MaterialPageRoute(builder: (context) => child));
+  // }
 
   Future<bool> _computeSwipeAnimation(
       {required NavigationPage currentPage,
