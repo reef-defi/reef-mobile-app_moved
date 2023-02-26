@@ -6,15 +6,23 @@ class TransferCtrl {
 
   TransferCtrl(this.jsApi);
 
+  Stream<dynamic> transferTokensStream(
+      String fromAddress, String toAddress, TokenWithAmount token) {
+    // print(
+    //     "$fromAddress | $toAddress | ${token.amount.toString()} | ${token.decimals}  | ${token.address}");
+    return jsApi.jsObservable(
+        'window.transfer.sendObs("$fromAddress", "$toAddress", "${token.amount.toString()}", ${token.decimals}, "${token.address}")');
+  }
+
   Future<dynamic> transferTokens(
       String fromAddress, String toAddress, TokenWithAmount token) async {
     // print(
     //     "$fromAddress | $toAddress | ${token.amount.toString()} | ${token.decimals}  | ${token.address}");
     return jsApi.jsPromise(
-        'window.transfer.send("$fromAddress", "$toAddress", "${token.amount.toString()}", ${token.decimals}, "${token.address}")');
+        'window.transfer.sendPromise("$fromAddress", "$toAddress", "${token.amount.toString()}", ${token.decimals}, "${token.address}")');
   }
 
-  Future<dynamic> testTransferTokens(String from) async {
+  /*Future<dynamic> testTransferTokens(String from) async {
     if (from == null) {
       print('No from address value specified');
       return false;
@@ -31,5 +39,5 @@ class TransferCtrl {
         amount: BigInt.one,
         price: null);
     return transferTokens(from, toAddress, tokenReef);
-  }
+  }*/
 }

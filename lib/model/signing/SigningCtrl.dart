@@ -1,12 +1,10 @@
 import 'dart:convert';
 
 import 'package:mobx/src/api/store.dart';
-import 'package:reef_mobile_app/components/modals/signing_modals.dart';
 import 'package:reef_mobile_app/model/signing/signature_request.dart';
-import 'package:reef_mobile_app/model/signing/signer_payload_json.dart';
 import 'package:reef_mobile_app/model/signing/signature_requests.dart';
+import 'package:reef_mobile_app/model/signing/signer_payload_json.dart';
 import 'package:reef_mobile_app/model/signing/signer_payload_raw.dart';
-import 'package:reef_mobile_app/pages/SplashScreen.dart';
 import 'package:reef_mobile_app/service/JsApiService.dart';
 import 'package:reef_mobile_app/service/StorageService.dart';
 
@@ -19,7 +17,7 @@ class SigningCtrl {
     jsApi.jsTxSignatureConfirmationMessageSubj.listen((jsApiMessage) {
       var signatureRequest = _buildSignatureRequest(jsApiMessage);
       signatureRequests.add(signatureRequest);
-      showSigningModal(navigatorKey.currentContext, signatureRequest);
+      //showSigningModal(navigatorKey.currentContext, signatureRequest);
     });
   }
 
@@ -51,7 +49,6 @@ class SigningCtrl {
   _buildSignatureRequest(JsApiMessage jsApiMessage) {
     var signatureIdent = jsApiMessage.reqId;
     Store payload;
-
     if (jsApiMessage.value["data"] != null) {
       payload = SignerPayloadRaw(jsApiMessage.value["address"],
           jsApiMessage.value["data"], jsApiMessage.value["type"]);
@@ -72,5 +69,10 @@ class SigningCtrl {
     }
 
     return SignatureRequest(signatureIdent, payload);
+  }
+
+  void rejectSignature(String signatureIdent) {
+    signatureRequests.remove(signatureIdent);
+    jsApi.rejectTxSignature(signatureIdent);
   }
 }
