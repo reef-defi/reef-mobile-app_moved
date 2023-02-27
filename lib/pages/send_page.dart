@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:gap/gap.dart';
 import 'package:mobx/mobx.dart';
+import 'package:reef_mobile_app/components/modals/qr_code_scanner.dart';
 import 'package:reef_mobile_app/components/modals/select_account_modal.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/StorageKey.dart';
@@ -442,7 +443,7 @@ class _SendPageState extends State<SendPage> {
                                 color: isFormDisabled
                                     ? Styles.textLightColor
                                     : Styles.textColor),
-                            decoration: InputDecoration(
+                            decoration: const InputDecoration(
                                 contentPadding: const EdgeInsets.symmetric(
                                     horizontal: 12, vertical: 2),
                                 border: InputBorder.none,
@@ -457,6 +458,30 @@ class _SendPageState extends State<SendPage> {
                             },
                           ),
                         ),
+                        SizedBox(
+                        width: 48,
+                        child: MaterialButton(
+                          elevation: 0,
+                          height: 48,
+                          padding: EdgeInsets.zero,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          onPressed: () {
+                            showQrCodeScannerModal("Scan Address",
+                                (selectedAddress) async {
+                              setState(() {
+                                address = selectedAddress;
+                                valueController.text = selectedAddress;
+                              });
+                            });
+                          },
+                              child: Icon(
+                                Icons.qr_code_scanner_sharp,
+                                color: Styles.textColor,
+                              )
+                        ),
+                      ),
                       ],
                     ),
                   ),
