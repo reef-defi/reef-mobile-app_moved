@@ -444,8 +444,8 @@ class _SendPageState extends State<SendPage> {
                                 color: isFormDisabled
                                     ? Styles.textLightColor
                                     : Styles.textColor),
-                            decoration: const InputDecoration(
-                                contentPadding: const EdgeInsets.symmetric(
+                            decoration: InputDecoration(
+                                contentPadding: EdgeInsets.symmetric(
                                     horizontal: 12, vertical: 2),
                                 border: InputBorder.none,
                                 hintText: AppLocalizations.of(context)!.send_to_address,
