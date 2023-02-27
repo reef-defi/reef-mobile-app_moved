@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:gap/gap.dart';
 import 'package:mobx/mobx.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:reef_mobile_app/components/modals/qr_code_scanner.dart';
 import 'package:reef_mobile_app/components/modals/select_account_modal.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
@@ -338,7 +339,7 @@ class _SendPageState extends State<SendPage> {
                 selectedToken = tokens[0];
               }
               if (selectedToken == null) {
-                return Text('No token selected');
+                return Text(AppLocalizations.of(context)!.no_token_selected);
               }
               return Container(
                 decoration: BoxDecoration(
@@ -397,7 +398,7 @@ class _SendPageState extends State<SendPage> {
                               if (isFormDisabled) {
                                 return;
                               }
-                              showSelectAccountModal("Select account",
+                              showSelectAccountModal(AppLocalizations.of(context)!.select_address,
                                   (selectedAddress) async {
                                 setState(() {
                                   address = selectedAddress;
@@ -447,12 +448,12 @@ class _SendPageState extends State<SendPage> {
                                 contentPadding: const EdgeInsets.symmetric(
                                     horizontal: 12, vertical: 2),
                                 border: InputBorder.none,
-                                hintText: 'Send to address',
+                                hintText: AppLocalizations.of(context)!.send_to_address,
                                 hintStyle:
                                     TextStyle(color: Styles.textLightColor)),
                             validator: (String? value) {
                               if (value == null || value.isEmpty) {
-                                return 'Address cannot be empty';
+                                return AppLocalizations.of(context)!.address_can_not_be_empty;
                               }
                               return null;
                             },
@@ -468,7 +469,7 @@ class _SendPageState extends State<SendPage> {
                             borderRadius: BorderRadius.circular(10),
                           ),
                           onPressed: () {
-                            showQrCodeScannerModal("Scan Address",
+                            showQrCodeScannerModal(AppLocalizations.of(context)!.scan_address,
                                 (selectedAddress) async {
                               setState(() {
                                 address = selectedAddress;
