@@ -10,6 +10,7 @@ import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/account/ReefAccount.dart';
 import 'package:reef_mobile_app/model/status-data-object/StatusDataObject.dart';
 import 'package:reef_mobile_app/utils/functions.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../utils/styles.dart';
 import 'BlurableContent.dart';
@@ -74,7 +75,7 @@ class _AccountBoxState extends State<AccountBox> {
                                 bottomLeft: Radius.circular(15),
                                 topRight: Radius.circular(12))),
                         child: Text(
-                          "Selected",
+                          AppLocalizations.of(context)!.selected,
                           style: TextStyle(
                               color: Styles.whiteColor,
                               fontWeight: FontWeight.w600,
@@ -127,7 +128,7 @@ class _AccountBoxState extends State<AccountBox> {
                                 choiceAction(choice, context,
                                     widget.reefAccountFDM.data);
                               },
-                              tooltip: "More Actions",
+                              tooltip: AppLocalizations.of(context)!.more_actions,
                               itemBuilder: (BuildContext context) {
                                 return Constants.choices.map((String choice) {
                                   return PopupMenuItem<String>(
@@ -198,7 +199,7 @@ class _AccountBoxState extends State<AccountBox> {
                 Flexible(
                     child: Text.rich(
                   TextSpan(
-                    text: "Address:",
+                    text: AppLocalizations.of(context)!.address,
                     style:
                         TextStyle(fontSize: 10, color: Styles.textLightColor),
                     children: <TextSpan>[
@@ -215,7 +216,7 @@ class _AccountBoxState extends State<AccountBox> {
                   Flexible(
                       child: Text.rich(
                     TextSpan(
-                      text: "Reef EVM:",
+                      text: AppLocalizations.of(context)!.reef_evm,
                       style:
                           TextStyle(fontSize: 10, color: Styles.textLightColor),
                       children: <TextSpan>[
@@ -250,7 +251,7 @@ class _AccountBoxState extends State<AccountBox> {
                           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                         ),
                         child: Text(
-                          "Connect EVM",
+                          AppLocalizations.of(context)!.connect_evm,
                           style: TextStyle(
                               color: Styles.whiteColor,
                               fontWeight: FontWeight.w600,
@@ -336,9 +337,9 @@ void choiceAction(
     });
   } else if (choice == Constants.shareEvmQr) {
       if(account.isEvmClaimed){
-        showQrCode('Share Reef EVM Address', account.evmAddress);
+        showQrCode(AppLocalizations.of(context)!.share_evm_qr, account.evmAddress);
       }
   } else if(choice == Constants.shareAddressQr){
-    showQrCode('Share Address', account.address);
+    showQrCode(AppLocalizations.of(context)!.share_address_qr, account.address);
   }
 }

@@ -81,4 +81,16 @@
 "select_address": "Seleziona indirizzo",
 "no_token_selected": "Nessun token selezionato",
 "send_to_address": "Invia all'indirizzo"
+  "no_account_currently":"Nessun account attualmente disponibile, creare o importare un account per visualizzare i tuoi assets.",
+  "selected": "Selezionato",
+"more_actions": "Altre Azioni",
+"address": "Indirizzo",
+"reef_evm": "Reef EVM:",
+"connect_evm": "Connetti EVM",
+"delete": "Elimina",
+"copy_native_address": "Copia Indirizzo",
+"copy_evm_address": "Copia Indirizzo Reef EVM",
+"share_address_qr": "Condividi QR Indirizzo",
+"share_evm_qr": "Condividi QR Indirizzo Reef EVM",
+"delete_account": "Elimina Account"
 }
