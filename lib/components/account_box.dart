@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_svg/svg.dart';
@@ -90,23 +89,29 @@ class _AccountBoxState extends State<AccountBox> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Column(children: [
-                        Container(
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.black12,
-                          ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(64),
-                            child: widget.reefAccountFDM.data.iconSVG != null
-                                ? SvgPicture.string(
-                                    widget.reefAccountFDM.data.iconSVG!,
-                                    height: 64,
-                                    width: 64,
-                                  )
-                                : const SizedBox(
-                                    width: 64,
-                                    height: 64,
-                                  ),
+                        GestureDetector(
+                          onTap: () => choiceAction(
+                              AppLocalizations.of(context)!.share_evm_qr,
+                              context,
+                              widget.reefAccountFDM.data),
+                          child: Container(
+                            decoration: const BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.black12,
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(64),
+                              child: widget.reefAccountFDM.data.iconSVG != null
+                                  ? SvgPicture.string(
+                                      widget.reefAccountFDM.data.iconSVG!,
+                                      height: 64,
+                                      width: 64,
+                                    )
+                                  : const SizedBox(
+                                      width: 64,
+                                      height: 64,
+                                    ),
+                            ),
                           ),
                         ),
                       ]),
@@ -133,11 +138,6 @@ class _AccountBoxState extends State<AccountBox> {
                               itemBuilder: (BuildContext context) {
                                 return Constants(
                                   delete: AppLocalizations.of(context)!.delete,
-                                  copyNativeAddress:
-                                      AppLocalizations.of(context)!
-                                          .copy_native_address,
-                                  copyEvmAddress: AppLocalizations.of(context)!
-                                      .copy_evm_address,
                                   shareAddressQr: AppLocalizations.of(context)!
                                       .share_address_qr,
                                   shareEvmQr: AppLocalizations.of(context)!
@@ -277,27 +277,17 @@ class _AccountBoxState extends State<AccountBox> {
 
 class Constants {
   final String delete;
-  final String copyNativeAddress;
-  final String copyEvmAddress;
   final String shareAddressQr;
   final String shareEvmQr;
 
   Constants({
     required this.delete,
-    required this.copyNativeAddress,
-    required this.copyEvmAddress,
     required this.shareAddressQr,
     required this.shareEvmQr,
   });
 
   List<String> getConstants() {
-    return [
-      shareEvmQr,
-      copyEvmAddress,
-      shareAddressQr,
-      copyNativeAddress,
-      delete
-    ];
+    return [shareEvmQr, shareAddressQr, delete];
   }
 }
 
@@ -345,26 +335,11 @@ void choiceAction(
     String choice, BuildContext context, ReefAccount account) async {
   Constants localizedConstants = Constants(
     delete: AppLocalizations.of(context)!.delete,
-    copyNativeAddress: AppLocalizations.of(context)!.copy_native_address,
-    copyEvmAddress: AppLocalizations.of(context)!.copy_evm_address,
     shareAddressQr: AppLocalizations.of(context)!.share_address_qr,
     shareEvmQr: AppLocalizations.of(context)!.share_evm_qr,
   );
   if (choice == AppLocalizations.of(context)!.delete) {
     showAlertDialog(context, account);
-  } else if (choice == AppLocalizations.of(context)!.copy_native_address) {
-    Clipboard.setData(ClipboardData(text: account.address)).then((_) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Native Address copied to clipboard")));
-    });
-  } else if (choice == AppLocalizations.of(context)!.copy_evm_address) {
-    var address = await ReefAppState.instance.accountCtrl
-        .toReefEVMAddressWithNotificationString(account.evmAddress);
-    Clipboard.setData(ClipboardData(text: address)).then((_) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(
-              "EVM Address copied to clipboard.\nUse it ONLY on Reef Chain!")));
-    });
   } else if (choice == AppLocalizations.of(context)!.share_evm_qr) {
     if (account.isEvmClaimed) {
       showQrCode(
