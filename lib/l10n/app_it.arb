@@ -75,5 +75,10 @@
   "reef_chain_desc":"La Reef chain è una blockchain compatibile con l'EVM per la DeFi. È veloce, scalabile, ha bassi costi di transazione e non spreca risorse con il mining. È costruita con il Substrate Framework ed è dotata di una governance on-chain..",
   "select_language":"Seleziona la lingua",
   "change_language":"Cambia la lingua",
-  "no_account_currently":"Nessun account attualmente disponibile, creare o importare un account per visualizzare i tuoi assets."
+  "no_account_currently":"Nessun account attualmente disponibile, creare o importare un account per visualizzare i tuoi assets.",
+  "scan_address": "Scansiona indirizzo",
+"address_can_not_be_empty": "L'indirizzo non può essere vuoto",
+"select_address": "Seleziona indirizzo",
+"no_token_selected": "Nessun token selezionato",
+"send_to_address": "Invia all'indirizzo"
 }

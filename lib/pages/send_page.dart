@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:gap/gap.dart';
 import 'package:mobx/mobx.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:reef_mobile_app/components/modals/qr_code_scanner.dart';
 import 'package:reef_mobile_app/components/modals/select_account_modal.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/StorageKey.dart';
@@ -337,7 +339,7 @@ class _SendPageState extends State<SendPage> {
                 selectedToken = tokens[0];
               }
               if (selectedToken == null) {
-                return Text('No token selected');
+                return Text(AppLocalizations.of(context)!.no_token_selected);
               }
               return Container(
                 decoration: BoxDecoration(
@@ -396,7 +398,7 @@ class _SendPageState extends State<SendPage> {
                               if (isFormDisabled) {
                                 return;
                               }
-                              showSelectAccountModal("Select account",
+                              showSelectAccountModal(AppLocalizations.of(context)!.select_address,
                                   (selectedAddress) async {
                                 setState(() {
                                   address = selectedAddress;
@@ -443,20 +445,44 @@ class _SendPageState extends State<SendPage> {
                                     ? Styles.textLightColor
                                     : Styles.textColor),
                             decoration: InputDecoration(
-                                contentPadding: const EdgeInsets.symmetric(
+                                contentPadding: EdgeInsets.symmetric(
                                     horizontal: 12, vertical: 2),
                                 border: InputBorder.none,
-                                hintText: 'Send to address',
+                                hintText: AppLocalizations.of(context)!.send_to_address,
                                 hintStyle:
                                     TextStyle(color: Styles.textLightColor)),
                             validator: (String? value) {
                               if (value == null || value.isEmpty) {
-                                return 'Address cannot be empty';
+                                return AppLocalizations.of(context)!.address_can_not_be_empty;
                               }
                               return null;
                             },
                           ),
                         ),
+                        SizedBox(
+                        width: 48,
+                        child: MaterialButton(
+                          elevation: 0,
+                          height: 48,
+                          padding: EdgeInsets.zero,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          onPressed: () {
+                            showQrCodeScannerModal(AppLocalizations.of(context)!.scan_address,
+                                (selectedAddress) async {
+                              setState(() {
+                                address = selectedAddress;
+                                valueController.text = selectedAddress;
+                              });
+                            });
+                          },
+                              child: Icon(
+                                Icons.qr_code_scanner_sharp,
+                                color: Styles.textColor,
+                              )
+                        ),
+                      ),
                       ],
                     ),
                   ),
