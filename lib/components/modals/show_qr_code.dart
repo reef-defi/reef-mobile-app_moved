@@ -34,10 +34,14 @@ class QRCodeGenerator extends StatelessWidget {
           const SizedBox(
             height: 8,
           ),
-          Text(
-            data,
-            style: TextStyle(fontSize: 10),
-          ),
+          Wrap(children: [
+            Padding(
+                padding: EdgeInsets.all(20),
+                child: Text(
+                  data,
+                  style: TextStyle(fontSize: 10),
+                ))
+          ]),
           const SizedBox(
             height: 16,
           ),
