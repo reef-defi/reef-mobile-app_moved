@@ -337,9 +337,9 @@ void choiceAction(
     });
   } else if (choice == Constants.shareEvmQr) {
       if(account.isEvmClaimed){
-        showQrCode('Share Reef EVM Address', account.evmAddress);
+        showQrCode(AppLocalizations.of(context)!.share_evm_qr, account.evmAddress);
       }
   } else if(choice == Constants.shareAddressQr){
-    showQrCode('Share Address', account.address);
+    showQrCode(AppLocalizations.of(context)!.share_address_qr, account.address);
   }
 }
