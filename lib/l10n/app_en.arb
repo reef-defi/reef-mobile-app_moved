@@ -75,5 +75,16 @@
   "reef_chain_desc":"Reef chain is an EVM compatible blockchain for DeFi. It is fast, scalable, has low transaction costs and does no wasteful mining. It is built with Substrate Framework and comes with on-chain governance.",
   "select_language":"Select Language",
   "change_language":"Change Language",
-  "no_account_currently":"No Account currently available, create or import an account to view your assets."
+  "no_account_currently":"No Account currently available, create or import an account to view your assets.",
+  "selected":"Selected",
+  "more_actions":"More Actions",
+  "address":"Address",
+  "reef_evm":"Reef EVM:",
+  "connect_evm":"Connect EVM",
+  "delete": "Delete",
+  "copy_native_address": "Copy Address",
+  "copy_evm_address": "Copy Reef EVM Address",
+  "share_address_qr": "Share Address QR",
+  "share_evm_qr": "Share EVM Address QR",
+  "delete_account":"Delete Account"
 }
