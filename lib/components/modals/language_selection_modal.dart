@@ -1,12 +1,10 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:gap/gap.dart';
 import 'package:reef_mobile_app/components/modal.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
-import 'package:reef_mobile_app/model/StorageKey.dart';
 import 'package:reef_mobile_app/pages/SplashScreen.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SelectLanguage extends StatefulWidget {
   const SelectLanguage({Key? key}) : super(key: key);
@@ -15,10 +13,11 @@ class SelectLanguage extends StatefulWidget {
 }
 
 class _SelectLanguageState extends State<SelectLanguage> {
-  String? _selectedLanguage="English";
+  String? _selectedLanguage = "English";
   final Map<String, String> _languageMap = {
     'English': 'en',
     'Hindi': 'hi',
+    'Italian': 'it',
   };
 
   @override
@@ -56,16 +55,16 @@ class _SelectLanguageState extends State<SelectLanguage> {
           ),
           value: _selectedLanguage,
           items: _languageMap.keys
-                .map((language) => DropdownMenuItem<String>(
-                      value: language,
-                      child: Text(
-                        language,
-                        style: const TextStyle(
-                          fontSize: 16,
-                        ),
+              .map((language) => DropdownMenuItem<String>(
+                    value: language,
+                    child: Text(
+                      language,
+                      style: const TextStyle(
+                        fontSize: 16,
                       ),
-                    ))
-                .toList(),
+                    ),
+                  ))
+              .toList(),
           onChanged: (String? value) {
             setState(() {
               _selectedLanguage = value;
@@ -83,9 +82,7 @@ class _SelectLanguageState extends State<SelectLanguage> {
               Expanded(
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    splashFactory: (true)
-                        ? NoSplash.splashFactory
-                        : InkSplash.splashFactory,
+                    splashFactory: NoSplash.splashFactory,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(40)),
                     shadowColor: const Color(0x559d6cff),
@@ -101,6 +98,9 @@ class _SelectLanguageState extends State<SelectLanguage> {
                     } else if (_selectedLanguage == 'Hindi') {
                       appState.localeCtrl.changeSelectedLanguage('hi');
                       SplashApp.setLocale(context, 'hi');
+                    } else if (_selectedLanguage == 'Italian') {
+                      appState.localeCtrl.changeSelectedLanguage('it');
+                      SplashApp.setLocale(context, 'it');
                     }
                     Navigator.pop(context);
                   },
