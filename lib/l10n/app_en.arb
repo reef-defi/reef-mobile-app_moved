@@ -80,8 +80,7 @@
   "address_can_not_be_empty":"Address cannot be empty",
   "select_address":"Select Address",
   "no_token_selected":"No token selected",
-  "send_to_address":"Send to address"
-  "no_account_currently":"No Account currently available, create or import an account to view your assets.",
+  "send_to_address":"Send to address",
   "selected":"Selected",
   "more_actions":"More Actions",
   "address":"Address",

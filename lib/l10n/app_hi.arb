@@ -80,8 +80,7 @@
   "address_can_not_be_empty": "पता खाली नहीं हो सकता",
   "select_address": "पता चुनें",
   "no_token_selected": "कोई टोकन चयनित नहीं है",
-  "send_to_address": "पते पर भेजें"
-"no_account_currently": "कोई खाता वर्तमान में उपलब्ध नहीं है, अपनी संपत्तियों को देखने के लिए एक खाता बनाएं या आयात करें।",
+  "send_to_address": "पते पर भेजें",
 "selected":"चयनित",
 "more_actions":"अधिक कार्रवाई",
 "address":"पता",
