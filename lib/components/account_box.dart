@@ -133,10 +133,15 @@ class _AccountBoxState extends State<AccountBox> {
                               itemBuilder: (BuildContext context) {
                                 return Constants(
                                   delete: AppLocalizations.of(context)!.delete,
-  copyNativeAddress: AppLocalizations.of(context)!.copy_native_address,
-  copyEvmAddress: AppLocalizations.of(context)!.copy_evm_address,
-  shareAddressQr: AppLocalizations.of(context)!.share_address_qr,
-  shareEvmQr: AppLocalizations.of(context)!.share_evm_qr,
+                                  copyNativeAddress:
+                                      AppLocalizations.of(context)!
+                                          .copy_native_address,
+                                  copyEvmAddress: AppLocalizations.of(context)!
+                                      .copy_evm_address,
+                                  shareAddressQr: AppLocalizations.of(context)!
+                                      .share_address_qr,
+                                  shareEvmQr: AppLocalizations.of(context)!
+                                      .share_evm_qr,
                                 ).getConstants().map((String choice) {
                                   return PopupMenuItem<String>(
                                     value: choice,
@@ -285,8 +290,14 @@ class Constants {
     required this.shareEvmQr,
   });
 
-  List<String> getConstants (){
-    return [delete,copyNativeAddress,copyEvmAddress,shareAddressQr,shareEvmQr];
+  List<String> getConstants() {
+    return [
+      shareEvmQr,
+      copyEvmAddress,
+      shareAddressQr,
+      copyNativeAddress,
+      delete
+    ];
   }
 }
 
@@ -332,13 +343,13 @@ showAlertDialog(BuildContext context, ReefAccount signer) {
 
 void choiceAction(
     String choice, BuildContext context, ReefAccount account) async {
-      Constants localizedConstants = Constants(
-  delete: AppLocalizations.of(context)!.delete,
-  copyNativeAddress: AppLocalizations.of(context)!.copy_native_address,
-  copyEvmAddress: AppLocalizations.of(context)!.copy_evm_address,
-  shareAddressQr: AppLocalizations.of(context)!.share_address_qr,
-  shareEvmQr: AppLocalizations.of(context)!.share_evm_qr,
-);
+  Constants localizedConstants = Constants(
+    delete: AppLocalizations.of(context)!.delete,
+    copyNativeAddress: AppLocalizations.of(context)!.copy_native_address,
+    copyEvmAddress: AppLocalizations.of(context)!.copy_evm_address,
+    shareAddressQr: AppLocalizations.of(context)!.share_address_qr,
+    shareEvmQr: AppLocalizations.of(context)!.share_evm_qr,
+  );
   if (choice == AppLocalizations.of(context)!.delete) {
     showAlertDialog(context, account);
   } else if (choice == AppLocalizations.of(context)!.copy_native_address) {
@@ -355,10 +366,11 @@ void choiceAction(
               "EVM Address copied to clipboard.\nUse it ONLY on Reef Chain!")));
     });
   } else if (choice == AppLocalizations.of(context)!.share_evm_qr) {
-      if(account.isEvmClaimed){
-        showQrCode(AppLocalizations.of(context)!.share_evm_qr, account.evmAddress);
-      }
-  } else if(choice == AppLocalizations.of(context)!.share_address_qr){
+    if (account.isEvmClaimed) {
+      showQrCode(
+          AppLocalizations.of(context)!.share_evm_qr, account.evmAddress);
+    }
+  } else if (choice == AppLocalizations.of(context)!.share_address_qr) {
     showQrCode(AppLocalizations.of(context)!.share_address_qr, account.address);
   }
 }
