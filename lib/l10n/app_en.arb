@@ -91,5 +91,7 @@
   "copy_evm_address": "Copy Reef EVM Address",
   "native_address_qr": "Native Address QR",
   "evm_address_qr": "EVM Address QR",
-  "delete_account":"Delete Account"
+  "delete_account":"Delete Account",
+  "share_evm_qr":"Share EVM Address",
+  "share_address_qr":"Share Native Address"
 }

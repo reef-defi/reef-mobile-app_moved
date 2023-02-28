@@ -91,5 +91,7 @@
 "copy_evm_address": "Copia Indirizzo Reef EVM",
 "native_address_qr": "Condividi QR Indirizzo",
 "evm_address_qr": "Condividi QR Indirizzo Reef EVM",
-"delete_account": "Elimina Account"
+"delete_account": "Elimina Account",
+"share_evm_qr":"Condividi indirizzo EVM",
+"share_address_qr":"Condividi indirizzo nativo"
 }
