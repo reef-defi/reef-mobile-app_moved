@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:gap/gap.dart';
+import 'package:mobx/mobx.dart';
 import 'package:reef_mobile_app/components/modals/select_account_modal.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/StorageKey.dart';
-import 'package:reef_mobile_app/model/navigation/navigation_model.dart';
 import 'package:reef_mobile_app/model/tokens/TokenWithAmount.dart';
 import 'package:reef_mobile_app/utils/constants.dart';
 import 'package:reef_mobile_app/utils/elements.dart';
@@ -13,12 +13,10 @@ import 'package:reef_mobile_app/utils/functions.dart';
 import 'package:reef_mobile_app/utils/icon_url.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 
-import '../components/SignatureContentToggle.dart';
-
 class SendPage extends StatefulWidget {
   final String preselected;
 
-  SendPage(this.preselected, {Key? key}) : super(key: key);
+  const SendPage(this.preselected, {Key? key}) : super(key: key);
 
   @override
   State<SendPage> createState() => _SendPageState();
@@ -26,7 +24,7 @@ class SendPage extends StatefulWidget {
 
 class _SendPageState extends State<SendPage> {
   bool isTokenReef = false;
-  ValidationError valError = ValidationError.NO_ADDRESS;
+  SendStatus statusValue = SendStatus.NO_ADDRESS;
   TextEditingController valueController = TextEditingController();
   String address = "";
   String? resolvedEvmAddress;
@@ -38,12 +36,17 @@ class _SendPageState extends State<SendPage> {
   bool _isValueSecondEditing = false;
   double rating = 0;
 
-  FocusNode _focus = FocusNode();
-  FocusNode _focusSecond = FocusNode();
+  final FocusNode _focus = FocusNode();
+  final FocusNode _focusSecond = FocusNode();
+
+  bool isFormDisabled = false;
+
+  dynamic transactionData;
 
   @override
   void initState() {
     super.initState();
+
     _focus.addListener(_onFocusChange);
     _focusSecond.addListener(_onFocusSecondChange);
     setState(() {
@@ -98,8 +101,7 @@ class _SendPageState extends State<SendPage> {
     return false;
   }
 
-  Future<ValidationError> _validate(
-      String addr, TokenWithAmount token, String amt,
+  Future<SendStatus> _validate(String addr, TokenWithAmount token, String amt,
       [bool skipAsync = false]) async {
     var isValidAddr = await _isValidAddress(addr);
     var balance = getSelectedTokenBalance(token);
@@ -108,11 +110,11 @@ class _SendPageState extends State<SendPage> {
     }
     var amtVal = double.parse(amt);
     if (addr.isEmpty) {
-      return ValidationError.NO_ADDRESS;
+      return SendStatus.NO_ADDRESS;
     } else if (amtVal <= 0) {
-      return ValidationError.NO_AMT;
+      return SendStatus.NO_AMT;
     } else if (amtVal > getMaxTransferAmount(token, balance)) {
-      return ValidationError.AMT_TOO_HIGH;
+      return SendStatus.AMT_TOO_HIGH;
     } else if (isValidAddr &&
         token.address != Constants.REEF_TOKEN_ADDRESS &&
         !addr.startsWith('0x')) {
@@ -125,28 +127,50 @@ class _SendPageState extends State<SendPage> {
         resolvedEvmAddress = null;
       }
       if (resolvedEvmAddress == null) {
-        return ValidationError.NO_EVM_CONNECTED;
+        return SendStatus.NO_EVM_CONNECTED;
       }
     } else if (!isValidAddr) {
-      return ValidationError.ADDR_NOT_VALID;
+      return SendStatus.ADDR_NOT_VALID;
     } else if (skipAsync == false &&
         addr.startsWith('0x') &&
         !(await ReefAppState.instance.accountCtrl.isEvmAddressExist(addr))) {
-      return ValidationError.ADDR_NOT_EXIST;
+      return SendStatus.ADDR_NOT_EXIST;
     }
-    return ValidationError.OK;
+    return SendStatus.READY;
   }
 
   Future<void> _onConfirmSend(TokenWithAmount sendToken) async {
     if (address.isEmpty ||
         sendToken.balance <= BigInt.zero ||
-        valError != ValidationError.OK) {
+        statusValue != SendStatus.READY) {
       return;
     }
-    final navigator = Navigator.of(context);
     setState(() {
-      valError = ValidationError.SENDING;
+      isFormDisabled = true;
+      statusValue = SendStatus.SIGNING;
     });
+
+    setStatusOnSignatureClosed();
+
+    Stream<dynamic> transferTransactionFeedbackStream =
+        await executeTransferTransaction(sendToken);
+
+    transferTransactionFeedbackStream.listen((txResponse) {
+      print('TRANSACTION RESPONSE=$txResponse');
+      if (handleExceptionResponse(txResponse)) {
+        return;
+      }
+      if (handleNativeTransferResponse(txResponse)) {
+        return;
+      }
+      if (handleEvmTransactionResponse(txResponse)) {
+        return;
+      }
+    });
+  }
+
+  Future<Stream<dynamic>> executeTransferTransaction(
+      TokenWithAmount sendToken) async {
     final signerAddress = await ReefAppState.instance.storage
         .getValue(StorageKey.selected_address.name);
     TokenWithAmount tokenToTransfer = TokenWithAmount(
@@ -160,41 +184,134 @@ class _SendPageState extends State<SendPage> {
             BigInt.parse(toStringWithoutDecimals(amount, sendToken.decimals)),
         price: 0);
 
-    dynamic result = await ReefAppState.instance.transferCtrl.transferTokens(
-        signerAddress, resolvedEvmAddress ?? address, tokenToTransfer);
-    print('RESULT=$result');
-    //if (result == null || result['success'] == false) {}
-    navigator.pop();
-    ReefAppState.instance.navigationCtrl.navigate(NavigationPage.home);
+    var toAddress = resolvedEvmAddress ?? address;
+    print('SENDDDDD aaa=$address to=$toAddress');
+    return ReefAppState.instance.transferCtrl
+        .transferTokensStream(
+            signerAddress, toAddress, tokenToTransfer);
   }
 
-  // void resetState() {
-  //   amountController.clear();
-  //   valueController.clear();
-  //   setState(() {
-  //     rating = 0;
-  //     isInProgress = false;
-  //      valError=ValErr.OK
-  //   });
-  // }
+  void setStatusOnSignatureClosed() {
+    when(
+        (p0) =>
+            ReefAppState.instance.signingCtrl.signatureRequests.list.isNotEmpty,
+        () {
+      // NEW SIGNATURE DISPLAYED
+      when(
+          (p0) =>
+              ReefAppState.instance.signingCtrl.signatureRequests.list.isEmpty,
+          () {
+        print('REMOVED SIGN DISPLAY');
+        setState(() {
+          statusValue = SendStatus.SENDING;
+        });
+      });
+    });
+  }
 
-  getSendBtnLabel(ValidationError validation) {
+  bool handleExceptionResponse(txResponse) {
+    if (txResponse == null || txResponse['success'] != true) {
+      setState(() {
+        statusValue = txResponse['data'] == '_canceled'
+            ? SendStatus.CANCELED
+            : SendStatus.ERROR;
+      });
+      return true;
+    }
+    return false;
+  }
+
+  bool handleEvmTransactionResponse(txResponse) {
+    if (txResponse['type'] == 'reef20') {
+      if(txResponse['data']['status']=='broadcast'){
+        setState(() {
+          transactionData = txResponse['data'];
+          statusValue = SendStatus.SENT_TO_NETWORK;
+        });
+      }
+      if (txResponse['data']['status'] == 'included-in-block') {
+        setState(() {
+          transactionData = txResponse['data'];
+          print('TRANSSSSSS $transactionData');
+          statusValue = SendStatus.INCLUDED_IN_BLOCK;
+        });
+      }
+      if (txResponse['data']['status'] == 'finalized') {
+        setState(() {
+          transactionData = txResponse['data'];
+          statusValue = SendStatus.FINALIZED;
+        });
+      }
+      if (txResponse['data']['status'] == 'not-finalized') {
+        print('block was not finalized');
+        setState(() {
+          statusValue = SendStatus.NOT_FINALIZED;
+        });
+      }
+      return true;
+    }
+    return false;
+  }
+
+  bool handleNativeTransferResponse(txResponse) {
+    if (txResponse['type'] == 'native') {
+      if (txResponse['data']['status'] == 'broadcast') {
+        setState(() {
+          transactionData = txResponse['data'];
+          statusValue = SendStatus.SENT_TO_NETWORK;
+        });
+      }
+      if (txResponse['data']['status'] == 'included-in-block') {
+        setState(() {
+          transactionData = txResponse['data'];
+          statusValue = SendStatus.INCLUDED_IN_BLOCK;
+        });
+      }
+      if (txResponse['data']['status'] == 'finalized') {
+        setState(() {
+          transactionData = txResponse['data'];
+          statusValue = SendStatus.FINALIZED;
+        });
+      }
+      return true;
+    }
+    return false;
+  }
+
+  void resetState() {
+    amountController.clear();
+    valueController.clear();
+    setState(() {
+      amount = '';
+      resolvedEvmAddress = null;
+      transactionData = null;
+      address = '';
+      rating = 0;
+      isFormDisabled = false;
+      statusValue = SendStatus.NO_ADDRESS;
+      transactionData = null;
+    });
+  }
+
+  getSendBtnLabel(SendStatus validation) {
     switch (validation) {
-      case ValidationError.NO_ADDRESS:
+      case SendStatus.NO_ADDRESS:
         return "Missing destination address";
-      case ValidationError.NO_AMT:
+      case SendStatus.NO_AMT:
         return "Insert amount";
-      case ValidationError.AMT_TOO_HIGH:
+      case SendStatus.AMT_TOO_HIGH:
         return "Amount too high";
-      case ValidationError.NO_EVM_CONNECTED:
+      case SendStatus.NO_EVM_CONNECTED:
         return "Target not EVM";
-      case ValidationError.ADDR_NOT_VALID:
+      case SendStatus.ADDR_NOT_VALID:
         return "Enter a valid address";
-      case ValidationError.ADDR_NOT_EXIST:
+      case SendStatus.ADDR_NOT_EXIST:
         return "Unknown address";
-      case ValidationError.SENDING:
+      case SendStatus.SIGNING:
+        return "Signing transaction ...";
+      case SendStatus.SENDING:
         return "Sending ...";
-      case ValidationError.OK:
+      case SendStatus.READY:
         return "Confirm Send";
       default:
         return "Not Valid";
@@ -203,363 +320,406 @@ class _SendPageState extends State<SendPage> {
 
   @override
   Widget build(BuildContext context) {
-    return SignatureContentToggle(Column(
-      children: [
-        buildHeader(context),
-        Gap(16),
-        Observer(builder: (_) {
-          var tokens = ReefAppState.instance.model.tokens.selectedErc20List;
-          var selectedToken =
-              tokens.firstWhere((tkn) => tkn.address == selectedTokenAddress);
-          if (selectedToken == null && !tokens.isEmpty) {
-            selectedToken = tokens[0];
-          }
-          if (selectedToken == null) {
-            return Text('Tokens error');
-          }
-          return Container(
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15),
-                color: Styles.primaryBackgroundColor,
-                boxShadow: neumorphicShadow()),
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              children: <Widget>[
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    border: _isValueEditing
-                        ? Border.all(color: const Color(0xffa328ab))
-                        : Border.all(color: const Color(0x00d7d1e9)),
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      if (_isValueEditing)
-                        const BoxShadow(
-                            blurRadius: 15,
-                            spreadRadius: -8,
-                            offset: Offset(0, 10),
-                            color: Color(0x40a328ab))
-                    ],
-                    color: _isValueEditing
-                        ? const Color(0xffeeebf6)
-                        : const Color(0xffE7E2F2),
-                  ),
-                  child: Row(
-                    children: [
-                      SizedBox(
-                        width: 48,
-                        child: MaterialButton(
-                          elevation: 0,
-                          height: 48,
-                          padding: EdgeInsets.zero,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
+    var transferStatusUI = buildFeedbackUI(statusValue, resetState, () {
+      final navigator = Navigator.of(context);
+      navigator.pop();
+      // ReefAppState.instance.navigationCtrl.navigate(NavigationPage.home);
+    });
+    return transferStatusUI ??
+        Column(
+          children: [
+            // Gap(16),
+            Observer(builder: (_) {
+              var tokens = ReefAppState.instance.model.tokens.selectedErc20List;
+              var selectedToken = tokens
+                  .firstWhere((tkn) => tkn.address == selectedTokenAddress);
+              if (selectedToken == null && !tokens.isEmpty) {
+                selectedToken = tokens[0];
+              }
+              if (selectedToken == null) {
+                return Text('No token selected');
+              }
+              return Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    color: Styles.primaryBackgroundColor,
+                    boxShadow: neumorphicShadow()),
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  children: <Widget>[
+                    ...buildInputElements(selectedToken),
+                    const Gap(36),
+                    ...buildSliderWidgets(selectedToken),
+                    const Gap(36),
+                    buildSendStatusButton(selectedToken),
+                  ],
+                ),
+              );
+            }),
+          ],
+        );
+  }
+
+  List<Widget> buildInputElements(TokenWithAmount selectedToken) {
+    return [Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      border: _isValueEditing
+                          ? Border.all(color: const Color(0xffa328ab))
+                          : Border.all(color: const Color(0x00d7d1e9)),
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        if (_isValueEditing)
+                          const BoxShadow(
+                              blurRadius: 15,
+                              spreadRadius: -8,
+                              offset: Offset(0, 10),
+                              color: Color(0x40a328ab))
+                      ],
+                      color: _isValueEditing
+                          ? const Color(0xffeeebf6)
+                          : const Color(0xffE7E2F2),
+                    ),
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          width: 48,
+                          child: MaterialButton(
+                            elevation: 0,
+                            height: 48,
+                            padding: EdgeInsets.zero,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            onPressed: () {
+                              if (isFormDisabled) {
+                                return;
+                              }
+                              showSelectAccountModal("Select account",
+                                  (selectedAddress) async {
+                                setState(() {
+                                  address = selectedAddress;
+                                  valueController.text = selectedAddress;
+                                });
+                                var state = await _validate(
+                                    address, selectedToken, amount);
+                                setState(() {
+                                  statusValue = state;
+                                });
+                              }, isTokenReef);
+                            },
+                            //color: const Color(0xffDFDAED),
+                            child: RotatedBox(
+                                quarterTurns: 1,
+                                child: Icon(
+                                  Icons.chevron_right_rounded,
+                                  color: isFormDisabled
+                                      ? Styles.textLightColor
+                                      : Styles.textColor,
+                                )),
                           ),
-                          onPressed: () {
-                            showSelectAccountModal("Select account",
-                                (selectedAddress) async {
+                        ),
+                        Expanded(
+                          child: TextFormField(
+                            focusNode: _focus,
+                            readOnly: isFormDisabled,
+                            controller: valueController,
+                            onChanged: (text) async {
                               setState(() {
-                                address = selectedAddress;
-                                valueController.text = selectedAddress;
+                                address = valueController.text;
                               });
+
                               var state = await _validate(
                                   address, selectedToken, amount);
                               setState(() {
-                                valError = state;
+                                statusValue = state;
                               });
-                            }, isTokenReef);
-                          },
-                          //color: const Color(0xffDFDAED),
-                          child: RotatedBox(
-                              quarterTurns: 1,
-                              child: Icon(
-                                Icons.chevron_right_rounded,
-                                color: Styles.textColor,
-                              )),
-                        ),
-                      ),
-                      Expanded(
-                        child: TextFormField(
-                          focusNode: _focus,
-                          controller: valueController,
-                          onChanged: (text) async {
-                            setState(() {
-                              address = valueController.text;
-                            });
-
-                            var state =
-                                await _validate(address, selectedToken, amount);
-                            setState(() {
-                              valError = state;
-                            });
-                          },
-                          style: const TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.w500),
-                          decoration: InputDecoration(
-                              contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 2),
-                              border: InputBorder.none,
-                              hintText: 'Send to address',
-                              hintStyle:
-                                  TextStyle(color: Styles.textLightColor)),
-                          validator: (String? value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Address cannot be empty';
-                            }
-                            return null;
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const Gap(10),
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    border: _isValueSecondEditing
-                        ? Border.all(color: const Color(0xffa328ab))
-                        : Border.all(color: const Color(0x00d7d1e9)),
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      if (_isValueSecondEditing)
-                        const BoxShadow(
-                            blurRadius: 15,
-                            spreadRadius: -8,
-                            offset: Offset(0, 10),
-                            color: Color(0x40a328ab))
-                    ],
-                    color: _isValueSecondEditing
-                        ? const Color(0xffeeebf6)
-                        : const Color(0xffE7E2F2),
-                  ),
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          Row(
-                            children: [
-                              IconFromUrl(selectedToken.iconUrl, size: 48),
-                              const Gap(13),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    selectedToken != null
-                                        ? selectedToken.name
-                                        : 'Select',
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 18,
-                                        color: Color(0xff19233c)),
-                                  ),
-                                  Text(
-                                    "${toAmountDisplayBigInt(selectedToken.balance)} ${selectedToken.name.toUpperCase()}",
-                                    style: TextStyle(
-                                        color: Styles.textLightColor,
-                                        fontSize: 12),
-                                  )
-                                ],
-                              ),
-                            ],
+                            },
+                            style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                color: isFormDisabled
+                                    ? Styles.textLightColor
+                                    : Styles.textColor),
+                            decoration: InputDecoration(
+                                contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 2),
+                                border: InputBorder.none,
+                                hintText: 'Send to address',
+                                hintStyle:
+                                    TextStyle(color: Styles.textLightColor)),
+                            validator: (String? value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Address cannot be empty';
+                              }
+                              return null;
+                            },
                           ),
-                          Expanded(
-                            child: TextFormField(
-                              focusNode: _focusSecond,
-                              inputFormatters: [
-                                FilteringTextInputFormatter.allow(
-                                    RegExp(r'[0-9]'))
-                              ],
-                              keyboardType: TextInputType.number,
-                              controller: amountController,
-                              onChanged: (text) async {
-                                amount = amountController.text;
-                                var status = await _validate(
-                                    address, selectedToken, amount);
-                                setState(() {
-                                  valError = status;
-                                  var balance =
-                                      getSelectedTokenBalance(selectedToken);
-
-                                  var amt =
-                                      amount != '' ? double.parse(amount) : 0;
-                                  var calcRating = (amt /
-                                      getMaxTransferAmount(
-                                          selectedToken, balance));
-                                  if (calcRating < 0) {
-                                    calcRating = 0;
-                                  }
-                                  rating = calcRating > 1 ? 1 : calcRating;
-                                });
-                              },
-                              decoration: const InputDecoration(
-                                  constraints: BoxConstraints(maxHeight: 32),
-                                  contentPadding: EdgeInsets.symmetric(
-                                      horizontal: 12, vertical: 8),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderSide:
-                                        BorderSide(color: Colors.transparent),
-                                  ),
-                                  border: OutlineInputBorder(),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: Colors.transparent,
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Gap(10),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      border: _isValueSecondEditing
+                          ? Border.all(color: const Color(0xffa328ab))
+                          : Border.all(color: const Color(0x00d7d1e9)),
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        if (_isValueSecondEditing)
+                          const BoxShadow(
+                              blurRadius: 15,
+                              spreadRadius: -8,
+                              offset: Offset(0, 10),
+                              color: Color(0x40a328ab))
+                      ],
+                      color: _isValueSecondEditing
+                          ? const Color(0xffeeebf6)
+                          : const Color(0xffE7E2F2),
+                    ),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Row(
+                              children: [
+                                IconFromUrl(selectedToken.iconUrl, size: 48),
+                                const Gap(13),
+                                Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      selectedToken != null
+                                          ? selectedToken.name
+                                          : 'Select',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 18,
+                                          color: isFormDisabled
+                                              ? Styles.textLightColor
+                                              : Styles.darkBackgroundColor),
                                     ),
-                                  ),
-                                  hintText: '0.0',
-                                  hintStyle:
-                                      TextStyle(color: Styles.textLightColor)),
-                              textAlign: TextAlign.right,
-                              validator: (String? value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Address cannot be empty';
-                                }
-                                return null;
-                              },
+                                    Text(
+                                      "${toAmountDisplayBigInt(selectedToken.balance)} ${selectedToken.name.toUpperCase()}",
+                                      style: TextStyle(
+                                          color: Styles.textLightColor,
+                                          fontSize: 12),
+                                    )
+                                  ],
+                                ),
+                              ],
                             ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                const Gap(36),
-                SliderTheme(
-                  data: SliderThemeData(
-                      showValueIndicator: ShowValueIndicator.never,
-                      overlayShape: SliderComponentShape.noOverlay,
-                      valueIndicatorShape: PaddleSliderValueIndicatorShape(),
-                      valueIndicatorColor: Color(0xff742cb2),
-                      thumbColor: const Color(0xff742cb2),
-                      inactiveTickMarkColor: Color(0xffc0b8dc),
-                      trackShape: const GradientRectSliderTrackShape(
-                          gradient: LinearGradient(colors: <Color>[
-                            Color(0xffae27a5),
-                            Color(0xff742cb2),
-                          ]),
-                          darkenInactive: true),
-                      activeTickMarkColor: const Color(0xffffffff),
-                      tickMarkShape:
-                          const RoundSliderTickMarkShape(tickMarkRadius: 4),
-                      thumbShape: const ThumbShape()),
-                  child: Slider(
-                    value: rating,
-                    onChanged: (newRating) async {
-                      String amountStr =
-                          getSliderValues(newRating, selectedToken);
-                      var status = await _validate(
-                          address, selectedToken, amountStr, true);
-                      setState(() {
+                            Expanded(
+                              child: TextFormField(
+                                focusNode: _focusSecond,
+                                readOnly: isFormDisabled,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.allow(
+                                      RegExp(r'[0-9]'))
+                                ],
+                                keyboardType: TextInputType.number,
+                                controller: amountController,
+                                onChanged: (text) async {
+                                  amount = amountController.text;
+                                  var status = await _validate(
+                                      address, selectedToken, amount);
+                                  setState(() {
+                                    statusValue = status;
+                                    var balance = getSelectedTokenBalance(
+                                        selectedToken);
+
+                                    var amt = amount != ''
+                                        ? double.parse(amount)
+                                        : 0;
+                                    var calcRating = (amt /
+                                        getMaxTransferAmount(
+                                            selectedToken, balance));
+                                    if (calcRating < 0) {
+                                      calcRating = 0;
+                                    }
+                                    rating = calcRating > 1 ? 1 : calcRating;
+                                  });
+                                },
+                                style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                    color: isFormDisabled
+                                        ? Styles.textLightColor
+                                        : Styles.textColor),
+                                decoration: const InputDecoration(
+                                    constraints:
+                                        BoxConstraints(maxHeight: 32),
+                                    contentPadding: EdgeInsets.symmetric(
+                                        horizontal: 12, vertical: 8),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Colors.transparent),
+                                    ),
+                                    border: OutlineInputBorder(),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: Colors.transparent,
+                                      ),
+                                    ),
+                                    hintText: '0.0',
+                                    hintStyle: TextStyle(
+                                        color: Styles.textLightColor)),
+                                textAlign: TextAlign.right,
+                                validator: (String? value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Address cannot be empty';
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  )];
+  }
+
+  List<Widget> buildSliderWidgets(TokenWithAmount selectedToken) {
+    return [SliderTheme(
+                    data: SliderThemeData(
+                        showValueIndicator: ShowValueIndicator.never,
+                        overlayShape: SliderComponentShape.noOverlay,
+                        valueIndicatorShape:
+                            PaddleSliderValueIndicatorShape(),
+                        valueIndicatorColor: Color(0xff742cb2),
+                        thumbColor: const Color(0xff742cb2),
+                        inactiveTickMarkColor: Color(0xffc0b8dc),
+                        trackShape: const GradientRectSliderTrackShape(
+                            gradient: LinearGradient(colors: <Color>[
+                              Color(0xffae27a5),
+                              Color(0xff742cb2),
+                            ]),
+                            darkenInactive: true),
+                        activeTickMarkColor: const Color(0xffffffff),
+                        tickMarkShape:
+                            const RoundSliderTickMarkShape(tickMarkRadius: 4),
+                        thumbShape: const ThumbShape()),
+                    child: Slider(
+                      value: rating,
+                      onChanged: isFormDisabled
+                          ? null
+                          : (newRating) async {
+                              String amountStr =
+                                  getSliderValues(newRating, selectedToken);
+                              var status = await _validate(
+                                  address, selectedToken, amountStr, true);
+                              setState(() {
+                                amount = amountStr;
+                                amountController.text = amountStr;
+                                statusValue = status;
+                              });
+                            },
+                      onChangeEnd: (newRating) async {
+                        String amountStr =
+                            getSliderValues(newRating, selectedToken);
+
                         amount = amountStr;
                         amountController.text = amountStr;
-                        valError = status;
-                      });
-                    },
-                    onChangeEnd: (newRating) async {
-                      String amountStr =
-                          getSliderValues(newRating, selectedToken);
-
-                      amount = amountStr;
-                      amountController.text = amountStr;
-                      var status =
-                          await _validate(address, selectedToken, amount);
-                      setState(() {
-                        valError = status;
-                      });
-                    },
-                    divisions: 100,
-                    label: "${(rating * 100).toInt()}%",
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "0%",
-                        style: TextStyle(
-                            color: Styles.textLightColor,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 12),
-                      ),
-                      Text(
-                        "50%",
-                        style: TextStyle(
-                            color: Styles.textLightColor,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 12),
-                      ),
-                      Text(
-                        "100%",
-                        style: TextStyle(
-                            color: Styles.textLightColor,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 12),
-                      ),
-                    ],
-                  ),
-                ),
-                const Gap(36),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14)),
-                      shadowColor: const Color(0x559d6cff),
-                      elevation: 0,
-                      backgroundColor: (valError == ValidationError.OK)
-                          ? const Color(0xffe6e2f1)
-                          : Colors.transparent,
-                      padding: const EdgeInsets.all(0),
+                        var status =
+                            await _validate(address, selectedToken, amount);
+                        setState(() {
+                          statusValue = status;
+                        });
+                      },
+                      inactiveColor: Colors.white24,
+                      divisions: 100,
+                      label: "${(rating * 100).toInt()}%",
                     ),
-                    onPressed: () => {_onConfirmSend(selectedToken)},
-                    child: Ink(
-                      width: double.infinity,
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 15, horizontal: 22),
-                      decoration: BoxDecoration(
-                        color: const Color(0xffe6e2f1),
-                        gradient: (valError == ValidationError.OK)
-                            ? const LinearGradient(colors: [
-                                Color(0xffae27a5),
-                                Color(0xff742cb2),
-                              ])
-                            : null,
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(14.0)),
-                      ),
-                      child: Center(
-                        child: Text(
-                          getSendBtnLabel(valError),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "0%",
                           style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                            color: (valError != ValidationError.OK)
-                                ? const Color(0x65898e9c)
-                                : Colors.white,
+                              color: Styles.textLightColor,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 12),
+                        ),
+                        Text(
+                          "50%",
+                          style: TextStyle(
+                              color: Styles.textLightColor,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 12),
+                        ),
+                        Text(
+                          "100%",
+                          style: TextStyle(
+                              color: Styles.textLightColor,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 12),
+                        ),
+                      ],
+                    ),
+                  )];
+  }
+
+  SizedBox buildSendStatusButton(TokenWithAmount selectedToken) {
+    return SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14)),
+                        shadowColor: const Color(0x559d6cff),
+                        elevation: 0,
+                        backgroundColor: (statusValue == SendStatus.READY)
+                            ? const Color(0xffe6e2f1)
+                            : Colors.transparent,
+                        padding: const EdgeInsets.all(0),
+                      ),
+                      onPressed: () => {_onConfirmSend(selectedToken)},
+                      child: Ink(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 15, horizontal: 22),
+                        decoration: BoxDecoration(
+                          color: const Color(0xffe6e2f1),
+                          gradient: (statusValue == SendStatus.READY)
+                              ? const LinearGradient(colors: [
+                                  Color(0xffae27a5),
+                                  Color(0xff742cb2),
+                                ])
+                              : null,
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(14.0)),
+                        ),
+                        child: Center(
+                          child: Text(
+                            getSendBtnLabel(statusValue),
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
+                              color: (statusValue != SendStatus.READY)
+                                  ? const Color(0x65898e9c)
+                                  : Colors.white,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ),
-              ],
-            ),
-          );
-        }),
-      ],
-    ));
+                  );
   }
 
   String getSliderValues(double newRating, TokenWithAmount selectedToken) {
     rating = newRating;
     var balance = getSelectedTokenBalance(selectedToken);
     double? amountValue = (balance * rating);
-    if (amountValue != null && amountValue <= 0) {
+    if (amountValue <= 0) {
       amountValue = null;
     }
     var maxTransferAmount = getMaxTransferAmount(selectedToken, balance);
@@ -578,42 +738,57 @@ class _SendPageState extends State<SendPage> {
     return double.parse(toAmountDisplayBigInt(selectedToken.balance));
   }
 
-  Padding buildHeader(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              // const Image(
-              //   image: AssetImage("./assets/images/reef.png"),
-              //   width: 24,
-              //   height: 24,
-              // ),
-              // const Gap(8),
-              // Text(
-              //   "Send Tokens",
-              //   style: GoogleFonts.spaceGrotesk(
-              //       fontWeight: FontWeight.w500,
-              //       fontSize: 32,
-              //       color: Colors.grey[800]),
-              // ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
 }
 
-enum ValidationError {
-  OK,
+buildFeedbackUI(
+    SendStatus stat, void Function() onNew, void Function() onHome) {
+  String? title;
+
+  if (stat == SendStatus.ERROR) {
+    title = 'Transaction Error';
+  }
+  if (stat == SendStatus.CANCELED) {
+    title = 'Transaction Canceled';
+  }
+  if (stat == SendStatus.SENDING) {
+    title = 'Sending transaction';
+  }
+  if (stat == SendStatus.SENT_TO_NETWORK) {
+    title = 'Sent';
+  }
+  if (stat == SendStatus.INCLUDED_IN_BLOCK) {
+    title = 'Included in block';
+  }
+  if (stat == SendStatus.FINALIZED) {
+    title = 'Finalized!';
+  }
+
+  if (stat == SendStatus.NOT_FINALIZED) {
+    title = 'NOT finalized!';
+  }
+
+  if (title == null) {
+    return null;
+  }
+  return Column(children: [Text(title), ButtonBar(children: [
+  ElevatedButton(onPressed: onHome, child: const Text('Home')),
+  ElevatedButton(onPressed: onNew, child: const Text('New'))
+  ])]);
+}
+
+enum SendStatus {
+  READY,
   NO_EVM_CONNECTED,
   NO_ADDRESS,
   NO_AMT,
   AMT_TOO_HIGH,
   ADDR_NOT_VALID,
   ADDR_NOT_EXIST,
+  SIGNING,
   SENDING,
+  CANCELED,
+  ERROR,
+  SENT_TO_NETWORK,
+  INCLUDED_IN_BLOCK,
+  FINALIZED, NOT_FINALIZED,
 }

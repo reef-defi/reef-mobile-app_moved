@@ -95,8 +95,8 @@ class JsApiService {
         .map((event) => event.value);
   }
 
-  void confirmTxSignature(String reqId, String mnemonic) {
-    jsCall('${TX_SIGN_CONFIRMATION_JS_FN_NAME}("$reqId", "$mnemonic")');
+  void confirmTxSignature(String reqId, String? mnemonic) {
+    jsCall('${TX_SIGN_CONFIRMATION_JS_FN_NAME}("$reqId", "${mnemonic ?? ''}")');
   }
 
   void sendDappMsgResponse(String reqId, dynamic value) {
@@ -169,6 +169,10 @@ class JsApiService {
         },
       ),
     };
+  }
+
+  void rejectTxSignature(String signatureIdent) {
+    confirmTxSignature(signatureIdent, '_canceled');
   }
 }
 

@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:reef_mobile_app/components/modals/signing_modals.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/signing/signature_request.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
 
 class SignatureContentToggle extends StatelessObserverWidget {
   final Widget content;
@@ -28,18 +26,22 @@ class SignatureContentToggle extends StatelessObserverWidget {
   @override
   Widget build(BuildContext context) {
     return Observer(builder: (_) {
-      // var requests = ReefAppState.instance.signingCtrl.signatureRequests.list;
       var requests = ReefAppState.instance.model.signatureRequests.list;
       var signatureRequest = requests.isNotEmpty ? requests.first : null;
       var displayIdx = signatureRequest != null ? 0 : 1;
-      displayIdx = 1; // TODO remove this line
-
+      //displayIdx = 1; // TODO remove this line
       return IndexedStack(
         index: displayIdx,
         children: [
           Scaffold(
               appBar: AppBar(
                 title: Text(AppLocalizations.of(context)!.sign_transaction),
+                leading: IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: () {
+                    _cancel(signatureRequest);
+                  },
+                ),
               ),
               body: Center(
                 child: Column(
@@ -52,7 +54,7 @@ class SignatureContentToggle extends StatelessObserverWidget {
                   ],
                 ),
               ),
-              floatingActionButton: Row(
+              floatingActionButton: Wrap(
                 children: [
                   ElevatedButton.icon(
                     icon: const Icon(Icons.check),
@@ -66,7 +68,7 @@ class SignatureContentToggle extends StatelessObserverWidget {
                   ),
                   ElevatedButton.icon(
                     icon: const Icon(Icons.key),
-                    label: Text(AppLocalizations.of(context)!.to_create_account),
+                    label: Text(AppLocalizations.of(context)!.sign_transaction),
                     onPressed: () => _confirmSign(signatureRequest),
                   ),
                 ],
@@ -86,8 +88,9 @@ class SignatureContentToggle extends StatelessObserverWidget {
   }
 
   void _cancel(SignatureRequest? signatureRequest) {
+    print('REMMMMMMMMM $signatureRequest');
     if (signatureRequest == null) return;
-    ReefAppState.instance.signingCtrl.signatureRequests
-        .remove(signatureRequest.signatureIdent);
+    ReefAppState.instance.signingCtrl
+        .rejectSignature(signatureRequest.signatureIdent);
   }
 }
