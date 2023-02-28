@@ -113,7 +113,7 @@ class _TokenViewState extends State<TokenView> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    /*Expanded(
+                    Expanded(
                         child: ElevatedButton.icon(
                       icon: const Icon(
                         CupertinoIcons.repeat,
@@ -136,7 +136,7 @@ class _TokenViewState extends State<TokenView> {
                             .navigateToSwapPage(context: context);
                       },
                     )),
-                    const SizedBox(width: 15),*/
+                    const SizedBox(width: 15),
                     Expanded(
                         child: Container(
                       decoration: BoxDecoration(
