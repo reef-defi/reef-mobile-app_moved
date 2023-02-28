@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
@@ -10,7 +11,6 @@ import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/account/ReefAccount.dart';
 import 'package:reef_mobile_app/model/status-data-object/StatusDataObject.dart';
 import 'package:reef_mobile_app/utils/functions.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../utils/styles.dart';
 import 'BlurableContent.dart';
@@ -128,7 +128,8 @@ class _AccountBoxState extends State<AccountBox> {
                                 choiceAction(choice, context,
                                     widget.reefAccountFDM.data);
                               },
-                              tooltip: AppLocalizations.of(context)!.more_actions,
+                              tooltip:
+                                  AppLocalizations.of(context)!.more_actions,
                               itemBuilder: (BuildContext context) {
                                 return Constants.choices.map((String choice) {
                                   return PopupMenuItem<String>(
@@ -267,14 +268,14 @@ class Constants {
   static const String delete = 'Delete';
   static const String copyNativeAddress = "Copy Address";
   static const String copyEvmAddress = "Copy Reef EVM Address";
-  static const String shareAddressQr = "Share Address QR";
-  static const String shareEvmQr = "Share EVM Address QR";
+  static const String shareAddressQr = "Display QR Native Address";
+  static const String shareEvmQr = "Display QR EVM Address";
 
   static const List<String> choices = <String>[
-    copyNativeAddress,
-    shareAddressQr,
     copyEvmAddress,
     shareEvmQr,
+    copyNativeAddress,
+    shareAddressQr,
     delete,
   ];
 }
@@ -288,7 +289,8 @@ showAlertDialog(BuildContext context, ReefAccount signer) {
     },
   );
   Widget continueButton = TextButton(
-    child: const Text("Yes"),
+    child: const Text("Delete Account",
+        style: TextStyle(color: Styles.errorColor)),
     onPressed: () {
       ReefAppState.instance.accountCtrl.deleteAccount(signer.address);
       Navigator.of(context).pop();
@@ -297,12 +299,15 @@ showAlertDialog(BuildContext context, ReefAccount signer) {
 
   // set up the AlertDialog
   AlertDialog alert = AlertDialog(
-    title: const Text("Delete Account"),
+    title: const Text(
+      "Delete Account",
+      style: TextStyle(color: Styles.errorColor),
+    ),
     content: Text(
-        "You will delete account with name ${signer.name} ${signer.address.shorten()}. Continue?"),
+        "You will loose all balance for ${signer.name} ${signer.address.shorten()} unless you have saved recovery phrase (mnemonic). \nContinue?"),
     actions: [
-      cancelButton,
       continueButton,
+      cancelButton,
     ],
   );
 
@@ -326,20 +331,19 @@ void choiceAction(
     });
   } else if (choice == Constants.copyEvmAddress) {
     var address = await ReefAppState.instance.accountCtrl
-                .toReefEVMAddressWithNotificationString(account.evmAddress);
-    print('AAAAdd $address');
-    Clipboard.setData(ClipboardData(
-            text: address))
-        .then((_) {
+        .toReefEVMAddressWithNotificationString(account.evmAddress);
+    Clipboard.setData(ClipboardData(text: address)).then((_) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content:  Text(
+          content: Text(
               "EVM Address copied to clipboard.\nUse it ONLY on Reef Chain!")));
     });
   } else if (choice == Constants.shareEvmQr) {
-      if(account.isEvmClaimed){
-        showQrCode(AppLocalizations.of(context)!.share_evm_qr, account.evmAddress);
-      }
-  } else if(choice == Constants.shareAddressQr){
-    showQrCode(AppLocalizations.of(context)!.share_address_qr, account.address);
+    if (account.isEvmClaimed) {
+      showQrCode(
+          AppLocalizations.of(context)!.evm_address_qr, account.evmAddress);
+    }
+  } else if (choice == Constants.shareAddressQr) {
+    showQrCode(
+        AppLocalizations.of(context)!.native_address_qr, account.address);
   }
 }

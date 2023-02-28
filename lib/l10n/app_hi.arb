@@ -90,7 +90,7 @@
 "delete": "हटाएं",
 "copy_native_address": "पता कॉपी करें",
 "copy_evm_address": "रीफ EVM पता कॉपी करें",
-"share_address_qr": "पते का क्यूआर कोड साझा करें",
-"share_evm_qr": "EVM पते का क्यूआर कोड साझा करें",
+"native_address_qr": "पते का क्यूआर कोड साझा करें",
+"evm_address_qr": "EVM पते का क्यूआर कोड साझा करें",
 "delete_account":"खाता हटाएं"
 }
