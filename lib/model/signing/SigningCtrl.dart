@@ -17,7 +17,6 @@ class SigningCtrl {
     jsApi.jsTxSignatureConfirmationMessageSubj.listen((jsApiMessage) {
       var signatureRequest = _buildSignatureRequest(jsApiMessage);
       signatureRequests.add(signatureRequest);
-      //showSigningModal(navigatorKey.currentContext, signatureRequest);
     });
   }
 
