@@ -17,7 +17,7 @@ import 'package:reef_mobile_app/utils/styles.dart';
 import '../components/SignatureContentToggle.dart';
 
 class SendPage extends StatefulWidget {
-  final String preselected;
+  final String preselected; 
 
   SendPage(this.preselected, {Key? key}) : super(key: key);
 

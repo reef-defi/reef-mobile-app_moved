@@ -21,7 +21,8 @@ import 'package:shimmer/shimmer.dart';
 import '../components/SignatureContentToggle.dart';
 
 class SwapPage extends StatefulWidget {
-  const SwapPage({Key? key}) : super(key: key);
+  final String preselected;
+  const SwapPage(this.preselected, {Key? key}) : super(key: key);
 
   @override
   State<SwapPage> createState() => _SwapPageState();
@@ -55,6 +56,13 @@ class _SwapPageState extends State<SwapPage> {
   void initState() {
     super.initState();
     _focus.addListener(_onFocusChange);
+    
+    //If token is not REEF - set target to reef
+    if (widget.preselected != Constants.REEF_TOKEN_ADDRESS) {
+      selectedBottomToken = ReefAppState.instance.model.tokens.selectedErc20List
+          .firstWhere((token) => token.address == Constants.REEF_TOKEN_ADDRESS);
+    }
+    ;
   }
 
   void _changeSelectedTopToken(TokenWithAmount token) {
@@ -71,18 +79,19 @@ class _SwapPageState extends State<SwapPage> {
     });
   }
 
-void _onFocusChange() {
+  void _onFocusChange() {
     setState(() {
       _isValueEditing = !_isValueEditing;
     });
   }
 
-    @override
+  @override
   void dispose() {
     super.dispose();
     _focus.removeListener(_onFocusChange);
     _focus.dispose();
   }
+
   void _switchTokens() {
     setState(() {
       var temp = selectedTopToken;
@@ -264,24 +273,24 @@ void _onFocusChange() {
                     children: <Widget>[
                       Container(
                         width: double.infinity,
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    border: _isValueEditing
-                        ? Border.all(color: const Color(0xffa328ab))
-                        : Border.all(color: const Color(0x00d7d1e9)),
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      if (_isValueEditing)
-                        const BoxShadow(
-                            blurRadius: 15,
-                            spreadRadius: -8,
-                            offset: Offset(0, 10),
-                            color: Color(0x40a328ab))
-                    ],
-                    color: _isValueEditing
-                        ? const Color(0xffeeebf6)
-                        : const Color(0xffE7E2F2),
-                  ),
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          border: _isValueEditing
+                              ? Border.all(color: const Color(0xffa328ab))
+                              : Border.all(color: const Color(0x00d7d1e9)),
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            if (_isValueEditing)
+                              const BoxShadow(
+                                  blurRadius: 15,
+                                  spreadRadius: -8,
+                                  offset: Offset(0, 10),
+                                  color: Color(0x40a328ab))
+                          ],
+                          color: _isValueEditing
+                              ? const Color(0xffeeebf6)
+                              : const Color(0xffE7E2F2),
+                        ),
                         child: Column(
                           children: [
                             Row(
@@ -368,7 +377,7 @@ void _onFocusChange() {
                                     ),
                                     MaxAmountButton(
                                       onPressed: () async {
-                                        //TODO: anukul -  set slider to max 
+                                        //TODO: anukul -  set slider to max
                                         var topTokenBalance =
                                             toAmountDisplayBigInt(
                                                 selectedTopToken!.balance,
@@ -380,7 +389,6 @@ void _onFocusChange() {
                                             topTokenBalance);
                                         amountTopController.text =
                                             topTokenBalance;
-  
                                       },
                                     )
                                   ]
@@ -390,27 +398,27 @@ void _onFocusChange() {
                           ],
                         ),
                       ),
-                      const Gap(4),
+                      const Gap(14),
                       Container(
                         width: double.infinity,
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    border: _isValueEditing
-                        ? Border.all(color: const Color(0xffa328ab))
-                        : Border.all(color: const Color(0x00d7d1e9)),
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      if (_isValueEditing)
-                        const BoxShadow(
-                            blurRadius: 15,
-                            spreadRadius: -8,
-                            offset: Offset(0, 10),
-                            color: Color(0x40a328ab))
-                    ],
-                    color: _isValueEditing
-                        ? const Color(0xffeeebf6)
-                        : const Color(0xffE7E2F2),
-                  ),
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          border: _isValueEditing
+                              ? Border.all(color: const Color(0xffa328ab))
+                              : Border.all(color: const Color(0x00d7d1e9)),
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            if (_isValueEditing)
+                              const BoxShadow(
+                                  blurRadius: 15,
+                                  spreadRadius: -8,
+                                  offset: Offset(0, 10),
+                                  color: Color(0x40a328ab))
+                          ],
+                          color: _isValueEditing
+                              ? const Color(0xffeeebf6)
+                              : const Color(0xffE7E2F2),
+                        ),
                         child: Column(
                           children: [
                             Row(
@@ -589,7 +597,7 @@ void _onFocusChange() {
                     ],
                   ),
                   Positioned(
-                    top: 76,
+                    top: 80,
                     child: Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(4),
