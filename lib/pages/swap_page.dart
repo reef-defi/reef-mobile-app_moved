@@ -43,11 +43,19 @@ class _SwapPageState extends State<SwapPage> {
   String reserveTop = "";
   TextEditingController amountBottomController = TextEditingController();
   String reserveBottom = "";
+  bool _isValueEditing = false;
 
   double rating = 0;
 
   TextEditingController amountController = TextEditingController();
   String amount = "";
+  FocusNode _focus = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    _focus.addListener(_onFocusChange);
+  }
 
   void _changeSelectedTopToken(TokenWithAmount token) {
     setState(() {
@@ -63,6 +71,18 @@ class _SwapPageState extends State<SwapPage> {
     });
   }
 
+void _onFocusChange() {
+    setState(() {
+      _isValueEditing = !_isValueEditing;
+    });
+  }
+
+    @override
+  void dispose() {
+    super.dispose();
+    _focus.removeListener(_onFocusChange);
+    _focus.dispose();
+  }
   void _switchTokens() {
     setState(() {
       var temp = selectedTopToken;
@@ -244,12 +264,24 @@ class _SwapPageState extends State<SwapPage> {
                     children: <Widget>[
                       Container(
                         width: double.infinity,
-                        padding: const EdgeInsets.all(24),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: const Color(0xffe1e2e8)),
-                          borderRadius: BorderRadius.circular(12),
-                          color: Styles.boxBackgroundColor,
-                        ),
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    border: _isValueEditing
+                        ? Border.all(color: const Color(0xffa328ab))
+                        : Border.all(color: const Color(0x00d7d1e9)),
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      if (_isValueEditing)
+                        const BoxShadow(
+                            blurRadius: 15,
+                            spreadRadius: -8,
+                            offset: Offset(0, 10),
+                            color: Color(0x40a328ab))
+                    ],
+                    color: _isValueEditing
+                        ? const Color(0xffeeebf6)
+                        : const Color(0xffE7E2F2),
+                  ),
                         child: Column(
                           children: [
                             Row(
@@ -361,12 +393,24 @@ class _SwapPageState extends State<SwapPage> {
                       const Gap(4),
                       Container(
                         width: double.infinity,
-                        padding: const EdgeInsets.all(24),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: const Color(0xffe1e2e8)),
-                          borderRadius: BorderRadius.circular(12),
-                          color: Styles.boxBackgroundColor,
-                        ),
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    border: _isValueEditing
+                        ? Border.all(color: const Color(0xffa328ab))
+                        : Border.all(color: const Color(0x00d7d1e9)),
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      if (_isValueEditing)
+                        const BoxShadow(
+                            blurRadius: 15,
+                            spreadRadius: -8,
+                            offset: Offset(0, 10),
+                            color: Color(0x40a328ab))
+                    ],
+                    color: _isValueEditing
+                        ? const Color(0xffeeebf6)
+                        : const Color(0xffE7E2F2),
+                  ),
                         child: Column(
                           children: [
                             Row(
@@ -545,7 +589,7 @@ class _SwapPageState extends State<SwapPage> {
                     ],
                   ),
                   Positioned(
-                    top: 96,
+                    top: 76,
                     child: Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(4),
