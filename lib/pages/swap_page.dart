@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:reef_mobile_app/components/SliderStandAlone.dart';
 import 'package:reef_mobile_app/components/modals/token_selection_modals.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/StorageKey.dart';
@@ -467,46 +468,18 @@ class _SwapPageState extends State<SwapPage> {
                         ),
                       ),
                       const Gap(8),
-                      SliderTheme(
-                  data: SliderThemeData(
-                      showValueIndicator: ShowValueIndicator.never,
-                      overlayShape: SliderComponentShape.noOverlay,
-                      valueIndicatorShape: PaddleSliderValueIndicatorShape(),
-                      valueIndicatorColor: Color(0xff742cb2),
-                      thumbColor: const Color(0xff742cb2),
-                      inactiveTickMarkColor: Color(0xffc0b8dc),
-                      trackShape: const GradientRectSliderTrackShape(
-                          gradient: LinearGradient(colors: <Color>[
-                            Color(0xffae27a5),
-                            Color(0xff742cb2),
-                          ]),
-                          darkenInactive: true),
-                      activeTickMarkColor: const Color(0xffffffff),
-                      tickMarkShape:
-                          const RoundSliderTickMarkShape(tickMarkRadius: 4),
-                      thumbShape: const ThumbShape()),
-                  child: Slider(
-                    value: rating,
-                    onChanged: (newRating) async {
+                SliderStandAlone(rating: rating, onChanged: 
+                (newRating) async {
                       setState(() {
                         rating = newRating;
-                        String amountValue = (double.parse(
-                                    toAmountDisplayBigInt(
-                                        selectedTopToken!.balance)) *
-                                rating)
+                        String amountValue = (double.parse(toAmountDisplayBigInt(selectedTopToken!.balance)) *rating)
                             .toStringAsFixed(2);
                         amount = amountValue;
                         amountController.text = amountValue;
                         amountTopController.text =amountValue;
                       });
-                      setState(() async {
-                        // valError = await _validate(address, selectedToken);
-                      });
-                    },
-                    divisions: 100,
-                    label: "${(rating * 100).toInt()}%",
-                  ),
-                ),
+                      
+                }),
                 Gap(8),
                       SizedBox(
                         width: double.infinity,
