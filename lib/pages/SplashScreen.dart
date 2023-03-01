@@ -125,6 +125,12 @@ class _SplashAppState extends State<SplashApp> {
       });
     });
   }
+
+  @override
+  void dispose(){
+    super.dispose();
+    _passwordController.dispose();
+  }
  
   Future<bool> _checkIfFirstLaunch() async {
     final isFirstLaunch =
