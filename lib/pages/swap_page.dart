@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:reef_mobile_app/components/MaxAmountButton.dart';
 import 'package:reef_mobile_app/components/SliderStandAlone.dart';
 import 'package:reef_mobile_app/components/modals/token_selection_modals.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
@@ -47,7 +48,6 @@ class _SwapPageState extends State<SwapPage> {
 
   TextEditingController amountController = TextEditingController();
   String amount = "";
-
 
   void _changeSelectedTopToken(TokenWithAmount token) {
     setState(() {
@@ -299,20 +299,21 @@ class _SwapPageState extends State<SwapPage> {
                                           amountTopController.text);
                                     },
                                     decoration: InputDecoration(
-                                  constraints:
-                                      const BoxConstraints(maxHeight: 32),
-                                  contentPadding: const EdgeInsets.symmetric(
-                                      horizontal: 12, vertical: 8),
-                                  enabledBorder: const OutlineInputBorder(
-                                    borderSide:
-                                        BorderSide(color: Colors.transparent),
-                                  ),
-                                  border: const OutlineInputBorder(),
-                                  focusedBorder: const OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: Colors.transparent,
-                                    ),
-                                  ),
+                                        constraints:
+                                            const BoxConstraints(maxHeight: 32),
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                                horizontal: 12, vertical: 8),
+                                        enabledBorder: const OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                              color: Colors.transparent),
+                                        ),
+                                        border: const OutlineInputBorder(),
+                                        focusedBorder: const OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                            color: Colors.transparent,
+                                          ),
+                                        ),
                                         hintText: '0.0',
                                         hintStyle: TextStyle(
                                             color: Styles.textLightColor)),
@@ -333,32 +334,23 @@ class _SwapPageState extends State<SwapPage> {
                                           color: Styles.textLightColor,
                                           fontSize: 12),
                                     ),
-                                    TextButton(
-                                        onPressed: () async {
-                                          var topTokenBalance =
-                                              toAmountDisplayBigInt(
-                                                  selectedTopToken!.balance,
-                                                  decimals: selectedTopToken!
-                                                      .decimals,
-                                                  fractionDigits:
-                                                      selectedTopToken!
-                                                          .decimals);
-                                          await _amountTopUpdated(
-                                              topTokenBalance);
-                                          amountTopController.text =
-                                              topTokenBalance;
-                                        },
-                                        style: TextButton.styleFrom(
-                                            padding: EdgeInsets.zero,
-                                            minimumSize: const Size(30, 10),
-                                            tapTargetSize: MaterialTapTargetSize
-                                                .shrinkWrap),
-                                        child: Text(
-                                          "(Max)",
-                                          style: TextStyle(
-                                              color: Styles.blueColor,
-                                              fontSize: 12),
-                                        ))
+                                    MaxAmountButton(
+                                      onPressed: () async {
+                                        //TODO: anukul -  set slider to max 
+                                        var topTokenBalance =
+                                            toAmountDisplayBigInt(
+                                                selectedTopToken!.balance,
+                                                decimals:
+                                                    selectedTopToken!.decimals,
+                                                fractionDigits:
+                                                    selectedTopToken!.decimals);
+                                        await _amountTopUpdated(
+                                            topTokenBalance);
+                                        amountTopController.text =
+                                            topTokenBalance;
+  
+                                      },
+                                    )
                                   ]
                                 ],
                               ),
@@ -468,19 +460,22 @@ class _SwapPageState extends State<SwapPage> {
                         ),
                       ),
                       const Gap(8),
-                SliderStandAlone(rating: rating, onChanged: 
-                (newRating) async {
-                      setState(() {
-                        rating = newRating;
-                        String amountValue = (double.parse(toAmountDisplayBigInt(selectedTopToken!.balance)) *rating)
-                            .toStringAsFixed(2);
-                        amount = amountValue;
-                        amountController.text = amountValue;
-                        amountTopController.text =amountValue;
-                      });
-                      
-                }),
-                Gap(8),
+                      SliderStandAlone(
+                          rating: rating,
+                          onChanged: (newRating) async {
+                            setState(() {
+                              rating = newRating;
+                              String amountValue = (double.parse(
+                                          toAmountDisplayBigInt(
+                                              selectedTopToken!.balance)) *
+                                      rating)
+                                  .toStringAsFixed(2);
+                              amount = amountValue;
+                              amountController.text = amountValue;
+                              amountTopController.text = amountValue;
+                            });
+                          }),
+                      const Gap(8),
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
