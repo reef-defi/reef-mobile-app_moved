@@ -10,6 +10,7 @@ import 'package:reef_mobile_app/model/StorageKey.dart';
 import 'package:reef_mobile_app/model/swap/swap_settings.dart';
 import 'package:reef_mobile_app/model/tokens/TokenWithAmount.dart';
 import 'package:reef_mobile_app/utils/constants.dart';
+import 'package:reef_mobile_app/utils/elements.dart';
 import 'package:reef_mobile_app/utils/functions.dart';
 import 'package:reef_mobile_app/utils/icon_url.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
@@ -40,6 +41,12 @@ class _SwapPageState extends State<SwapPage> {
   String reserveTop = "";
   TextEditingController amountBottomController = TextEditingController();
   String reserveBottom = "";
+
+  double rating = 0;
+
+  TextEditingController amountController = TextEditingController();
+  String amount = "";
+
 
   void _changeSelectedTopToken(TokenWithAmount token) {
     setState(() {
@@ -217,344 +224,391 @@ class _SwapPageState extends State<SwapPage> {
 
   @override
   Widget build(BuildContext context) {
-    return SignatureContentToggle(Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24),
-      child: Column(
-        children: [
-          TextButton(onPressed: _testFindToken, child: Text("Test")),
-          Text(
-            "Swap",
-            style: GoogleFonts.spaceGrotesk(
-                fontWeight: FontWeight.w500,
-                fontSize: 24,
-                color: Colors.grey[800]),
-          ),
-          const Gap(24),
-          Stack(
-              clipBehavior: Clip.none,
-              alignment: Alignment.center,
-              children: [
-                Column(
-                  children: <Widget>[
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(24),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: const Color(0xffe1e2e8)),
-                        borderRadius: BorderRadius.circular(12),
-                        color: Styles.boxBackgroundColor,
-                      ),
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              MaterialButton(
-                                onPressed: () {
-                                  showTokenSelectionModal(context,
-                                      callback: _changeSelectedTopToken);
-                                },
-                                materialTapTargetSize:
-                                    MaterialTapTargetSize.shrinkWrap,
-                                minWidth: 0,
-                                height: 36,
-                                elevation: 0,
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 4, horizontal: 12),
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                    side: const BorderSide(
-                                        color: Colors.black26)),
-                                child: Row(
-                                  children: [
-                                    if (selectedTopToken == null)
-                                      const Text("Select token")
-                                    else ...[
-                                      IconFromUrl(selectedTopToken!.iconUrl),
-                                      const Gap(4),
-                                      Text(selectedTopToken!.symbol),
-                                    ],
-                                    const Gap(4),
-                                    Icon(CupertinoIcons.chevron_down,
-                                        size: 16, color: Styles.textLightColor)
-                                  ],
-                                ),
-                              ),
-                              Expanded(
-                                child: TextField(
-                                  inputFormatters: [
-                                    FilteringTextInputFormatter.allow(
-                                        RegExp(r'[\.0-9]'))
-                                  ],
-                                  keyboardType: TextInputType.number,
-                                  controller: amountTopController,
-                                  onChanged: (text) async {
-                                    await _amountTopUpdated(
-                                        amountTopController.text);
-                                  },
-                                  decoration: InputDecoration(
-                                      constraints:
-                                          const BoxConstraints(maxHeight: 32),
-                                      contentPadding:
-                                          const EdgeInsets.symmetric(
-                                              horizontal: 12, vertical: 8),
-                                      enabledBorder: const OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                            color: Colors.transparent),
-                                      ),
-                                      border: const OutlineInputBorder(),
-                                      focusedBorder: const OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: Colors.transparent,
-                                        ),
-                                      ),
-                                      hintText: '0.0',
-                                      hintStyle: TextStyle(
-                                          color: Styles.textLightColor)),
-                                  textAlign: TextAlign.right,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const Gap(8),
-                          SizedBox(
-                            width: double.infinity,
-                            child: Row(
+    return SignatureContentToggle(Column(children: [
+      const Gap(64),
+      Container(
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(15),
+            color: Styles.primaryBackgroundColor,
+            boxShadow: neumorphicShadow()),
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          children: [
+            const Gap(24),
+            Stack(
+                clipBehavior: Clip.none,
+                alignment: Alignment.center,
+                children: [
+                  Column(
+                    children: <Widget>[
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(24),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: const Color(0xffe1e2e8)),
+                          borderRadius: BorderRadius.circular(12),
+                          color: Styles.boxBackgroundColor,
+                        ),
+                        child: Column(
+                          children: [
+                            Row(
                               children: [
-                                if (selectedTopToken != null) ...[
-                                  Text(
-                                    "Balance: ${toAmountDisplayBigInt(selectedTopToken!.balance, decimals: selectedTopToken!.decimals)} ${selectedTopToken!.symbol}",
-                                    style: TextStyle(
-                                        color: Styles.textLightColor,
-                                        fontSize: 12),
-                                  ),
-                                  TextButton(
-                                      onPressed: () async {
-                                        var topTokenBalance =
-                                            toAmountDisplayBigInt(
-                                                selectedTopToken!.balance,
-                                                decimals:
-                                                    selectedTopToken!.decimals,
-                                                fractionDigits:
-                                                    selectedTopToken!.decimals);
-                                        await _amountTopUpdated(
-                                            topTokenBalance);
-                                        amountTopController.text =
-                                            topTokenBalance;
-                                      },
-                                      style: TextButton.styleFrom(
-                                          padding: EdgeInsets.zero,
-                                          minimumSize: const Size(30, 10),
-                                          tapTargetSize:
-                                              MaterialTapTargetSize.shrinkWrap),
-                                      child: Text(
-                                        "(Max)",
-                                        style: TextStyle(
-                                            color: Styles.blueColor,
-                                            fontSize: 12),
-                                      ))
-                                ]
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                    const Gap(4),
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(24),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: const Color(0xffe1e2e8)),
-                        borderRadius: BorderRadius.circular(12),
-                        color: Styles.boxBackgroundColor,
-                      ),
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              MaterialButton(
-                                onPressed: () {
-                                  showTokenSelectionModal(context,
-                                      callback: _changeSelectedBottomToken);
-                                },
-                                materialTapTargetSize:
-                                    MaterialTapTargetSize.shrinkWrap,
-                                minWidth: 0,
-                                height: 36,
-                                elevation: 0,
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 4, horizontal: 12),
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                    side: const BorderSide(
-                                        color: Colors.black26)),
-                                child: Row(
-                                  children: [
-                                    if (selectedBottomToken == null)
-                                      const Text("Select token")
-                                    else ...[
-                                      IconFromUrl(selectedBottomToken!.iconUrl),
+                                MaterialButton(
+                                  onPressed: () {
+                                    showTokenSelectionModal(context,
+                                        callback: _changeSelectedTopToken);
+                                  },
+                                  materialTapTargetSize:
+                                      MaterialTapTargetSize.shrinkWrap,
+                                  minWidth: 0,
+                                  height: 36,
+                                  elevation: 0,
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 4, horizontal: 12),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                      side: const BorderSide(
+                                          color: Colors.black26)),
+                                  child: Row(
+                                    children: [
+                                      if (selectedTopToken == null)
+                                        const Text("Select token")
+                                      else ...[
+                                        IconFromUrl(selectedTopToken!.iconUrl),
+                                        const Gap(4),
+                                        Text(selectedTopToken!.symbol),
+                                      ],
                                       const Gap(4),
-                                      Text(selectedBottomToken!.symbol),
+                                      Icon(CupertinoIcons.chevron_down,
+                                          size: 16,
+                                          color: Styles.textLightColor)
                                     ],
-                                    const Gap(4),
-                                    Icon(CupertinoIcons.chevron_down,
-                                        size: 16, color: Styles.textLightColor)
-                                  ],
+                                  ),
                                 ),
-                              ),
-                              Expanded(
-                                child: TextField(
+                                Expanded(
+                                  child: TextField(
                                     inputFormatters: [
                                       FilteringTextInputFormatter.allow(
                                           RegExp(r'[\.0-9]'))
                                     ],
                                     keyboardType: TextInputType.number,
-                                    controller: amountBottomController,
+                                    controller: amountTopController,
                                     onChanged: (text) async {
-                                      await _amountBottomUpdated(
-                                          amountBottomController.text);
+                                      await _amountTopUpdated(
+                                          amountTopController.text);
                                     },
                                     decoration: InputDecoration(
-                                        constraints:
-                                            const BoxConstraints(maxHeight: 32),
-                                        contentPadding:
-                                            const EdgeInsets.symmetric(
-                                                horizontal: 12, vertical: 8),
-                                        enabledBorder: const OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                              color: Colors.transparent),
-                                        ),
-                                        border: const OutlineInputBorder(),
-                                        focusedBorder: const OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                            color: Colors.transparent,
-                                          ),
-                                        ),
+                                  constraints:
+                                      const BoxConstraints(maxHeight: 32),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 12, vertical: 8),
+                                  enabledBorder: const OutlineInputBorder(
+                                    borderSide:
+                                        BorderSide(color: Colors.transparent),
+                                  ),
+                                  border: const OutlineInputBorder(),
+                                  focusedBorder: const OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Colors.transparent,
+                                    ),
+                                  ),
                                         hintText: '0.0',
                                         hintStyle: TextStyle(
                                             color: Styles.textLightColor)),
-                                    textAlign: TextAlign.right),
-                              ),
-                            ],
-                          ),
-                          const Gap(8),
-                          SizedBox(
-                            width: double.infinity,
-                            child: Row(
-                              children: [
-                                if (selectedBottomToken != null)
-                                  Text(
-                                    "Balance: ${toAmountDisplayBigInt(selectedBottomToken!.balance, decimals: selectedBottomToken!.decimals)} ${selectedBottomToken!.symbol}",
-                                    style: TextStyle(
-                                        color: Styles.textLightColor,
-                                        fontSize: 12),
-                                  )
+                                    textAlign: TextAlign.right,
+                                  ),
+                                ),
                               ],
                             ),
-                          )
-                        ],
-                      ),
-                    ),
-                    const Gap(8),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14)),
-                      shadowColor: const Color(0x559d6cff),
-                      elevation: 0,
-                      backgroundColor: (selectedTopToken == null ||
-                                  selectedTopToken!.amount <= BigInt.zero ||
-                                  selectedBottomToken == null ||
-                                  selectedBottomToken!.amount <= BigInt.zero)
-? const Color(0xffe6e2f1)
-                          : Colors.transparent,
-                         padding: const EdgeInsets.all(0),
+                            const Gap(8),
+                            SizedBox(
+                              width: double.infinity,
+                              child: Row(
+                                children: [
+                                  if (selectedTopToken != null) ...[
+                                    Text(
+                                      "Balance: ${toAmountDisplayBigInt(selectedTopToken!.balance, decimals: selectedTopToken!.decimals)} ${selectedTopToken!.symbol}",
+                                      style: TextStyle(
+                                          color: Styles.textLightColor,
+                                          fontSize: 12),
+                                    ),
+                                    TextButton(
+                                        onPressed: () async {
+                                          var topTokenBalance =
+                                              toAmountDisplayBigInt(
+                                                  selectedTopToken!.balance,
+                                                  decimals: selectedTopToken!
+                                                      .decimals,
+                                                  fractionDigits:
+                                                      selectedTopToken!
+                                                          .decimals);
+                                          await _amountTopUpdated(
+                                              topTokenBalance);
+                                          amountTopController.text =
+                                              topTokenBalance;
+                                        },
+                                        style: TextButton.styleFrom(
+                                            padding: EdgeInsets.zero,
+                                            minimumSize: const Size(30, 10),
+                                            tapTargetSize: MaterialTapTargetSize
+                                                .shrinkWrap),
+                                        child: Text(
+                                          "(Max)",
+                                          style: TextStyle(
+                                              color: Styles.blueColor,
+                                              fontSize: 12),
+                                        ))
+                                  ]
+                                ],
+                              ),
+                            )
+                          ],
                         ),
-                        onPressed: () {
-                          if (selectedTopToken == null ||
-                              selectedTopToken!.amount <= BigInt.zero ||
-                              selectedBottomToken == null ||
-                              selectedBottomToken!.amount <= BigInt.zero) {
-                            return;
-                          }
-                          _executeSwap();
-                        },
-                        child: Ink(
-                         width: double.infinity,
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 15, horizontal: 22),
-                      decoration: BoxDecoration(
-                        color: const Color(0xffe6e2f1),
-                        gradient: (selectedTopToken == null ||
-                              selectedTopToken!.amount <= BigInt.zero ||
-                              selectedBottomToken == null ||
-                              selectedBottomToken!.amount <= BigInt.zero)
-                            ? null
-                            : const LinearGradient(colors: [
-                                Color(0xffae27a5),
-                                Color(0xff742cb2),
-                              ]),
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(14.0)),
                       ),
-                          child: Center(
-                            child: Text(
-                              // TODO changes not reflected in UI
-                              (selectedTopToken == null
-                                  ? "Select sell token"
-                                  : selectedBottomToken == null
-                                      ? "Select buy token"
-                                      : selectedTopToken!.amount <= BigInt.zero ||
-                                              selectedBottomToken!.amount <=
-                                                  BigInt.zero
-                                          ? "Insert amount"
-                                          : "Swap"),
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w700,
+                      const Gap(4),
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(24),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: const Color(0xffe1e2e8)),
+                          borderRadius: BorderRadius.circular(12),
+                          color: Styles.boxBackgroundColor,
+                        ),
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                MaterialButton(
+                                  onPressed: () {
+                                    showTokenSelectionModal(context,
+                                        callback: _changeSelectedBottomToken);
+                                  },
+                                  materialTapTargetSize:
+                                      MaterialTapTargetSize.shrinkWrap,
+                                  minWidth: 0,
+                                  height: 36,
+                                  elevation: 0,
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 4, horizontal: 12),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                      side: const BorderSide(
+                                          color: Colors.black26)),
+                                  child: Row(
+                                    children: [
+                                      if (selectedBottomToken == null)
+                                        const Text("Select token")
+                                      else ...[
+                                        IconFromUrl(
+                                            selectedBottomToken!.iconUrl),
+                                        const Gap(4),
+                                        Text(selectedBottomToken!.symbol),
+                                      ],
+                                      const Gap(4),
+                                      Icon(CupertinoIcons.chevron_down,
+                                          size: 16,
+                                          color: Styles.textLightColor)
+                                    ],
+                                  ),
+                                ),
+                                Expanded(
+                                  child: TextField(
+                                      inputFormatters: [
+                                        FilteringTextInputFormatter.allow(
+                                            RegExp(r'[\.0-9]'))
+                                      ],
+                                      keyboardType: TextInputType.number,
+                                      controller: amountBottomController,
+                                      onChanged: (text) async {
+                                        await _amountBottomUpdated(
+                                            amountBottomController.text);
+                                      },
+                                      decoration: InputDecoration(
+                                          constraints: const BoxConstraints(
+                                              maxHeight: 32),
+                                          contentPadding:
+                                              const EdgeInsets.symmetric(
+                                                  horizontal: 12, vertical: 8),
+                                          enabledBorder:
+                                              const OutlineInputBorder(
+                                            borderSide: BorderSide(
+                                                color: Colors.transparent),
+                                          ),
+                                          border: const OutlineInputBorder(),
+                                          focusedBorder:
+                                              const OutlineInputBorder(
+                                            borderSide: BorderSide(
+                                              color: Colors.transparent,
+                                            ),
+                                          ),
+                                          hintText: '0.0',
+                                          hintStyle: TextStyle(
+                                              color: Styles.textLightColor)),
+                                      textAlign: TextAlign.right),
+                                ),
+                              ],
+                            ),
+                            const Gap(8),
+                            SizedBox(
+                              width: double.infinity,
+                              child: Row(
+                                children: [
+                                  if (selectedBottomToken != null)
+                                    Text(
+                                      "Balance: ${toAmountDisplayBigInt(selectedBottomToken!.balance, decimals: selectedBottomToken!.decimals)} ${selectedBottomToken!.symbol}",
+                                      style: TextStyle(
+                                          color: Styles.textLightColor,
+                                          fontSize: 12),
+                                    )
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                      const Gap(8),
+                      SliderTheme(
+                  data: SliderThemeData(
+                      showValueIndicator: ShowValueIndicator.never,
+                      overlayShape: SliderComponentShape.noOverlay,
+                      valueIndicatorShape: PaddleSliderValueIndicatorShape(),
+                      valueIndicatorColor: Color(0xff742cb2),
+                      thumbColor: const Color(0xff742cb2),
+                      inactiveTickMarkColor: Color(0xffc0b8dc),
+                      trackShape: const GradientRectSliderTrackShape(
+                          gradient: LinearGradient(colors: <Color>[
+                            Color(0xffae27a5),
+                            Color(0xff742cb2),
+                          ]),
+                          darkenInactive: true),
+                      activeTickMarkColor: const Color(0xffffffff),
+                      tickMarkShape:
+                          const RoundSliderTickMarkShape(tickMarkRadius: 4),
+                      thumbShape: const ThumbShape()),
+                  child: Slider(
+                    value: rating,
+                    onChanged: (newRating) async {
+                      setState(() {
+                        rating = newRating;
+                        String amountValue = (double.parse(
+                                    toAmountDisplayBigInt(
+                                        selectedTopToken!.balance)) *
+                                rating)
+                            .toStringAsFixed(2);
+                        amount = amountValue;
+                        amountController.text = amountValue;
+                        amountTopController.text =amountValue;
+                      });
+                      setState(() async {
+                        // valError = await _validate(address, selectedToken);
+                      });
+                    },
+                    divisions: 100,
+                    label: "${(rating * 100).toInt()}%",
+                  ),
+                ),
+                Gap(8),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14)),
+                            shadowColor: const Color(0x559d6cff),
+                            elevation: 0,
+                            backgroundColor: (selectedTopToken == null ||
+                                    selectedTopToken!.amount <= BigInt.zero ||
+                                    selectedBottomToken == null ||
+                                    selectedBottomToken!.amount <= BigInt.zero)
+                                ? const Color(0xffe6e2f1)
+                                : Colors.transparent,
+                            padding: const EdgeInsets.all(0),
+                          ),
+                          onPressed: () {
+                            if (selectedTopToken == null ||
+                                selectedTopToken!.amount <= BigInt.zero ||
+                                selectedBottomToken == null ||
+                                selectedBottomToken!.amount <= BigInt.zero) {
+                              return;
+                            }
+                            _executeSwap();
+                          },
+                          child: Ink(
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 15, horizontal: 22),
+                            decoration: BoxDecoration(
+                              color: const Color(0xffe6e2f1),
+                              gradient: (selectedTopToken == null ||
+                                      selectedTopToken!.amount <= BigInt.zero ||
+                                      selectedBottomToken == null ||
+                                      selectedBottomToken!.amount <=
+                                          BigInt.zero)
+                                  ? null
+                                  : const LinearGradient(colors: [
+                                      Color(0xffae27a5),
+                                      Color(0xff742cb2),
+                                    ]),
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(14.0)),
+                            ),
+                            child: Center(
+                              child: Text(
+                                // TODO changes not reflected in UI
+                                (selectedTopToken == null
+                                    ? "Select sell token"
+                                    : selectedBottomToken == null
+                                        ? "Select buy token"
+                                        : selectedTopToken!.amount <=
+                                                    BigInt.zero ||
+                                                selectedBottomToken!.amount <=
+                                                    BigInt.zero
+                                            ? "Insert amount"
+                                            : "Swap"),
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700,
+                                ),
                               ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-                Positioned(
-                  top: 96,
-                  child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(4),
-                        border: Border.all(
-                            width: 0.5, color: const Color(0xffe1e2e8)),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Color(0x15000000),
-                            blurRadius: 1,
-                            offset: Offset(0, 1),
-                          )
-                        ],
-                        color: Styles.boxBackgroundColor,
-                      ),
-                      height: 28,
-                      width: 28,
-                      child: IconButton(
-                        icon: Icon(
-                          CupertinoIcons.arrow_down,
-                          color: Styles.textLightColor,
-                          size: 12,
+                    ],
+                  ),
+                  Positioned(
+                    top: 96,
+                    child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(4),
+                          border: Border.all(
+                              width: 0.5, color: const Color(0xffe1e2e8)),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Color(0x15000000),
+                              blurRadius: 1,
+                              offset: Offset(0, 1),
+                            )
+                          ],
+                          color: Styles.boxBackgroundColor,
                         ),
-                        onPressed: () {
-                          _switchTokens();
-                        },
-                      )),
-                ),
-              ]),
-        ],
+                        height: 28,
+                        width: 28,
+                        child: IconButton(
+                          icon: Icon(
+                            CupertinoIcons.arrow_down,
+                            color: Styles.textLightColor,
+                            size: 12,
+                          ),
+                          onPressed: () {
+                            _switchTokens();
+                          },
+                        )),
+                  ),
+                ]),
+          ],
+        ),
       ),
-    ));
+    ]));
   }
 }
