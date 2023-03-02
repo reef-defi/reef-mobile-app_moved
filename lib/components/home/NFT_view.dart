@@ -30,7 +30,7 @@ class _NFTViewState extends State<NFTView> {
         onLongPress: () {
           _popupDialog = _createPopupDialog(dialogKey, name, url, balance);
           HapticFeedback.lightImpact();
-          Overlay.of(context)?.insert(_popupDialog!);
+          Overlay.of(context).insert(_popupDialog!);
         },
         onLongPressEnd: (details) async {
           await dialogKey.currentState?.controller

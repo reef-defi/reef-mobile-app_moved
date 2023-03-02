@@ -25,23 +25,6 @@ mixin _$AppConfigModel on _AppConfigModel, Store {
     });
   }
 
-  late final _$navigateOnAccountSwitchAtom =
-      Atom(name: '_AppConfigModel.navigateOnAccountSwitch', context: context);
-
-  @override
-  bool get navigateOnAccountSwitch {
-    _$navigateOnAccountSwitchAtom.reportRead();
-    return super.navigateOnAccountSwitch;
-  }
-
-  @override
-  set navigateOnAccountSwitch(bool value) {
-    _$navigateOnAccountSwitchAtom
-        .reportWrite(value, super.navigateOnAccountSwitch, () {
-      super.navigateOnAccountSwitch = value;
-    });
-  }
-
   late final _$_AppConfigModelActionController =
       ActionController(name: '_AppConfigModel', context: context);
 
@@ -57,21 +40,9 @@ mixin _$AppConfigModel on _AppConfigModel, Store {
   }
 
   @override
-  void setNavigateOnAccountSwitch(bool val) {
-    final _$actionInfo = _$_AppConfigModelActionController.startAction(
-        name: '_AppConfigModel.setNavigateOnAccountSwitch');
-    try {
-      return super.setNavigateOnAccountSwitch(val);
-    } finally {
-      _$_AppConfigModelActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
   String toString() {
     return '''
-displayBalance: ${displayBalance},
-navigateOnAccountSwitch: ${navigateOnAccountSwitch}
+displayBalance: ${displayBalance}
     ''';
   }
 }
