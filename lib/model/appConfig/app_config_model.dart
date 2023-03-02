@@ -9,9 +9,17 @@ abstract class _AppConfigModel with Store {
   @observable
   bool displayBalance = false;
 
+  @observable
+  bool navigateOnAccountSwitch = true;
+
   @action
   void setDisplayBalance(bool val) {
-    displayBalance=val;
+    displayBalance = val;
+  }
+
+  @action
+  void setNavigateOnAccountSwitch(bool val) {
+    navigateOnAccountSwitch = val;
   }
 
 }
