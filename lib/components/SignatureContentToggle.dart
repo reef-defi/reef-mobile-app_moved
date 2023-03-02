@@ -211,7 +211,7 @@ class LoadingIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Observer(
       builder: (_) => signatureReq?.fetchMethodDataFuture.status == FutureStatus.pending
-          ? const LinearProgressIndicator()
+          ? Expanded(child: const LinearProgressIndicator())
           : Container());
 }
 
@@ -226,8 +226,11 @@ class MethodDataDisplay extends StatelessWidget {
           child: Observer(
               builder: (_) {
                 if (signatureReq!=null && signatureReq!.hasResults) {
-                  // if it has .evm property display evm content
-                  return Text('render method data here');
+                  var isEVM = signatureReq?.decodedMethod['evm']['contractAddress']!=null;
+                  print('EVM DATA= ${signatureReq?.decodedMethod['evm']}');
+                  //TODO display title if it's evm or native, display method name, parameter names and values
+                  // if native also display info
+                  return Text('render method data here / evm=$isEVM / ${signatureReq?.decodedMethod['methodName']}');
                 }
 
                 return Container();

@@ -38,7 +38,7 @@ abstract class _SignatureRequest with Store {
   @action
   Future<dynamic> decodeMethod() async {
     decodedMethod = {};
-    final future = _signingCtrl.decodeSignatureMethod(payload.method);
+    final future = _signingCtrl.decodeMethod(payload.method);
     fetchMethodDataFuture = ObservableFuture(future);
 
     return decodedMethod = await future;

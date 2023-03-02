@@ -363,7 +363,7 @@ Future<TxDecodedData> _getTxDecodedData(SignatureRequest request) async {
           int.parse(request.payload.specVersion.substring(2), radix: 16)) {
     types = metadata.types;
     final decodedMethod = await ReefAppState.instance.signingCtrl
-        .decodeMethod(request.payload.method, types);
+        .decodeMethod(request.payload.method, types: types);
     txDecodedData.methodName = decodedMethod["methodName"];
     const jsonEncoder = JsonEncoder.withIndent("  ");
     txDecodedData.args = jsonEncoder.convert(decodedMethod["args"]);

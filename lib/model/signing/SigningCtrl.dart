@@ -29,8 +29,7 @@ class SigningCtrl {
       jsApi.jsPromise(
           'window.signApi.signPayloadPromise(`$address`, ${jsonEncode(payload)})');
 
-  Future<dynamic> decodeMethod(String data, dynamic types) => jsApi
-      .jsPromise('window.utils.decodeMethod(`$data`, ${jsonEncode(types)})');
+  Future<dynamic> decodeMethod(String data, {dynamic types})=>types==null?jsApi.jsPromise('window.utils.decodeMethod(`$data`)') : jsApi.jsPromise('window.utils.decodeMethod(`$data`, ${jsonEncode(types)})');
 
   Future<dynamic> bytesString(String bytes) =>
       jsApi.jsPromise('window.utils.bytesString("$bytes")');
@@ -87,14 +86,5 @@ class SigningCtrl {
   void rejectSignature(String signatureIdent) {
     signatureRequests.remove(signatureIdent);
     jsApi.rejectTxSignature(signatureIdent);
-  }
-
-  Future<dynamic> decodeSignatureMethod(String methodData) {
-    // TODO will use js later
-    return Future.delayed(Duration(seconds: 3), (){
-      var decodedMethod={};
-      decodedMethod['methodName']='hello';
-      return decodedMethod;
-    });
   }
 }
