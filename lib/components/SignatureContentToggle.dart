@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:gap/gap.dart';
+import 'package:mobx/mobx.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/signing/signature_request.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
@@ -12,22 +13,6 @@ class SignatureContentToggle extends StatelessObserverWidget {
   final Widget content;
 
   const SignatureContentToggle(this.content, {Key? key}) : super(key: key);
-
-  void _decodeMethod(dynamic request) async {
-    dynamic types;
-    var metadata = await ReefAppState.instance.storage
-        .getMetadata(request.payload.genesisHash);
-    if (metadata != null &&
-        metadata.specVersion ==
-            int.parse(request.payload.specVersion.substring(2), radix: 16)) {
-      types = metadata.types;
-    }
-    var res = await ReefAppState.instance.signingCtrl
-        .decodeMethod(request.payload.method, types);
-
-    // TODO also get ABI from contract (res['args'][0]) and decode ethers.decode res['args'][1] EVM arguments - https://app.clickup.com/t/861me3nvy
-    print(res);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -115,7 +100,9 @@ class SignatureContentToggle extends StatelessObserverWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        ElevatedButton(
+                        LoadingIndicator(signatureRequest),
+                        MethodDataDisplay(signatureRequest),
+                        /*ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(40)),
@@ -140,7 +127,7 @@ class SignatureContentToggle extends StatelessObserverWidget {
                               ),
                             ],
                           ),
-                        ),
+                        ),*/
                         const Gap(10),
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
@@ -215,4 +202,34 @@ class SignatureContentToggle extends StatelessObserverWidget {
     ReefAppState.instance.signingCtrl
         .rejectSignature(signatureRequest.signatureIdent);
   }
+}
+class LoadingIndicator extends StatelessWidget {
+  const LoadingIndicator(this.signatureReq, {Key? key}) : super(key: key);
+
+  final SignatureRequest? signatureReq;
+
+  @override
+  Widget build(BuildContext context) => Observer(
+      builder: (_) => signatureReq?.fetchMethodDataFuture.status == FutureStatus.pending
+          ? const LinearProgressIndicator()
+          : Container());
+}
+
+class MethodDataDisplay extends StatelessWidget {
+  const MethodDataDisplay(this.signatureReq, {Key? key}) : super(key: key);
+
+  final SignatureRequest? signatureReq;
+
+  @override
+  Widget build(BuildContext context) =>
+      Expanded(
+          child: Observer(
+              builder: (_) {
+                if (signatureReq!=null && signatureReq!.hasResults) {
+                  // if it has .evm property display evm content
+                  return Text('render method data here');
+                }
+
+                return Container();
+              }));
 }

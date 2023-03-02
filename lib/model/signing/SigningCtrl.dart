@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:mobx/src/api/store.dart';
@@ -16,6 +17,7 @@ class SigningCtrl {
   SigningCtrl(this.jsApi, this.storage, this.signatureRequests) {
     jsApi.jsTxSignatureConfirmationMessageSubj.listen((jsApiMessage) {
       var signatureRequest = _buildSignatureRequest(jsApiMessage);
+      signatureRequest.decodeMethod();
       signatureRequests.add(signatureRequest);
     });
   }
@@ -45,7 +47,19 @@ class SigningCtrl {
     jsApi.confirmTxSignature(sigConfirmationIdent, account.mnemonic);
   }
 
-  _buildSignatureRequest(JsApiMessage jsApiMessage) {
+  Future<dynamic> getTypes(String genesisHash, String specVersion)async{
+    dynamic types;
+    var metadata = await storage
+        .getMetadata(genesisHash);
+    if (metadata != null &&
+        metadata.specVersion ==
+            int.parse(specVersion.substring(2), radix: 16)) {
+      types = metadata.types;
+    }
+    return types;
+  }
+
+  SignatureRequest _buildSignatureRequest(JsApiMessage jsApiMessage) {
     var signatureIdent = jsApiMessage.reqId;
     Store payload;
     if (jsApiMessage.value["data"] != null) {
@@ -67,11 +81,20 @@ class SigningCtrl {
           jsApiMessage.value["version"]);
     }
 
-    return SignatureRequest(signatureIdent, payload);
+    return SignatureRequest(signatureIdent, payload, this);
   }
 
   void rejectSignature(String signatureIdent) {
     signatureRequests.remove(signatureIdent);
     jsApi.rejectTxSignature(signatureIdent);
+  }
+
+  Future<dynamic> decodeSignatureMethod(String methodData) {
+    // TODO will use js later
+    return Future.delayed(Duration(seconds: 3), (){
+      var decodedMethod={};
+      decodedMethod['methodName']='hello';
+      return decodedMethod;
+    });
   }
 }
