@@ -181,6 +181,12 @@ class _SignModalState extends State<SignModal> {
     return isAvailable && isDeviceSupported;
   }
 
+  @override
+  void dispose(){
+    super.dispose();
+    _passwordController.dispose();
+  }
+
   Future<void> authenticateWithPassword(String value) async {
     final storedPassword =
         await ReefAppState.instance.storage.getValue(StorageKey.password.name);
