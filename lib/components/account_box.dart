@@ -30,137 +30,135 @@ class AccountBox extends StatefulWidget {
 
   @override
   State<AccountBox> createState() => _AccountBoxState();
-  void SelectAccount(){
-  this.onSelected;
 }
-}
-
 
 class _AccountBoxState extends State<AccountBox> {
   bool showBalance = true;
 
   @override
   Widget build(BuildContext context) {
-    return PhysicalModel(
-        borderRadius: BorderRadius.circular(15),
-        elevation: 4,
-        color: Colors.transparent,
-        child: Container(
-          width: double.infinity,
-          decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                  begin: Alignment(0, 0.2),
-                  end: Alignment(0.1, 1.3),
-                  colors: [
-                    Color.fromARGB(198, 37, 19, 79),
-                    Color.fromARGB(53, 110, 27, 117),
-                  ]),
-              border: Border.all(
-                  color: !widget.selected
-                      ? Color(Styles.purpleColor.value)
-                      : Color(Styles.purpleColor.value),
-                  width: widget.selected ? 3 : 0),
-              borderRadius: BorderRadius.circular(15)),
-          child: Stack(
-            children: [
-              if (widget.selected)
-                Positioned(
-                    top: 0,
-                    right: 0,
-                    child: Container(
-                      padding: const EdgeInsets.only(
-                          left: 12, bottom: 5, right: 10, top: 2),
-                      decoration: BoxDecoration(
-                          color: Styles.purpleColor,
-                          borderRadius: const BorderRadius.only(
-                              bottomLeft: Radius.circular(15),
-                              topRight: Radius.circular(12))),
-                      child: Text(
-                        AppLocalizations.of(context)!.selected,
-                        style: TextStyle(
-                            color: Styles.whiteColor,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 12),
-                      ),
-                    )),
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 8, vertical: 24.0),
-                child: Flex(
-                  direction: Axis.horizontal,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(children: [
-                      GestureDetector(
-                        onTap: () => choiceAction(
-                            AppLocalizations.of(context)!.share_evm_qr,
-                            context,
-                            widget.reefAccountFDM.data,widget.onSelected),
-                        child: Container(
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.black12,
-                          ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(64),
-                            child: widget.reefAccountFDM.data.iconSVG != null
-                                ? SvgPicture.string(
-                                    widget.reefAccountFDM.data.iconSVG!,
-                                    height: 64,
-                                    width: 64,
-                                  )
-                                : const SizedBox(
-                                    width: 64,
-                                    height: 64,
-                                  ),
+    return InkWell(
+      onTap: widget.onSelected,
+      child: PhysicalModel(
+          borderRadius: BorderRadius.circular(15),
+          elevation: 4,
+          color: Colors.transparent,
+          child: Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                    begin: Alignment(0, 0.2),
+                    end: Alignment(0.1, 1.3),
+                    colors: [
+                      Color.fromARGB(198, 37, 19, 79),
+                      Color.fromARGB(53, 110, 27, 117),
+                    ]),
+                border: Border.all(
+                    color: !widget.selected
+                        ? Color(Styles.purpleColor.value)
+                        : Color(Styles.purpleColor.value),
+                    width: widget.selected ? 3 : 0),
+                borderRadius: BorderRadius.circular(15)),
+            child: Stack(
+              children: [
+                if (widget.selected)
+                  Positioned(
+                      top: 0,
+                      right: 0,
+                      child: Container(
+                        padding: const EdgeInsets.only(
+                            left: 12, bottom: 5, right: 10, top: 2),
+                        decoration: BoxDecoration(
+                            color: Styles.purpleColor,
+                            borderRadius: const BorderRadius.only(
+                                bottomLeft: Radius.circular(15),
+                                topRight: Radius.circular(12))),
+                        child: Text(
+                          AppLocalizations.of(context)!.selected,
+                          style: TextStyle(
+                              color: Styles.whiteColor,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 12),
+                        ),
+                      )),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 24.0),
+                  child: Flex(
+                    direction: Axis.horizontal,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(children: [
+                        GestureDetector(
+                          onTap: () => choiceAction(
+                              AppLocalizations.of(context)!.share_evm_qr,
+                              context,
+                              widget.reefAccountFDM.data),
+                          child: Container(
+                            decoration: const BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.black12,
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(64),
+                              child: widget.reefAccountFDM.data.iconSVG != null
+                                  ? SvgPicture.string(
+                                      widget.reefAccountFDM.data.iconSVG!,
+                                      height: 64,
+                                      width: 64,
+                                    )
+                                  : const SizedBox(
+                                      width: 64,
+                                      height: 64,
+                                    ),
+                            ),
                           ),
                         ),
-                      ),
-                    ]),
-                    Expanded(
-                        child: Padding(
-                      padding: const EdgeInsets.only(left: 10),
-                      child: buildCentralColumn(widget.reefAccountFDM),
-                    )),
-                    if (widget.showOptions)
-                      Column(
-                        children: [
-                          PopupMenuButton<String>(
-                            icon: Icon(
-                              Icons.more_vert,
-                              color: Colors.grey.shade100,
+                      ]),
+                      Expanded(
+                          child: Padding(
+                        padding: const EdgeInsets.only(left: 10),
+                        child: buildCentralColumn(widget.reefAccountFDM),
+                      )),
+                      if (widget.showOptions)
+                        Column(
+                          children: [
+                            PopupMenuButton<String>(
+                              icon: Icon(
+                                Icons.more_vert,
+                                color: Colors.grey.shade100,
+                              ),
+                              enableFeedback: true,
+                              onSelected: (String choice) {
+                                choiceAction(choice, context,
+                                    widget.reefAccountFDM.data);
+                              },
+                              tooltip:
+                                  AppLocalizations.of(context)!.more_actions,
+                              itemBuilder: (BuildContext context) {
+                                return Constants(
+                                  delete: AppLocalizations.of(context)!.delete,
+                                  shareAddressQr: AppLocalizations.of(context)!
+                                      .share_address_qr,
+                                  shareEvmQr: AppLocalizations.of(context)!
+                                      .share_evm_qr,
+                                ).getConstants().map((String choice) {
+                                  return PopupMenuItem<String>(
+                                    value: choice,
+                                    child: Text(choice),
+                                  );
+                                }).toList();
+                              },
                             ),
-                            enableFeedback: true,
-                            onSelected: (String choice) {
-                              choiceAction(choice, context,
-                                  widget.reefAccountFDM.data,widget.onSelected);
-                            },
-                            tooltip:
-                                AppLocalizations.of(context)!.more_actions,
-                            itemBuilder: (BuildContext context) {
-                              return Constants(
-                                delete: AppLocalizations.of(context)!.delete,
-                                shareAddressQr: AppLocalizations.of(context)!
-                                    .share_address_qr,
-                                shareEvmQr: AppLocalizations.of(context)!
-                                    .share_evm_qr,
-                                selectAccount: AppLocalizations.of(context)!.select_account,
-                              ).getConstants().map((String choice) {
-                                return PopupMenuItem<String>(
-                                  value: choice,
-                                  child: Text(choice),
-                                );
-                              }).toList();
-                            },
-                          ),
-                        ],
-                      )
-                  ],
+                          ],
+                        )
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ));
+              ],
+            ),
+          )),
+    );
   }
 
   Widget buildCentralColumn(StatusDataObject<ReefAccount> reefAccount) {
@@ -281,17 +279,15 @@ class Constants {
   final String delete;
   final String shareAddressQr;
   final String shareEvmQr;
-  final String selectAccount;
 
   Constants({
     required this.delete,
     required this.shareAddressQr,
     required this.shareEvmQr,
-    required this.selectAccount,
   });
 
   List<String> getConstants() {
-    return [selectAccount,shareEvmQr, shareAddressQr, delete];
+    return [shareEvmQr, shareAddressQr, delete];
   }
 }
 
@@ -336,12 +332,11 @@ showAlertDialog(BuildContext context, ReefAccount signer) {
 }
 
 void choiceAction(
-    String choice, BuildContext context, ReefAccount account,VoidCallback onSelected) async {
+    String choice, BuildContext context, ReefAccount account) async {
   Constants localizedConstants = Constants(
     delete: AppLocalizations.of(context)!.delete,
     shareAddressQr: AppLocalizations.of(context)!.share_address_qr,
     shareEvmQr: AppLocalizations.of(context)!.share_evm_qr,
-    selectAccount: AppLocalizations.of(context)!.select_account,
   );
   if (choice == AppLocalizations.of(context)!.delete) {
     showAlertDialog(context, account);
@@ -352,7 +347,5 @@ void choiceAction(
     }
   } else if (choice == AppLocalizations.of(context)!.share_address_qr) {
     showQrCode(AppLocalizations.of(context)!.share_address_qr, account.address);
-  }else if (choice == AppLocalizations.of(context)!.select_account) {
-    onSelected();
   }
 }
