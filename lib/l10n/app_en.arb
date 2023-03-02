@@ -93,5 +93,6 @@
   "evm_address_qr": "EVM Address QR",
   "delete_account":"Delete Account",
   "share_evm_qr":"Share EVM Address",
-  "share_address_qr":"Share Native Address"
+  "share_address_qr":"Share Native Address",
+  "select_account":"Select Account"
 }
