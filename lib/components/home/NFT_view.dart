@@ -21,8 +21,6 @@ class NFTView extends StatefulWidget {
 }
 
 class _NFTViewState extends State<NFTView> {
-  final snackBar = const SnackBar(content: Text('Image is tapped.'));
-
   OverlayEntry? _popupDialog;
 
   Widget _createGridTileCard(String name, String url, int balance) {
