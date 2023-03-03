@@ -163,15 +163,15 @@ class _ActivityViewState extends State<ActivityView> {
 
   @override
   Widget build(BuildContext context) {
-    print(ReefAppState.instance.model.tokens.txHistory.data.map((item) => [
-          item.token,
-          item.isInbound,
-          item.extrinsic,
-          item.timestamp,
-          item.tokenNFT,
-          item.url,
-          item.token?.iconUrl ?? item.tokenNFT?.iconUrl,
-        ]));
+    // print(ReefAppState.instance.model.tokens.txHistory.data.map((item) => [
+    //       item.token,
+    //       item.isInbound,
+    //       item.extrinsic,
+    //       item.timestamp,
+    //       item.tokenNFT,
+    //       item.url,
+    //       item.token?.iconUrl ?? item.tokenNFT?.iconUrl,
+    //     ]));
      
     return Observer(builder: (_) {
       String? message = getFdmListMessage(
