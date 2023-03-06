@@ -8,7 +8,6 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:gap/gap.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:reef_mobile_app/components/account_box.dart';
-import 'package:reef_mobile_app/components/modals/bind_modal.dart';
 import 'package:reef_mobile_app/model/StorageKey.dart';
 import 'package:reef_mobile_app/model/navigation/navigation_model.dart';
 import 'package:mobx/mobx.dart';
@@ -69,14 +68,7 @@ class SignatureContentToggle extends StatelessObserverWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                Text(
-                  "Transaction Details",
-                  style: TextStyle(
-                    fontSize: 26,
-                    fontWeight: FontWeight.bold,
-                    color: Styles.textColor,
-                  ),
-                ),
+                
                 Gap(4),
                 // ElevatedButton(
                 //     onPressed: () {
@@ -324,32 +316,42 @@ class _MethodDataDisplayState extends State<MethodDataDisplay> {
                   List<TableRow> detailsTable = snapshot.data![0];
                   var account = snapshot.data![1];
                   var decodedData = snapshot.data![2];
-                  return Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: isEVM || isTransaction
-                        ? Column(
-                            children: [
-                              // Text(
-                              //     'render method data here / evm=$isEVM / ${widget.signatureReq?.decodedMethod['methodName']}'),
-                              AccountBox(
-                                  reefAccountFDM: account,
-                                  selected: false,
-                                  onSelected: () => {},
-                                  showOptions: false),
-                              const Gap(16),
-                              Table(
-                                columnWidths: const {
-                                  0: IntrinsicColumnWidth(),
-                                  1: FlexColumnWidth(4),
-                                },
-                                children: detailsTable,
-                              ),
-                              decodedData != ""
+                  return Column(
+                    children: [
+                      Text(
+                  AppLocalizations.of(context)!.transaction_details,
+                  style: TextStyle(
+                    fontSize: 26,
+                    fontWeight: FontWeight.bold,
+                    color: Styles.textColor,
+                  ),
+                ),
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: isEVM || isTransaction
+                            ? Column(
+                                children: [
+                                  // Text(
+                                  //     'render method data here / evm=$isEVM / ${widget.signatureReq?.decodedMethod['methodName']}'),
+                                  AccountBox(
+                                      reefAccountFDM: account,
+                                      selected: false,
+                                      onSelected: () => {},
+                                      showOptions: false),
+                                  const Gap(16),
+                                  Table(
+                                    columnWidths: const {
+                                      0: IntrinsicColumnWidth(),
+                                      1: FlexColumnWidth(4),
+                                    },
+                                    children: detailsTable,
+                                  ),
+                                  decodedData != ""
   ? Container(
       height: 80, // set the height as per your requirement
       child: Column(
         children: [
-          Text("Decoded Data",style: TextStyle(
+          Text(AppLocalizations.of(context)!.decoded_data,style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
                 color: Styles.primaryAccentColor,
@@ -369,189 +371,198 @@ class _MethodDataDisplayState extends State<MethodDataDisplay> {
     )
   : const Gap(0),
 
-                              if (!_biometricsIsAvailable) ...[
-                                const Divider(
-                                  color: Styles.textLightColor,
-                                  thickness: 1,
-                                ),
-                                const Gap(12),
-                                const Text(
-                                  "PASSWORD FOR REEF APP",
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                      color: Styles.textLightColor),
-                                ),
-                                const Gap(8),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 12, vertical: 14),
-                                  decoration: BoxDecoration(
-                                    color: Styles.whiteColor,
-                                    borderRadius: BorderRadius.circular(12),
-                                    border: Border.all(
-                                      color: const Color(0x20000000),
-                                      width: 1,
+                                  if (!_biometricsIsAvailable) ...[
+                                    const Divider(
+                                      color: Styles.textLightColor,
+                                      thickness: 1,
                                     ),
-                                  ),
-                                  child: TextField(
-                                    controller: _passwordController,
-                                    obscureText: true,
-                                    decoration: const InputDecoration.collapsed(
-                                        hintText: ''),
-                                    style: const TextStyle(
-                                      fontSize: 16,
+                                    const Gap(12),
+                                    Text(
+                                      AppLocalizations.of(context)!
+                                                      .password_for_reef_app,
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                          color: Styles.textLightColor),
                                     ),
-                                  ),
-                                ),
-                                const Gap(8),
-                                if (_wrongPassword)
-                                  Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Icon(
-                                        CupertinoIcons
-                                            .exclamationmark_triangle_fill,
-                                        color: Styles.errorColor,
-                                        size: 16,
-                                      ),
-                                      const Gap(8),
-                                      Flexible(
-                                        child: Text(
-                                          "Password is incorrect",
-                                          style: TextStyle(
-                                              color: Colors.grey[600],
-                                              fontSize: 13),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                Row(
-                                  children: [
+                                    const Gap(8),
                                     Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 12, vertical: 14),
                                       decoration: BoxDecoration(
+                                        color: Styles.whiteColor,
                                         borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      width: 240.0,
-                                      child: ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(40)),
-                                          shadowColor: const Color(0x559d6cff),
-                                          elevation: 5,
-                                          backgroundColor:
-                                              Styles.secondaryAccentColor,
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 16),
+                                        border: Border.all(
+                                          color: const Color(0x20000000),
+                                          width: 1,
                                         ),
-                                        onPressed: () {
-                                          if (_biometricsIsAvailable) {
-                                            authenticateWithBiometrics();
-                                          } else {
-                                            authenticateWithPassword(password);
-                                          }
-                                        },
-                                        child: Text(
-                                          isTransaction
-                                              ? 'Sign the transaction'
-                                              : 'Sign the message',
-                                          style: const TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w700,
-                                          ),
+                                      ),
+                                      child: TextField(
+                                        controller: _passwordController,
+                                        obscureText: true,
+                                        decoration: const InputDecoration.collapsed(
+                                            hintText: ''),
+                                        style: const TextStyle(
+                                          fontSize: 16,
                                         ),
                                       ),
                                     ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(2.0),
-                                      child: ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(40)),
-                                          shadowColor: const Color(0x559d6cff),
-                                          elevation: 5,
-                                          backgroundColor:
-                                              Styles.primaryAccentColor,
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 16, horizontal: 20),
-                                        ),
-                                        onPressed: () =>
-                                            _cancel(widget.signatureReq),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            const Icon(Icons.cancel, size: 18),
-                                            const SizedBox(width: 8),
-                                            Text(
+                                    const Gap(8),
+                                    if (_wrongPassword)
+                                      Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Icon(
+                                            CupertinoIcons
+                                                .exclamationmark_triangle_fill,
+                                            color: Styles.errorColor,
+                                            size: 16,
+                                          ),
+                                          const Gap(8),
+                                          Flexible(
+                                            child: Text(
                                               AppLocalizations.of(context)!
-                                                  .cancel,
+                                                      .incorrect_password,
+                                              style: TextStyle(
+                                                  color: Colors.grey[600],
+                                                  fontSize: 13),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    Row(
+                                      children: [
+                                        Container(
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(12),
+                                          ),
+                                          width: 240.0,
+                                          child: ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(40)),
+                                              shadowColor: const Color(0x559d6cff),
+                                              elevation: 5,
+                                              backgroundColor:
+                                                  Styles.secondaryAccentColor,
+                                              padding: const EdgeInsets.symmetric(
+                                                  vertical: 16),
+                                            ),
+                                            onPressed: () {
+                                              if (_biometricsIsAvailable) {
+                                                authenticateWithBiometrics();
+                                              } else {
+                                                authenticateWithPassword(password);
+                                              }
+                                            },
+                                            child: Text(
+                                              isTransaction
+                                                  ? AppLocalizations.of(context)!
+                                                      .sign_transaction
+                                                  : AppLocalizations.of(context)!
+                                                      .sign_message,
                                               style: const TextStyle(
-                                                fontSize: 14,
+                                                fontSize: 16,
                                                 fontWeight: FontWeight.w700,
                                               ),
                                             ),
-                                          ],
+                                          ),
                                         ),
-                                      ),
+                                        Padding(
+                                          padding: const EdgeInsets.all(2.0),
+                                          child: ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(40)),
+                                              shadowColor: const Color(0x559d6cff),
+                                              elevation: 5,
+                                              backgroundColor:
+                                                  Styles.primaryAccentColor,
+                                              padding: const EdgeInsets.symmetric(
+                                                  vertical: 16, horizontal: 20),
+                                            ),
+                                            onPressed: () =>
+                                                _cancel(widget.signatureReq),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                const Icon(Icons.cancel, size: 18),
+                                                const SizedBox(width: 8),
+                                                Text(
+                                                  AppLocalizations.of(context)!
+                                                      .cancel,
+                                                  style: const TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w700,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ],
-                                ),
-                              ],
-                            ],
-                          )
-                        : Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              AccountBox(
-                                  reefAccountFDM: account,
-                                  selected: false,
-                                  onSelected: () {},
-                                  showOptions: false),
-                              const Gap(16),
-                              Column(
-                                children: [
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    width: double.infinity,
-                                    child: ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(40)),
-                                        shadowColor: const Color(0x559d6cff),
-                                        elevation: 5,
-                                        backgroundColor:
-                                            Styles.secondaryAccentColor,
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 16),
-                                      ),
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: const Text(
-                                        'Claim EVM account',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
                                 ],
                               )
-                            ],
-                          ),
+                            : Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  AccountBox(
+                                      reefAccountFDM: account,
+                                      selected: false,
+                                      onSelected: () {},
+                                      showOptions: false),
+                                  const Gap(16),
+                                  Column(
+                                    children: [
+                                      Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(12),
+                                        ),
+                                        width: double.infinity,
+                                        child: ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(40)),
+                                            shadowColor: const Color(0x559d6cff),
+                                            elevation: 5,
+                                            backgroundColor:
+                                                Styles.secondaryAccentColor,
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 16),
+                                          ),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: Text(
+                                            AppLocalizations.of(context)!
+                                                      .claim_evm_account,
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w700,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                ],
+                              ),
+                      ),
+                    ],
                   );
                 } else if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
                 } else {
-                  return const CircularProgressIndicator();
+                  return Center(child: CircularProgressIndicator(
+                     valueColor: AlwaysStoppedAnimation<Color>(Styles.primaryAccentColor),
+                  ));
                 }
               },
             );
