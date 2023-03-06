@@ -32,7 +32,7 @@ class _TokenViewState extends State<TokenView> {
     return ViewBoxContainer(
         child: Padding(
             padding:
-                const EdgeInsets.symmetric(vertical: 15.0, horizontal: 15.0),
+                const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
@@ -42,7 +42,7 @@ class _TokenViewState extends State<TokenView> {
                     GestureDetector(
                         onDoubleTap: () {
                           showQrCode(
-                              '${name} Contract \n(don\'t send funds here)',
+                              '$name Contract \n(don\'t send funds here)',
                               address);
                         },
                         child: SizedBox(
