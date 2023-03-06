@@ -77,7 +77,7 @@ class SignatureContentToggle extends StatelessObserverWidget {
                     color: Styles.textColor,
                   ),
                 ),
-                Gap(10),
+                Gap(4),
                 // ElevatedButton(
                 //     onPressed: () {
                 //       showSigningModal(context, signatureRequest!);
@@ -137,7 +137,6 @@ class SignatureContentToggle extends StatelessObserverWidget {
       signatureRequest.payload.address,
     );
   }
-  
 
   void _cancel(SignatureRequest? signatureRequest) {
     print('REMMMMMMMMM $signatureRequest');
@@ -268,7 +267,7 @@ class _MethodDataDisplayState extends State<MethodDataDisplay> {
     }
     var res = await ReefAppState.instance.signingCtrl
         .decodeMethod(request.payload.method);
-    return res!['data']??"";
+    return res!['data'] ?? "";
   }
 
   Future<List<dynamic>> _getData() async {
@@ -289,20 +288,19 @@ class _MethodDataDisplayState extends State<MethodDataDisplay> {
         bytes,
       ]);
       isTransaction = false;
-      return [detailsTable, account,data];
+      return [detailsTable, account, data];
     } else {
       final txDecodedData = await _getTxDecodedData(widget.signatureReq!);
       if (txDecodedData.methodName != null &&
           txDecodedData.methodName!.startsWith("evm.") &&
           !account.data.isEvmClaimed) {
-
       } else {
         List<TableRow> detailsTable = createTransactionTable(txDecodedData);
         isTransaction = true;
-        return [detailsTable, account,data];
+        return [detailsTable, account, data];
       }
     }
-    return [[], account,data];
+    return [[], account, data];
   }
 
   @override
@@ -346,7 +344,31 @@ class _MethodDataDisplayState extends State<MethodDataDisplay> {
                                 },
                                 children: detailsTable,
                               ),
-                              decodedData!=""?Text("Decoded Data : $decodedData"):const Gap(0),
+                              decodedData != ""
+  ? Container(
+      height: 80, // set the height as per your requirement
+      child: Column(
+        children: [
+          Text("Decoded Data",style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+                color: Styles.primaryAccentColor,
+              ),),
+          SingleChildScrollView(
+            child: Text(
+              "$decodedData",
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+                color: Styles.greyColor,
+              ),
+            ),
+          ),
+        ],
+      ),
+    )
+  : const Gap(0),
+
                               if (!_biometricsIsAvailable) ...[
                                 const Divider(
                                   color: Styles.textLightColor,
@@ -405,13 +427,13 @@ class _MethodDataDisplayState extends State<MethodDataDisplay> {
                                       ),
                                     ],
                                   ),
-                                Column(
+                                Row(
                                   children: [
                                     Container(
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(12),
                                       ),
-                                      width: double.infinity,
+                                      width: 240.0,
                                       child: ElevatedButton(
                                         style: ElevatedButton.styleFrom(
                                           shape: RoundedRectangleBorder(
