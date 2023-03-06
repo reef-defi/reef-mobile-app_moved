@@ -115,7 +115,7 @@ class SignatureContentToggle extends StatelessObserverWidget {
                               ),
                             ],
                           ),
-                        ),*/
+                        ), */
                       ],
                     ),
                   ),
@@ -137,6 +137,7 @@ class SignatureContentToggle extends StatelessObserverWidget {
       signatureRequest.payload.address,
     );
   }
+  
 
   void _cancel(SignatureRequest? signatureRequest) {
     print('REMMMMMMMMM $signatureRequest');
@@ -256,13 +257,27 @@ class _MethodDataDisplayState extends State<MethodDataDisplay> {
     }
   }
 
+  Future<String> _decodeMethod(dynamic request) async {
+    dynamic types;
+    var metadata = await ReefAppState.instance.storage
+        .getMetadata(request.payload.genesisHash);
+    if (metadata != null &&
+        metadata.specVersion ==
+            int.parse(request.payload.specVersion.substring(2), radix: 16)) {
+      types = metadata.types;
+    }
+    var res = await ReefAppState.instance.signingCtrl
+        .decodeMethod(request.payload.method);
+    return res!['data']??"";
+  }
+
   Future<List<dynamic>> _getData() async {
     final account = ReefAppState.instance.model.accounts.accountsFDM.data
         .firstWhere(
             (acc) => acc.data.address == widget.signatureReq?.payload.address,
             orElse: () => throw Exception("Signer not found"));
 
-    final signatureIdentifier = widget.signatureReq?.signatureIdent;
+    final data = await _decodeMethod(widget.signatureReq!);
 
     final type = widget.signatureReq?.payload.type;
     if (type == "bytes") {
@@ -274,19 +289,20 @@ class _MethodDataDisplayState extends State<MethodDataDisplay> {
         bytes,
       ]);
       isTransaction = false;
-      return [detailsTable, account];
+      return [detailsTable, account,data];
     } else {
       final txDecodedData = await _getTxDecodedData(widget.signatureReq!);
       if (txDecodedData.methodName != null &&
           txDecodedData.methodName!.startsWith("evm.") &&
           !account.data.isEvmClaimed) {
+
       } else {
         List<TableRow> detailsTable = createTransactionTable(txDecodedData);
         isTransaction = true;
-        return [detailsTable, account];
+        return [detailsTable, account,data];
       }
     }
-    return [[], account];
+    return [[], account,data];
   }
 
   @override
@@ -309,9 +325,10 @@ class _MethodDataDisplayState extends State<MethodDataDisplay> {
                 if (snapshot.hasData) {
                   List<TableRow> detailsTable = snapshot.data![0];
                   var account = snapshot.data![1];
+                  var decodedData = snapshot.data![2];
                   return Padding(
                     padding: const EdgeInsets.all(16.0),
-                    child: isEVM
+                    child: isEVM || isTransaction
                         ? Column(
                             children: [
                               // Text(
@@ -329,6 +346,7 @@ class _MethodDataDisplayState extends State<MethodDataDisplay> {
                                 },
                                 children: detailsTable,
                               ),
+                              decodedData!=""?Text("Decoded Data : $decodedData"):const Gap(0),
                               if (!_biometricsIsAvailable) ...[
                                 const Divider(
                                   color: Styles.textLightColor,
