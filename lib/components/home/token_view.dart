@@ -30,102 +30,101 @@ class _TokenViewState extends State<TokenView> {
       double price = 0.0,
       String tokenName = ""}) {
     return ViewBoxContainer(
-        child: Padding(
-            padding:
-                const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
+      child: Padding(
+        padding:
+            const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
               children: [
-                Row(
+                GestureDetector(
+                    onDoubleTap: () {
+                      showQrCode(
+                          '$name Contract \n(don\'t send funds here)',
+                          address);
+                    },
+                    child: SizedBox(
+                        height: 48,
+                        width: 48,
+                        child: IconFromUrl(iconURL))),
+                const SizedBox(width: 15),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    GestureDetector(
-                        onDoubleTap: () {
-                          showQrCode(
-                              '$name Contract \n(don\'t send funds here)',
-                              address);
-                        },
-                        child: SizedBox(
-                            height: 48,
-                            width: 48,
-                            child: IconFromUrl(iconURL))),
-                    const SizedBox(width: 15),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(
-                          constraints: const BoxConstraints(maxWidth: 100),
-                          child: Text(name,
-                              overflow: TextOverflow.ellipsis,
+                    Container(
+                      constraints: const BoxConstraints(maxWidth: 100),
+                      child: Text(name,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.poppins(
+                            color: Styles.textColor,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700,
+                          )),
+                    ),
+                    Text(
+                      // TODO allow conversionRate to be null for no data
+                      price != 0
+                          ? NumberFormat.simpleCurrency(decimalDigits: 4)
+                              .format(price)
+                              .toString()
+                          : 'No pool data',
+                      style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.normal,
+                          color: Styles.textLightColor,
+                          fontSize: 14),
+                    )
+                  ],
+                ),
+                const Spacer(),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Observer(builder: (context) {
+                      return BlurableContent(
+                          GradientText(
+                              price != 0
+                                  ? NumberFormat.compactLong()
+                                      .format(
+                                          getBalanceValueBI(balance, price))
+                                      .toString()
+                                  : "N/A",
+                              gradient: textGradient(),
                               style: GoogleFonts.poppins(
                                 color: Styles.textColor,
                                 fontSize: 18,
-                                fontWeight: FontWeight.w700,
+                                fontWeight: FontWeight.w900,
                               )),
-                        ),
-                        Text(
-                          // TODO allow conversionRate to be null for no data
-                          price != 0
-                              ? NumberFormat.simpleCurrency(decimalDigits: 4)
-                                  .format(price)
-                                  .toString()
-                              : 'No pool data',
-                          style: GoogleFonts.poppins(
-                              fontWeight: FontWeight.normal,
-                              color: Styles.textLightColor,
-                              fontSize: 14),
-                        )
-                      ],
-                    ),
-                    const Spacer(),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Observer(builder: (context) {
-                          return BlurableContent(
-                              GradientText(
-                                  price != 0
-                                      ? NumberFormat.compactLong()
-                                          .format(
-                                              getBalanceValueBI(balance, price))
-                                          .toString()
-                                      : "N/A",
-                                  gradient: textGradient(),
-                                  style: GoogleFonts.poppins(
-                                    color: Styles.textColor,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w900,
-                                  )),
-                              ReefAppState
-                                  .instance.model.appConfig.displayBalance);
-                        }),
-                        Observer(builder: (context) {
-                          return BlurableContent(
-                              Text(
-                                "${balance != null && balance > BigInt.zero ? NumberFormat.compact().format((balance) / BigInt.from(10).pow(18)).toString() : 0} ${tokenName != "" ? tokenName : name.toUpperCase()}",
-                                style: GoogleFonts.poppins(
-                                  color: Styles.textColor,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              ReefAppState
-                                  .instance.model.appConfig.displayBalance);
-                        })
-                      ],
-                    ),
+                          ReefAppState.instance.model.appConfig
+                              .displayBalance);
+                    }),
+                    Observer(builder: (context) {
+                      return BlurableContent(
+                          Text(
+                            "${balance != null && balance > BigInt.zero ? NumberFormat.compact().format((balance) / BigInt.from(10).pow(18)).toString() : 0} ${tokenName != "" ? tokenName : name.toUpperCase()}",
+                            style: GoogleFonts.poppins(
+                              color: Styles.textColor,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          ReefAppState.instance.model.appConfig
+                              .displayBalance);
+                    })
                   ],
                 ),
-                const SizedBox(height: 15),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    /*Expanded(
-                        child: ElevatedButton.icon(
+              ],
+            ),
+            const SizedBox(height: 15),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                        /*ElevatedButton.icon(
                       icon: const Icon(
                         CupertinoIcons.repeat,
                         color: Color(0xffa93185),
