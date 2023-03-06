@@ -58,6 +58,7 @@ class SelectAccount extends StatelessWidget {
                               Navigator.of(context).pop();
                             },
                             showOptions: false),
+            Gap(10),
                       ],
                     ),
                   )
