@@ -47,7 +47,6 @@ class SignatureContentToggle extends StatelessObserverWidget {
               leading: IconButton(
                 icon: Image.asset('assets/images/reef.png'),
                 onPressed: () {
-                  // TODO: implement menu button action
                 },
               ),
               backgroundColor: Styles.primaryBackgroundColor,
@@ -70,11 +69,6 @@ class SignatureContentToggle extends StatelessObserverWidget {
               children: <Widget>[
                 
                 Gap(4),
-                // ElevatedButton(
-                //     onPressed: () {
-                //       showSigningModal(context, signatureRequest!);
-                //     },
-                //     child: Text('display modal')),
                 Center(
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -82,32 +76,6 @@ class SignatureContentToggle extends StatelessObserverWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         MethodDataDisplay(signatureRequest),
-                        /*ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(40)),
-                            shadowColor: const Color(0x559d6cff),
-                            elevation: 5,
-                            backgroundColor: Styles.primaryAccentColor,
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 16, horizontal: 20),
-                          ),
-                          onPressed: () => _decodeMethod(signatureRequest),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Icon(Icons.crop_free, size: 18),
-                              const SizedBox(width: 8),
-                              Text(
-                                AppLocalizations.of(context)!.decode,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ), */
                       ],
                     ),
                   ),
@@ -332,7 +300,7 @@ class _MethodDataDisplayState extends State<MethodDataDisplay> {
                             ? Column(
                                 children: [
                                   // Text(
-                                  //     'render method data here / evm=$isEVM / ${widget.signatureReq?.decodedMethod['methodName']}'),
+                                  //     'render method data here / evm=$isEVM / ${widget.signatureReq?.decodedMethod['data']}'),
                                   AccountBox(
                                       reefAccountFDM: account,
                                       selected: false,
