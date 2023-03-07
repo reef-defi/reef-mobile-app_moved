@@ -93,5 +93,6 @@
 "evm_address_qr": "EVM पते का क्यूआर कोड साझा करें",
 "delete_account":"खाता हटाएं",
   "share_evm_qr":"EVM पता साझा करें",
-  "share_address_qr":"नेटिव पता साझा करें"
+  "share_address_qr":"नेटिव पता साझा करें",
+  "go_to_home_on_account_switch":"अकाउंट स्विच पर होम पर जाएं"
 }
