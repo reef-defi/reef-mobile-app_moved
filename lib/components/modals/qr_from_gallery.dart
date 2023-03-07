@@ -8,7 +8,7 @@ class QrCodeFromGallery extends StatefulWidget {
 }
 
 class _QrCodeFromGalleryState extends State<QrCodeFromGallery> {
-  String qrcode = 'Unknown';
+  String qrcode = '';
 
   @override
   void initState() {

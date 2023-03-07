@@ -5,6 +5,7 @@ import 'package:reef_mobile_app/components/modal.dart';
 import 'package:reef_mobile_app/pages/SplashScreen.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 import 'package:scan/scan.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:images_picker/images_picker.dart';
 
 class QrCodeScanner extends StatefulWidget {
@@ -64,7 +65,7 @@ class _QrCodeScannerState extends State<QrCodeScanner> {
               child: ElevatedButton.icon(
                 icon: Icon(Icons.crop_free),
                 label:  Text(
-    "Scan from Image",
+    AppLocalizations.of(context)!.scan_from_image,
     style: const TextStyle(
       fontSize: 12,
       fontWeight: FontWeight.w700,
