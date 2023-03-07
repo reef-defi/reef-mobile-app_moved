@@ -46,8 +46,7 @@ class SignatureContentToggle extends StatelessObserverWidget {
               ),
               leading: IconButton(
                 icon: Image.asset('assets/images/reef.png'),
-                onPressed: () {
-                },
+                onPressed: () {},
               ),
               backgroundColor: Styles.primaryBackgroundColor,
               elevation: 0.0,
@@ -67,8 +66,8 @@ class SignatureContentToggle extends StatelessObserverWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                
                 Gap(4),
+                DisplayDetailsTable(signatureRequest),
                 Center(
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -118,6 +117,77 @@ class LoadingIndicator extends StatelessWidget {
               ? Expanded(child: const LinearProgressIndicator())
               : Container());
 }
+class DisplayDetailsTable extends StatefulWidget {
+  const DisplayDetailsTable(this.signatureReq, {Key? key}) : super(key: key);
+  final SignatureRequest? signatureReq;
+
+  @override
+  _DisplayDetailsTableState createState() => _DisplayDetailsTableState();
+}
+
+class _DisplayDetailsTableState extends State<DisplayDetailsTable> {
+  late Future<List<TableRow>> _tableRows;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  Future<List<TableRow>> _getData() async {
+    final account = ReefAppState.instance.model.accounts.accountsFDM.data
+        .firstWhere(
+            (acc) => acc.data.address == widget.signatureReq?.payload.address,
+            orElse: () => throw Exception("Signer not found"));
+
+    final type = widget.signatureReq?.payload.type;
+    if (type == "bytes") {
+      final bytes = await ReefAppState.instance.signingCtrl
+          .bytesString(widget.signatureReq?.payload.data);
+      return createTable(keyTexts: [
+        "bytes",
+      ], valueTexts: [
+        bytes,
+      ]);
+    } else {
+      final txDecodedData = await _getTxDecodedData(widget.signatureReq!);
+      if (txDecodedData.methodName != null &&
+          txDecodedData.methodName!.startsWith("evm.") &&
+          !account.data.isEvmClaimed) {
+        return [];
+      } else {
+        return createTransactionTable(txDecodedData);
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Observer(builder: (_) {
+      if (widget.signatureReq != null && widget.signatureReq!.hasResults) {
+        var isEVM = widget.signatureReq?.decodedMethod['evm']
+                ['contractAddress'] !=
+            null;
+        return FutureBuilder<List<TableRow>>(
+            future: _getData(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                final detailsTable = snapshot.data!;
+                return Table(
+                  columnWidths: const {
+                    0: IntrinsicColumnWidth(),
+                    1: FlexColumnWidth(4),
+                  },
+                  children: detailsTable,
+                );
+              }
+              return LoadingIndicator(widget.signatureReq);
+            });
+      }
+      return LoadingIndicator(widget.signatureReq);
+    });
+  }
+}
+
 
 // Method to display data
 class MethodDataDisplay extends StatefulWidget {
@@ -250,6 +320,7 @@ class _MethodDataDisplayState extends State<MethodDataDisplay> {
       isTransaction = false;
       return [detailsTable, account, data];
     } else {
+      if(widget.signatureReq!=Null){
       final txDecodedData = await _getTxDecodedData(widget.signatureReq!);
       if (txDecodedData.methodName != null &&
           txDecodedData.methodName!.startsWith("evm.") &&
@@ -259,6 +330,7 @@ class _MethodDataDisplayState extends State<MethodDataDisplay> {
         isTransaction = true;
         return [detailsTable, account, data];
       }
+    }
     }
     return [[], account, data];
   }
@@ -287,13 +359,13 @@ class _MethodDataDisplayState extends State<MethodDataDisplay> {
                   return Column(
                     children: [
                       Text(
-                  AppLocalizations.of(context)!.transaction_details,
-                  style: TextStyle(
-                    fontSize: 26,
-                    fontWeight: FontWeight.bold,
-                    color: Styles.textColor,
-                  ),
-                ),
+                        AppLocalizations.of(context)!.transaction_details,
+                        style: TextStyle(
+                          fontSize: 26,
+                          fontWeight: FontWeight.bold,
+                          color: Styles.textColor,
+                        ),
+                      ),
                       Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: isEVM || isTransaction
@@ -315,29 +387,35 @@ class _MethodDataDisplayState extends State<MethodDataDisplay> {
                                     children: detailsTable,
                                   ),
                                   decodedData != ""
-  ? Container(
-      height: 80, // set the height as per your requirement
-      child: Column(
-        children: [
-          Text(AppLocalizations.of(context)!.decoded_data,style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-                color: Styles.primaryAccentColor,
-              ),),
-          SingleChildScrollView(
-            child: Text(
-              "$decodedData",
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-                color: Styles.greyColor,
-              ),
-            ),
-          ),
-        ],
-      ),
-    )
-  : const Gap(0),
+                                      ? Container(
+                                          height:
+                                              80, // set the height as per your requirement
+                                          child: Column(
+                                            children: [
+                                              Text(
+                                                AppLocalizations.of(context)!
+                                                    .decoded_data,
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.bold,
+                                                  color:
+                                                      Styles.primaryAccentColor,
+                                                ),
+                                              ),
+                                              SingleChildScrollView(
+                                                child: Text(
+                                                  "$decodedData",
+                                                  style: TextStyle(
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Styles.greyColor,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        )
+                                      : const Gap(0),
 
                                   if (!_biometricsIsAvailable) ...[
                                     const Divider(
@@ -347,7 +425,7 @@ class _MethodDataDisplayState extends State<MethodDataDisplay> {
                                     const Gap(12),
                                     Text(
                                       AppLocalizations.of(context)!
-                                                      .password_for_reef_app,
+                                          .password_for_reef_app,
                                       style: TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.w500,
@@ -368,8 +446,9 @@ class _MethodDataDisplayState extends State<MethodDataDisplay> {
                                       child: TextField(
                                         controller: _passwordController,
                                         obscureText: true,
-                                        decoration: const InputDecoration.collapsed(
-                                            hintText: ''),
+                                        decoration:
+                                            const InputDecoration.collapsed(
+                                                hintText: ''),
                                         style: const TextStyle(
                                           fontSize: 16,
                                         ),
@@ -391,7 +470,7 @@ class _MethodDataDisplayState extends State<MethodDataDisplay> {
                                           Flexible(
                                             child: Text(
                                               AppLocalizations.of(context)!
-                                                      .incorrect_password,
+                                                  .incorrect_password,
                                               style: TextStyle(
                                                   color: Colors.grey[600],
                                                   fontSize: 13),
@@ -403,33 +482,40 @@ class _MethodDataDisplayState extends State<MethodDataDisplay> {
                                       children: [
                                         Container(
                                           decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(12),
+                                            borderRadius:
+                                                BorderRadius.circular(12),
                                           ),
                                           width: 240.0,
                                           child: ElevatedButton(
                                             style: ElevatedButton.styleFrom(
                                               shape: RoundedRectangleBorder(
                                                   borderRadius:
-                                                      BorderRadius.circular(40)),
-                                              shadowColor: const Color(0x559d6cff),
+                                                      BorderRadius.circular(
+                                                          40)),
+                                              shadowColor:
+                                                  const Color(0x559d6cff),
                                               elevation: 5,
                                               backgroundColor:
                                                   Styles.secondaryAccentColor,
-                                              padding: const EdgeInsets.symmetric(
-                                                  vertical: 16),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 16),
                                             ),
                                             onPressed: () {
                                               if (_biometricsIsAvailable) {
                                                 authenticateWithBiometrics();
                                               } else {
-                                                authenticateWithPassword(password);
+                                                authenticateWithPassword(
+                                                    password);
                                               }
                                             },
                                             child: Text(
                                               isTransaction
-                                                  ? AppLocalizations.of(context)!
+                                                  ? AppLocalizations.of(
+                                                          context)!
                                                       .sign_transaction
-                                                  : AppLocalizations.of(context)!
+                                                  : AppLocalizations.of(
+                                                          context)!
                                                       .sign_message,
                                               style: const TextStyle(
                                                 fontSize: 16,
@@ -444,13 +530,17 @@ class _MethodDataDisplayState extends State<MethodDataDisplay> {
                                             style: ElevatedButton.styleFrom(
                                               shape: RoundedRectangleBorder(
                                                   borderRadius:
-                                                      BorderRadius.circular(40)),
-                                              shadowColor: const Color(0x559d6cff),
+                                                      BorderRadius.circular(
+                                                          40)),
+                                              shadowColor:
+                                                  const Color(0x559d6cff),
                                               elevation: 5,
                                               backgroundColor:
                                                   Styles.primaryAccentColor,
-                                              padding: const EdgeInsets.symmetric(
-                                                  vertical: 16, horizontal: 20),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 16,
+                                                      horizontal: 20),
                                             ),
                                             onPressed: () =>
                                                 _cancel(widget.signatureReq),
@@ -458,7 +548,8 @@ class _MethodDataDisplayState extends State<MethodDataDisplay> {
                                               mainAxisAlignment:
                                                   MainAxisAlignment.center,
                                               children: [
-                                                const Icon(Icons.cancel, size: 18),
+                                                const Icon(Icons.cancel,
+                                                    size: 18),
                                                 const SizedBox(width: 8),
                                                 Text(
                                                   AppLocalizations.of(context)!
@@ -490,7 +581,8 @@ class _MethodDataDisplayState extends State<MethodDataDisplay> {
                                     children: [
                                       Container(
                                         decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(12),
+                                          borderRadius:
+                                              BorderRadius.circular(12),
                                         ),
                                         width: double.infinity,
                                         child: ElevatedButton(
@@ -498,7 +590,8 @@ class _MethodDataDisplayState extends State<MethodDataDisplay> {
                                             shape: RoundedRectangleBorder(
                                                 borderRadius:
                                                     BorderRadius.circular(40)),
-                                            shadowColor: const Color(0x559d6cff),
+                                            shadowColor:
+                                                const Color(0x559d6cff),
                                             elevation: 5,
                                             backgroundColor:
                                                 Styles.secondaryAccentColor,
@@ -510,7 +603,7 @@ class _MethodDataDisplayState extends State<MethodDataDisplay> {
                                           },
                                           child: Text(
                                             AppLocalizations.of(context)!
-                                                      .claim_evm_account,
+                                                .claim_evm_account,
                                             style: TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.w700,
@@ -528,8 +621,10 @@ class _MethodDataDisplayState extends State<MethodDataDisplay> {
                 } else if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
                 } else {
-                  return Center(child: CircularProgressIndicator(
-                     valueColor: AlwaysStoppedAnimation<Color>(Styles.primaryAccentColor),
+                  return Center(
+                      child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                        Styles.primaryAccentColor),
                   ));
                 }
               },
