@@ -67,6 +67,8 @@ class SignatureContentToggle extends StatelessObserverWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 Gap(4),
+                DisplayAccountBox(signatureRequest),
+                Gap(8),
                 DisplayDetailsTable(signatureRequest),
                 Center(
                   child: Padding(
@@ -117,6 +119,7 @@ class LoadingIndicator extends StatelessWidget {
               ? Expanded(child: const LinearProgressIndicator())
               : Container());
 }
+
 class DisplayDetailsTable extends StatefulWidget {
   const DisplayDetailsTable(this.signatureReq, {Key? key}) : super(key: key);
   final SignatureRequest? signatureReq;
@@ -126,13 +129,6 @@ class DisplayDetailsTable extends StatefulWidget {
 }
 
 class _DisplayDetailsTableState extends State<DisplayDetailsTable> {
-  late Future<List<TableRow>> _tableRows;
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
   Future<List<TableRow>> _getData() async {
     final account = ReefAppState.instance.model.accounts.accountsFDM.data
         .firstWhere(
@@ -172,22 +168,69 @@ class _DisplayDetailsTableState extends State<DisplayDetailsTable> {
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 final detailsTable = snapshot.data!;
-                return Table(
-                  columnWidths: const {
-                    0: IntrinsicColumnWidth(),
-                    1: FlexColumnWidth(4),
-                  },
-                  children: detailsTable,
+                return Padding(
+                  padding: const EdgeInsets.only(left:16.0,right: 16.0),
+                  child: Table(
+                    columnWidths: const {
+                      0: IntrinsicColumnWidth(),
+                      1: FlexColumnWidth(4),
+                    },
+                    children: detailsTable,
+                  ),
                 );
               }
               return LoadingIndicator(widget.signatureReq);
             });
       }
-      return LoadingIndicator(widget.signatureReq);
+      return Gap(0);
     });
   }
 }
 
+class DisplayAccountBox extends StatefulWidget {
+  const DisplayAccountBox(this.signatureReq, {Key? key}) : super(key: key);
+  final SignatureRequest? signatureReq;
+
+  @override
+  _DisplayAccountBoxState createState() => _DisplayAccountBoxState();
+}
+
+class _DisplayAccountBoxState extends State<DisplayAccountBox> {
+  Future<dynamic> _getData() async {
+    final account = ReefAppState.instance.model.accounts.accountsFDM.data
+        .firstWhere(
+            (acc) => acc.data.address == widget.signatureReq?.payload.address,
+            orElse: () => throw Exception("Signer not found"));
+    return account;
+  }
+  @override
+  Widget build(BuildContext context) {
+    return Observer(builder: (_) {
+      if (widget.signatureReq != null && widget.signatureReq!.hasResults) {
+        var isEVM = widget.signatureReq?.decodedMethod['evm']
+                ['contractAddress'] !=
+            null;
+        return FutureBuilder<dynamic>(
+            future: _getData(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                final account = snapshot.data!;
+                return Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: AccountBox(
+                      reefAccountFDM: account,
+                      selected: false,
+                      onSelected: () => {},
+                      showOptions: false),
+                );
+              }
+              return LoadingIndicator(widget.signatureReq);
+            });
+      }
+      return const Gap(0);
+    });
+  }
+}
 
 // Method to display data
 class MethodDataDisplay extends StatefulWidget {
@@ -320,17 +363,17 @@ class _MethodDataDisplayState extends State<MethodDataDisplay> {
       isTransaction = false;
       return [detailsTable, account, data];
     } else {
-      if(widget.signatureReq!=Null){
-      final txDecodedData = await _getTxDecodedData(widget.signatureReq!);
-      if (txDecodedData.methodName != null &&
-          txDecodedData.methodName!.startsWith("evm.") &&
-          !account.data.isEvmClaimed) {
-      } else {
-        List<TableRow> detailsTable = createTransactionTable(txDecodedData);
-        isTransaction = true;
-        return [detailsTable, account, data];
+      if (widget.signatureReq != Null) {
+        final txDecodedData = await _getTxDecodedData(widget.signatureReq!);
+        if (txDecodedData.methodName != null &&
+            txDecodedData.methodName!.startsWith("evm.") &&
+            !account.data.isEvmClaimed) {
+        } else {
+          List<TableRow> detailsTable = createTransactionTable(txDecodedData);
+          isTransaction = true;
+          return [detailsTable, account, data];
+        }
       }
-    }
     }
     return [[], account, data];
   }
@@ -373,11 +416,7 @@ class _MethodDataDisplayState extends State<MethodDataDisplay> {
                                 children: [
                                   // Text(
                                   //     'render method data here / evm=$isEVM / ${widget.signatureReq?.decodedMethod['data']}'),
-                                  AccountBox(
-                                      reefAccountFDM: account,
-                                      selected: false,
-                                      onSelected: () => {},
-                                      showOptions: false),
+
                                   const Gap(16),
                                   Table(
                                     columnWidths: const {
