@@ -75,9 +75,7 @@ class _AccountsPageState extends State<AccountsPage> {
               await ReefAppState.instance.accountCtrl.setSelectedAddress(addr);
               ReefAppState.instance.navigationCtrl.navigateHomePage(0);
     
-              // TODO save to AppConfig and settings menu - https://app.clickup.com/t/861me4dy0
               var navigateOnAccountSwitch = ReefAppState.instance.model.appConfig.navigateOnAccountSwitch;
-              print("================ $navigateOnAccountSwitch");
               if (navigateOnAccountSwitch)
                 ReefAppState.instance.navigationCtrl
                     .navigate(NavigationPage.home);

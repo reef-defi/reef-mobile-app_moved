@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:reef_mobile_app/components/modals/auth_url_list_modal.dart';
@@ -19,8 +20,6 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   bool _showDeveloperSettings = false;
-  var navigateOnAccountSwitchVal =
-      ReefAppState.instance.model.appConfig.navigateOnAccountSwitch;
 
   @override
   Widget build(BuildContext context) {
@@ -62,28 +61,29 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
             ),*/
             const Gap(24),
-            CheckboxListTile(
-              contentPadding: EdgeInsets.zero,
-              title: Row(children: [
-                Icon(
-                  Icons.home,
-                  color: Styles.textLightColor,
-                  size: 22,
-                ),
-                Gap(9),
-                Text(AppLocalizations.of(context)!.go_to_home_on_account_switch,
-                    style: Theme.of(context).textTheme.bodyText1)
-              ]),
-              value: navigateOnAccountSwitchVal,
-              onChanged: (newValue) {
-                ReefAppState.instance.appConfigCtrl.appConfigModel
-                    .setNavigateOnAccountSwitch(newValue!);
-                setState(() {
-                  navigateOnAccountSwitchVal = newValue;
-                });
-              },
-              activeColor: Styles.primaryAccentColor,
-            ),
+            Observer(builder: (_){
+              var navigateOnAccountSwitchVal =
+                  ReefAppState.instance.model.appConfig.navigateOnAccountSwitch;
+
+              return CheckboxListTile(
+                contentPadding: EdgeInsets.zero,
+                title: Row(children: [
+                  Icon(
+                    Icons.home,
+                    color: Styles.textLightColor,
+                    size: 22,
+                  ),
+                  Gap(9),
+                  Text(AppLocalizations.of(context)!.go_to_home_on_account_switch,
+                      style: Theme.of(context).textTheme.bodyText1)
+                ]),
+                value: navigateOnAccountSwitchVal,
+                onChanged: (newValue) {
+                  ReefAppState.instance.appConfigCtrl.setNavigateOnAccountSwitch(newValue==true);
+                },
+                activeColor: Styles.primaryAccentColor,
+              );
+            }),
             Gap(8),
             MaterialButton(
               materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,

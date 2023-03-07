@@ -3,14 +3,14 @@ import 'package:reef_mobile_app/model/appConfig/app_config_model.dart';
 
 class AppConfigCtrl {
   final StorageService storage;
-  AppConfigModel appConfigModel;
+  AppConfigModel _appConfigModel;
 
-  AppConfigCtrl(this.storage, this.appConfigModel) {
+  AppConfigCtrl(this.storage, this._appConfigModel) {
     Future<dynamic> storedValueResult = storage.getValue("displayBalance");
     storedValueResult.then((storedValue) {
       // if no value in storage - when app is newly installed - set to true
       var setVal = storedValue??true;
-      appConfigModel.setDisplayBalance(setVal);
+      _appConfigModel.setDisplayBalance(setVal);
       if(storedValue==null) {
         storage.setValue("displayBalance", setVal);
       }
@@ -20,7 +20,7 @@ class AppConfigCtrl {
     storedNavigateValueResult.then((storedValue) {
       // if no value in storage - when app is newly installed - set to true
       var setVal = storedValue??true;
-      appConfigModel.setNavigateOnAccountSwitch(setVal);
+      _appConfigModel.setNavigateOnAccountSwitch(setVal);
       if(storedValue==null) {
         storage.setValue("navigateOnAccountSwitch", setVal);
       }
@@ -28,14 +28,13 @@ class AppConfigCtrl {
   }
 
   toggleDisplayBalance() {
-    var newValue = !appConfigModel.displayBalance;
+    var newValue = !_appConfigModel.displayBalance;
     storage.setValue("displayBalance", newValue);
-    appConfigModel.setDisplayBalance(newValue);
+    _appConfigModel.setDisplayBalance(newValue);
   }
 
-  toggleNavigateOnAccountSwitch() {
-    var newValue = !appConfigModel.navigateOnAccountSwitch;
-    storage.setValue("navigateOnAccountSwitch", newValue);
-    appConfigModel.setNavigateOnAccountSwitch(newValue);
+  setNavigateOnAccountSwitch(bool value) {
+    storage.setValue("navigateOnAccountSwitch", value);
+    _appConfigModel.setNavigateOnAccountSwitch(value);
   }
 }
