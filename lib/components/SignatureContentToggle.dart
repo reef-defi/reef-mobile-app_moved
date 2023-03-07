@@ -8,6 +8,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:gap/gap.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:reef_mobile_app/components/account_box.dart';
+import 'package:reef_mobile_app/components/TransactionButtonRow.dart';
 import 'package:reef_mobile_app/model/StorageKey.dart';
 import 'package:reef_mobile_app/model/navigation/navigation_model.dart';
 import 'package:mobx/mobx.dart';
@@ -66,13 +67,13 @@ class SignatureContentToggle extends StatelessObserverWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                Gap(4),
                 DisplayAccountBox(signatureRequest),
                 Gap(8),
                 DisplayDetailsTable(signatureRequest),
+                Gap(4),
                 Center(
                   child: Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.only(left:8.0,right: 8.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -169,7 +170,7 @@ class _DisplayDetailsTableState extends State<DisplayDetailsTable> {
               if (snapshot.hasData) {
                 final detailsTable = snapshot.data!;
                 return Padding(
-                  padding: const EdgeInsets.only(left:16.0,right: 16.0),
+                  padding: const EdgeInsets.only(left: 16.0, right: 16.0),
                   child: Table(
                     columnWidths: const {
                       0: IntrinsicColumnWidth(),
@@ -182,7 +183,9 @@ class _DisplayDetailsTableState extends State<DisplayDetailsTable> {
               return LoadingIndicator(widget.signatureReq);
             });
       }
-      return Gap(0);
+      return SizedBox(
+        height: 1,
+      );
     });
   }
 }
@@ -203,6 +206,7 @@ class _DisplayAccountBoxState extends State<DisplayAccountBox> {
             orElse: () => throw Exception("Signer not found"));
     return account;
   }
+
   @override
   Widget build(BuildContext context) {
     return Observer(builder: (_) {
@@ -217,17 +221,121 @@ class _DisplayAccountBoxState extends State<DisplayAccountBox> {
                 final account = snapshot.data!;
                 return Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: AccountBox(
-                      reefAccountFDM: account,
-                      selected: false,
-                      onSelected: () => {},
-                      showOptions: false),
+                  child: Column(
+                    children: [Text(
+                  AppLocalizations.of(context)!.transaction_details,
+                  style: const TextStyle(
+                    fontSize: 26,
+                    fontWeight: FontWeight.bold,
+                    color: Styles.textColor,
+                  ),
+                ),
+                const Gap(16),
+                      AccountBox(
+                          reefAccountFDM: account,
+                          selected: false,
+                          onSelected: () => {},
+                          showOptions: false),
+                    ],
+                  ),
                 );
               }
               return LoadingIndicator(widget.signatureReq);
             });
       }
-      return const Gap(0);
+      return SizedBox(
+        height: 1,
+      );
+    });
+  }
+}
+
+class DisplayDecodedData extends StatefulWidget {
+  const DisplayDecodedData(this.signatureReq, {Key? key}) : super(key: key);
+  final SignatureRequest? signatureReq;
+
+  @override
+  _DisplayDecodedDataState createState() => _DisplayDecodedDataState();
+}
+
+class _DisplayDecodedDataState extends State<DisplayDecodedData> {
+  Future<String> _decodeMethod(dynamic request) async {
+    dynamic types;
+    var metadata = await ReefAppState.instance.storage
+        .getMetadata(request.payload.genesisHash);
+    if (metadata != null &&
+        metadata.specVersion ==
+            int.parse(request.payload.specVersion.substring(2), radix: 16)) {
+      types = metadata.types;
+    }
+    var res = await ReefAppState.instance.signingCtrl
+        .decodeMethod(request.payload.method);
+    return res!['data'] ?? "";
+  }
+
+  Future<dynamic> _getData() async {
+    final decodedData = await _decodeMethod(widget.signatureReq!);
+    return decodedData;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Observer(builder: (_) {
+      if (widget.signatureReq != null && widget.signatureReq!.hasResults) {
+        var isEVM = widget.signatureReq?.decodedMethod['evm']
+                ['contractAddress'] !=
+            null;
+        return FutureBuilder<dynamic>(
+            future: _getData(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                final decodedData = snapshot.data!;
+                return Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: decodedData != ""
+                      ? Container(
+                          height: 80,
+                          child: Column(
+                            children: [
+                              Text(
+                                AppLocalizations.of(context)!.decoded_data,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  color: Styles.primaryAccentColor,
+                                ),
+                              ),
+                              SingleChildScrollView(
+                                child: Text(
+                                  "$decodedData",
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                    color: Styles.greyColor,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      : SizedBox(
+                          height: 1,
+                        ),
+                );
+              } else if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+              } else {
+                return Center(
+                    child: CircularProgressIndicator(
+                  valueColor:
+                      AlwaysStoppedAnimation<Color>(Styles.primaryAccentColor),
+                ));
+              }
+            });
+      }
+      return SizedBox(
+        height: 1,
+      );
     });
   }
 }
@@ -398,17 +506,8 @@ class _MethodDataDisplayState extends State<MethodDataDisplay> {
                 if (snapshot.hasData) {
                   List<TableRow> detailsTable = snapshot.data![0];
                   var account = snapshot.data![1];
-                  var decodedData = snapshot.data![2];
                   return Column(
                     children: [
-                      Text(
-                        AppLocalizations.of(context)!.transaction_details,
-                        style: TextStyle(
-                          fontSize: 26,
-                          fontWeight: FontWeight.bold,
-                          color: Styles.textColor,
-                        ),
-                      ),
                       Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: isEVM || isTransaction
@@ -416,46 +515,7 @@ class _MethodDataDisplayState extends State<MethodDataDisplay> {
                                 children: [
                                   // Text(
                                   //     'render method data here / evm=$isEVM / ${widget.signatureReq?.decodedMethod['data']}'),
-
-                                  const Gap(16),
-                                  Table(
-                                    columnWidths: const {
-                                      0: IntrinsicColumnWidth(),
-                                      1: FlexColumnWidth(4),
-                                    },
-                                    children: detailsTable,
-                                  ),
-                                  decodedData != ""
-                                      ? Container(
-                                          height:
-                                              80, // set the height as per your requirement
-                                          child: Column(
-                                            children: [
-                                              Text(
-                                                AppLocalizations.of(context)!
-                                                    .decoded_data,
-                                                style: TextStyle(
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.bold,
-                                                  color:
-                                                      Styles.primaryAccentColor,
-                                                ),
-                                              ),
-                                              SingleChildScrollView(
-                                                child: Text(
-                                                  "$decodedData",
-                                                  style: TextStyle(
-                                                    fontSize: 12,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Styles.greyColor,
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        )
-                                      : const Gap(0),
-
+                                  DisplayDecodedData(widget.signatureReq),
                                   if (!_biometricsIsAvailable) ...[
                                     const Divider(
                                       color: Styles.textLightColor,
@@ -517,93 +577,8 @@ class _MethodDataDisplayState extends State<MethodDataDisplay> {
                                           ),
                                         ],
                                       ),
-                                    Row(
-                                      children: [
-                                        Container(
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(12),
-                                          ),
-                                          width: 240.0,
-                                          child: ElevatedButton(
-                                            style: ElevatedButton.styleFrom(
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          40)),
-                                              shadowColor:
-                                                  const Color(0x559d6cff),
-                                              elevation: 5,
-                                              backgroundColor:
-                                                  Styles.secondaryAccentColor,
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 16),
-                                            ),
-                                            onPressed: () {
-                                              if (_biometricsIsAvailable) {
-                                                authenticateWithBiometrics();
-                                              } else {
-                                                authenticateWithPassword(
-                                                    password);
-                                              }
-                                            },
-                                            child: Text(
-                                              isTransaction
-                                                  ? AppLocalizations.of(
-                                                          context)!
-                                                      .sign_transaction
-                                                  : AppLocalizations.of(
-                                                          context)!
-                                                      .sign_message,
-                                              style: const TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w700,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.all(2.0),
-                                          child: ElevatedButton(
-                                            style: ElevatedButton.styleFrom(
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          40)),
-                                              shadowColor:
-                                                  const Color(0x559d6cff),
-                                              elevation: 5,
-                                              backgroundColor:
-                                                  Styles.primaryAccentColor,
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 16,
-                                                      horizontal: 20),
-                                            ),
-                                            onPressed: () =>
-                                                _cancel(widget.signatureReq),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                const Icon(Icons.cancel,
-                                                    size: 18),
-                                                const SizedBox(width: 8),
-                                                Text(
-                                                  AppLocalizations.of(context)!
-                                                      .cancel,
-                                                  style: const TextStyle(
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.w700,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+                  
+                                    TransactionButtonRow(biometricsIsAvailable: _biometricsIsAvailable, authenticateWithBiometrics: authenticateWithBiometrics, authenticateWithPassword: authenticateWithPassword, isTransaction: isTransaction, password: password, cancelCallback: ()=>{_cancel(widget.signatureReq)})
                                   ],
                                 ],
                               )
@@ -692,7 +667,6 @@ Future<TxDecodedData> _getTxDecodedData(SignatureRequest request) async {
     txDecodedData.genesisHash = request.payload.genesisHash;
   }
 
-  // Method data
   dynamic types;
   if (metadata != null &&
       metadata.specVersion ==
@@ -708,13 +682,10 @@ Future<TxDecodedData> _getTxDecodedData(SignatureRequest request) async {
     txDecodedData.rawMethodData = request.payload.method;
   }
 
-  // Tip
   if (request.payload.tip != null) {
     txDecodedData.tip = hexToDecimalString(request.payload.tip);
   }
 
-  // Lifetime
-  // TODO: era should be an object, instead of a string
 
   return txDecodedData;
 }
