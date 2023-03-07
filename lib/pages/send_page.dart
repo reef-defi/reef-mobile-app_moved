@@ -5,7 +5,6 @@ import 'package:gap/gap.dart';
 import 'package:mobx/mobx.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:reef_mobile_app/components/modals/qr_code_scanner.dart';
-import 'package:reef_mobile_app/components/modals/qr_from_gallery.dart';
 import 'package:reef_mobile_app/components/modals/select_account_modal.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/StorageKey.dart';
