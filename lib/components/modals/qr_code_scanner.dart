@@ -20,7 +20,7 @@ class _QrCodeScannerState extends State<QrCodeScanner> {
   final GlobalKey _gLobalkey = GlobalKey();
   QRViewController? controller;
   Barcode? result;
-  String qrcode = 'Unknown';
+  String qrcode = '';
 
   void qr(QRViewController controller) {
     this.controller = controller;
