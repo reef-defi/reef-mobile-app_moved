@@ -12,7 +12,7 @@ class LocaleCtrl {
     Future<dynamic> storedValueResult = storage.getValue("selectedLanguage");
     storedValueResult.then((storedValue) {
       if (storedValue != 'en') {
-        localeModel.setSelectedLanguage(storedValue);
+        localeModel.setSelectedLanguage(storedValue ?? 'en');
       }
     });
   }

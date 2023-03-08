@@ -195,10 +195,10 @@ class _SignModalState extends State<SignModal> {
         _wrongPassword = false;
         ReefAppState.instance.navigationCtrl.navigate(NavigationPage.home);
         Navigator.pop(context);
-        ReefAppState.instance.signingCtrl.confirmSignature(
-          widget.signatureIdent,
-          widget.signer.data.address,
-        );
+        // ReefAppState.instance.signingCtrl.confirmSignature(
+        //   widget.signatureIdent,
+        //   widget.signer.data.address,
+        // );
       });
     } else {
       setState(() {
@@ -217,10 +217,10 @@ class _SignModalState extends State<SignModal> {
         _wrongPassword = false;
         ReefAppState.instance.navigationCtrl.navigate(NavigationPage.home);
         Navigator.pop(context);
-        ReefAppState.instance.signingCtrl.confirmSignature(
-          widget.signatureIdent,
-          widget.signer.data.address,
-        );
+        // ReefAppState.instance.signingCtrl.confirmSignature(
+        //   widget.signatureIdent,
+        //   widget.signer.data.address,
+        // );
       });
     }
   }
@@ -369,7 +369,7 @@ Future<TxDecodedData> _getTxDecodedData(SignatureRequest request) async {
           int.parse(request.payload.specVersion.substring(2), radix: 16)) {
     types = metadata.types;
     final decodedMethod = await ReefAppState.instance.signingCtrl
-        .decodeMethod(request.payload.method, types);
+        .decodeMethod(request.payload.method, types: types);
     txDecodedData.methodName = decodedMethod["methodName"];
     const jsonEncoder = JsonEncoder.withIndent("  ");
     txDecodedData.args = jsonEncoder.convert(decodedMethod["args"]);
