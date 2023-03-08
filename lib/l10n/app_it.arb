@@ -76,6 +76,11 @@
   "select_language":"Seleziona la lingua",
   "change_language":"Cambia la lingua",
   "no_account_currently":"Nessun account attualmente disponibile, creare o importare un account per visualizzare i tuoi assets.",
+  "claim_evm_account": "Richiedi account EVM",
+"transaction_details": "Dettagli della transazione",
+"decoded_data": "Dati decodificati",
+"sign_message": "Firma il messaggio"
+  "no_account_currently":"Nessun account attualmente disponibile, creare o importare un account per visualizzare i tuoi assets.",
   "scan_address": "Scansiona indirizzo",
 "address_can_not_be_empty": "L'indirizzo non può essere vuoto",
 "select_address": "Seleziona indirizzo",

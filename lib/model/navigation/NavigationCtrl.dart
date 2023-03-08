@@ -9,7 +9,7 @@ import 'package:reef_mobile_app/pages/swap_page.dart';
 import 'package:reef_mobile_app/utils/liquid_edge/liquid_carousel.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 
-import '../../components/SignatureContentToggle.dart';
+import '../../components/sign/SignatureContentToggle.dart';
 
 class NavigationCtrl with NavSwipeCompute {
   final NavigationModel _navigationModel;

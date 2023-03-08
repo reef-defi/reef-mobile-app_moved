@@ -18,7 +18,7 @@ import 'package:reef_mobile_app/utils/constants.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../components/SignatureContentToggle.dart';
+import '../components/sign/SignatureContentToggle.dart';
 
 const FIAT_NAME = 'USD';
 const TOKEN_NAME = 'BUSD'; // TODO change to REEF

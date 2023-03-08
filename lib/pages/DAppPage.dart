@@ -3,7 +3,7 @@ import 'package:reef_mobile_app/service/DAppRequestService.dart';
 import 'package:reef_mobile_app/service/JsApiService.dart';
 import 'package:http/http.dart' as http;
 
-import '../components/SignatureContentToggle.dart';
+import '../components/sign/SignatureContentToggle.dart';
 import '../model/ReefAppState.dart';
 
 class DAppPage extends StatefulWidget {

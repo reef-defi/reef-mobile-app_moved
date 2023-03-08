@@ -12,7 +12,7 @@ import 'package:reef_mobile_app/model/navigation/navigation_model.dart';
 import 'package:reef_mobile_app/model/status-data-object/StatusDataObject.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 
-import '../components/SignatureContentToggle.dart';
+import '../components/sign/SignatureContentToggle.dart';
 
 class AccountsPage extends StatefulWidget {
   AccountsPage({Key? key}) : super(key: key);
