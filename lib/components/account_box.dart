@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:reef_mobile_app/components/modals/bind_modal.dart';
+import 'package:reef_mobile_app/components/modals/show_qr_code.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/account/ReefAccount.dart';
 import 'package:reef_mobile_app/model/status-data-object/StatusDataObject.dart';
@@ -73,7 +74,7 @@ class _AccountBoxState extends State<AccountBox> {
                                 bottomLeft: Radius.circular(15),
                                 topRight: Radius.circular(12))),
                         child: Text(
-                          "Selected",
+                          AppLocalizations.of(context)!.selected,
                           style: TextStyle(
                               color: Styles.whiteColor,
                               fontWeight: FontWeight.w600,
@@ -88,23 +89,29 @@ class _AccountBoxState extends State<AccountBox> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Column(children: [
-                        Container(
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.black12,
-                          ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(64),
-                            child: widget.reefAccountFDM.data.iconSVG != null
-                                ? SvgPicture.string(
-                                    widget.reefAccountFDM.data.iconSVG!,
-                                    height: 64,
-                                    width: 64,
-                                  )
-                                : const SizedBox(
-                                    width: 64,
-                                    height: 64,
-                                  ),
+                        GestureDetector(
+                          onTap: () => choiceAction(
+                              AppLocalizations.of(context)!.share_evm_qr,
+                              context,
+                              widget.reefAccountFDM.data),
+                          child: Container(
+                            decoration: const BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.black12,
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(64),
+                              child: widget.reefAccountFDM.data.iconSVG != null
+                                  ? SvgPicture.string(
+                                      widget.reefAccountFDM.data.iconSVG!,
+                                      height: 64,
+                                      width: 64,
+                                    )
+                                  : const SizedBox(
+                                      width: 64,
+                                      height: 64,
+                                    ),
+                            ),
                           ),
                         ),
                       ]),
@@ -126,9 +133,16 @@ class _AccountBoxState extends State<AccountBox> {
                                 choiceAction(choice, context,
                                     widget.reefAccountFDM.data);
                               },
-                              tooltip: "More Actions",
+                              tooltip:
+                                  AppLocalizations.of(context)!.more_actions,
                               itemBuilder: (BuildContext context) {
-                                return Constants.choices.map((String choice) {
+                                return Constants(
+                                  delete: AppLocalizations.of(context)!.delete,
+                                  shareAddressQr: AppLocalizations.of(context)!
+                                      .share_address_qr,
+                                  shareEvmQr: AppLocalizations.of(context)!
+                                      .share_evm_qr,
+                                ).getConstants().map((String choice) {
                                   return PopupMenuItem<String>(
                                     value: choice,
                                     child: Text(choice),
@@ -197,7 +211,7 @@ class _AccountBoxState extends State<AccountBox> {
                 Flexible(
                     child: Text.rich(
                   TextSpan(
-                    text: "Address:",
+                    text: AppLocalizations.of(context)!.address,
                     style:
                         TextStyle(fontSize: 10, color: Styles.textLightColor),
                     children: <TextSpan>[
@@ -214,7 +228,7 @@ class _AccountBoxState extends State<AccountBox> {
                   Flexible(
                       child: Text.rich(
                     TextSpan(
-                      text: "Reef EVM:",
+                      text: AppLocalizations.of(context)!.reef_evm,
                       style:
                           TextStyle(fontSize: 10, color: Styles.textLightColor),
                       children: <TextSpan>[
@@ -249,7 +263,7 @@ class _AccountBoxState extends State<AccountBox> {
                           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                         ),
                         child: Text(
-                          "Connect EVM",
+                          AppLocalizations.of(context)!.connect_evm,
                           style: TextStyle(
                               color: Styles.whiteColor,
                               fontWeight: FontWeight.w600,
@@ -262,15 +276,19 @@ class _AccountBoxState extends State<AccountBox> {
 }
 
 class Constants {
-  static const String delete = 'Delete';
-  static const String copyNativeAddress = "Copy Address";
-  static const String copyEvmAddress = "Copy Reef EVM Address";
+  final String delete;
+  final String shareAddressQr;
+  final String shareEvmQr;
 
-  static const List<String> choices = <String>[
-    copyNativeAddress,
-    copyEvmAddress,
-    delete,
-  ];
+  Constants({
+    required this.delete,
+    required this.shareAddressQr,
+    required this.shareEvmQr,
+  });
+
+  List<String> getConstants() {
+    return [shareEvmQr, shareAddressQr, delete];
+  }
 }
 
 showAlertDialog(BuildContext context, ReefAccount signer) {
@@ -282,7 +300,8 @@ showAlertDialog(BuildContext context, ReefAccount signer) {
     },
   );
   Widget continueButton = TextButton(
-    child: const Text("Yes"),
+    child: const Text("Delete Account",
+        style: TextStyle(color: Styles.errorColor)),
     onPressed: () {
       ReefAppState.instance.accountCtrl.deleteAccount(signer.address);
       Navigator.of(context).pop();
@@ -291,12 +310,15 @@ showAlertDialog(BuildContext context, ReefAccount signer) {
 
   // set up the AlertDialog
   AlertDialog alert = AlertDialog(
-    title: const Text("Delete Account"),
+    title: const Text(
+      "Delete Account",
+      style: TextStyle(color: Styles.errorColor),
+    ),
     content: Text(
-        "You will delete account with name ${signer.name} ${signer.address.shorten()}. Continue?"),
+        "You will loose all balance for ${signer.name} ${signer.address.shorten()} unless you have saved recovery phrase (mnemonic). \nContinue?"),
     actions: [
-      cancelButton,
       continueButton,
+      cancelButton,
     ],
   );
 
@@ -311,23 +333,19 @@ showAlertDialog(BuildContext context, ReefAccount signer) {
 
 void choiceAction(
     String choice, BuildContext context, ReefAccount account) async {
-  if (choice == Constants.delete) {
+  Constants localizedConstants = Constants(
+    delete: AppLocalizations.of(context)!.delete,
+    shareAddressQr: AppLocalizations.of(context)!.share_address_qr,
+    shareEvmQr: AppLocalizations.of(context)!.share_evm_qr,
+  );
+  if (choice == AppLocalizations.of(context)!.delete) {
     showAlertDialog(context, account);
-  } else if (choice == Constants.copyNativeAddress) {
-    Clipboard.setData(ClipboardData(text: account.address)).then((_) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Native Address copied to clipboard")));
-    });
-  } else if (choice == Constants.copyEvmAddress) {
-    var address = await ReefAppState.instance.accountCtrl
-                .toReefEVMAddressWithNotificationString(account.evmAddress);
-    print('AAAAdd $address');
-    Clipboard.setData(ClipboardData(
-            text: address))
-        .then((_) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text(
-              "EVM Address copied to clipboard.\nUse it ONLY on Reef Chain!")));
-    });
+  } else if (choice == AppLocalizations.of(context)!.share_evm_qr) {
+    if (account.isEvmClaimed) {
+      showQrCode(
+          AppLocalizations.of(context)!.share_evm_qr, account.evmAddress);
+    }
+  } else if (choice == AppLocalizations.of(context)!.share_address_qr) {
+    showQrCode(AppLocalizations.of(context)!.share_address_qr, account.address);
   }
 }

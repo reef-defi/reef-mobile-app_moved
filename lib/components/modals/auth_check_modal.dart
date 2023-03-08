@@ -76,6 +76,12 @@ class _AuthCheckState extends State<AuthCheck> {
     }
   }
 
+   @override
+  void dispose() {
+    super.dispose();
+    _passwordController.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(

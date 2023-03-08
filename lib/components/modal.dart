@@ -74,6 +74,11 @@ class CustomModalState extends State<CustomModal>
     _fadeController.forward();
   }
 
+   @override
+  void dispose() {
+    super.dispose();
+    _scaleController.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     return GestureDetector(

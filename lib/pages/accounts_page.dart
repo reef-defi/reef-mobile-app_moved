@@ -8,6 +8,7 @@ import 'package:reef_mobile_app/components/modals/account_modals.dart';
 import 'package:reef_mobile_app/components/modals/add_account_modal.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/account/AccountCtrl.dart';
+import 'package:reef_mobile_app/model/navigation/navigation_model.dart';
 import 'package:reef_mobile_app/model/status-data-object/StatusDataObject.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 
@@ -70,7 +71,15 @@ class _AccountsPageState extends State<AccountsPage> {
                 child: AccountsList(
                     ReefAppState.instance.model.accounts.accountsFDM.data,
                     ReefAppState.instance.model.accounts.selectedAddress,
-                    ReefAppState.instance.accountCtrl.setSelectedAddress));
+                    (addr) async {
+              await ReefAppState.instance.accountCtrl.setSelectedAddress(addr);
+              ReefAppState.instance.navigationCtrl.navigateHomePage(0);
+    
+              var navigateOnAccountSwitch = ReefAppState.instance.model.appConfig.navigateOnAccountSwitch;
+              if (navigateOnAccountSwitch)
+                ReefAppState.instance.navigationCtrl
+                    .navigate(NavigationPage.home);
+            }));
           }),
         ],
       ),

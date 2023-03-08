@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import "package:flutter/material.dart";
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -12,7 +13,8 @@ import 'package:reef_mobile_app/utils/gradient_text.dart';
 import 'package:reef_mobile_app/utils/icon_url.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 import 'package:sliver_tools/sliver_tools.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import '../modals/show_qr_code.dart';
 
 class TokenView extends StatefulWidget {
   const TokenView({Key? key}) : super(key: key);
@@ -37,8 +39,16 @@ class _TokenViewState extends State<TokenView> {
               children: [
                 Row(
                   children: [
-                    SizedBox(
-                        height: 48, width: 48, child: IconFromUrl(iconURL)),
+                    GestureDetector(
+                        onDoubleTap: () {
+                          showQrCode(
+                              '${name} Contract \n(don\'t send funds here)',
+                              address);
+                        },
+                        child: SizedBox(
+                            height: 48,
+                            width: 48,
+                            child: IconFromUrl(iconURL))),
                     const SizedBox(width: 15),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -190,7 +200,10 @@ class _TokenViewState extends State<TokenView> {
         final selectedERC20s =
             ReefAppState.instance.model.tokens.selectedErc20s;
 
-        String? message = getFdmListMessage(selectedERC20s, AppLocalizations.of(context)!.balance, AppLocalizations.of(context)!.loading);
+        String? message = getFdmListMessage(
+            selectedERC20s,
+            AppLocalizations.of(context)!.balance,
+            AppLocalizations.of(context)!.loading);
 
         return MultiSliver(
           pushPinnedChildren: false,
