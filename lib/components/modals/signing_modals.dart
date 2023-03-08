@@ -189,10 +189,10 @@ class _SignModalState extends State<SignModal> {
         _wrongPassword = false;
         ReefAppState.instance.navigationCtrl.navigate(NavigationPage.home);
         Navigator.pop(context);
-        ReefAppState.instance.signingCtrl.confirmSignature(
-          widget.signatureIdent,
-          widget.signer.data.address,
-        );
+        // ReefAppState.instance.signingCtrl.confirmSignature(
+        //   widget.signatureIdent,
+        //   widget.signer.data.address,
+        // );
       });
     } else {
       setState(() {
@@ -211,10 +211,10 @@ class _SignModalState extends State<SignModal> {
         _wrongPassword = false;
         ReefAppState.instance.navigationCtrl.navigate(NavigationPage.home);
         Navigator.pop(context);
-        ReefAppState.instance.signingCtrl.confirmSignature(
-          widget.signatureIdent,
-          widget.signer.data.address,
-        );
+        // ReefAppState.instance.signingCtrl.confirmSignature(
+        //   widget.signatureIdent,
+        //   widget.signer.data.address,
+        // );
       });
     }
   }

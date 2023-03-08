@@ -1,25 +1,49 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:local_auth/local_auth.dart';
 import 'package:mobx/src/api/store.dart';
+import 'package:reef_mobile_app/model/account/ReefAccount.dart';
 import 'package:reef_mobile_app/model/signing/signature_request.dart';
 import 'package:reef_mobile_app/model/signing/signature_requests.dart';
 import 'package:reef_mobile_app/model/signing/signer_payload_json.dart';
 import 'package:reef_mobile_app/model/signing/signer_payload_raw.dart';
+import 'package:reef_mobile_app/model/status-data-object/StatusDataObject.dart';
 import 'package:reef_mobile_app/service/JsApiService.dart';
 import 'package:reef_mobile_app/service/StorageService.dart';
+
+import '../StorageKey.dart';
+import '../account/account_model.dart';
 
 class SigningCtrl {
   final SignatureRequests signatureRequests;
   final JsApiService jsApi;
   final StorageService storage;
+  static final LocalAuthentication localAuth = LocalAuthentication();
+  final AccountModel accountModel;
 
-  SigningCtrl(this.jsApi, this.storage, this.signatureRequests) {
+  SigningCtrl(this.jsApi, this.storage, this.signatureRequests, this.accountModel) {
     jsApi.jsTxSignatureConfirmationMessageSubj.listen((jsApiMessage) {
       var signatureRequest = _buildSignatureRequest(jsApiMessage);
       signatureRequest.decodeMethod();
       signatureRequests.add(signatureRequest);
     });
+  }
+
+  Future<bool> authenticateAndSign(SignatureRequest signatureRequest, String? verifyPassword) async {
+    bool authenticated = false;
+    if (await checkBiometricsSupport()) {
+      authenticated = await _authenticateWithBiometrics(signatureRequest);
+    } else {
+      authenticated = await _authenticateWithPassword( signatureRequest, verifyPassword);
+    }
+    if (authenticated == true){
+      _confirmSignature(
+        signatureRequest.signatureIdent,
+        signatureRequest.payload.address,
+      );
+    }
+    return authenticated;
   }
 
   Future<dynamic> signRaw(String address, String message) =>
@@ -34,14 +58,13 @@ class SigningCtrl {
   Future<dynamic> bytesString(String bytes) =>
       jsApi.jsPromise('window.utils.bytesString("$bytes")');
 
-  Future<void> confirmSignature(
+  Future<void> _confirmSignature(
       String sigConfirmationIdent, String address) async {
     var account = await storage.getAccount(address);
     if (account == null) {
       print("ERROR: confirmSignature - Account not found.");
       return;
     }
-    // TODO user feedback
     signatureRequests.remove(sigConfirmationIdent);
     jsApi.confirmTxSignature(sigConfirmationIdent, account.mnemonic);
   }
@@ -86,5 +109,41 @@ class SigningCtrl {
   void rejectSignature(String signatureIdent) {
     signatureRequests.remove(signatureIdent);
     jsApi.rejectTxSignature(signatureIdent);
+  }
+
+  Future<bool> checkBiometricsSupport() async {
+    final isDeviceSupported = await localAuth.isDeviceSupported();
+    final isAvailable = await localAuth.canCheckBiometrics;
+    return isAvailable && isDeviceSupported;
+  }
+
+  Future<bool> _authenticateWithBiometrics(SignatureRequest signatureReq) async {
+    getSignatureSigner(signatureReq);
+
+    return localAuth.authenticate(
+        localizedReason: 'Authenticate with biometrics',
+        options: const AuthenticationOptions(
+            useErrorDialogs: true, stickyAuth: true, biometricOnly: true));
+  }
+
+  Future<bool> _authenticateWithPassword(SignatureRequest signatureReq, String? value) async {
+    if(value==null || value.isEmpty) {
+      return false;
+    }
+    getSignatureSigner(signatureReq);
+    final storedPassword =
+    await storage.getValue(StorageKey.password.name);
+    return storedPassword == value;
+  }
+
+  StatusDataObject<ReefAccount> getSignatureSigner(SignatureRequest signatureReq) {
+    final signer = accountModel.accountsFDM.data
+        .firstWhere((acc) => acc.data.address == signatureReq?.payload.address,
+        orElse: () => throw Exception("Signer not found"));
+    return signer;
+  }
+
+  bool isTransaction(SignatureRequest signatureRequest){
+    return signatureRequest.payload.type== "bytes";
   }
 }
