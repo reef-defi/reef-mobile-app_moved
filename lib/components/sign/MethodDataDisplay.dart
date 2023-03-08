@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:reef_mobile_app/utils/json_big_int.dart';
 
 import '../../model/signing/signature_request.dart';
 
@@ -11,14 +12,33 @@ class MethodDataDisplay extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Expanded(child: Observer(builder: (_) {
         if (signatureReq != null && signatureReq!.hasResults) {
-          var isEVM = signatureReq?.decodedMethod['evm'] != null;
-          //TODO display title if it's evm or native, display method name, parameter names and values
-          // if native also display info
-          print('EEEEE ${signatureReq?.decodedMethod['evm']}');
+          var evmMethodData = signatureReq?.decodedMethod['vm']['evm'];
+          var isEVM = evmMethodData != null;
+
+          var fragmentData = evmMethodData['decodedData']['functionFragment'];
+          var args=List.from(fragmentData['inputs']).asMap().map((i,val)=>MapEntry(val['name'], _getValue(evmMethodData['decodedData']['args'][i])));
+
+          print('MATHOD DATAAA ${evmMethodData['decodedData']}');
+
+          if(isEVM==true) {
+            return Text(
+                'EVM contract: ${evmMethodData['contractAddress']} \n ${fragmentData['name']}(${args.entries.join(',')})/ ${signatureReq?.decodedMethod['methodName']}');
+          }
           return Text(
-              'render method data here / evm=$isEVM / ${signatureReq?.decodedMethod['methodName']}');
+              'native method data here / evm=$isEVM / ${signatureReq?.decodedMethod['methodName']} / params...');
         }
 
         return Container();
       }));
+}
+
+_getValue(dynamic argVal) {
+  if(argVal is String) {
+    return argVal;
+  }
+  try{
+    return JsonBigInt.toBigInt(argVal)??argVal;
+  }catch(e){
+    return argVal;
+  }
 }
