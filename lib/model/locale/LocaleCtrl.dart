@@ -11,13 +11,13 @@ class LocaleCtrl {
   LocaleCtrl(this.storage, this.localeModel) {
     Future<dynamic> storedValueResult = storage.getValue("selectedLanguage");
     storedValueResult.then((storedValue) {
-      if(storedValue != 'en'){
-      localeModel.setSelectedLanguage(storedValue);
+      if (storedValue != 'en') {
+        localeModel.setSelectedLanguage(storedValue);
       }
     });
-  } 
+  }
 
-  changeSelectedLanguage(String newLang)async{
+  changeSelectedLanguage(String newLang) async {
     SharedPreferences _prefs = await SharedPreferences.getInstance();
     await _prefs.setString('languageCode', newLang);
     localeModel.setSelectedLanguage(newLang);

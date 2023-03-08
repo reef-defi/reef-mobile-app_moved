@@ -66,6 +66,14 @@ class _ChangePasswordState extends State<ChangePassword> {
             }));
   }
 
+   @override
+  void dispose() {
+    super.dispose();
+    currPasswordController.dispose();
+    newPasswordController.dispose();
+    confirmNewPasswordController.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
