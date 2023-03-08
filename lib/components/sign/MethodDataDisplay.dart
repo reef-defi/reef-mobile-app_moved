@@ -14,13 +14,14 @@ class MethodDataDisplay extends StatelessWidget {
         if (signatureReq != null && signatureReq!.hasResults) {
           var evmMethodData = signatureReq?.decodedMethod['vm']['evm'];
           var isEVM = evmMethodData != null;
+          if (isEVM == true) {
+            var fragmentData = evmMethodData['decodedData']['functionFragment'];
+            var args = List.from(fragmentData['inputs']).asMap().map((i, val) =>
+                MapEntry(val['name'],
+                    _getValue(evmMethodData['decodedData']['args'][i])));
 
-          var fragmentData = evmMethodData['decodedData']['functionFragment'];
-          var args=List.from(fragmentData['inputs']).asMap().map((i,val)=>MapEntry(val['name'], _getValue(evmMethodData['decodedData']['args'][i])));
+            print('MATHOD DATAAA ${evmMethodData['decodedData']}');
 
-          print('MATHOD DATAAA ${evmMethodData['decodedData']}');
-
-          if(isEVM==true) {
             return Text(
                 'EVM contract: ${evmMethodData['contractAddress']} \n ${fragmentData['name']}(${args.entries.join(',')})/ ${signatureReq?.decodedMethod['methodName']}');
           }
@@ -33,12 +34,12 @@ class MethodDataDisplay extends StatelessWidget {
 }
 
 _getValue(dynamic argVal) {
-  if(argVal is String) {
+  if (argVal is String) {
     return argVal;
   }
-  try{
-    return JsonBigInt.toBigInt(argVal)??argVal;
-  }catch(e){
+  try {
+    return JsonBigInt.toBigInt(argVal) ?? argVal;
+  } catch (e) {
     return argVal;
   }
 }
