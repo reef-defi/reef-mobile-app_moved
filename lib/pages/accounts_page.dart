@@ -12,7 +12,7 @@ import 'package:reef_mobile_app/model/navigation/navigation_model.dart';
 import 'package:reef_mobile_app/model/status-data-object/StatusDataObject.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 
-import '../components/SignatureContentToggle.dart';
+import '../components/sign/SignatureContentToggle.dart';
 
 class AccountsPage extends StatefulWidget {
   AccountsPage({Key? key}) : super(key: key);
@@ -74,9 +74,9 @@ class _AccountsPageState extends State<AccountsPage> {
                     (addr) async {
               await ReefAppState.instance.accountCtrl.setSelectedAddress(addr);
               ReefAppState.instance.navigationCtrl.navigateHomePage(0);
-              // TODO save to AppConfig and settings menu - https://app.clickup.com/t/861me4dy0
-              var navigateOnAcountSwitch = true;
-              if (navigateOnAcountSwitch)
+    
+              var navigateOnAccountSwitch = ReefAppState.instance.model.appConfig.navigateOnAccountSwitch;
+              if (navigateOnAccountSwitch)
                 ReefAppState.instance.navigationCtrl
                     .navigate(NavigationPage.home);
             }));

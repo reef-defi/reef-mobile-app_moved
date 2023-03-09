@@ -10,6 +10,9 @@ import 'package:reef_mobile_app/utils/icon_url.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+
 import '../../model/status-data-object/StatusDataObject.dart';
 import '../BlurContent.dart';
 
@@ -20,6 +23,15 @@ class ActivityView extends StatefulWidget {
   State<ActivityView> createState() => _ActivityViewState();
 }
 
+
+Future<IconData> getIconData(String imageUrl) async {
+  final response = await http.get(Uri.parse(imageUrl));
+  final bytes = response.bodyBytes;
+  final base64String = base64Encode(bytes);
+  final IconData iconData = IconData(int.parse(base64String.substring(0, 10)), fontFamily: 'MaterialIcons');
+  return iconData;
+}
+
 class _ActivityViewState extends State<ActivityView> {
   Widget activityItem(
       {required String type,
@@ -27,6 +39,7 @@ class _ActivityViewState extends State<ActivityView> {
       required String tokenName,
       required DateTime timeStamp,
       required String? iconUrl,
+      required bool? isTokenNFT,
       isFirstElement = false,
       isLastElement = false}) {
     final tsDate = timeStamp;
@@ -45,7 +58,11 @@ class _ActivityViewState extends State<ActivityView> {
           amountText =
               "+ ${formatAmountToDisplayBigInt(amount, fractionDigits: 2)}";
         } else {
+          if(isTokenNFT!){
+            amountText = "";
+          }else{
           amountText = "0";
+          }
         }
         // amountText =
         //     "+ ${amount != null ? toAmountDisplayBigInt(amount!, fractionDigits: 2) : 0}";
@@ -57,11 +74,16 @@ class _ActivityViewState extends State<ActivityView> {
         if (amount != null) {
           amountText = "- ${formatAmountToDisplayBigInt(amount)}";
         } else {
+          if(isTokenNFT!){
+            amountText = "";
+          }else{
           amountText = "0";
+          }
         }
         // amountText =
         //     "- ${amount != null ? toAmountDisplayBigInt(amount!, fractionDigits: 2) : 0}";
-        icon = CupertinoIcons.arrow_up_right;
+        
+        icon =  CupertinoIcons.arrow_up_right;
         bgColor = const Color(0x8cd8dce6);
         iconColor = const Color(0xffb2b0c8);
     }
@@ -129,7 +151,7 @@ class _ActivityViewState extends State<ActivityView> {
                 const SizedBox(width: 4),
                 IconFromUrl(
                   iconUrl,
-                  size: 18,
+                  size:isTokenNFT!? 45:18,
                 )
               ]),
             ],
@@ -141,15 +163,16 @@ class _ActivityViewState extends State<ActivityView> {
 
   @override
   Widget build(BuildContext context) {
-    /*print(ReefAppState.instance.model.tokens.txHistory.data.map((item) => [
-          item.token,
-          item.isInbound,
-          item.extrinsic,
-          item.timestamp,
-          item.tokenNFT,
-          item.url,
-          item.token?.iconUrl ?? "",
-        ]));*/
+    // print(ReefAppState.instance.model.tokens.txHistory.data.map((item) => [
+    //       item.token,
+    //       item.isInbound,
+    //       item.extrinsic,
+    //       item.timestamp,
+    //       item.tokenNFT,
+    //       item.url,
+    //       item.token?.iconUrl ?? item.tokenNFT?.iconUrl,
+    //     ]));
+     
     return Observer(builder: (_) {
       String? message = getFdmListMessage(
           ReefAppState.instance.model.tokens.txHistory, AppLocalizations.of(context)!.activity, AppLocalizations.of(context)!.loading);
@@ -171,13 +194,14 @@ class _ActivityViewState extends State<ActivityView> {
                                 .map((item) => Column(
                                       children: [
                                         activityItem(
-                                          tokenName: item.token?.name ?? "",
+                                          tokenName: item.token?.name ?? (item.tokenNFT!.balance==BigInt.one? item.tokenNFT!.name: "${item.tokenNFT!.balance} ${item.tokenNFT!.name}s"),
                                           type: item.isInbound
                                               ? 'received'
                                               : 'sent',
                                           timeStamp: item.timestamp.toLocal(),
-                                          amount: item.token?.balance,
-                                          iconUrl: item.token?.iconUrl,
+                                          amount: item.tokenNFT?.iconUrl==""?item.token?.balance:item.token?.balance,
+                                          iconUrl: item.token?.iconUrl??item.tokenNFT?.iconUrl,
+                                          isTokenNFT: item.tokenNFT==null?false:true,
                                         ),
                                         if (ReefAppState.instance.model.tokens
                                                 .txHistory.data.last !=

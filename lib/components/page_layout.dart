@@ -16,7 +16,7 @@ import 'package:reef_mobile_app/utils/constants.dart';
 import 'package:reef_mobile_app/utils/liquid_edge/liquid_carousel.dart';
 import "package:reef_mobile_app/utils/styles.dart";
 
-import 'SignatureContentToggle.dart';
+import 'sign/SignatureContentToggle.dart';
 
 class BottomNav extends StatefulWidget {
   const BottomNav({Key? key}) : super(key: key);

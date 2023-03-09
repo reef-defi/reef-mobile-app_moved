@@ -22,7 +22,7 @@ class SelectAccount extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<StatusDataObject<ReefAccount>> accountList;
-    if (this.isTokenReef) {
+    if (isTokenReef) {
       accountList = ReefAppState.instance.model.accounts.accountsFDM.data
           .where((accFDM) => accFDM.data.address != signerAddress)
           .toList();
@@ -35,35 +35,36 @@ class SelectAccount extends StatelessWidget {
           .toList();
     }
 
-    return Expanded(
-        child: Padding(
-            padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-            child: accountList.isEmpty
-                ? Text(
-                    AppLocalizations.of(context)!.no_other_accounts,
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+      child: accountList.isEmpty
+          ? Text(
+              AppLocalizations.of(context)!.no_other_accounts,
+            )
+          : ListView(
+              physics: const BouncingScrollPhysics(),
+              padding: const EdgeInsets.all(0),
+              scrollDirection: Axis.vertical,
+              shrinkWrap: true,
+              children: accountList
+                  .map<Widget>(
+                    (StatusDataObject<ReefAccount> account) => Column(
+                      children: [
+                        AccountBox(
+                            reefAccountFDM: account,
+                            selected: false,
+                            onSelected: () {
+                              callback(account.data.address);
+                              Navigator.of(context).pop();
+                            },
+                            showOptions: false),
+            Gap(10),
+                      ],
+                    ),
                   )
-                : ListView(
-                    physics: const BouncingScrollPhysics(),
-                    padding: const EdgeInsets.all(0),
-                    scrollDirection: Axis.vertical,
-                    shrinkWrap: true,
-                    children: accountList
-                        .map<Widget>(
-                          (StatusDataObject<ReefAccount> account) => Column(
-                            children: [
-                              AccountBox(
-                                  reefAccountFDM: account,
-                                  selected: false,
-                                  onSelected: () {
-                                    callback(account.data.address);
-                                    Navigator.of(context).pop();
-                                  },
-                                  showOptions: false),
-                              Gap(10)
-                            ],
-                          ),
-                        )
-                        .toList())));
+                  .toList(),
+            ),
+    );
   }
 }
 

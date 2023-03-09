@@ -401,8 +401,8 @@ class _SendPageState extends State<SendPage> {
                               showSelectAccountModal(AppLocalizations.of(context)!.select_address,
                                   (selectedAddress) async {
                                 setState(() {
-                                  address = selectedAddress;
-                                  valueController.text = selectedAddress;
+                                  address = selectedAddress.trim();
+                                  valueController.text = address;
                                 });
                                 var state = await _validate(
                                     address, selectedToken, amount);
@@ -429,7 +429,7 @@ class _SendPageState extends State<SendPage> {
                             controller: valueController,
                             onChanged: (text) async {
                               setState(() {
-                                address = valueController.text;
+                                address = valueController.text.trim();
                               });
 
                               var state = await _validate(
@@ -472,8 +472,8 @@ class _SendPageState extends State<SendPage> {
                             showQrCodeScannerModal(AppLocalizations.of(context)!.scan_address,
                                 (selectedAddress) async {
                               setState(() {
-                                address = selectedAddress;
-                                valueController.text = selectedAddress;
+                                address = selectedAddress.trim();
+                                valueController.text = address;
                               });
                             });
                           },
