@@ -143,9 +143,11 @@ class _AccountBoxState extends State<AccountBox> {
                                   shareEvmQr: AppLocalizations.of(context)!
                                       .share_evm_qr,
                                 ).getConstants().map((String choice) {
-                                  return PopupMenuItem<String>(
+                                  return  PopupMenuItem<String>(
                                     value: choice,
                                     child: Text(choice),
+                                    enabled: widget.reefAccountFDM.data.isEvmClaimed?true:choice ==AppLocalizations.of(context)!
+                                      .share_evm_qr?false:true,
                                   );
                                 }).toList();
                               },
