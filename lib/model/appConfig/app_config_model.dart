@@ -6,7 +6,7 @@ class AppConfigModel = _AppConfigModel with _$AppConfigModel;
 
 abstract class _AppConfigModel with Store {
 
-  @observable
+  @observable 
   bool displayBalance = false;
 
   @observable
