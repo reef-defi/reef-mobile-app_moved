@@ -217,14 +217,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.5"
-  cupertino_stepper:
-    dependency: "direct main"
-    description:
-      name: cupertino_stepper
-      sha256: "124690b8b23db7b43fc6d547688e42a9f3d73c8f46d0b210568e98a04b5645b2"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.2.1"
   dart_style:
     dependency: transitive
     description:
@@ -241,14 +233,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.0+3"
-  easy_stepper:
-    dependency: "direct main"
-    description:
-      name: easy_stepper
-      sha256: c08c1a1a3346beb093aa4382d2942516635b1290d4117974577329f966b69375
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.3.2"
   fake_async:
     dependency: transitive
     description:
@@ -613,14 +597,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.1"
-  lottie:
-    dependency: transitive
-    description:
-      name: lottie
-      sha256: "49bbc544e44bf0c734ccda29b182e3516a12f5021ea98b206cf31a168b0f97da"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.2.0"
   matcher:
     dependency: transitive
     description:

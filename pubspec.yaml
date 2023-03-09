@@ -62,8 +62,6 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   video_player: ^2.5.1
-  easy_stepper: ^0.3.2
-  cupertino_stepper: ^0.2.1
   #freezed: ^2.0.3+1 #immutable classes
 
 dev_dependencies:
