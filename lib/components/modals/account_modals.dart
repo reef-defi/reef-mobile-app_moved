@@ -745,7 +745,7 @@ class CurrentScreen extends StatefulWidget {
 
   final bool fromMnemonic;
   final ReefAppState reefState = ReefAppState.instance;
-  final StorageService storageService = ReefAppState.instance.storage;
+  // final StorageService storageService = ReefAppState.instance.storage;
 
   @override
   State<CurrentScreen> createState() => _CurrentScreenState();

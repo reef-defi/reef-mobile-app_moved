@@ -20,17 +20,17 @@ class _TestPageState extends State<TestPage> {
     var metadataMap = await ReefAppState.instance.metadataCtrl.getMetadata();
     Metadata metadata = Metadata.fromMap(metadataMap);
     var chain =
-        await ReefAppState.instance.storage.getMetadata(metadata.genesisHash);
+        await ReefAppState.instance.storageCtrl.getMetadata(metadata.genesisHash);
     int currVersion = chain != null ? chain.specVersion : 0;
     var response = await showMetadataAprovalModal(
         metadata: metadata, currVersion: currVersion);
     if (response == true) {
-      ReefAppState.instance.storage.saveMetadata(metadata);
+      ReefAppState.instance.storageCtrl.saveMetadata(metadata);
     }
   }
 
   _deleteMetadata() async {
-    var metadatas = await ReefAppState.instance.storage.getAllMetadatas();
+    var metadatas = await ReefAppState.instance.storageCtrl.getAllMetadatas();
     for (var metadata in metadatas) {
       metadata.delete();
     }
@@ -77,7 +77,7 @@ class _TestPageState extends State<TestPage> {
   }
 
   _signPayloadTransfer() async {
-    var signerAddress = await ReefAppState.instance.storage
+    var signerAddress = await ReefAppState.instance.storageCtrl
         .getValue(StorageKey.selected_address.name);
     TokenWithAmount tokenToTranfer = TokenWithAmount(
         name: 'REEF',

@@ -54,7 +54,7 @@ class _SplashAppState extends State<SplashApp> {
   static const _firstLaunch = "firstLaunch";
   bool _hasError = false;
   bool _isGifFinished = false;
-  bool _requiresAuth = false;
+  bool _requiresAuth = true;
   bool _isAuthenticated = false;
   bool _wrongPassword = false;
   bool _biometricsIsAvailable = false;
@@ -133,8 +133,8 @@ class _SplashAppState extends State<SplashApp> {
   }
  
   Future<bool> _checkIfFirstLaunch() async {
-    final isFirstLaunch =
-        await ReefAppState.instance.storageCtrl.getValue(_firstLaunch);
+    final isFirstLaunch =        false;
+    // final isFirstLaunch =        await ReefAppState.instance.storageCtrl.getValue(_firstLaunch);
     return isFirstLaunch == null;
   }
 
@@ -142,6 +142,7 @@ class _SplashAppState extends State<SplashApp> {
     final storageService = StorageService();
     await ReefAppState.instance.init(widget.reefJsApiService, storageService);
     setState(() {
+      print('LLLLLLLLLLLLLLLLLLLlLLLL');
       loaded = true;
     });
   }
@@ -193,7 +194,7 @@ class _SplashAppState extends State<SplashApp> {
     //TODO: Initialise the widget back
 
     return Stack(children: <Widget>[
-      widget.reefJsApiService.widget,
+      if(loaded==true)widget.reefJsApiService.widget,
       if ((loaded == false || _isAuthenticated == false) ||
           _isFirstLaunch == null)
         Stack(
