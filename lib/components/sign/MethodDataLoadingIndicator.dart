@@ -1,18 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mobx/mobx.dart';
+import 'package:reef_mobile_app/utils/styles.dart';
 
 import '../../model/signing/signature_request.dart';
 
 class MethodDataLoadingIndicator extends StatelessWidget {
-  const MethodDataLoadingIndicator(this.signatureReq, {Key? key}) : super(key: key);
+  const MethodDataLoadingIndicator(this.signatureReq, {Key? key})
+      : super(key: key);
 
   final SignatureRequest? signatureReq;
 
   @override
   Widget build(BuildContext context) => Observer(
       builder: (_) =>
-      signatureReq?.fetchMethodDataFuture.status == FutureStatus.pending
-          ? const Expanded(child: LinearProgressIndicator())
-          : Container());
+          signatureReq?.fetchMethodDataFuture.status == FutureStatus.pending
+              ? Center(
+                  child: LinearProgressIndicator(
+                  valueColor:
+                      AlwaysStoppedAnimation<Color>(Styles.primaryAccentColor),
+                  backgroundColor: Styles.greyColor,
+                ))
+              : Container());
 }

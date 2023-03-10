@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:reef_mobile_app/utils/json_big_int.dart';
-
 import '../../model/signing/signature_request.dart';
 
 class MethodDataDisplay extends StatelessWidget {
