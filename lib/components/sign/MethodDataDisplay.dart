@@ -13,6 +13,7 @@ class MethodDataDisplay extends StatelessWidget {
         if (signatureReq != null && signatureReq!.hasResults) {
           var evmMethodData = signatureReq?.decodedMethod['vm']['evm'];
           var isEVM = evmMethodData != null;
+          print(signatureReq!.decodedMethod['args']);
           if (isEVM == true) {
             var fragmentData = evmMethodData['decodedData']['functionFragment'];
             var args = List.from(fragmentData['inputs']).asMap().map((i, val) =>
@@ -22,10 +23,11 @@ class MethodDataDisplay extends StatelessWidget {
             print('MATHOD DATAAA ${evmMethodData['decodedData']}');
 
             return Text(
-                'EVM contract: ${evmMethodData['contractAddress']} \n ${fragmentData['name']}(${args.entries.join(',')})/ ${signatureReq?.decodedMethod['methodName']}');
+                'EVM contract: ${evmMethodData['contractAddress']}\n ${fragmentData['name']}(${args.entries.join(',')})/ ${signatureReq?.decodedMethod['methodName']}');
           }
+
           return Text(
-              'native method data here / evm=$isEVM / ${signatureReq?.decodedMethod['methodName']} / params...');
+              'native method data here\n evm=$isEVM\n method name: ${signatureReq?.decodedMethod['methodName']}\n params: ${signatureReq?.decodedMethod['args'].join(', ').split(':')[1].split('}')[0]},${signatureReq?.decodedMethod['args'].join(', ').split(',')[1]}');
         }
 
         return Container();
