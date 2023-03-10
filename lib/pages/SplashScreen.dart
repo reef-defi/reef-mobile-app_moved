@@ -178,6 +178,7 @@ class _SplashAppState extends State<SplashApp> {
       );
     }
     if (_isFirstLaunch == true && loaded == true) {
+      print('REBUILDDDDDDDD // this widget gets returned and disposes WebViewFlutterJS (widget.reefJsApiService.widget from below) so it breaks the Flutter<>JS connection');
       return ShouldRebuild(
           shouldRebuild: (oldWidget, newWidget) => false,
           child: IntroductionPage(
@@ -191,8 +192,9 @@ class _SplashAppState extends State<SplashApp> {
           ));
     }
     //TODO: Initialise the widget back
-
+    print('INCLUDE WEBVIEWWWWWWWWW   // this widget initializes js libs (and causes ReefAppState to initialize so sets loaded=true) and if removed it disconnects Flutter<>JS connection');
     return Stack(children: <Widget>[
+
       widget.reefJsApiService.widget,
       if ((loaded == false || _isAuthenticated == false) ||
           _isFirstLaunch == null)
