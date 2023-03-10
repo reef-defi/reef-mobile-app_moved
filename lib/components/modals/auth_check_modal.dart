@@ -50,7 +50,7 @@ class _AuthCheckState extends State<AuthCheck> {
 
   Future<void> authenticateWithPassword(String value) async {
     final storedPassword =
-        await ReefAppState.instance.storage.getValue(StorageKey.password.name);
+        await ReefAppState.instance.storageCtrl.getValue(StorageKey.password.name);
     if (storedPassword == value) {
       setState(() {
         _wrongPassword = false;

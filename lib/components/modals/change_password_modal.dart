@@ -58,7 +58,7 @@ class _ChangePasswordState extends State<ChangePassword> {
       });
     });
 
-    ReefAppState.instance.storage
+    ReefAppState.instance.storageCtrl
         .getValue(StorageKey.password.name)
         .then((value) => setState(() {
               hasPassword = value != null && value.isNotEmpty;
@@ -269,7 +269,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                       onPressed: () {
                         if (confirmNewPassword.isNotEmpty &&
                             !confirmNewPasswordError) {
-                          ReefAppState.instance.storage
+                          ReefAppState.instance.storageCtrl
                               .setValue(StorageKey.password.name, newPassword);
                           Navigator.of(context).pop();
                         }

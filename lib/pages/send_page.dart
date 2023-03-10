@@ -173,7 +173,7 @@ class _SendPageState extends State<SendPage> {
 
   Future<Stream<dynamic>> executeTransferTransaction(
       TokenWithAmount sendToken) async {
-    final signerAddress = await ReefAppState.instance.storage
+    final signerAddress = await ReefAppState.instance.storageCtrl
         .getValue(StorageKey.selected_address.name);
     TokenWithAmount tokenToTransfer = TokenWithAmount(
         name: sendToken.name,

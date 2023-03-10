@@ -181,10 +181,9 @@ class _TokenViewState extends State<TokenView> {
                               color: Colors.white, fontWeight: FontWeight.w700),
                         ),
                         onPressed: () async{
-                          // ReefAppState.instance.navigationCtrl
-                          //     .navigateToSendPage(
-                          //         context: context, preselected: address);
-                          print(await ReefAppState.instance.storageCtrl.getStorageValue("firstLaunch"));
+                          ReefAppState.instance.navigationCtrl
+                              .navigateToSendPage(
+                                  context: context, preselected: address);
                         },
                       ),
                     )),

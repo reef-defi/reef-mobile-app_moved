@@ -112,14 +112,14 @@ class _TestPageState extends State<TestPage> {
             ElevatedButton(
               child: const Text('delete password'),
               onPressed: () {
-                ReefAppState.instance.storage
+                ReefAppState.instance.storageCtrl
                     .deleteValue(StorageKey.password.name);
               },
             ),
             ElevatedButton(
               child: const Text('delete jwts'),
-              onPressed: () async => ReefAppState.instance.storage.deleteJwt(
-                  await ReefAppState.instance.storage
+              onPressed: () async => ReefAppState.instance.storageCtrl.deleteJwt(
+                  await ReefAppState.instance.storageCtrl
                       .getValue(StorageKey.selected_address.name)),
             ),
           ]),

@@ -59,7 +59,7 @@ class _WebViewFlutterJSState extends State<WebViewFlutterJS> {
                 const Gap(4),
                 TextButton(
                     onPressed: () async {
-                      await ReefAppState.instance.storage
+                      await ReefAppState.instance.storageCtrl
                           .saveAuthUrl(AuthUrl(url, true));
                       _setAuthUrl(false, url);
                       _controller!.reload();
@@ -91,7 +91,7 @@ class _WebViewFlutterJSState extends State<WebViewFlutterJS> {
           onPageFinished: (url) {
             var strippedUrl = stripUrl(url);
             if (strippedUrl.isNotEmpty) {
-              ReefAppState.instance.storage
+              ReefAppState.instance.storageCtrl
                   .getAuthUrl(strippedUrl)
                   .then((authUrl) {
                 if (authUrl != null && !authUrl.isAllowed) {

@@ -74,7 +74,7 @@ class _SplashAppState extends State<SplashApp> {
 
   Future<bool> _checkRequiresAuth() async {
     final storedPassword =
-        await ReefAppState.instance.storage.getValue(StorageKey.password.name);
+        await ReefAppState.instance.storageCtrl.getValue(StorageKey.password.name);
     return storedPassword != null && storedPassword != "";
   }
 
@@ -134,7 +134,7 @@ class _SplashAppState extends State<SplashApp> {
  
   Future<bool> _checkIfFirstLaunch() async {
     final isFirstLaunch =
-        await ReefAppState.instance.storage.getValue(_firstLaunch);
+        await ReefAppState.instance.storageCtrl.getValue(_firstLaunch);
     return isFirstLaunch == null;
   }
 
@@ -183,7 +183,7 @@ class _SplashAppState extends State<SplashApp> {
           child: IntroductionPage(
             title: "nice demo",
             onDone: () async {
-              await ReefAppState.instance.storage.setValue(_firstLaunch, false);
+              await ReefAppState.instance.storageCtrl.setValue(_firstLaunch, false);
               setState(() {
                 _isFirstLaunch = false;
               });
@@ -260,7 +260,7 @@ class _SplashAppState extends State<SplashApp> {
 
   Future<void> authenticateWithPassword(String value) async {
     final storedPassword =
-        await ReefAppState.instance.storage.getValue(StorageKey.password.name);
+        await ReefAppState.instance.storageCtrl.getValue(StorageKey.password.name);
     if (storedPassword == value) {
       setState(() {
         _wrongPassword = false;

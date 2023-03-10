@@ -75,7 +75,7 @@ class DAppRequestService {
   Future<AuthUrlStatus> _getAuthUrlStatus(String? url) async {
     if (url == null) return AuthUrlStatus.notFound;
 
-    var authUrl = await ReefAppState.instance.storage.getAuthUrl(url);
+    var authUrl = await ReefAppState.instance.storageCtrl.getAuthUrl(url);
     if (authUrl == null) return AuthUrlStatus.notFound;
 
     return authUrl.isAllowed
@@ -90,7 +90,7 @@ class DAppRequestService {
       case AuthUrlStatus.notFound:
         var response =
             await showAuthUrlAprovalModal(origin: dAppName, url: url);
-        await ReefAppState.instance.storage
+        await ReefAppState.instance.storageCtrl
             .saveAuthUrl(AuthUrl(url!, response == true));
         return response == true;
       case AuthUrlStatus.notAuthorized:
@@ -102,21 +102,21 @@ class DAppRequestService {
   Future<bool> _metadataProvide(Map metadataMap) async {
     Metadata metadata = Metadata.fromMap(metadataMap);
     var chain =
-        await ReefAppState.instance.storage.getMetadata(metadata.genesisHash);
+        await ReefAppState.instance.storageCtrl.getMetadata(metadata.genesisHash);
     var currVersion = chain != null ? chain.specVersion.toString() : 0;
     var response = await showMetadataAprovalModal(
       metadata: metadata,
       currVersion: currVersion,
     );
     if (response == true) {
-      await ReefAppState.instance.storage.saveMetadata(metadata);
+      await ReefAppState.instance.storageCtrl.saveMetadata(metadata);
       return true;
     }
     return false;
   }
 
   Future<String> _metadataList() async {
-    var metadatas = await ReefAppState.instance.storage.getAllMetadatas();
+    var metadatas = await ReefAppState.instance.storageCtrl.getAllMetadatas();
     var injectedMetadataKnown = [];
     for (var metadata in metadatas) {
       injectedMetadataKnown.add(metadata.toInjectedMetadataKnownJson());

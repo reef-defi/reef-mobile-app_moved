@@ -494,7 +494,7 @@ class _AccountCreationConfirmContentState
         _confirmPasswordError = password != confirmPassword;
       });
     });
-    ReefAppState.instance.storage
+    ReefAppState.instance.storageCtrl
         .getValue(StorageKey.password.name)
         .then((value) => setState(() {
               _hasPassword = value != null && value.isNotEmpty;
@@ -699,7 +699,7 @@ class _AccountCreationConfirmContentState
                         if (widget.account != null) {
                           widget.saveAccount(widget.account as StoredAccount);
                           if (!_hasPassword && password.isNotEmpty) {
-                            ReefAppState.instance.storage
+                            ReefAppState.instance.storageCtrl
                                 .setValue(StorageKey.password.name, password);
                           }
 

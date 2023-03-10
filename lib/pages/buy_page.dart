@@ -148,7 +148,7 @@ class _BuyPageState extends State<BuyPage> {
 
   Future<String> _authenticate() async {
     try {
-      var signerAddress = await ReefAppState.instance.storage
+      var signerAddress = await ReefAppState.instance.storageCtrl
           .getValue(StorageKey.selected_address.name);
       http.Response responseNonce =
           await http.get(Uri.parse('$baseUrl/auth/$signerAddress'));
@@ -163,7 +163,7 @@ class _BuyPageState extends State<BuyPage> {
       var auth = manageResponse(responseAuth);
       if (auth['authenticated'] == true) {
         var jwt = auth['token'];
-        await ReefAppState.instance.storage.saveJwt(signerAddress, jwt);
+        await ReefAppState.instance.storageCtrl.saveJwt(signerAddress, jwt);
         return jwt;
       } else {
         showAlertModal("Error", ["Authentication failed"], context: context);
@@ -176,9 +176,9 @@ class _BuyPageState extends State<BuyPage> {
   }
 
   void _buy() async {
-    var signerAddress = await ReefAppState.instance.storage
+    var signerAddress = await ReefAppState.instance.storageCtrl
         .getValue(StorageKey.selected_address.name);
-    var jwt = await ReefAppState.instance.storage.getJwt(signerAddress);
+    var jwt = await ReefAppState.instance.storageCtrl.getJwt(signerAddress);
     if (jwt == null) {
       jwt = await _authenticate();
       if (jwt == "") {
@@ -197,7 +197,7 @@ class _BuyPageState extends State<BuyPage> {
           body: body, headers: headers);
       var tradeRespRaw = manageResponse(responseBuy);
       if (tradeRespRaw['status'] == 401) {
-        await ReefAppState.instance.storage.saveJwt(signerAddress, jwt);
+        await ReefAppState.instance.storageCtrl.saveJwt(signerAddress, jwt);
         _buy();
       } else {
         tradeResp = BcTradeResp.fromJson(tradeRespRaw);
@@ -208,7 +208,7 @@ class _BuyPageState extends State<BuyPage> {
       }
     } catch (e) {
       if (e is Exception && e.toString().contains('TokenExpiredError')) {
-        await ReefAppState.instance.storage.deleteJwt(signerAddress);
+        await ReefAppState.instance.storageCtrl.deleteJwt(signerAddress);
         await _authenticate();
         _buy();
       } else {
