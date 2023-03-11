@@ -34,10 +34,10 @@ class SplashApp extends StatefulWidget {
 
   @override
   _SplashAppState createState() => _SplashAppState();
-  
 
-  static void setLocale(BuildContext context, String newLocale){
-    print('setting locale to ===================================== ${newLocale}');
+  static void setLocale(BuildContext context, String newLocale) {
+    print(
+        'setting locale to ===================================== ${newLocale}');
     _SplashAppState? state = context.findAncestorStateOfType<_SplashAppState>();
     state?.setLocale(newLocale);
   }
@@ -46,11 +46,12 @@ class SplashApp extends StatefulWidget {
 class _SplashAppState extends State<SplashApp> {
   String _locale = ReefAppState.instance.model.locale.selectedLanguage;
 
-  setLocale(String locale){
+  setLocale(String locale) {
     setState(() {
       _locale = locale;
     });
   }
+
   static const _firstLaunch = "firstLaunch";
   bool _hasError = false;
   bool _isGifFinished = false;
@@ -60,7 +61,7 @@ class _SplashAppState extends State<SplashApp> {
   bool _biometricsIsAvailable = false;
   bool? _isFirstLaunch;
   Widget? onInitWidget;
-  
+
   var loaded = false;
   final TextEditingController _passwordController = TextEditingController();
   String password = "";
@@ -80,14 +81,14 @@ class _SplashAppState extends State<SplashApp> {
 
   Future<String> getLocale() async {
     SharedPreferences _prefs = await SharedPreferences.getInstance();
-    String languageCode = _prefs.getString("languageCode")??'en';
+    String languageCode = _prefs.getString("languageCode") ?? 'en';
     return languageCode;
   }
+
   @override
   void initState() {
     super.initState();
- getLocale().then((value) => setLocale(value)
- );
+    getLocale().then((value) => setLocale(value));
 
     _initializeAsyncDependencies();
     _checkIfFirstLaunch().then((value) {
@@ -127,11 +128,11 @@ class _SplashAppState extends State<SplashApp> {
   }
 
   @override
-  void dispose(){
+  void dispose() {
     super.dispose();
     _passwordController.dispose();
   }
- 
+
   Future<bool> _checkIfFirstLaunch() async {
     final isFirstLaunch =
         await ReefAppState.instance.storage.getValue(_firstLaunch);
@@ -145,18 +146,18 @@ class _SplashAppState extends State<SplashApp> {
       loaded = true;
     });
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Reef Chain App',
-       localizationsDelegates: [
-    AppLocalizations.delegate,
-    GlobalMaterialLocalizations.delegate,
-    GlobalWidgetsLocalizations.delegate,
-  ],
+      localizationsDelegates: [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
       supportedLocales: AppLocalizations.supportedLocales,
-      locale:Locale(_locale),
+      locale: Locale(_locale),
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
           primarySwatch: Colors.blue,
@@ -176,19 +177,6 @@ class _SplashAppState extends State<SplashApp> {
           onPressed: () => main(),
         ),
       );
-    }
-    if (_isFirstLaunch == true && loaded == true) {
-      return ShouldRebuild(
-          shouldRebuild: (oldWidget, newWidget) => false,
-          child: IntroductionPage(
-            title: "nice demo",
-            onDone: () async {
-              await ReefAppState.instance.storage.setValue(_firstLaunch, false);
-              setState(() {
-                _isFirstLaunch = false;
-              });
-            },
-          ));
     }
     //TODO: Initialise the widget back
 
@@ -239,7 +227,7 @@ class _SplashAppState extends State<SplashApp> {
                           decoration: TextDecoration.none),
                     ),
                     const Gap(4),
-                    SizedBox(
+                    const SizedBox(
                       height: 12,
                       width: 12,
                       child: CircularProgressIndicator.adaptive(
@@ -252,6 +240,17 @@ class _SplashAppState extends State<SplashApp> {
               ),
             )
           ],
+        )
+      else if (_isFirstLaunch == true &&
+          loaded == true &&
+          _isAuthenticated == true)
+        IntroductionPage(
+          onDone: () async {
+            await ReefAppState.instance.storage.setValue(_firstLaunch, false);
+            setState(() {
+              _isFirstLaunch = false;
+            });
+          },
         )
       else
         widget.displayOnInit(),
