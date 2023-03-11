@@ -56,6 +56,7 @@ class _MethodDataDisplayState extends State<MethodDataDisplay> {
   Future<List<Object>> _getMethodData() async {
     if (widget.signatureReq != null && widget.signatureReq!.hasResults) {
       dynamic detailsTable = [];
+
       if(widget.signatureReq!=Null){
         var requests = ReefAppState.instance.model.signatureRequests.list;
       var signatureRequest = requests.isNotEmpty ? requests.first : null;
@@ -65,7 +66,7 @@ class _MethodDataDisplayState extends State<MethodDataDisplay> {
     final txDecodedData = await _getTxDecodedData(widget.signatureReq!);
       var evmMethodData = widget.signatureReq?.decodedMethod['vm']['evm'];
       var isEVM = evmMethodData != null;
-      print("=====");
+
       print(widget.signatureReq!.decodedMethod['args']);
       if (isEVM == true) {
         var fragmentData =
@@ -74,13 +75,30 @@ class _MethodDataDisplayState extends State<MethodDataDisplay> {
             (i, val) => MapEntry(val['name'],
                 _getValue(evmMethodData['decodedData']['args'][i])));
         print('MATHOD DATAAA ${evmMethodData['decodedData']}');
-
-        return ['EVM contract: ${evmMethodData['contractAddress']}\n ${fragmentData['name']}(${args.entries.join(',')})/ ${widget.signatureReq?.decodedMethod['methodName']}',detailsTable];
+        print('EVM contract: ${evmMethodData['contractAddress']}\n ${fragmentData['name']}(${args.entries.join(',')})/ ${widget.signatureReq?.decodedMethod['methodName']}');
+        Map<String,String> decodedData = {
+          "type":"EVM Contract",
+          "contract address":evmMethodData['contractAddress'],
+          "method name":widget.signatureReq?.decodedMethod['methodName'],
+          "args":"${fragmentData['name']}(${args.entries.join(',')})"
+        };
+        
+        return [createDecodedDataTable(decodedData),detailsTable];
       }
+      print('native method data here\n evm=$isEVM\n method name: ${widget.signatureReq?.decodedMethod['methodName']}\n params: ${widget.signatureReq?.decodedMethod['args'].join(', ').split(':')[1].split('}')[0]},${widget.signatureReq?.decodedMethod['args'].join(', ').split(',')[1]}');
+      final List<dynamic>? argsList = widget.signatureReq?.decodedMethod['args'];
+final String args = argsList?.join(', ').toString() ?? "";
+final String params = "${args.split(':')[1].split('}')[0]},${args.split(',')[1]}";
+print("==== $params");
 
-      return ['native method data here\n evm=$isEVM\n method name: ${widget.signatureReq?.decodedMethod['methodName']}\n params: ${widget.signatureReq?.decodedMethod['args'].join(', ').split(':')[1].split('}')[0]},${widget.signatureReq?.decodedMethod['args'].join(', ').split(',')[1]}',detailsTable];
+      Map<String,String> decodedData = {
+          "type":"Native Method Call",
+          "method name":widget.signatureReq?.decodedMethod['methodName'],
+          "params":params
+        };
+      return [createDecodedDataTable(decodedData),detailsTable];
     }
-    return ['',[]];
+    return [[],[]];
   }
 
   dynamic _getValue(dynamic argVal) {
@@ -102,14 +120,15 @@ class _MethodDataDisplayState extends State<MethodDataDisplay> {
         key: Key(widget.signatureReq.toString()),
         builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
           if (snapshot.hasData) {
-            String details = snapshot.data![0];
+            final decodedDetails = snapshot.data![0];
             final detailsTable = snapshot.data![1];
+            List<TableRow> decodedDetailsTableRow = decodedDetails.cast<TableRow>();
             List<TableRow> tableRows = detailsTable.cast<TableRow>();
 
             return Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.fromLTRB(16.0,0.0,16.0,0.0),
                   child: Table(
                     columnWidths: const {
                   0: IntrinsicColumnWidth(),
@@ -118,16 +137,36 @@ class _MethodDataDisplayState extends State<MethodDataDisplay> {
                     children: tableRows,
                   ),
                 ),
-                Text(details),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16.0,0.0,16.0,10.0),
+                  child: Table(
+                    columnWidths: const {
+                  0: IntrinsicColumnWidth(),
+                  1: FlexColumnWidth(4),
+                              },
+                    children: decodedDetailsTableRow,
+                  ),
+                ),
               ],
             );
           } else {
             return Text("no data");
           }
-          return Text("yo");
         },
       ),
     );
   }
 }
 
+
+List<TableRow> createDecodedDataTable(Map<String, String> decodedData) {
+  List<String> keyTexts = [];
+  List<String> valueTexts = [];
+
+  decodedData.forEach((key, value) {
+    keyTexts.add(key);
+    valueTexts.add(value);
+  });
+
+  return createTable(keyTexts: keyTexts, valueTexts: valueTexts);
+}
