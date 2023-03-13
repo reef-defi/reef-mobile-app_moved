@@ -62,8 +62,8 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   video_player: ^2.5.1
-  scan:
-  images_picker:
+  barcode_finder:
+  file_picker:
   #freezed: ^2.0.3+1 #immutable classes
 
 dev_dependencies:

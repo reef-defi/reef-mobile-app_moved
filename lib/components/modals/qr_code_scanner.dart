@@ -4,9 +4,9 @@ import 'package:gap/gap.dart';
 import 'package:reef_mobile_app/components/modal.dart';
 import 'package:reef_mobile_app/pages/SplashScreen.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
-import 'package:scan/scan.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:images_picker/images_picker.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:barcode_finder/barcode_finder.dart';
 
 class QrCodeScanner extends StatefulWidget {
   final Function(String)? onScanned;
@@ -81,20 +81,16 @@ class _QrCodeScannerState extends State<QrCodeScanner> {
                 padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 28),
               ),
                 onPressed: () async {
-                  List<Media>? res = await ImagesPicker.pick();
-                  if (res != null) {
-                    String? str = await Scan.parse(res[0].path);
-                    if (str != null) {
-                      setState(() {
-                        qrcode = str;
-                      });
-                      widget.onScanned!(str);
-                      Navigator.of(context).pop();
-                    }else{
-                      ScaffoldMessenger.of(context)
+                  final res = await scanFile();
+                  if(res!=Null){
+                  widget.onScanned!(res!);
+                  Navigator.of(context).pop();
+                  }else{
+                    ScaffoldMessenger.of(context)
                       .showSnackBar(SnackBar(content: Text("This image does not have QR in it.")));
-                    }
                   }
+
+
                 },
               ),
             ),
@@ -107,4 +103,16 @@ void showQrCodeScannerModal(String title, Function(String)? onScanned,
     {BuildContext? context}) {
   showModal(context ?? navigatorKey.currentContext,
       child: QrCodeScanner(onScanned: onScanned), headText: title);
+}
+
+Future<String?> scanFile() async {
+    // Used to pick a file from device storage
+    final pickedFile = await FilePicker.platform.pickFiles();
+    if (pickedFile != null) {
+        final filePath = pickedFile.files.single.path;
+        if (filePath != null) {
+            final res = await BarcodeFinder.scanFile(path: filePath);
+            return res;
+        }
+    }
 }
