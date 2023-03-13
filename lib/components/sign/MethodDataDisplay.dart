@@ -19,8 +19,6 @@ class MethodDataDisplay extends StatelessWidget {
                 MapEntry(val['name'],
                     _getValue(evmMethodData['decodedData']['args'][i])));
 
-            print('MATHOD DATAAA ${evmMethodData['decodedData']}');
-
             return Text(
                 'EVM contract: ${evmMethodData['contractAddress']} \n ${fragmentData['name']}(${args.entries.join(',')})/ ${signatureReq?.decodedMethod['methodName']}');
           }
@@ -72,8 +70,8 @@ _getValue(dynamic argVal) {
 //       if(widget.signatureReq!=Null){
 //         var requests = ReefAppState.instance.model.signatureRequests.list;
 //       var signatureRequest = requests.isNotEmpty ? requests.first : null;
-//       final txData = widget.signatureReq?.txDecodedData;
-//         detailsTable = createTransactionTable(txData);
+      // final txData = widget.signatureReq?.txDecodedData;
+      //   detailsTable = createTransactionTable(txData);
 //       }
 //     final txDecodedData = widget.signatureReq?.txDecodedData;
 //       var evmMethodData = widget.signatureReq?.decodedMethod['vm']['evm'];
