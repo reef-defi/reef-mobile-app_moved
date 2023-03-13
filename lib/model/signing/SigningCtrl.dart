@@ -3,14 +3,17 @@ import 'dart:convert';
 
 import 'package:local_auth/local_auth.dart';
 import 'package:mobx/src/api/store.dart';
+import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/account/ReefAccount.dart';
 import 'package:reef_mobile_app/model/signing/signature_request.dart';
 import 'package:reef_mobile_app/model/signing/signature_requests.dart';
 import 'package:reef_mobile_app/model/signing/signer_payload_json.dart';
 import 'package:reef_mobile_app/model/signing/signer_payload_raw.dart';
+import 'package:reef_mobile_app/model/signing/tx_decoded_data.dart';
 import 'package:reef_mobile_app/model/status-data-object/StatusDataObject.dart';
 import 'package:reef_mobile_app/service/JsApiService.dart';
 import 'package:reef_mobile_app/service/StorageService.dart';
+import 'package:reef_mobile_app/utils/functions.dart';
 
 import '../StorageKey.dart';
 import '../account/account_model.dart';
@@ -110,6 +113,27 @@ class SigningCtrl {
     signatureRequests.remove(signatureIdent);
     jsApi.rejectTxSignature(signatureIdent);
   }
+
+  Future<TxDecodedData> getTxDecodedData(dynamic payload, dynamic decodedMethod) async {
+  TxDecodedData txDecodedData = TxDecodedData(
+    specVersion: hexToDecimalString(payload.specVersion),
+    nonce: hexToDecimalString(payload.nonce),
+  );
+
+    txDecodedData.genesisHash = payload.genesisHash;
+
+    txDecodedData.methodName = decodedMethod["methodName"];
+    const jsonEncoder = JsonEncoder.withIndent("  ");
+    txDecodedData.args = jsonEncoder.convert(decodedMethod["args"]);
+    txDecodedData.info = decodedMethod["info"];
+
+    txDecodedData.rawMethodData = payload.method;
+
+  if (payload.tip != null) {
+    txDecodedData.tip = hexToDecimalString(payload.tip);
+  }
+  return txDecodedData;
+}
 
   Future<bool> checkBiometricsSupport() async {
     final isDeviceSupported = await localAuth.isDeviceSupported();
