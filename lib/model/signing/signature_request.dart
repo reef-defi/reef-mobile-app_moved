@@ -24,23 +24,36 @@ abstract class _SignatureRequest with Store {
   // No need to observe this as we are relying on the fetchMethodDataFuture.status
   dynamic decodedMethod;
 
+  @observable
+  dynamic txDecodedData;
+
   static ObservableFuture<dynamic> emptyResponse =
-  ObservableFuture.value({});
+      ObservableFuture.value({});
 
   @computed
   bool get hasResults =>
       fetchMethodDataFuture != emptyResponse &&
-          fetchMethodDataFuture.status == FutureStatus.fulfilled;
+      fetchMethodDataFuture.status == FutureStatus.fulfilled;
 
   @observable
   ObservableFuture<dynamic> fetchMethodDataFuture = emptyResponse;
-  
+
   @action
   Future<dynamic> decodeMethod() async {
     decodedMethod = {};
     final future = _signingCtrl.decodeMethod(payload.method);
     fetchMethodDataFuture = ObservableFuture(future);
 
-    return decodedMethod = await future;
+    decodedMethod = await future;
+    txDecodedData = await _signingCtrl.getTxDecodedData(this.toSignatureRequest());
+    return decodedMethod;
+  }
+
+  SignatureRequest toSignatureRequest() {
+    return SignatureRequest(
+      signatureIdent,
+      payload,
+      _signingCtrl,
+    );
   }
 }
