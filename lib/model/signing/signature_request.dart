@@ -45,7 +45,7 @@ abstract class _SignatureRequest with Store {
     fetchMethodDataFuture = ObservableFuture(future);
 
     decodedMethod = await future;
-    txDecodedData = await _signingCtrl.getTxDecodedData(this.toSignatureRequest());
+    txDecodedData = await _signingCtrl.getTxDecodedData(payload, decodedMethod);
     return decodedMethod;
   }
 

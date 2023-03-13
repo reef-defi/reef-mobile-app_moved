@@ -114,35 +114,23 @@ class SigningCtrl {
     jsApi.rejectTxSignature(signatureIdent);
   }
 
-  Future<TxDecodedData> getTxDecodedData(SignatureRequest request) async {
+  Future<TxDecodedData> getTxDecodedData(dynamic payload, dynamic decodedMethod) async {
   TxDecodedData txDecodedData = TxDecodedData(
-    specVersion: hexToDecimalString(request.payload.specVersion),
-    nonce: hexToDecimalString(request.payload.nonce),
+    specVersion: hexToDecimalString(payload.specVersion),
+    nonce: hexToDecimalString(payload.nonce),
   );
 
-  final metadata = await ReefAppState.instance.storage
-      .getMetadata(request.payload.genesisHash);
-  if (metadata != null) {
-    txDecodedData.chainName = metadata.chain;
-  } else {
-    txDecodedData.genesisHash = request.payload.genesisHash;
-  }
-  dynamic types;
-  if (metadata != null &&
-      metadata.specVersion ==
-          int.parse(request.payload.specVersion.substring(2), radix: 16)) {
-    types = metadata.types;
-    final decodedMethod = await ReefAppState.instance.signingCtrl
-        .decodeMethod(request.payload.method, types: types);
+    txDecodedData.genesisHash = payload.genesisHash;
+
     txDecodedData.methodName = decodedMethod["methodName"];
     const jsonEncoder = JsonEncoder.withIndent("  ");
     txDecodedData.args = jsonEncoder.convert(decodedMethod["args"]);
     txDecodedData.info = decodedMethod["info"];
-  } else {
-    txDecodedData.rawMethodData = request.payload.method;
-  }
-  if (request.payload.tip != null) {
-    txDecodedData.tip = hexToDecimalString(request.payload.tip);
+
+    txDecodedData.rawMethodData = payload.method;
+
+  if (payload.tip != null) {
+    txDecodedData.tip = hexToDecimalString(payload.tip);
   }
   return txDecodedData;
 }
