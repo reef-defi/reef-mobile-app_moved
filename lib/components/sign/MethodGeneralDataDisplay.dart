@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:reef_mobile_app/components/modals/signing_modals.dart';
-import 'package:reef_mobile_app/utils/json_big_int.dart';
 import '../../model/signing/signature_request.dart';
 
 class MethodGeneralDataDisplay extends StatelessWidget {
@@ -15,12 +14,15 @@ class MethodGeneralDataDisplay extends StatelessWidget {
             final txData = signatureReq?.txDecodedData;
         final detailsTable = createTransactionTable(txData);
 
-          return Table(
-            columnWidths: const {
-                0: IntrinsicColumnWidth(),
-                1: FlexColumnWidth(4),
-              },
-            children: detailsTable,
+          return Padding(
+            padding: EdgeInsets.fromLTRB(16.0,0.0,16.0,0.0),
+            child: Table(
+              columnWidths: const {
+                  0: IntrinsicColumnWidth(),
+                  1: FlexColumnWidth(4),
+                },
+              children: detailsTable,
+            ),
           );
         }
 
