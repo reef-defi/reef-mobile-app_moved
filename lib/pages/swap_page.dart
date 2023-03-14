@@ -542,38 +542,36 @@ class _SwapPageState extends State<SwapPage> {
                             Row(
                               children: [
                                 MaterialButton(
-                                  onPressed: () {
-                                    showTokenSelectionModal(context,
-                                        callback: _changeSelectedBottomToken);
-                                  },
-                                  materialTapTargetSize:
-                                      MaterialTapTargetSize.shrinkWrap,
-                                  minWidth: 0,
-                                  height: 36,
-                                  elevation: 0,
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 4, horizontal: 12),
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                      side: const BorderSide(
-                                          color: Colors.black26)),
-                                  child: Row(
-                                    children: [
-                                      if (selectedBottomToken == null)
-                                        const Text("Select token")
-                                      else ...[
-                                        IconFromUrl(
-                                            selectedBottomToken!.iconUrl),
-                                        const Gap(4),
-                                        Text(selectedBottomToken!.symbol),
-                                      ],
-                                      const Gap(4),
-                                      Icon(CupertinoIcons.chevron_down,
-                                          size: 16,
-                                          color: Styles.textLightColor)
-                                    ],
-                                  ),
-                                ),
+  onPressed: () {
+    showTokenSelectionModal(context,
+        callback: _changeSelectedBottomToken);
+  },
+  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+  minWidth: 0,
+  height: 36,
+  elevation: 0,
+  padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
+  shape: RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(12),
+    // Remove the `BorderSide` from the `shape` property
+  ),
+  child: Row(
+    children: [
+      if (selectedBottomToken == null)
+        const Text("Select token")
+      else ...[
+        IconFromUrl(selectedBottomToken!.iconUrl),
+        const Gap(4),
+        Text(selectedBottomToken!.symbol),
+      ],
+      const Gap(4),
+      Icon(CupertinoIcons.chevron_down,
+          size: 16,
+          color: Styles.textLightColor)
+    ],
+  ),
+),
+
                                 Expanded(
                                   child: TextField(
                                       inputFormatters: [
@@ -803,8 +801,14 @@ class _SwapPageState extends State<SwapPage> {
                                                     BigInt.zero
                                             ? "Insert amount"
                                             : "Swap"),
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 16,
+                                  color: (selectedTopToken == null || selectedBottomToken == null||selectedTopToken!.amount <=
+                                                    BigInt.zero ||
+                                                selectedBottomToken!.amount <=
+                                                    BigInt.zero)
+                                ? const Color(0x65898e9c)
+                                : Colors.white,
                                   fontWeight: FontWeight.w700,
                                 ),
                               ),
@@ -814,35 +818,6 @@ class _SwapPageState extends State<SwapPage> {
                       ),
                     ],
                   ),
-                //   Positioned(
-                //     top: 80,
-                //     child: Container(
-                //         decoration: BoxDecoration(
-                //           borderRadius: BorderRadius.circular(4),
-                //           border: Border.all(
-                //               width: 0.5, color: const Color(0xffe1e2e8)),
-                //           boxShadow: const [
-                //             BoxShadow(
-                //               color: Color(0x15000000),
-                //               blurRadius: 1,
-                //               offset: Offset(0, 1),
-                //             )
-                //           ],
-                //           color: Styles.boxBackgroundColor,
-                //         ),
-                //         height: 28,
-                //         width: 28,
-                //         child: IconButton(
-                //           icon: Icon(
-                //             CupertinoIcons.arrow_down,
-                //             color: Styles.textLightColor,
-                //             size: 12,
-                //           ),
-                //           onPressed: () {
-                //             _switchTokens();
-                //           },
-                //         )),
-                //   ),
                 ]),
           ],
         ),
