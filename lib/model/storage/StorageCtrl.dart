@@ -10,11 +10,11 @@ class StorageCtrl {
 
   StorageCtrl(this.storage);
 
-  Future<dynamic> getStorageValue(String key)=>storage.getValue(key);
+  Future<dynamic> getValue(String key)=>storage.getValue(key);
 
-  Future<dynamic> setStorageValue(String key,dynamic value)=>storage.setValue(key,value);
+  Future<dynamic> setValue(String key,dynamic value)=>storage.setValue(key,value);
   
-  Future<dynamic> deleteStorageValue(String key)=> storage.deleteValue(key);
+  Future<dynamic> deleteValue(String key)=> storage.deleteValue(key);
 
   Future<dynamic> getMetadata(String genesisHash)=>storage.getMetadata(genesisHash);
 
