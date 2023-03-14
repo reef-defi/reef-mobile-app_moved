@@ -18,9 +18,10 @@ import 'package:shimmer/shimmer.dart';
 import '../../model/tokens/Token.dart';
 
 class TokenSelection extends StatefulWidget {
-  const TokenSelection({Key? key, required this.callback}) : super(key: key);
+  const TokenSelection({Key? key, required this.callback,required this.selectedToken}) : super(key: key);
 
   final Function(TokenWithAmount token) callback;
+  final String selectedToken;
 
   @override
   State<TokenSelection> createState() => TokenSelectionState();
@@ -129,22 +130,27 @@ class TokenSelectionState extends State<TokenSelection> {
                   shrinkWrap: true,
                   physics: const BouncingScrollPhysics(),
                   children: displayTokens
-                      .map((e) => Column(
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                    border: Border.all(
-                                      color: const Color(0x20000000),
-                                      width: 1,
-                                    ),
-                                    boxShadow: const [
-                                      BoxShadow(
-                                        color: Color(0x16000000),
-                                        blurRadius: 24,
-                                      )
-                                    ],
-                                    borderRadius: BorderRadius.circular(8)),
-                                child: MaterialButton(
+      .map((e) {
+        if (e.data.address == widget.selectedToken) {
+          return SizedBox.shrink();
+        }
+        return Column(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: const Color(0x20000000),
+                  width: 1,
+                ),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Color(0x16000000),
+                    blurRadius: 24,
+                  )
+                ],
+                borderRadius: BorderRadius.circular(8)
+              ),
+              child: MaterialButton(
                                     splashColor: const Color(0x555531a9),
                                     color: Colors.white,
                                     padding: const EdgeInsets.fromLTRB(
@@ -237,10 +243,11 @@ class TokenSelectionState extends State<TokenSelection> {
                               if (e.data.address !=
                                   displayTokens[displayTokens.length - 1]
                                       .data.address)
-                                const Gap(4),
-                            ],
-                          ))
-                      .toList(),
+                                const Gap(16),
+          ],
+        );
+      })
+      .toList(),
                 );
               }),
             ),
@@ -251,7 +258,7 @@ class TokenSelectionState extends State<TokenSelection> {
   }
 }
 
-void showTokenSelectionModal(context, {required callback}) {
+void showTokenSelectionModal(context, {required callback,required selectedToken}) {
   showModal(context,
-      child: TokenSelection(callback: callback), headText: "Select Token");
+      child: TokenSelection(callback: callback,selectedToken:selectedToken), headText: "Select Token");
 }

@@ -316,7 +316,7 @@ class _SwapPageState extends State<SwapPage> {
                                 MaterialButton(
                                   onPressed: () {
                                     showTokenSelectionModal(context,
-                                        callback: _changeSelectedTopToken);
+                                        callback: _changeSelectedTopToken,selectedToken: selectedBottomToken?.address);
                                   },
                                   materialTapTargetSize:
                                       MaterialTapTargetSize.shrinkWrap,
@@ -544,7 +544,7 @@ class _SwapPageState extends State<SwapPage> {
                                 MaterialButton(
   onPressed: () {
     showTokenSelectionModal(context,
-        callback: _changeSelectedBottomToken);
+        callback: _changeSelectedBottomToken,selectedToken: selectedTopToken?.address);
   },
   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
   minWidth: 0,
@@ -669,12 +669,6 @@ class _SwapPageState extends State<SwapPage> {
                                         fontSize: 18,
                                         color: Color(0xff19233c)),
                                   ),
-                                  // Text(
-                                  //    "Balance: ${toAmountDisplayBigInt(selectedBottomToken!.balance, decimals: selectedBottomToken!.decimals)} ${selectedBottomToken!.symbol}",
-                                  //   style: TextStyle(
-                                  //       color: Styles.textLightColor,
-                                  //       fontSize: 12),
-                                  // )
                                 ],
                               ),
                             ],
@@ -790,7 +784,6 @@ class _SwapPageState extends State<SwapPage> {
                             ),
                             child: Center(
                               child: Text(
-                                // TODO changes not reflected in UI
                                 (selectedTopToken == null
                                     ? "Select sell token"
                                     : selectedBottomToken == null
