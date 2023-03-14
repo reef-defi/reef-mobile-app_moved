@@ -721,7 +721,7 @@ class _SwapPageState extends State<SwapPage> {
                     ],
                   ),
                 ),
-                      const Gap(8),
+                      const Gap(36),
                       SliderStandAlone(
                           rating: rating,
                           onChanged: (newRating) async {
@@ -737,7 +737,7 @@ class _SwapPageState extends State<SwapPage> {
                               amountTopController.text = amountValue;
                             });
                           }),
-                      const Gap(8),
+                      const Gap(36),
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
