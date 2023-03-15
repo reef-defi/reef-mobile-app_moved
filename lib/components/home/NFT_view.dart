@@ -88,7 +88,7 @@ class _NFTViewState extends State<NFTView> {
                     Observer(builder: (context) {
                       return BlurableContent(
                           Text(
-                            NumberFormat.compact().format(11),
+                            NumberFormat.compact().format(balance),
                             style: const TextStyle(color: Colors.white),
                           ),
                           ReefAppState.instance.model.appConfig.displayBalance);

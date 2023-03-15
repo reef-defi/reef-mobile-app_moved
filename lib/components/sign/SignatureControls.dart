@@ -43,62 +43,65 @@ class _SignatureControlsState extends State<SignatureControls> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
-      if (!_biometricsIsAvailable) ...[
-        const Divider(
-          color: Styles.textLightColor,
-          thickness: 1,
-        ),
-        const Gap(12),
-        const Text(
-          "PASSWORD FOR REEF APP",
-          style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: Styles.textLightColor),
-        ),
-        const Gap(8),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-          decoration: BoxDecoration(
-            color: Styles.whiteColor,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: const Color(0x20000000),
-              width: 1,
-            ),
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(children: [
+        if (!_biometricsIsAvailable) ...[
+          const Divider(
+            color: Styles.textLightColor,
+            thickness: 1,
           ),
-          child: TextField(
-            controller: _passwordController,
-            obscureText: true,
-            decoration: const InputDecoration.collapsed(hintText: ''),
-            style: const TextStyle(
-              fontSize: 16,
-            ),
+          const Gap(12),
+          const Text(
+            "PASSWORD FOR REEF APP",
+            style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: Styles.textLightColor),
           ),
-        ),
-        const Gap(8),
-        if (_passwordMatch==false&&password.isNotEmpty)
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Icon(
-                CupertinoIcons.exclamationmark_triangle_fill,
-                color: Styles.errorColor,
-                size: 16,
+          const Gap(8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+            decoration: BoxDecoration(
+              color: Styles.whiteColor,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: const Color(0x20000000),
+                width: 1,
               ),
-              const Gap(8),
-              Flexible(
-                child: Text(
-                  "Password is incorrect",
-                  style: TextStyle(color: Colors.grey[600], fontSize: 13),
+            ),
+            child: TextField(
+              controller: _passwordController,
+              obscureText: true,
+              decoration: const InputDecoration.collapsed(hintText: ''),
+              style: const TextStyle(
+                fontSize: 16,
+              ),
+            ),
+          ),
+          const Gap(8),
+          if (_passwordMatch==false&&password.isNotEmpty)
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(
+                  CupertinoIcons.exclamationmark_triangle_fill,
+                  color: Styles.errorColor,
+                  size: 16,
                 ),
-              ),
-            ],
-          )
-      ],
-      buildButtons(context)
-    ],);
+                const Gap(8),
+                Flexible(
+                  child: Text(
+                    "Password is incorrect",
+                    style: TextStyle(color: Colors.grey[600], fontSize: 13),
+                  ),
+                ),
+              ],
+            )
+        ],
+        buildButtons(context)
+      ],),
+    );
   }
 
   Row buildButtons(BuildContext context) {
