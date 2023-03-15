@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
+import 'package:reef_mobile_app/components/modals/signing_modals.dart';
 import '../sign/SignatureContentToggle.dart';
 import 'package:reef_mobile_app/components/modal.dart';
 import 'package:reef_mobile_app/components/modals/qr_code_scanner.dart';
@@ -38,7 +39,7 @@ class _BindEvmState extends State<BindEvm> {
   String? resolvedEvmAddress;
   ReefAccount? selectedAccount;
   TextEditingController valueController = TextEditingController();
-  Completer<bool> signingComplete = Completer();
+  bool boundComplete = false;
 
   final FocusNode _focus = FocusNode();
   final FocusNode _focusSecond = FocusNode();
@@ -246,10 +247,27 @@ class _BindEvmState extends State<BindEvm> {
 
   Widget buildBound() {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text(AppLocalizations.of(context)!.bind_modal_connected),
-      Text(widget.bindFor.evmAddress.shorten(),
-          style: const TextStyle(fontWeight: FontWeight.bold)),
-      const Gap(48),
+      if (boundComplete) ...[
+        Text(AppLocalizations.of(context)!.bind_modal_connected),
+        Text(widget.bindFor.evmAddress.shorten(),
+            style: const TextStyle(fontWeight: FontWeight.bold))
+      ] else ...[
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: const [
+            SizedBox(
+              height: 20,
+              width: 20,
+              child: CircularProgressIndicator(
+                color: Colors.purple,
+              ),
+            ),
+            SizedBox(width: 12),
+            Flexible(child: Text("Waiting for bound to complete..."))
+          ],
+        )
+      ],
+      const Gap(25),
     ]);
   }
 
@@ -349,17 +367,28 @@ class _BindEvmState extends State<BindEvm> {
                   child: Row(
                     children: <Widget>[
                       TextButton(
-                        onPressed: () {
+                        onPressed: () async {
                           if (details.currentStep < 2) {
                             if (details.currentStep == 1) {
                               if (hasBalanceForBinding(widget.bindFor)) {
                                 ReefAppState.instance.accountCtrl
                                     .bindEvmAccount(widget.bindFor.address)
-                                    .then((value) => details.onStepContinue!());
+                                    .then((value) {
+                                  setState(() {
+                                    boundComplete = true;
+                                  });
+                                });
+                                details.onStepContinue!();
                               } else {
-                                transfer();
-                                signingComplete.future
-                                    .then((res) => details.onStepContinue!());
+                                await transfer();
+                                details.onStepContinue!();
+                                await ReefAppState.instance.accountCtrl
+                                    .bindEvmAccount(widget.bindFor.address)
+                                    .then((value) {
+                                  setState(() {
+                                    boundComplete = true;
+                                  });
+                                });
                               }
                             } else {
                               details.onStepContinue!();
@@ -413,12 +442,23 @@ class _BindEvmState extends State<BindEvm> {
             },
             steps: [
               ReefStep(
+                  state: currentStep > 0
+                      ? ReefStepState.complete
+                      : ReefStepState.indexed,
                   title: const Text("Select Account for Funding"),
                   content: buildSelectAccount(widget.bindFor)),
               ReefStep(
-                  title: const Text("Bind Transaction"), content: buildBind()),
+                  state: currentStep > 1
+                      ? ReefStepState.complete
+                      : ReefStepState.indexed,
+                  title: const Text("Bind Transaction"),
+                  content: buildBind()),
               ReefStep(
-                  title: const Text("EVM is Bound"), content: buildBound()),
+                  state: (currentStep == 2 && boundComplete)
+                      ? ReefStepState.complete
+                      : ReefStepState.indexed,
+                  title: const Text("EVM is Bound"),
+                  content: buildBound()),
             ]),
         // child: Column(
         //   crossAxisAlignment: CrossAxisAlignment.start,
@@ -432,7 +472,6 @@ class _BindEvmState extends State<BindEvm> {
         //   ],
         // ),
       ),
-      completeSigning: signingComplete,
     );
   }
 }

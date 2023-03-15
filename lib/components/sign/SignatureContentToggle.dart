@@ -18,12 +18,10 @@ import 'MethodDataLoadingIndicator.dart';
 
 class SignatureContentToggle extends StatelessObserverWidget {
   final Widget content;
-  final Completer<bool>? completeSigning;
 
   const SignatureContentToggle(
     this.content, {
     Key? key,
-    this.completeSigning,
   }) : super(key: key);
 
   @override
