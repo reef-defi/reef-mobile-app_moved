@@ -158,7 +158,7 @@ class _SendPageState extends State<SendPage> {
     Stream<dynamic> transferTransactionFeedbackStream =
         await executeTransferTransaction(sendToken);
 
-    transferTransactionFeedbackStream.listen((txResponse) {
+    transferTransactionFeedbackStream.first.then((txResponse) {
       print('TRANSACTION RESPONSE=$txResponse');
       if (handleExceptionResponse(txResponse)) {
         return;
