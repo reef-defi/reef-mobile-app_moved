@@ -3,6 +3,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:gap/gap.dart';
 import 'package:reef_mobile_app/components/account_box.dart';
+import 'package:reef_mobile_app/components/sign/MethodBytesDataDisplay.dart';
 import 'package:reef_mobile_app/components/sign/MethodGeneralDataDisplay.dart';
 import 'package:reef_mobile_app/components/sign/SignatureControls.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
@@ -25,7 +26,9 @@ class SignatureContentToggle extends StatelessObserverWidget {
       var requests = ReefAppState.instance.model.signatureRequests.list;
       var signatureRequest = requests.isNotEmpty ? requests.first : null;
       var displayIdx = signatureRequest != null ? 0 : 1;
-      var account = signatureRequest!=null?ReefAppState.instance.signingCtrl.getSignatureSigner(signatureRequest):null;
+      var account = signatureRequest!=null?ReefAppState.instance.signingCtrl.
+      getSignatureSigner(signatureRequest):null;
+      print(signatureRequest?.bytesData);
       // displayIdx = 1; // TODO remove this line
       return IndexedStack(
         index: displayIdx,
@@ -96,7 +99,7 @@ class SignatureContentToggle extends StatelessObserverWidget {
                 Gap(10),
                 MethodGeneralDataDisplay(signatureRequest),
                 MethodDataLoadingIndicator(signatureRequest),
-                MethodDataDisplay(signatureRequest),
+                 signatureRequest?.payload.type=="bytes"?MethodBytesDataDisplay(signatureRequest,signatureRequest?.bytesData):MethodDataDisplay(signatureRequest),
               ])),
               if(signatureRequest!=null)SignatureControls(signatureRequest, (String password)=>_confirmSign(signatureRequest, password), ()=>_cancel(signatureRequest))
             ],
