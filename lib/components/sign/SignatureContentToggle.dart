@@ -28,7 +28,6 @@ class SignatureContentToggle extends StatelessObserverWidget {
       var displayIdx = signatureRequest != null ? 0 : 1;
       var account = signatureRequest!=null?ReefAppState.instance.signingCtrl.
       getSignatureSigner(signatureRequest):null;
-      print(signatureRequest?.bytesData);
       // displayIdx = 1; // TODO remove this line
       return IndexedStack(
         index: displayIdx,
