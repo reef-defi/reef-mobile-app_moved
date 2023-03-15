@@ -689,7 +689,7 @@ if (password.isNotEmpty && !_passwordError) ...[
         : const Color(0xff9d6cff),
     padding: const EdgeInsets.symmetric(vertical: 16),
   ),
-  onPressed: (name.trim().isNotEmpty &&
+  onPressed: (name.trim().isNotEmpty && name.trim()!="<No Name>" &&
               (_hasPassword ||
                   (password.isNotEmpty &&
                       !_passwordError &&
