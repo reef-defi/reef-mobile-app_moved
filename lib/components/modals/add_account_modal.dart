@@ -67,6 +67,33 @@ class AddAccount extends StatelessWidget {
                 ],
               ),
             ),
+            const Gap(8),
+            MaterialButton(
+              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              onPressed: () {
+                Navigator.of(context).pop();
+                callback('restoreJson');
+              },
+              padding: const EdgeInsets.all(2),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.restore,
+                    color: Styles.textLightColor,
+                    size: 22,
+                  ),
+                  const Gap(8),
+                  Flexible(
+                    child: Builder(
+                      builder: (context) {
+                        return Text("Restore from JSON",
+                            style: Theme.of(context).textTheme.bodyText1);
+                      }
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
         ));
   }
