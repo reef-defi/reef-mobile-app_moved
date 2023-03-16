@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
+import 'package:mobx/mobx.dart';
 import 'package:reef_mobile_app/components/modals/signing_modals.dart';
 import '../sign/SignatureContentToggle.dart';
 import 'package:reef_mobile_app/components/modal.dart';
@@ -21,6 +22,24 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 const MIN_BALANCE = 5;
 
+enum SendStatus {
+  READY,
+  NO_EVM_CONNECTED,
+  NO_ADDRESS,
+  NO_AMT,
+  AMT_TOO_HIGH,
+  ADDR_NOT_VALID,
+  ADDR_NOT_EXIST,
+  SIGNING,
+  SENDING,
+  CANCELED,
+  ERROR,
+  SENT_TO_NETWORK,
+  INCLUDED_IN_BLOCK,
+  FINALIZED,
+  NOT_FINALIZED,
+}
+
 class BindEvm extends StatefulWidget {
   final ReefAccount bindFor;
 
@@ -33,13 +52,17 @@ class BindEvm extends StatefulWidget {
 class _BindEvmState extends State<BindEvm> {
   bool selectAccount = false;
   dynamic transferBalanceFrom;
+  SendStatus statusValue = SendStatus.NO_ADDRESS;
   int currentStep = 0;
   List<ReefAccount> availableTxAccounts = [];
   String address = "";
   String? resolvedEvmAddress;
   ReefAccount? selectedAccount;
   TextEditingController valueController = TextEditingController();
+  StreamController<SendStatus> sendStatusStream = StreamController.broadcast();
   bool boundComplete = false;
+  bool sendingFundTransaction = false;
+  bool sendingBoundTransaction = false;
 
   final FocusNode _focus = FocusNode();
   final FocusNode _focusSecond = FocusNode();
@@ -48,7 +71,10 @@ class _BindEvmState extends State<BindEvm> {
   void initState() {
     super.initState();
 
-    if (hasBalanceForBinding(widget.bindFor)) return;
+    if (hasBalanceForBinding(widget.bindFor)) {
+      currentStep = 1;
+      return;
+    }
 
     availableTxAccounts = getSignersWithEnoughBalance(widget.bindFor);
     if (availableTxAccounts.isNotEmpty) {
@@ -74,6 +100,108 @@ class _BindEvmState extends State<BindEvm> {
     return _availableTxAccounts;
   }
 
+  Future<void> startFunding() async {
+    setState(() {
+      statusValue = SendStatus.SIGNING;
+    });
+
+    setStatusOnSignatureClosed();
+
+    Completer<void> transactionSigned = Completer();
+
+    Stream<dynamic> transferTransactionFeedbackStream =
+        await executeTransferTransaction();
+
+    transferTransactionFeedbackStream =
+        transferTransactionFeedbackStream.asBroadcastStream();
+
+    transferTransactionFeedbackStream.listen((txResponse) {
+      if (!transactionSigned.isCompleted) {
+        transactionSigned.complete();
+      }
+      if (handleExceptionResponse(txResponse)) {
+        return;
+      }
+      if (handleNativeTransferResponse(txResponse)) {
+        return;
+      }
+    });
+
+    await transactionSigned.future;
+  }
+
+  void setStatusOnSignatureClosed() {
+    when(
+        (p0) =>
+            ReefAppState.instance.signingCtrl.signatureRequests.list.isNotEmpty,
+        () {
+      // NEW SIGNATURE DISPLAYED
+      when(
+          (p0) =>
+              ReefAppState.instance.signingCtrl.signatureRequests.list.isEmpty,
+          () {
+        print('REMOVED SIGN DISPLAY');
+        setState(() {
+          statusValue = SendStatus.SENDING;
+        });
+      });
+    });
+  }
+
+  bool handleExceptionResponse(txResponse) {
+    if (txResponse == null || txResponse['success'] != true) {
+      setState(() {
+        statusValue = txResponse['data'] == '_canceled'
+            ? SendStatus.CANCELED
+            : SendStatus.ERROR;
+      });
+      return true;
+    }
+    return false;
+  }
+
+  bool handleNativeTransferResponse(txResponse) {
+    print("------------------received feedback------------------");
+    print(txResponse['data']['status']);
+    if (txResponse['type'] == 'native') {
+      if (txResponse['data']['status'] == 'broadcast') {
+        setState(() {
+          statusValue = SendStatus.SENT_TO_NETWORK;
+        });
+      }
+      if (txResponse['data']['status'] == 'included-in-block') {
+        setState(() {
+          statusValue = SendStatus.INCLUDED_IN_BLOCK;
+        });
+      }
+      if (txResponse['data']['status'] == 'finalized') {
+        setState(() {
+          statusValue = SendStatus.FINALIZED;
+          currentStep += 1;
+        });
+      }
+      return true;
+    }
+    return false;
+  }
+
+  Future<Stream<dynamic>> executeTransferTransaction() async {
+    TokenWithAmount tokenToTransfer = TokenWithAmount(
+        name: 'Reef',
+        address: Constants.REEF_TOKEN_ADDRESS,
+        iconUrl: '',
+        symbol: 'REEF',
+        balance: BigInt.zero,
+        decimals: 18,
+        amount: BigInt.from(MIN_BALANCE * 1e18),
+        price: null);
+
+    return ReefAppState.instance.transferCtrl.transferTokensStream(
+        selectedAccount?.address ?? transferBalanceFrom.address,
+        widget.bindFor.address,
+        tokenToTransfer);
+  }
+
   Future<void> transfer() async {
     TokenWithAmount reefToken = TokenWithAmount(
         name: 'Reef',
@@ -85,7 +213,9 @@ class _BindEvmState extends State<BindEvm> {
         amount: BigInt.from(MIN_BALANCE * 1e18),
         price: null);
     await ReefAppState.instance.transferCtrl.transferTokens(
-        transferBalanceFrom.address, widget.bindFor.address, reefToken);
+        selectedAccount?.address ?? transferBalanceFrom.address,
+        widget.bindFor.address,
+        reefToken);
   }
 
   Widget buildAccount(ReefAccount signer) {
@@ -247,11 +377,57 @@ class _BindEvmState extends State<BindEvm> {
 
   Widget buildBound() {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      if (boundComplete) ...[
-        Text(AppLocalizations.of(context)!.bind_modal_connected),
-        Text(widget.bindFor.evmAddress.shorten(),
-            style: const TextStyle(fontWeight: FontWeight.bold))
-      ] else ...[
+      Text(AppLocalizations.of(context)!.bind_modal_connected),
+      Text(widget.bindFor.evmAddress.shorten(),
+          style: const TextStyle(fontWeight: FontWeight.bold)),
+      const Gap(25),
+    ]);
+  }
+
+  Widget buildFundTransaction() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              height: 20,
+              width: 20,
+              child: (statusValue != SendStatus.CANCELED &&
+                      statusValue != SendStatus.ERROR)
+                  ? const CircularProgressIndicator(
+                      color: Colors.purple,
+                    )
+                  : const CircleAvatar(
+                      child: Icon(Icons.error),
+                    ),
+            ),
+            const SizedBox(width: 12),
+            Flexible(
+                child: Text((statusValue != SendStatus.CANCELED &&
+                        statusValue != SendStatus.ERROR)
+                    ? "Waiting for fund transaction to complete..."
+                    : "Fund Transaction Failed"))
+          ],
+        )
+      ],
+    );
+  }
+
+  Widget buildBind() {
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      if (!sendingBoundTransaction) ...[
+        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text(AppLocalizations.of(context)!.bind_modal_start_using_reef_evm),
+          const Gap(8),
+          Text(AppLocalizations.of(context)!.bind_modal_first_connect),
+          const Gap(8)
+        ]),
+        // Bind for
+        buildAccount(widget.bindFor),
+        const Gap(16),
+      ] else
         Row(
           mainAxisSize: MainAxisSize.min,
           children: const [
@@ -266,56 +442,36 @@ class _BindEvmState extends State<BindEvm> {
             Flexible(child: Text("Waiting for bound to complete..."))
           ],
         )
-      ],
-      const Gap(25),
     ]);
   }
 
-  Widget buildBind() {
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text(AppLocalizations.of(context)!.bind_modal_start_using_reef_evm),
-        Gap(8),
-        Text(AppLocalizations.of(context)!.bind_modal_first_connect),
-        Gap(8)
-      ]),
-      // Bind for
-      buildAccount(widget.bindFor),
-      const Gap(16),
-      if (hasBalanceForBinding(widget.bindFor)) ...[
-        // Bind button
-      ] else ...[
-        // Insufficient balance
-        if (transferBalanceFrom == null) ...[
-          // No other accounts with enough balance
-          const Text(
-              "Not enough REEF in account for connect EVM address transaction fee."),
-          const Gap(16),
-        ] else ...[
-          // Other accounts with enough balance
-          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Row(children: [
-              const Text("~$MIN_BALANCE REEF ",
-                  style: TextStyle(fontWeight: FontWeight.bold)),
-              Text(AppLocalizations.of(context)!
-                  .bind_modal_is_needed_for_transaction),
-            ]),
-            const Gap(24),
+  Widget buildFund() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Other accounts with enough balance
+        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Row(children: [
+            const Text("~$MIN_BALANCE REEF ",
+                style: TextStyle(fontWeight: FontWeight.bold)),
             Text(AppLocalizations.of(context)!
-                .bind_modal_coins_will_be_transferred),
-            const Gap(8)
+                .bind_modal_is_needed_for_transaction),
           ]),
-          // Transfer from
-          InkWell(
-              onTap: () {
-                if (availableTxAccounts.length > 1) {
-                  setState(() => selectAccount = true);
-                }
-              },
-              child: (buildAccount(selectedAccount ?? transferBalanceFrom))),
-        ],
-      ]
-    ]);
+          const Gap(24),
+          Text(AppLocalizations.of(context)!
+              .bind_modal_coins_will_be_transferred),
+          const Gap(8)
+        ]),
+        // Transfer from
+        InkWell(
+            onTap: () {
+              if (availableTxAccounts.length > 1) {
+                setState(() => selectAccount = true);
+              }
+            },
+            child: (buildSelectAccount(widget.bindFor))),
+      ],
+    );
   }
 
   @override
@@ -325,7 +481,34 @@ class _BindEvmState extends State<BindEvm> {
         padding: const EdgeInsets.fromLTRB(24, 0, 24, 32.0),
         child: ReefStepper(
             currentStep: currentStep,
-            onStepContinue: () {
+            onStepContinue: () async {
+              switch (currentStep) {
+                case 0:
+                  await startFunding();
+                  setState(() {
+                    sendingFundTransaction = true;
+                  });
+                  return;
+                case 1:
+                  Future.delayed(const Duration(seconds: 1), () {
+                    setState(() {
+                      sendingBoundTransaction = true;
+                    });
+                  });
+                  final value = await ReefAppState.instance.accountCtrl
+                      .bindEvmAccount(widget.bindFor.address);
+                  if (value == null) {
+                    return;
+                  } else {
+                    boundComplete = true;
+                  }
+                  break;
+                case 2:
+                  Navigator.of(context).pop();
+                  return;
+                default:
+              }
+
               if (currentStep <= 2) {
                 setState(() {
                   currentStep += 1;
@@ -360,93 +543,61 @@ class _BindEvmState extends State<BindEvm> {
               const EdgeInsets buttonPadding =
                   EdgeInsets.symmetric(horizontal: 16.0);
 
-              return Container(
-                margin: const EdgeInsets.only(top: 16.0),
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints.tightFor(height: 48.0),
-                  child: Row(
-                    children: <Widget>[
-                      TextButton(
-                        onPressed: () async {
-                          if (details.currentStep < 2) {
-                            if (details.currentStep == 1) {
-                              if (hasBalanceForBinding(widget.bindFor)) {
-                                ReefAppState.instance.accountCtrl
-                                    .bindEvmAccount(widget.bindFor.address)
-                                    .then((value) {
-                                  setState(() {
-                                    boundComplete = true;
-                                  });
-                                });
+              return ((currentStep == 0 && sendingFundTransaction) ||
+                      (currentStep == 1 && sendingBoundTransaction))
+                  ? const SizedBox()
+                  : Container(
+                      margin: const EdgeInsets.only(top: 16.0),
+                      child: ConstrainedBox(
+                        constraints:
+                            const BoxConstraints.tightFor(height: 48.0),
+                        child: Row(
+                          children: <Widget>[
+                            TextButton(
+                              onPressed: () {
                                 details.onStepContinue!();
-                              } else {
-                                await transfer();
-                                details.onStepContinue!();
-                                await ReefAppState.instance.accountCtrl
-                                    .bindEvmAccount(widget.bindFor.address)
-                                    .then((value) {
-                                  setState(() {
-                                    boundComplete = true;
-                                  });
-                                });
-                              }
-                            } else {
-                              details.onStepContinue!();
-                            }
-                          } else {
-                            Navigator.of(context).pop();
-                          }
-                        },
-                        style: ButtonStyle(
-                          foregroundColor:
-                              MaterialStateProperty.resolveWith<Color?>(
-                                  (Set<MaterialState> states) {
-                            return states.contains(MaterialState.disabled)
-                                ? null
-                                : colorScheme.onPrimary;
-                          }),
-                          backgroundColor:
-                              MaterialStateProperty.resolveWith<Color?>(
-                                  (Set<MaterialState> states) {
-                            return Styles.primaryAccentColorDark;
-                          }),
-                          padding: const MaterialStatePropertyAll<
-                              EdgeInsetsGeometry>(buttonPadding),
-                          shape: const MaterialStatePropertyAll<OutlinedBorder>(
-                              buttonShape),
-                        ),
-                        child: Text(details.isActive && details.currentStep == 2
-                            ? "Go back to home page".toUpperCase()
-                            : localizations.continueButtonLabel.toUpperCase()),
-                      ),
-                      if (details.currentStep > 0 && details.currentStep != 2)
-                        Container(
-                          margin: const EdgeInsetsDirectional.only(start: 8.0),
-                          child: TextButton(
-                            onPressed: details.onStepCancel,
-                            style: TextButton.styleFrom(
-                              foregroundColor: cancelColor,
-                              padding: buttonPadding,
-                              shape: buttonShape,
+                              },
+                              style: ButtonStyle(
+                                foregroundColor:
+                                    MaterialStateProperty.resolveWith<Color?>(
+                                        (Set<MaterialState> states) {
+                                  return states.contains(MaterialState.disabled)
+                                      ? null
+                                      : colorScheme.onPrimary;
+                                }),
+                                backgroundColor:
+                                    MaterialStateProperty.resolveWith<Color?>(
+                                        (Set<MaterialState> states) {
+                                  return Styles.primaryAccentColorDark;
+                                }),
+                                padding: const MaterialStatePropertyAll<
+                                    EdgeInsetsGeometry>(buttonPadding),
+                                shape: const MaterialStatePropertyAll<
+                                    OutlinedBorder>(buttonShape),
+                              ),
+                              child: Text(
+                                  details.isActive && details.currentStep == 3
+                                      ? "Go back to home page".toUpperCase()
+                                      : localizations.continueButtonLabel
+                                          .toUpperCase()),
                             ),
-                            child: Text(themeData.useMaterial3
-                                ? localizations.cancelButtonLabel
-                                : localizations.cancelButtonLabel
-                                    .toUpperCase()),
-                          ),
+                          ],
                         ),
-                    ],
-                  ),
-                ),
-              );
+                      ),
+                    );
             },
             steps: [
               ReefStep(
                   state: currentStep > 0
                       ? ReefStepState.complete
-                      : ReefStepState.indexed,
+                      : ((statusValue != SendStatus.CANCELED &&
+                              statusValue != SendStatus.ERROR)
+                          ? ReefStepState.indexed
+                          : ReefStepState.error),
                   title: const Text("Select Account for Funding"),
-                  content: buildSelectAccount(widget.bindFor)),
+                  content: sendingFundTransaction
+                      ? buildFundTransaction()
+                      : buildFund()),
               ReefStep(
                   state: currentStep > 1
                       ? ReefStepState.complete
@@ -454,7 +605,7 @@ class _BindEvmState extends State<BindEvm> {
                   title: const Text("Bind Transaction"),
                   content: buildBind()),
               ReefStep(
-                  state: (currentStep == 2 && boundComplete)
+                  state: (currentStep == 2)
                       ? ReefStepState.complete
                       : ReefStepState.indexed,
                   title: const Text("EVM is Bound"),
