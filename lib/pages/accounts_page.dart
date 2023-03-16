@@ -33,6 +33,9 @@ class _AccountsPageState extends State<AccountsPage> {
       case 'importAccount':
         showCreateAccountModal(context, fromMnemonic: true);
         break;
+      case 'restoreJSON':
+        showCreateAccountModal(context, fromJson: true);
+        break;
       default:
         break;
     }

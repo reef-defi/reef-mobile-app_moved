@@ -885,7 +885,7 @@ Widget buildAccountBox(StoredAccount? account, {name = "<No Name>"}) {
       ));
 }
 
-void showCreateAccountModal(BuildContext context, {bool fromMnemonic = false}) {
+void showCreateAccountModal(BuildContext context, {bool fromMnemonic = false,bool fromJson = false}) {
   showModal(context,
       headText: fromMnemonic ? AppLocalizations.of(context)!.import_the_account : AppLocalizations.of(context)!.create_new_account,
       dismissible: true,
