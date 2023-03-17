@@ -8,6 +8,9 @@ import {
 import { KeypairType } from "@reef-defi/util-crypto/types";
 import { KeyringPair } from "@reef-defi/keyring/types";
 import { polkadotIcon } from "@polkadot/ui-shared";
+import {keyring as kr} from '@polkadot/ui-keyring';
+import { ResponseJsonRestore } from "./background/types";
+import type { KeyringPair$Json } from '@polkadot/keyring/types';
 
 const CRYPTO_TYPE: KeypairType = "sr25519";
 const SS58_FORMAT = 42;
@@ -23,6 +26,9 @@ async function initWasm(): Promise<boolean> {
     // we only need to do this once per app, somewhere in our init code
     // (when using the API and waiting on `isReady` this is done automatically)
     const isReady = await cryptoWaitReady();
+    kr.loadAll({
+
+    });
     if (isReady) {
         console.log("WASM initialized");
     } else {
@@ -92,6 +98,17 @@ function checkMnemonicValid(mnemonic: string): any {
     return mnemonicValidate(mnemonic).toString();
 }
 
+// Restore account from JSON
+async function restoreJson(file:KeyringPair$Json,password:string):Promise<any> {
+    try {
+        console.log(file);
+        return kr.restoreAccount(file, password);
+      } catch (error) {
+        throw new Error((error as Error).message);
+      }
+}
+
+
 /**
  * Get SVG icons of addresses.
  */
@@ -111,5 +128,6 @@ export default {
     generate,
     keyPairFromMnemonic,
     accountFromMnemonic,
-    checkMnemonicValid
+    checkMnemonicValid,
+    restoreJson
 };
