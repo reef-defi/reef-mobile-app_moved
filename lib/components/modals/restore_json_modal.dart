@@ -46,24 +46,31 @@ class _RestoreJSONState extends State<RestoreJSON> {
 </svg>
 """;
 
-  Future<void> _selectFile() async {
-    final result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['json'],
-    );
+  String _fileButtonText = 'Select file';
+  bool _isButtonPressed = false;
 
-    if (result != null) {
-      setState(() {
-        _selectedFile = File(result.files.single.path??"");
-        _isButtonEnabled = true;
-      });
-    }
+Future<void> _selectFile() async {
+  final result = await FilePicker.platform.pickFiles(
+    type: FileType.custom,
+    allowedExtensions: ['json'],
+  );
+
+  if (result != null) {
+    setState(() {
+      _selectedFile = File(result.files.single.path ?? '');
+      _fileButtonText = 'File Selected';
+    });
   }
+}
+
 
   void _onPressedNext() async{
+      setState(() {
+    _isButtonPressed = true;
+  });
     String password = _passwordController.text;
 
-    if (_selectedFile != null && password.isNotEmpty) {
+     if (_selectedFile != null && password.isNotEmpty) {
       try {
         // Read JSON file
         String jsonString = _selectedFile!.readAsStringSync();
@@ -97,27 +104,42 @@ class _RestoreJSONState extends State<RestoreJSON> {
         );
       } catch (e) {
         // Show error message
-        Navigator.pop(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Wrong Password!'),
-            duration: Duration(seconds: 2),
-          ),
-        );
-      }
+              ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Wrong Password!'),
+          duration: Duration(seconds: 2),
+        ),
+      );
     }
   }
+  setState(() {
+    _isButtonPressed = false;
+  });
+}
 
   @override
-  Widget build(BuildContext context) {
-    return  Padding(
+Widget build(BuildContext context) {
+  return Stack(
+    
+    children: [
+if (_isButtonPressed)
+        Expanded(
+          child: Container(
+            height: 100,
+            child: Center(
+              child: CircularProgressIndicator(color: Styles.primaryAccentColor,),
+            ),
+          ),
+        ),
+        if (!_isButtonPressed)
+        Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             ElevatedButton(
               onPressed: _selectFile,
-              child: Text('Select file'),
+              child: Text(_fileButtonText),
             ),
             SizedBox(height: 16),
             TextField(
@@ -139,11 +161,13 @@ class _RestoreJSONState extends State<RestoreJSON> {
               child: Text('Import Account'),
             ),
           ],
-        )
-    );
-  }
+        ),
+      ),
+      
+      
+    ],
+    );}
 }
-
 void showRestoreJson(
     BuildContext? context) {
   showModal(context ?? navigatorKey.currentContext,
