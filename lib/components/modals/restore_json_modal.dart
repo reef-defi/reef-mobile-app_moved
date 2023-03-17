@@ -71,6 +71,15 @@ class _RestoreJSONState extends State<RestoreJSON> {
 
         // Decrypt data with password
         final response = await ReefAppState.instance.accountCtrl.restoreJson(jsonData,password);
+        if(response=="error"){
+          Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Incorrect File Selected!'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+        }
         response['svg']=svgData;
         response['mnemonic']="";
         response['name']=response['meta']['name'];
