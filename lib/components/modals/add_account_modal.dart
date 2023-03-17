@@ -72,7 +72,7 @@ class AddAccount extends StatelessWidget {
               materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
               onPressed: () {
                 Navigator.of(context).pop();
-                callback('restoreJson');
+                callback('restoreJSON');
               },
               padding: const EdgeInsets.all(2),
               child: Row(
