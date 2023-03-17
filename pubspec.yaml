@@ -42,6 +42,7 @@ dependencies:
   rxdart: ^0.27.4
   google_fonts: ^3.0.1
   gap: ^2.0.1
+  file_picker:
   # We added jovial_svg for SVGs from URL, as flutter_svg does not offer support support <style> elements
   # We keep flutter_svg for string SVGs, as jovial_svg renders them without colors
   flutter_svg: ^1.1.0
