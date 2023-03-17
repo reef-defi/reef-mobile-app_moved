@@ -103,7 +103,7 @@ async function restoreJson(file:KeyringPair$Json,password:string):Promise<any> {
     try {
         return kr.restoreAccount(file, password);
       } catch (error) {
-        throw new Error((error as Error).message);
+        return "error";
       }
 }
 
