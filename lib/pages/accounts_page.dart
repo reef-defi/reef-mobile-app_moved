@@ -120,17 +120,6 @@ class _AccountsPageState extends State<AccountsPage> {
           ),
           Row(
             children: [
-              // ElevatedButton(onPressed: ()async{
-              //   var respose = await ReefAppState.instance.accountCtrl.restoreJson("", "");
-              //   var modObj = respose;
-              //   modObj['mnemonic']="";
-              //   modObj['name']=respose['meta']['name'];
-    
-              //   var importedAccount = StoredAccount.fromString(jsonEncode(modObj).toString());
-              //   print(modObj);
-              //   await ReefAppState.instance.accountCtrl.saveAccount(importedAccount);
-
-              // }, child: Text("Click me")),
               MaterialButton(
                 onPressed: () => showAddAccountModal(
                     AppLocalizations.of(context)!.add_account, openModal,
