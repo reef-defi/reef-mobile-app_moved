@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -5,9 +7,11 @@ import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:reef_mobile_app/components/accounts/accounts_list.dart';
 import 'package:reef_mobile_app/components/modals/account_modals.dart';
+import 'package:reef_mobile_app/components/modals/restore_json_modal.dart';
 import 'package:reef_mobile_app/components/modals/add_account_modal.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/account/AccountCtrl.dart';
+import 'package:reef_mobile_app/model/account/stored_account.dart';
 import 'package:reef_mobile_app/model/navigation/navigation_model.dart';
 import 'package:reef_mobile_app/model/status-data-object/StatusDataObject.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
@@ -34,7 +38,7 @@ class _AccountsPageState extends State<AccountsPage> {
         showCreateAccountModal(context, fromMnemonic: true);
         break;
       case 'restoreJSON':
-        showCreateAccountModal(context, fromJson: true);
+        showRestoreJson(context);
         break;
       default:
         break;
@@ -116,6 +120,17 @@ class _AccountsPageState extends State<AccountsPage> {
           ),
           Row(
             children: [
+              // ElevatedButton(onPressed: ()async{
+              //   var respose = await ReefAppState.instance.accountCtrl.restoreJson("", "");
+              //   var modObj = respose;
+              //   modObj['mnemonic']="";
+              //   modObj['name']=respose['meta']['name'];
+    
+              //   var importedAccount = StoredAccount.fromString(jsonEncode(modObj).toString());
+              //   print(modObj);
+              //   await ReefAppState.instance.accountCtrl.saveAccount(importedAccount);
+
+              // }, child: Text("Click me")),
               MaterialButton(
                 onPressed: () => showAddAccountModal(
                     AppLocalizations.of(context)!.add_account, openModal,
