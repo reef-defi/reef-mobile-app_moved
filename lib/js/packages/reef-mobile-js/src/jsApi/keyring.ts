@@ -101,7 +101,6 @@ function checkMnemonicValid(mnemonic: string): any {
 // Restore account from JSON
 async function restoreJson(file:KeyringPair$Json,password:string):Promise<any> {
     try {
-        console.log(file);
         return kr.restoreAccount(file, password);
       } catch (error) {
         throw new Error((error as Error).message);
