@@ -7,32 +7,44 @@ import 'package:reef_mobile_app/utils/styles.dart';
 
 class IntroductionPage extends StatefulWidget {
   final Future<void> Function() onDone;
+  final Widget heroVideo;
 
-  const IntroductionPage({Key? key, required this.onDone}) : super(key: key);
+  const IntroductionPage(
+      {Key? key, required this.heroVideo, required this.onDone})
+      : super(key: key);
 
   @override
   State<IntroductionPage> createState() => _IntroductionPageState();
 }
 
-class _IntroductionPageState extends State<IntroductionPage> {
+class _IntroductionPageState extends State<IntroductionPage>
+    with AutomaticKeepAliveClientMixin {
   late final Widget child;
 
   @override
   void initState() {
     super.initState();
-    child = IntroView(onDone: widget.onDone);
+    child = IntroView(
+      onDone: widget.onDone,
+      heroVideo: widget.heroVideo,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return child;
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
 
 class IntroView extends StatelessWidget {
   final Future<void> Function() onDone;
+  final Widget heroVideo;
 
-  const IntroView({super.key, required this.onDone});
+  const IntroView({super.key, required this.onDone, required this.heroVideo});
 
   @override
   Widget build(BuildContext context) {
@@ -54,13 +66,13 @@ class IntroView extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 direction: Axis.vertical,
                 children: [
-                  const Expanded(
+                  Expanded(
                     child: SizedBox(
-                        child: Image(
-                      image: AssetImage("assets/images/intro.gif"),
                       height: 240.0,
                       width: 240.0,
-                    )),
+                      child: Padding(
+                          padding: const EdgeInsets.all(35), child: heroVideo),
+                    ),
                   ),
                   Flexible(
                       child: FittedBox(
