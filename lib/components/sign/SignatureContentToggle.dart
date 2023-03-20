@@ -5,6 +5,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:gap/gap.dart';
 import 'package:reef_mobile_app/components/account_box.dart';
+import 'package:reef_mobile_app/components/sign/MethodBytesDataDisplay.dart';
 import 'package:reef_mobile_app/components/sign/MethodGeneralDataDisplay.dart';
 import 'package:reef_mobile_app/components/sign/SignatureControls.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
@@ -99,13 +100,13 @@ class SignatureContentToggle extends StatelessObserverWidget {
                         showOptions: false),
                   ],
                 )),
-          Expanded(
-              child: Column(children: [
+          Expanded(child: Column(children: [
+            Gap(10),
+            MethodGeneralDataDisplay(signatureRequest),
             MethodDataLoadingIndicator(signatureRequest),
-            MethodDataDisplay(signatureRequest),
+            signatureRequest?.payload.type=="bytes"?MethodBytesDataDisplay(signatureRequest,signatureRequest?.bytesData):MethodDataDisplay(signatureRequest),
           ])),
-          if (signatureRequest != null)
-            SignatureControls(
+          if (signatureRequest != null)SignatureControls(
                 signatureRequest,
                 (String password) => _confirmSign(signatureRequest, password),
                 () => _cancel(signatureRequest))
