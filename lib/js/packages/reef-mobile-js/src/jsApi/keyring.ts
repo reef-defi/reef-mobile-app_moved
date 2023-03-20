@@ -9,7 +9,7 @@ import { KeypairType } from "@reef-defi/util-crypto/types";
 import { KeyringPair } from "@reef-defi/keyring/types";
 import { polkadotIcon } from "@polkadot/ui-shared";
 import {keyring as kr} from '@polkadot/ui-keyring';
-import { ResponseJsonRestore } from "./background/types";
+import { RequestAccountCreateExternal } from "./background/types";
 import type { KeyringPair$Json } from '@polkadot/keyring/types';
 
 const CRYPTO_TYPE: KeypairType = "sr25519";
@@ -100,11 +100,12 @@ function checkMnemonicValid(mnemonic: string): any {
 
 // Restore account from JSON
 async function restoreJson(file:KeyringPair$Json,password:string):Promise<any> {
-    try {
         return kr.restoreAccount(file, password);
-      } catch (error) {
-        return "error";
-      }
+}
+
+// Add External account
+function addExternalAccount({ address, genesisHash, name }: RequestAccountCreateExternal): any {
+    return kr.addExternal(address, { genesisHash, name });
 }
 
 
@@ -128,5 +129,6 @@ export default {
     keyPairFromMnemonic,
     accountFromMnemonic,
     checkMnemonicValid,
-    restoreJson
+    restoreJson,
+    addExternalAccount
 };

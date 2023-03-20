@@ -78,7 +78,7 @@ class AddAccount extends StatelessWidget {
               child: Row(
                 children: [
                   Icon(
-                    Icons.restore,
+                    Icons.settings_backup_restore,
                     color: Styles.textLightColor,
                     size: 22,
                   ),

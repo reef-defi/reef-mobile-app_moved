@@ -46,11 +46,11 @@ class AccountCtrl {
   }
 
   Future<dynamic> restoreJson(Map<String,dynamic> file,String password) async {
-    try {
     return await _jsApi.jsPromise('window.keyring.restoreJson(${jsonEncode(file)},"$password")');
-    } catch (e) {
-      return "error";
-    }
+  }
+
+  Future<dynamic> addExternalAccount(Map<String,dynamic> file) async {
+    return await _jsApi.jsPromise('window.keyring.addExternalAccount(${jsonEncode(file)})');
   }
 
   Future<bool> checkMnemonicValid(String mnemonic) async {
