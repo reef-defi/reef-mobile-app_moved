@@ -166,19 +166,6 @@ if (_isButtonPressed)
               },
             ),
             ),
-            // TextField(
-            //   controller: _passwordController,
-            //   obscureText: true,
-            //   decoration: InputDecoration(
-            //     labelText: 'Password',
-            //     border: OutlineInputBorder(),
-            //   ),
-            //   onChanged: (value) {
-            //     setState(() {
-            //       _isButtonEnabled = _selectedFile != null && value.isNotEmpty;
-            //     });
-            //   },
-            // ),
             SizedBox(height: 16),
             Container(
                 decoration: BoxDecoration(
@@ -187,9 +174,6 @@ if (_isButtonPressed)
                 width: double.infinity,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    // splashFactory: account == null
-                    //     ? NoSplash.splashFactory
-                    //     : InkSplash.splashFactory,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(40)),
                     shadowColor: const Color(0x559d6cff),
