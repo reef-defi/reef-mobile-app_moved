@@ -137,10 +137,28 @@ if (_isButtonPressed)
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            ElevatedButton(
-              onPressed: _selectFile,
-              child: Text(_fileButtonText),
-            ),
+            Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(40)),
+                    shadowColor: const Color(0x559d6cff),
+                    elevation: 5,
+                    backgroundColor: const Color(0xff9d6cff),
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                  ),
+                  onPressed:_selectFile,
+                  child: Builder(
+                    builder: (context) {
+                      return  Text(_fileButtonText,style: TextStyle(fontSize: 16.0),);
+                    }
+                  ),
+                ),
+              ),
             SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
