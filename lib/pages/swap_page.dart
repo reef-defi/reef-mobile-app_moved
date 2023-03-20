@@ -18,7 +18,7 @@ import 'package:reef_mobile_app/utils/icon_url.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 import 'package:shimmer/shimmer.dart';
 
-import '../components/SignatureContentToggle.dart';
+import '../components/sign/SignatureContentToggle.dart';
 
 class SwapPage extends StatefulWidget {
   final String preselected;

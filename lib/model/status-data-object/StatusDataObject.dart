@@ -29,13 +29,17 @@ class FeedbackStatus {
 
   static List<FeedbackStatus> fromJson<T>(List<dynamic> json) {
     return json.map((dynamic e) {
-      // try {
+      // if(e is List)
+      try {
+        if(e is Map && e.isEmpty) {
+          return FeedbackStatus(StatusCode.completeData, '');
+        }
       return FeedbackStatus(toStatusCode(e['code']), e['message'],
           propertyName: e['propertyName']);
-      // }catch(err){
-      //   print("ERROR PARSING JSON=${e['code']}");
-      //   return FeedbackStatus(StatusCode.completeData, 'failed to parse');
-      // }
+      }catch(err){
+        print("StatusDataObject ERROR PARSING JSON=${e['code']} v=${e['message']}");
+        return FeedbackStatus(StatusCode.completeData, 'failed to parse');
+      }
     }).toList();
   }
 
@@ -55,16 +59,17 @@ ParseListFn<StatusDataObject<T>> getParsableListFn<T>(ParseFn<T> fn) {
   return parsableFn;
 }
 
-String? getFdmListMessage(StatusDataObject<List> list, String itemName) {
+String? getFdmListMessage(
+    StatusDataObject<List> list, String itemName, String loading) {
   String? message = null;
   if (list.hasStatus(StatusCode.completeData) && list.data.isEmpty) {
     message = 'No ${itemName}s found.';
   }
   if (list.hasStatus(StatusCode.loading)) {
-    message = 'Loading ${itemName}s...';
+    message = '${loading} ${itemName}...';
   }
   if (list.hasStatus(StatusCode.error)) {
-    message = 'Error loading ${itemName}s (${list.statusList[0].message})';
+    message = 'Error ${loading} ${itemName}s (${list.statusList[0].message})';
   }
   return message;
 }

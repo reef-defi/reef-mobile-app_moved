@@ -62,7 +62,7 @@ class _ContentCardState extends State<ContentCard> {
                       )),
                 ),
                 onPressed: () {
-                  widget.liquidCarouselKey.currentState?.swipeToPrevious();
+                  widget.liquidCarouselKey.currentState?.swipeXPrevious(x: 1);
                 },
               ),
             ),
@@ -84,7 +84,7 @@ class _ContentCardState extends State<ContentCard> {
                       )),
                 ),
                 onPressed: () {
-                  widget.liquidCarouselKey.currentState?.swipeToNext();
+                  widget.liquidCarouselKey.currentState?.swipeXNext(x: 1);
                 },
               ),
             ),

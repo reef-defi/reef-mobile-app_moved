@@ -9,6 +9,7 @@ import 'package:reef_mobile_app/utils/styles.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:reef_mobile_app/utils/functions.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class StakingView extends StatefulWidget {
   const StakingView({Key? key}) : super(key: key);
@@ -89,9 +90,9 @@ class _StakingViewState extends State<StakingView> {
                       width: 48,
                     ),
                     const Gap(16),
-                    const Center(
+                    Center(
                       child: Text(
-                        "Reef community staking bond",
+                        AppLocalizations.of(context)!.reef_community_bond,
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontWeight: FontWeight.w700,
@@ -128,7 +129,7 @@ class _StakingViewState extends State<StakingView> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text("Bond Contract"),
+                            Text(AppLocalizations.of(context)!.bond_contract),
                             const Gap(4),
                             Text(
                               _stakeInfo["contract"].toString().shorten(),
@@ -154,7 +155,7 @@ class _StakingViewState extends State<StakingView> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text("Staking closes in"),
+                          Text(AppLocalizations.of(context)!.staking_closes_in),
                           const Gap(4),
                           Text(
                             // TODO: add datetime and format it accordingly
@@ -173,7 +174,7 @@ class _StakingViewState extends State<StakingView> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text("Bond started on"),
+                          Text(AppLocalizations.of(context)!.bond_started_on),
                           const Gap(4),
                           Text(
                             dateFormat.format(
@@ -192,7 +193,7 @@ class _StakingViewState extends State<StakingView> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text("Funds unlock on"),
+                          Text(AppLocalizations.of(context)!.funds_unlock_on),
                           const Gap(4),
                           Text(
                             dateFormat.format(

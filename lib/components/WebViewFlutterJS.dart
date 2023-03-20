@@ -7,6 +7,7 @@ import 'package:reef_mobile_app/model/auth_url/auth_url.dart';
 import 'package:reef_mobile_app/utils/functions.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class WebViewFlutterJS extends StatefulWidget {
   final Completer<WebViewController> controller;
@@ -50,8 +51,8 @@ class _WebViewFlutterJSState extends State<WebViewFlutterJS> {
               color: Styles.primaryAccentColor,
               child:
                   Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                const Text(
-                  'You disabled this dApp domain',
+                Text(
+                  AppLocalizations.of(context)!.you_disabled_this_dapp_domain,
                   style: TextStyle(color: Colors.white),
                 ),
                 const Gap(4),
@@ -71,7 +72,7 @@ class _WebViewFlutterJSState extends State<WebViewFlutterJS> {
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
                     child: Text(
-                      "Enable",
+                      AppLocalizations.of(context)!.enable,
                       style: TextStyle(
                           color: Styles.whiteColor,
                           fontWeight: FontWeight.w600,
@@ -84,7 +85,9 @@ class _WebViewFlutterJSState extends State<WebViewFlutterJS> {
           javascriptChannels: widget.jsChannels,
           onWebViewCreated: (webViewController) {
             _controller = webViewController;
-            widget.controller.complete(_controller);
+            if (!widget.controller.isCompleted) {
+              widget.controller.complete(_controller);
+            }
           },
           onPageFinished: (url) {
             var strippedUrl = stripUrl(url);

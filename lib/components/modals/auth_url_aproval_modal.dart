@@ -5,6 +5,7 @@ import 'package:reef_mobile_app/components/modal.dart';
 import 'package:reef_mobile_app/pages/SplashScreen.dart';
 import 'package:reef_mobile_app/utils/elements.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AuthUrlAproval extends StatefulWidget {
   final String origin;
@@ -51,7 +52,7 @@ class _AuthUrlAprovalState extends State<AuthUrlAproval> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                "Only approve this request if you trust the application. Approving gives the application access to the addresses of your accounts.",
+                                AppLocalizations.of(context)!.approve_domain_message,
                                 style: TextStyle(
                                     fontSize: 16, color: Styles.textColor),
                                 textAlign: TextAlign.justify,
@@ -79,8 +80,8 @@ class _AuthUrlAprovalState extends State<AuthUrlAproval> {
                     onPressed: () {
                       Navigator.pop(context, true);
                     },
-                    child: const Text(
-                      'Yes, allow this application access',
+                    child: Text(
+                      AppLocalizations.of(context)!.auth_allow,
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
@@ -92,7 +93,7 @@ class _AuthUrlAprovalState extends State<AuthUrlAproval> {
                     onPressed: () {
                       Navigator.pop(context, false);
                     },
-                    child: Text("Reject",
+                    child: Text(AppLocalizations.of(context)!.auth_reject,
                         style: TextStyle(
                           color: Styles.primaryAccentColorDark,
                           decoration: TextDecoration.underline,
@@ -106,6 +107,7 @@ class _AuthUrlAprovalState extends State<AuthUrlAproval> {
     );
   }
 }
+
 
 Future<dynamic> showAuthUrlAprovalModal({required origin, required url}) {
   return showModal(navigatorKey.currentContext,

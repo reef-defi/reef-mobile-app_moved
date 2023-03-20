@@ -66,6 +66,12 @@ class TokenSelectionState extends State<TokenSelection> {
   }
 
   @override
+  void dispose(){
+    super.dispose();
+    valueContainer.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 0, 24, 32.0),

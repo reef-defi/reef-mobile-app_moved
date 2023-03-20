@@ -1,6 +1,5 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -9,10 +8,11 @@ import 'package:reef_mobile_app/components/modals/account_modals.dart';
 import 'package:reef_mobile_app/components/modals/add_account_modal.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/account/AccountCtrl.dart';
+import 'package:reef_mobile_app/model/navigation/navigation_model.dart';
 import 'package:reef_mobile_app/model/status-data-object/StatusDataObject.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 
-import '../components/SignatureContentToggle.dart';
+import '../components/sign/SignatureContentToggle.dart';
 
 class AccountsPage extends StatefulWidget {
   AccountsPage({Key? key}) : super(key: key);
@@ -71,7 +71,15 @@ class _AccountsPageState extends State<AccountsPage> {
                 child: AccountsList(
                     ReefAppState.instance.model.accounts.accountsFDM.data,
                     ReefAppState.instance.model.accounts.selectedAddress,
-                    ReefAppState.instance.accountCtrl.setSelectedAddress));
+                    (addr) async {
+              await ReefAppState.instance.accountCtrl.setSelectedAddress(addr);
+              ReefAppState.instance.navigationCtrl.navigateHomePage(0);
+    
+              var navigateOnAccountSwitch = ReefAppState.instance.model.appConfig.navigateOnAccountSwitch;
+              if (navigateOnAccountSwitch)
+                ReefAppState.instance.navigationCtrl
+                    .navigate(NavigationPage.home);
+            }));
           }),
         ],
       ),
@@ -92,44 +100,49 @@ class _AccountsPageState extends State<AccountsPage> {
               //   height: 24,
               // ),
               const Gap(8),
-              Text(
-                "My Account",
-                style: GoogleFonts.spaceGrotesk(
-                    fontWeight: FontWeight.w500,
-                    fontSize: 32,
-                    color: Colors.grey.shade100),
-              ),
+              Builder(builder: (context) {
+                return Text(
+                  AppLocalizations.of(context)!.my_account,
+                  style: GoogleFonts.spaceGrotesk(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 32,
+                      color: Colors.grey.shade100),
+                );
+              }),
             ],
           ),
           Row(
             children: [
               MaterialButton(
-                onPressed: () => showAddAccountModal('Add account', openModal,
+                onPressed: () => showAddAccountModal(
+                    AppLocalizations.of(context)!.add_account, openModal,
                     context: context),
                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 minWidth: 0,
                 height: 36,
                 elevation: 0,
-                color: Colors.purple,
+                color: Colors.transparent,
                 padding:
                     const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
-                    side: const BorderSide(color: Colors.black26)),
+                    side: const BorderSide(color: Styles.purpleColor)),
                 child: Row(children: [
                   Icon(
                     Icons.add_circle_rounded,
-                    color: Colors.grey.shade100,
+                    color: Styles.purpleColor,
                     size: 22,
                   ),
                   const Gap(4),
-                  Text(
-                    "Add",
-                    style: GoogleFonts.roboto(
-                        color: Colors.grey.shade100,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500),
-                  )
+                  Builder(builder: (context) {
+                    return Text(
+                      AppLocalizations.of(context)!.add,
+                      style: GoogleFonts.roboto(
+                          color: Colors.grey.shade100,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500),
+                    );
+                  })
                 ]),
               ),
               const Gap(8)
