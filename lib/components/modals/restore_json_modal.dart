@@ -142,24 +142,78 @@ if (_isButtonPressed)
               child: Text(_fileButtonText),
             ),
             SizedBox(height: 16),
-            TextField(
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+              decoration: BoxDecoration(
+                color: Styles.whiteColor,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color:  const Color(0x20000000),
+                  width: 1,
+                ),
+              ),
+              child:  TextField(
               controller: _passwordController,
               obscureText: true,
-              decoration: InputDecoration(
-                labelText: 'Password',
-                border: OutlineInputBorder(),
-              ),
+              decoration: const InputDecoration.collapsed(hintText: 'Password'),
+                style: const TextStyle(
+                  fontSize: 16,
+                ),
               onChanged: (value) {
                 setState(() {
                   _isButtonEnabled = _selectedFile != null && value.isNotEmpty;
                 });
               },
             ),
-            SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _isButtonEnabled ? _onPressedNext : null,
-              child: Text('Import Account'),
             ),
+            // TextField(
+            //   controller: _passwordController,
+            //   obscureText: true,
+            //   decoration: InputDecoration(
+            //     labelText: 'Password',
+            //     border: OutlineInputBorder(),
+            //   ),
+            //   onChanged: (value) {
+            //     setState(() {
+            //       _isButtonEnabled = _selectedFile != null && value.isNotEmpty;
+            //     });
+            //   },
+            // ),
+            SizedBox(height: 16),
+            Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    // splashFactory: account == null
+                    //     ? NoSplash.splashFactory
+                    //     : InkSplash.splashFactory,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(40)),
+                    shadowColor: const Color(0x559d6cff),
+                    elevation: 5,
+                    backgroundColor: _isButtonEnabled
+                        ? const Color(0xff9d6cff)
+                        : Styles.secondaryAccentColor,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                  ),
+                  onPressed: _isButtonEnabled ? _onPressedNext : null,
+                  child: Builder(
+                    builder: (context) {
+                      return Text(
+                        "Import Account",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      );
+                    }
+                  ),
+                ),
+              ),
+             
           ],
         ),
       ),
