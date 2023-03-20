@@ -91,14 +91,7 @@ class _AccountBoxState extends State<AccountBox> {
                     direction: Axis.horizontal,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Column(children: [
-                        GestureDetector(
-                          onTap: () => choiceAction(
-                              AppLocalizations.of(context)!.share_evm_qr,
-                              context,
-                              widget.reefAccountFDM.data,
-                              widget.onSelected),
-                          child: Container(
+                      Column(children: [Container(
                             decoration: const BoxDecoration(
                               shape: BoxShape.circle,
                               color: Colors.black12,
@@ -117,7 +110,6 @@ class _AccountBoxState extends State<AccountBox> {
                                     ),
                             ),
                           ),
-                        ),
                       ]),
                       Expanded(
                           child: Padding(
