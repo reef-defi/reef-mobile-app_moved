@@ -76,6 +76,11 @@
 "select_language": "भाषा चुनें",
 "change_language": "भाषा बदलें",
 "no_account_currently": "कोई खाता वर्तमान में उपलब्ध नहीं है, अपनी संपत्तियों को देखने के लिए एक खाता बनाएं या आयात करें।",
+"claim_evm_account": "क्लेम EVM अकाउंट",
+"transaction_details": "लेनदेन विवरण",
+"decoded_data": "डिकोडेड डेटा",
+"sign_message": "संदेश हस्ताक्षर करें",
+"no_account_currently": "कोई खाता वर्तमान में उपलब्ध नहीं है, अपनी संपत्तियों को देखने के लिए एक खाता बनाएं या आयात करें।",
 "scan_address": "स्कैन पता",
   "address_can_not_be_empty": "पता खाली नहीं हो सकता",
   "select_address": "पता चुनें",
@@ -94,5 +99,7 @@
 "delete_account":"खाता हटाएं",
   "share_evm_qr":"EVM पता साझा करें",
   "share_address_qr":"नेटिव पता साझा करें",
-  "scan_from_image":"फोटो से स्कैन करें"
+  "scan_from_image":"फोटो से स्कैन करें",
+  "select_account":"खाता चुनें",
+  "go_to_home_on_account_switch":"अकाउंट स्विच पर होम पर जाएं"
 }

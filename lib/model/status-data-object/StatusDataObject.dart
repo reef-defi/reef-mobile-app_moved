@@ -29,13 +29,17 @@ class FeedbackStatus {
 
   static List<FeedbackStatus> fromJson<T>(List<dynamic> json) {
     return json.map((dynamic e) {
-      // try {
+      // if(e is List)
+      try {
+        if(e is Map && e.isEmpty) {
+          return FeedbackStatus(StatusCode.completeData, '');
+        }
       return FeedbackStatus(toStatusCode(e['code']), e['message'],
           propertyName: e['propertyName']);
-      // }catch(err){
-      //   print("ERROR PARSING JSON=${e['code']}");
-      //   return FeedbackStatus(StatusCode.completeData, 'failed to parse');
-      // }
+      }catch(err){
+        print("StatusDataObject ERROR PARSING JSON=${e['code']} v=${e['message']}");
+        return FeedbackStatus(StatusCode.completeData, 'failed to parse');
+      }
     }).toList();
   }
 
