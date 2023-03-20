@@ -30,11 +30,10 @@ class AccountBox extends StatefulWidget {
 
   @override
   State<AccountBox> createState() => _AccountBoxState();
-  void SelectAccount(){
-  this.onSelected;
+  void SelectAccount() {
+    this.onSelected;
+  }
 }
-}
-
 
 class _AccountBoxState extends State<AccountBox> {
   bool showBalance = true;
@@ -97,7 +96,8 @@ class _AccountBoxState extends State<AccountBox> {
                           onTap: () => choiceAction(
                               AppLocalizations.of(context)!.share_evm_qr,
                               context,
-                              widget.reefAccountFDM.data,widget.onSelected),
+                              widget.reefAccountFDM.data,
+                              widget.onSelected),
                           child: Container(
                             decoration: const BoxDecoration(
                               shape: BoxShape.circle,
@@ -134,8 +134,11 @@ class _AccountBoxState extends State<AccountBox> {
                               ),
                               enableFeedback: true,
                               onSelected: (String choice) {
-                                choiceAction(choice, context,
-                                    widget.reefAccountFDM.data,widget.onSelected);
+                                choiceAction(
+                                    choice,
+                                    context,
+                                    widget.reefAccountFDM.data,
+                                    widget.onSelected);
                               },
                               tooltip:
                                   AppLocalizations.of(context)!.more_actions,
@@ -146,13 +149,20 @@ class _AccountBoxState extends State<AccountBox> {
                                       .share_address_qr,
                                   shareEvmQr: AppLocalizations.of(context)!
                                       .share_evm_qr,
-                                  selectAccount: AppLocalizations.of(context)!.select_account,
+                                  selectAccount: AppLocalizations.of(context)!
+                                      .select_account,
                                 ).getConstants().map((String choice) {
-                                  return  PopupMenuItem<String>(
+                                  return PopupMenuItem<String>(
                                     value: choice,
                                     child: Text(choice),
-                                    enabled: widget.reefAccountFDM.data.isEvmClaimed?true:choice ==AppLocalizations.of(context)!
-                                      .share_evm_qr?false:true,
+                                    enabled: widget
+                                            .reefAccountFDM.data.isEvmClaimed
+                                        ? true
+                                        : choice ==
+                                                AppLocalizations.of(context)!
+                                                    .share_evm_qr
+                                            ? false
+                                            : true,
                                   );
                                 }).toList();
                               },
@@ -296,7 +306,7 @@ class Constants {
   });
 
   List<String> getConstants() {
-    return [selectAccount,shareEvmQr, shareAddressQr, delete];
+    return [selectAccount, shareEvmQr, shareAddressQr, delete];
   }
 }
 
@@ -340,8 +350,8 @@ showAlertDialog(BuildContext context, ReefAccount signer) {
   );
 }
 
-void choiceAction(
-    String choice, BuildContext context, ReefAccount account,VoidCallback onSelected) async {
+void choiceAction(String choice, BuildContext context, ReefAccount account,
+    VoidCallback onSelected) async {
   Constants localizedConstants = Constants(
     delete: AppLocalizations.of(context)!.delete,
     shareAddressQr: AppLocalizations.of(context)!.share_address_qr,
@@ -357,7 +367,7 @@ void choiceAction(
     }
   } else if (choice == AppLocalizations.of(context)!.share_address_qr) {
     showQrCode(AppLocalizations.of(context)!.share_address_qr, account.address);
-  }else if (choice == AppLocalizations.of(context)!.select_account) {
+  } else if (choice == AppLocalizations.of(context)!.select_account) {
     onSelected();
   }
 }
