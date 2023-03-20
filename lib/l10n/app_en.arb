@@ -100,5 +100,6 @@
   "share_evm_qr":"Share EVM Address",
   "share_address_qr":"Share Native Address",
   "select_account":"Select Account",
-  "go_to_home_on_account_switch":"Go to Home on Account Switch"
+  "go_to_home_on_account_switch":"Go to Home on Account Switch",
+  "scan_from_image":"Scan from Image"
 }
