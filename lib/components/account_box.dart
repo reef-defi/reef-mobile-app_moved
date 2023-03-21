@@ -366,8 +366,6 @@ void choiceAction(
     onSelected();
   }
   else if (choice == "Export Account") {
-    // final message = await ReefAppState.instance.accountCtrl.addExternalAccount(account.address, "testtest");
-    // showQrCode("Export Account", message.toString());
     showExportQrAccount("Export Account",account.address);
   }
 }
