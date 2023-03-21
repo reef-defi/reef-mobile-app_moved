@@ -110,7 +110,7 @@ async function restoreJson(file:KeyringPair$Json,password:string):Promise<any> {
 // Add External account
 function exportAccountQr(address:string, password:string): any  {
     try {
-        return { exportedJson: kr.backupAccount(kr.getPair(address), password),password:password };
+        return { exportedJson: kr.backupAccount(kr.getPair(address), password)};
     } catch (error) {
         return "error";
     }
