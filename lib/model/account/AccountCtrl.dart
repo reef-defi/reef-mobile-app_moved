@@ -49,8 +49,8 @@ class AccountCtrl {
     return await _jsApi.jsPromise('window.keyring.restoreJson(${jsonEncode(file)},"$password")');
   }
 
-  Future<dynamic> addExternalAccount(Map<String,dynamic> file) async {
-    return await _jsApi.jsPromise('window.keyring.addExternalAccount(${jsonEncode(file)})');
+  Future<dynamic> addExternalAccount(String address,String password) async {
+    return await _jsApi.jsPromise('window.keyring.exportAccountQr("$address","$password")');
   }
 
   Future<bool> checkMnemonicValid(String mnemonic) async {
