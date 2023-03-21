@@ -105,7 +105,7 @@ class AddAccount extends StatelessWidget {
               child: Row(
                 children: [
                   Icon(
-                    Icons.import_export,
+                    Icons.crop_free,
                     color: Styles.textLightColor,
                     size: 22,
                   ),
@@ -113,7 +113,7 @@ class AddAccount extends StatelessWidget {
                   Flexible(
                     child: Builder(
                       builder: (context) {
-                        return Text("Import from QR",
+                        return Text("Import account from QR",
                             style: Theme.of(context).textTheme.bodyText1);
                       }
                     ),
