@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:reef_mobile_app/components/modal.dart';
@@ -37,14 +39,14 @@ class _ExportQrAccountState extends State<ExportQrAccount> {
         _passwordController.text = "";
       });
     }else{
-      Map<String,dynamic> test = {};
-      test['encoded']=res['exportedJson']['encoded'];
-      test['encoding']=res['exportedJson']['encoding'];
-      test['address']=res['exportedJson']['address'];
-      test['password']=res['password'];
+      Map<String,dynamic> response = {};
+      response['encoded']=res['exportedJson']['encoded'];
+      response['encoding']=res['exportedJson']['encoding'];
+      response['address']=res['exportedJson']['address'];
+      final resultToSend = jsonEncode(response);
       setState(() {
         isData = true;
-        data = test.toString();
+        data = resultToSend.toString();
         _isLoading = false;
       });
     }
