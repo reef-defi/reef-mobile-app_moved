@@ -6,6 +6,7 @@ import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:reef_mobile_app/components/modals/bind_modal.dart';
 import 'package:reef_mobile_app/components/modals/show_qr_code.dart';
+import 'package:reef_mobile_app/components/modals/export_qr_account_modal.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/account/ReefAccount.dart';
 import 'package:reef_mobile_app/model/status-data-object/StatusDataObject.dart';
@@ -146,6 +147,7 @@ class _AccountBoxState extends State<AccountBox> {
                                       .share_address_qr,
                                   shareEvmQr: AppLocalizations.of(context)!
                                       .share_evm_qr,
+                                  exportAccount: "Export Account",
                                   selectAccount: AppLocalizations.of(context)!.select_account,
                                 ).getConstants().map((String choice) {
                                   return  PopupMenuItem<String>(
@@ -287,16 +289,18 @@ class Constants {
   final String shareAddressQr;
   final String shareEvmQr;
   final String selectAccount;
+  final String exportAccount;
 
   Constants({
     required this.delete,
     required this.shareAddressQr,
     required this.shareEvmQr,
+    required this.exportAccount,
     required this.selectAccount,
   });
 
   List<String> getConstants() {
-    return [selectAccount,shareEvmQr, shareAddressQr, delete];
+    return [selectAccount,shareEvmQr, shareAddressQr, delete,exportAccount];
   }
 }
 
@@ -347,6 +351,7 @@ void choiceAction(
     shareAddressQr: AppLocalizations.of(context)!.share_address_qr,
     shareEvmQr: AppLocalizations.of(context)!.share_evm_qr,
     selectAccount: AppLocalizations.of(context)!.select_account,
+    exportAccount: "Export Account",
   );
   if (choice == AppLocalizations.of(context)!.delete) {
     showAlertDialog(context, account);
@@ -359,5 +364,10 @@ void choiceAction(
     showQrCode(AppLocalizations.of(context)!.share_address_qr, account.address);
   }else if (choice == AppLocalizations.of(context)!.select_account) {
     onSelected();
+  }
+  else if (choice == "Export Account") {
+    // final message = await ReefAppState.instance.accountCtrl.addExternalAccount(account.address, "testtest");
+    // showQrCode("Export Account", message.toString());
+    showExportQrAccount("Export Account",account.address);
   }
 }
