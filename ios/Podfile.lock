@@ -1,10 +1,51 @@
 PODS:
+  - ATBarSDK (1.4.1)
+  - barcode_finder (0.0.1):
+    - ATBarSDK (~> 1.4.1)
+    - Flutter
+    - ZXingObjC (~> 3.6.4)
+  - DKImagePickerController/Core (4.3.4):
+    - DKImagePickerController/ImageDataManager
+    - DKImagePickerController/Resource
+  - DKImagePickerController/ImageDataManager (4.3.4)
+  - DKImagePickerController/PhotoGallery (4.3.4):
+    - DKImagePickerController/Core
+    - DKPhotoGallery
+  - DKImagePickerController/Resource (4.3.4)
+  - DKPhotoGallery (0.0.17):
+    - DKPhotoGallery/Core (= 0.0.17)
+    - DKPhotoGallery/Model (= 0.0.17)
+    - DKPhotoGallery/Preview (= 0.0.17)
+    - DKPhotoGallery/Resource (= 0.0.17)
+    - SDWebImage
+    - SwiftyGif
+  - DKPhotoGallery/Core (0.0.17):
+    - DKPhotoGallery/Model
+    - DKPhotoGallery/Preview
+    - SDWebImage
+    - SwiftyGif
+  - DKPhotoGallery/Model (0.0.17):
+    - SDWebImage
+    - SwiftyGif
+  - DKPhotoGallery/Preview (0.0.17):
+    - DKPhotoGallery/Model
+    - DKPhotoGallery/Resource
+    - SDWebImage
+    - SwiftyGif
+  - DKPhotoGallery/Resource (0.0.17):
+    - SDWebImage
+    - SwiftyGif
+  - file_picker (0.0.1):
+    - DKImagePickerController/PhotoGallery
+    - Flutter
   - Flutter (1.0.0)
   - flutter_secure_storage (3.3.1):
     - Flutter
   - FMDB (2.7.5):
     - FMDB/standard (= 2.7.5)
   - FMDB/standard (2.7.5)
+  - image_picker_ios (0.0.1):
+    - Flutter
   - local_auth_ios (0.0.1):
     - Flutter
   - MTBBarcodeScanner (5.0.11)
@@ -16,22 +57,32 @@ PODS:
   - qr_code_scanner (0.2.0):
     - Flutter
     - MTBBarcodeScanner
+  - SDWebImage (5.14.2):
+    - SDWebImage/Core (= 5.14.2)
+  - SDWebImage/Core (5.14.2)
   - shared_preferences_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
   - sqflite (0.0.2):
     - Flutter
     - FMDB (>= 2.7.5)
+  - SwiftyGif (5.4.3)
   - url_launcher_ios (0.0.1):
     - Flutter
   - video_player_avfoundation (0.0.1):
     - Flutter
   - webview_flutter_wkwebview (0.0.1):
     - Flutter
+  - ZXingObjC (3.6.5):
+    - ZXingObjC/All (= 3.6.5)
+  - ZXingObjC/All (3.6.5)
 
 DEPENDENCIES:
+  - barcode_finder (from `.symlinks/plugins/barcode_finder/ios`)
+  - file_picker (from `.symlinks/plugins/file_picker/ios`)
   - Flutter (from `Flutter`)
   - flutter_secure_storage (from `.symlinks/plugins/flutter_secure_storage/ios`)
+  - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
   - local_auth_ios (from `.symlinks/plugins/local_auth_ios/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/ios`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
@@ -44,14 +95,26 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
+    - ATBarSDK
+    - DKImagePickerController
+    - DKPhotoGallery
     - FMDB
     - MTBBarcodeScanner
+    - SDWebImage
+    - SwiftyGif
+    - ZXingObjC
 
 EXTERNAL SOURCES:
+  barcode_finder:
+    :path: ".symlinks/plugins/barcode_finder/ios"
+  file_picker:
+    :path: ".symlinks/plugins/file_picker/ios"
   Flutter:
     :path: Flutter
   flutter_secure_storage:
     :path: ".symlinks/plugins/flutter_secure_storage/ios"
+  image_picker_ios:
+    :path: ".symlinks/plugins/image_picker_ios/ios"
   local_auth_ios:
     :path: ".symlinks/plugins/local_auth_ios/ios"
   path_provider_foundation:
@@ -72,19 +135,28 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/webview_flutter_wkwebview/ios"
 
 SPEC CHECKSUMS:
+  ATBarSDK: b6aa2b6a120ac7d6b1ff041bd60b9edde6bb17c4
+  barcode_finder: 9bfb4e551dca1b3035ed8911fd0c3fbeddf5c7be
+  DKImagePickerController: b512c28220a2b8ac7419f21c491fc8534b7601ac
+  DKPhotoGallery: fdfad5125a9fdda9cc57df834d49df790dbb4179
+  file_picker: ce3938a0df3cc1ef404671531facef740d03f920
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
   flutter_secure_storage: 7953c38a04c3fdbb00571bcd87d8e3b5ceb9daec
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
-  local_auth_ios: ceb207b594b48c075f1065f97b61e3ffa00d686b
+  image_picker_ios: 4a8aadfbb6dc30ad5141a2ce3832af9214a705b5
+  local_auth_ios: c6cf091ded637a88f24f86a8875d8b0f526e2605
   MTBBarcodeScanner: f453b33c4b7dfe545d8c6484ed744d55671788cb
   path_provider_foundation: c68054786f1b4f3343858c1e1d0caaded73f0be9
   permission_handler_apple: 44366e37eaf29454a1e7b1b7d736c2cceaeb17ce
   qr_code_scanner: bb67d64904c3b9658ada8c402e8b4d406d5d796e
+  SDWebImage: b9a731e1d6307f44ca703b3976d18c24ca561e84
   shared_preferences_foundation: 986fc17f3d3251412d18b0265f9c64113a8c2472
   sqflite: 6d358c025f5b867b29ed92fc697fd34924e11904
+  SwiftyGif: 6c3eafd0ce693cad58bb63d2b2fb9bacb8552780
   url_launcher_ios: 08a3dfac5fb39e8759aeb0abbd5d9480f30fc8b4
-  video_player_avfoundation: 6d971a232d72e6ee25368378d48a079dea01f1cf
+  video_player_avfoundation: 81e49bb3d9fb63dccf9fa0f6d877dc3ddbeac126
   webview_flutter_wkwebview: b7e70ef1ddded7e69c796c7390ee74180182971f
+  ZXingObjC: fdbb269f25dd2032da343e06f10224d62f537bdb
 
 PODFILE CHECKSUM: 168109ea30e446486010e84577542cbafbcb4180
 

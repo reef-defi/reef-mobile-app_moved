@@ -92,30 +92,23 @@ class _AccountBoxState extends State<AccountBox> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Column(children: [
-                        GestureDetector(
-                          onTap: () => choiceAction(
-                              AppLocalizations.of(context)!.share_evm_qr,
-                              context,
-                              widget.reefAccountFDM.data,
-                              widget.onSelected),
-                          child: Container(
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.black12,
-                            ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(64),
-                              child: widget.reefAccountFDM.data.iconSVG != null
-                                  ? SvgPicture.string(
-                                      widget.reefAccountFDM.data.iconSVG!,
-                                      height: 64,
-                                      width: 64,
-                                    )
-                                  : const SizedBox(
-                                      width: 64,
-                                      height: 64,
-                                    ),
-                            ),
+                        Container(
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.black12,
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(64),
+                            child: widget.reefAccountFDM.data.iconSVG != null
+                                ? SvgPicture.string(
+                                    widget.reefAccountFDM.data.iconSVG!,
+                                    height: 64,
+                                    width: 64,
+                                  )
+                                : const SizedBox(
+                                    width: 64,
+                                    height: 64,
+                                  ),
                           ),
                         ),
                       ]),

@@ -682,7 +682,7 @@ class _AccountCreationConfirmContentState
                 Expanded(
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      splashFactory: !(name.isNotEmpty &&
+                      splashFactory: !(name.trim().isNotEmpty &&
                               (!_hasPassword || password.isNotEmpty))
                           ? NoSplash.splashFactory
                           : InkSplash.splashFactory,
@@ -699,35 +699,39 @@ class _AccountCreationConfirmContentState
                           : const Color(0xff9d6cff),
                       padding: const EdgeInsets.symmetric(vertical: 16),
                     ),
-                    onPressed: () {
-                      if (name.isNotEmpty &&
-                          (_hasPassword ||
-                              (password.isNotEmpty &&
-                                  !_passwordError &&
-                                  !_confirmPasswordError))) {
-                        if (widget.account != null) {
-                          widget.saveAccount(widget.account as StoredAccount);
-                          if (!_hasPassword && password.isNotEmpty) {
-                            ReefAppState.instance.storage
-                                .setValue(StorageKey.password.name, password);
-                          }
+                    onPressed: (name.trim().isNotEmpty &&
+                            name.trim() != "<No Name>" &&
+                            (_hasPassword ||
+                                (password.isNotEmpty &&
+                                    !_passwordError &&
+                                    !_confirmPasswordError &&
+                                    _confirmPasswordController.text ==
+                                        _passwordController.text)))
+                        ? () {
+                            if (widget.account != null) {
+                              widget
+                                  .saveAccount(widget.account as StoredAccount);
+                              if (!_hasPassword && password.isNotEmpty) {
+                                ReefAppState.instance.storage.setValue(
+                                    StorageKey.password.name, password);
+                              }
 
-                          Navigator.of(context).pop();
+                              Navigator.of(context).pop();
 
-                          if (!widget.fromMnemonic) {
-                            ReefAccount signer = ReefAccount(
-                              address: widget.account!.address,
-                              name: name,
-                              balance: BigInt.zero,
-                              evmAddress: "",
-                              isEvmClaimed: false,
-                              iconSVG: widget.account!.svg,
-                            );
-                            showBindEvmModal(context, bindFor: signer);
+                              if (!widget.fromMnemonic) {
+                                ReefAccount signer = ReefAccount(
+                                  address: widget.account!.address,
+                                  name: name,
+                                  balance: BigInt.zero,
+                                  evmAddress: "",
+                                  isEvmClaimed: false,
+                                  iconSVG: widget.account!.svg,
+                                );
+                                showBindEvmModal(context, bindFor: signer);
+                              }
+                            }
                           }
-                        }
-                      }
-                    },
+                        : null,
                     child: Text(
                       widget.fromMnemonic
                           ? AppLocalizations.of(context)!.import_the_account

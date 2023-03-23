@@ -18,9 +18,12 @@ import 'package:shimmer/shimmer.dart';
 import '../../model/tokens/Token.dart';
 
 class TokenSelection extends StatefulWidget {
-  const TokenSelection({Key? key, required this.callback}) : super(key: key);
+  const TokenSelection(
+      {Key? key, required this.callback, required this.selectedToken})
+      : super(key: key);
 
   final Function(TokenWithAmount token) callback;
+  final String selectedToken;
 
   @override
   State<TokenSelection> createState() => TokenSelectionState();
@@ -134,120 +137,121 @@ class TokenSelectionState extends State<TokenSelection> {
                 return ListView(
                   shrinkWrap: true,
                   physics: const BouncingScrollPhysics(),
-                  children: displayTokens
-                      .map((e) => Column(
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                    border: Border.all(
-                                      color: const Color(0x20000000),
-                                      width: 1,
-                                    ),
-                                    boxShadow: const [
-                                      BoxShadow(
-                                        color: Color(0x16000000),
-                                        blurRadius: 24,
-                                      )
-                                    ],
-                                    borderRadius: BorderRadius.circular(8)),
-                                child: MaterialButton(
-                                    splashColor: const Color(0x555531a9),
-                                    color: Colors.white,
-                                    padding: const EdgeInsets.fromLTRB(
-                                        12, 12, 12, 10),
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(8)),
-                                    elevation: 0,
-                                    onPressed: () {
-                                      widget.callback(e.data);
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Row(children: [
-                                          IconFromUrl(e.data.iconUrl),
-                                          const Gap(12),
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(e.data.name,
-                                                  style: const TextStyle(
-                                                      fontSize: 16)),
-                                              Wrap(spacing: 8.0, children: [
-                                                Text(toAmountDisplayBigInt(
-                                                    e.data.balance,
-                                                    decimals: e.data.decimals)),
-                                                Text(e.data.symbol)
-                                              ]),
-                                              Row(
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  Text(
-                                                    e.data.address
-                                                        .toString()
-                                                        .shorten(),
-                                                    style: TextStyle(
-                                                        fontSize: 12,
-                                                        color:
-                                                            Colors.grey[600]!),
-                                                  ),
-                                                  TextButton(
-                                                      style: TextButton.styleFrom(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                      .symmetric(
-                                                                  horizontal: 8,
-                                                                  vertical: 6),
-                                                          minimumSize:
-                                                              const Size(0, 0),
-                                                          tapTargetSize:
-                                                              MaterialTapTargetSize
-                                                                  .shrinkWrap),
-                                                      onPressed: () {
-                                                        Clipboard.setData(
-                                                            ClipboardData(
-                                                                text: e.data
-                                                                    .address));
-                                                      },
-                                                      child: Row(
-                                                        mainAxisSize:
-                                                            MainAxisSize.min,
-                                                        children: [
-                                                          Icon(
-                                                            Icons.copy,
-                                                            size: 12,
-                                                            color: Styles
-                                                                .textLightColor,
-                                                          ),
-                                                          const Gap(2),
-                                                          Text(
-                                                            "Copy Address",
-                                                            style: TextStyle(
-                                                                color: Styles
-                                                                    .textColor,
-                                                                fontSize: 12),
-                                                          ),
-                                                        ],
-                                                      )),
-                                                ],
-                                              )
-                                            ],
-                                          ),
-                                        ]),
-                                      ],
-                                    )),
+                  children: displayTokens.map((e) {
+                    if (e.data.address == widget.selectedToken) {
+                      return SizedBox.shrink();
+                    }
+                    return Column(
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                              border: Border.all(
+                                color: const Color(0x20000000),
+                                width: 1,
                               ),
-                              if (e.data.address !=
-                                  displayTokens[displayTokens.length - 1]
-                                      .data
-                                      .address)
-                                const Gap(4),
-                            ],
-                          ))
-                      .toList(),
+                              boxShadow: const [
+                                BoxShadow(
+                                  color: Color(0x16000000),
+                                  blurRadius: 24,
+                                )
+                              ],
+                              borderRadius: BorderRadius.circular(8)),
+                          child: MaterialButton(
+                              splashColor: const Color(0x555531a9),
+                              color: Colors.white,
+                              padding:
+                                  const EdgeInsets.fromLTRB(12, 12, 12, 10),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8)),
+                              elevation: 0,
+                              onPressed: () {
+                                widget.callback(e.data);
+                                Navigator.of(context).pop();
+                              },
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(children: [
+                                    IconFromUrl(e.data.iconUrl),
+                                    const Gap(12),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(e.data.name,
+                                            style:
+                                                const TextStyle(fontSize: 16)),
+                                        Wrap(spacing: 8.0, children: [
+                                          Text(toAmountDisplayBigInt(
+                                              e.data.balance,
+                                              decimals: e.data.decimals)),
+                                          Text(e.data.symbol)
+                                        ]),
+                                        Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Text(
+                                              e.data.address
+                                                  .toString()
+                                                  .shorten(),
+                                              style: TextStyle(
+                                                  fontSize: 12,
+                                                  color: Colors.grey[600]!),
+                                            ),
+                                            TextButton(
+                                                style: TextButton.styleFrom(
+                                                    padding: const EdgeInsets
+                                                            .symmetric(
+                                                        horizontal: 8,
+                                                        vertical: 6),
+                                                    minimumSize:
+                                                        const Size(0, 0),
+                                                    tapTargetSize:
+                                                        MaterialTapTargetSize
+                                                            .shrinkWrap),
+                                                onPressed: () {
+                                                  Clipboard.setData(
+                                                      ClipboardData(
+                                                          text:
+                                                              e.data.address));
+                                                },
+                                                child: Row(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: const [
+                                                    Icon(
+                                                      Icons.copy,
+                                                      size: 12,
+                                                      color:
+                                                          Styles.textLightColor,
+                                                    ),
+                                                    Gap(2),
+                                                    Text(
+                                                      "Copy Address",
+                                                      style: TextStyle(
+                                                          color:
+                                                              Styles.textColor,
+                                                          fontSize: 12),
+                                                    ),
+                                                  ],
+                                                )),
+                                          ],
+                                        )
+                                      ],
+                                    ),
+                                  ]),
+                                ],
+                              )),
+                        ),
+                        if (e.data.address !=
+                            displayTokens[displayTokens.length - 1]
+                                .data
+                                .address)
+                          const Gap(16),
+                      ],
+                    );
+                  }).toList(),
                 );
               }),
             ),
@@ -258,7 +262,9 @@ class TokenSelectionState extends State<TokenSelection> {
   }
 }
 
-void showTokenSelectionModal(context, {required callback}) {
+void showTokenSelectionModal(context,
+    {required callback, required selectedToken}) {
   showModal(context,
-      child: TokenSelection(callback: callback), headText: "Select Token");
+      child: TokenSelection(callback: callback, selectedToken: selectedToken),
+      headText: "Select Token");
 }
