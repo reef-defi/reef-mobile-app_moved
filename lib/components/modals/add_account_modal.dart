@@ -86,7 +86,7 @@ class AddAccount extends StatelessWidget {
                   Flexible(
                     child: Builder(
                       builder: (context) {
-                        return Text("Restore from JSON",
+                        return Text(AppLocalizations.of(context)!.restore_from_json,
                             style: Theme.of(context).textTheme.bodyText1);
                       }
                     ),
@@ -113,7 +113,7 @@ class AddAccount extends StatelessWidget {
                   Flexible(
                     child: Builder(
                       builder: (context) {
-                        return Text("Import account from QR",
+                        return Text(AppLocalizations.of(context)!.import_from_qr_code,
                             style: Theme.of(context).textTheme.bodyText1);
                       }
                     ),
