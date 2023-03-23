@@ -49,7 +49,7 @@ class _ImportAccountQrState extends State<ImportAccountQr> {
   TextEditingController _passwordController = TextEditingController();
   
   void _onPressedNext()async{
-         final response = await ReefAppState.instance.accountCtrl.restoreJson(finalRes,_passwordController.text);
+         final response = await ReefAppState.instance.accountCtrl.restoreJson(jsonDecode(finalRes["data"]),_passwordController.text);
         if(response=="error"){
         Navigator.pop(context);
         }else{
@@ -73,7 +73,7 @@ class _ImportAccountQrState extends State<ImportAccountQr> {
       if(jsonDecode(resultStr)["type"]=="importAccount"){
       setState(() {
         isData = true;
-        finalRes = jsonDecode(resultStr)["data"];
+        finalRes = jsonDecode(resultStr);
       });
       }
       print("invalid qr code");
