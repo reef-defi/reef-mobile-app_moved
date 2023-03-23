@@ -53,7 +53,7 @@ class NavigationCtrl with NavSwipeCompute {
   }
 
   void navigateToSendPage(
-      {required BuildContext context, required String preselected}) {
+      {required BuildContext context, required String preselected,String? preSelectedTransferAddress}) {
     Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => SignatureContentToggle(Scaffold(
               appBar: AppBar(
@@ -67,7 +67,7 @@ class NavigationCtrl with NavSwipeCompute {
               body: Padding(
                 padding:
                     const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
-                child: SendPage(preselected),
+                child: SendPage(preselected,preSelectedTransferAddress: preSelectedTransferAddress,),
               ),
               backgroundColor: Styles.greyColor,
             ))));

@@ -5,6 +5,7 @@ import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:gap/gap.dart';
 import 'package:reef_mobile_app/components/modal.dart';
 import 'package:reef_mobile_app/components/modals/import_account_from_qr.dart';
+import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/pages/SplashScreen.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 
@@ -34,6 +35,25 @@ class _GetQrTypeDataState extends State<GetQrTypeData> {
       setState(() {
         displayData = "You can import this Account by scanning this QR code and entering the password.";
       });
+      break;
+    
+    default:
+      break;
+
+  }
+}
+
+  void _onPressed(String type){
+  switch(type){
+    case 'address':
+    Navigator.pop(context);
+      ReefAppState.instance.navigationCtrl
+                              .navigateToSendPage(
+                                  context: context, preselected: "0x0000000000000000000000000000000001000000",preSelectedTransferAddress: jsonDecode(result!.code!)["data"]);
+      break;
+    case 'importAccount':
+      Navigator.pop(context);
+      showImportAccountQrModal(data: result!.code!);
       break;
     
     default:
@@ -98,10 +118,7 @@ class _GetQrTypeDataState extends State<GetQrTypeData> {
                     backgroundColor: const Color(0xff9d6cff),
                     padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
-                  onPressed: (){
-                    Navigator.pop(context);
-                    showImportAccountQrModal(data: result!.code!);
-                  },
+                  onPressed: ()=>_onPressed(jsonDecode(result!.code!)["type"]),
                   child: Builder(
                     builder: (context) {
                       return Text(

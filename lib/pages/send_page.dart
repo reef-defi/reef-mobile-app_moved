@@ -18,8 +18,9 @@ import 'package:reef_mobile_app/utils/styles.dart';
 
 class SendPage extends StatefulWidget {
   final String preselected;
+  String? preSelectedTransferAddress;
 
-  const SendPage(this.preselected, {Key? key}) : super(key: key);
+  SendPage(this.preselected, {Key? key,this.preSelectedTransferAddress}) : super(key: key);
 
   @override
   State<SendPage> createState() => _SendPageState();
@@ -56,6 +57,17 @@ class _SendPageState extends State<SendPage> {
       selectedTokenAddress = widget.preselected;
     });
 
+    if(widget.preSelectedTransferAddress!=null){
+      setState(() {
+        valueController.text = widget.preSelectedTransferAddress!;
+        address=widget.preSelectedTransferAddress!;
+        statusValue = SendStatus.NO_AMT;
+      });
+    }
+
+
+    
+
     //checking if selected token is REEF or not
     if (widget.preselected == Constants.REEF_TOKEN_ADDRESS) {
       setState(() {
@@ -83,6 +95,7 @@ class _SendPageState extends State<SendPage> {
     _focusSecond.removeListener(_onFocusSecondChange);
     _focus.dispose();
     _focusSecond.dispose();
+    
   }
 
   /*void _changeSelectedToken(String tokenAddr) {
@@ -425,41 +438,41 @@ class _SendPageState extends State<SendPage> {
               ),
             ),
             Expanded(
-              child: TextFormField(
-                focusNode: _focus,
-                readOnly: isFormDisabled,
-                controller: valueController,
-                onChanged: (text) async {
-                  setState(() {
-                    address = valueController.text.trim();
-                  });
+  child: TextFormField(
+    focusNode: _focus,
+    readOnly: isFormDisabled,
+    controller: valueController,
+    onChanged: (text) async {
+      setState(() {
+        address = text.trim(); // update the address variable with the new value
+      });
 
-                  var state = await _validate(address, selectedToken, amount);
-                  setState(() {
-                    statusValue = state;
-                  });
-                },
-                style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: isFormDisabled
-                        ? Styles.textLightColor
-                        : Styles.textColor),
-                decoration: InputDecoration(
-                    contentPadding:
-                        EdgeInsets.symmetric(horizontal: 12, vertical: 2),
-                    border: InputBorder.none,
-                    hintText: AppLocalizations.of(context)!.send_to_address,
-                    hintStyle: TextStyle(color: Styles.textLightColor)),
-                validator: (String? value) {
-                  if (value == null || value.isEmpty) {
-                    return AppLocalizations.of(context)!
-                        .address_can_not_be_empty;
-                  }
-                  return null;
-                },
-              ),
-            ),
+      var state = await _validate(address, selectedToken, amount);
+      setState(() {
+        statusValue = state;
+      });
+    },
+    style: TextStyle(
+      fontSize: 14,
+      fontWeight: FontWeight.w500,
+      color: isFormDisabled
+          ? Styles.textLightColor
+          : Styles.textColor),
+    decoration: InputDecoration(
+      contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+      border: InputBorder.none,
+      hintText: AppLocalizations.of(context)!.send_to_address,
+      hintStyle: TextStyle(color: Styles.textLightColor)),
+    validator: (String? value) {
+      if (value == null || value.isEmpty) {
+        return AppLocalizations.of(context)!
+            .address_can_not_be_empty;
+      }
+      return null;
+    },
+  ),
+),
+
             SizedBox(
               width: 48,
               child: MaterialButton(
