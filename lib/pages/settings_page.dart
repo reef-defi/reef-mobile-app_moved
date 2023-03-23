@@ -111,7 +111,7 @@ class _SettingsPageState extends State<SettingsPage> {
             MaterialButton(
               materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
               onPressed: () => showQrTypeDataModal(
-                  "Get QR information",
+                  AppLocalizations.of(context)!.get_qr_information,
                   context: context),
               padding: const EdgeInsets.all(2),
               child: Row(
@@ -123,7 +123,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   ),
                   const Gap(8),
                   Builder(builder: (context) {
-                    return Text("Get QR Information",
+                    return Text(AppLocalizations.of(context)!.get_qr_information,
                         style: Theme.of(context).textTheme.bodyText1);
                   }),
                 ],
