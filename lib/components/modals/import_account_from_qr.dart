@@ -33,8 +33,8 @@ import 'package:reef_mobile_app/utils/styles.dart';
 """;
 
 class ImportAccountQr extends StatefulWidget {
-  const ImportAccountQr({Key? key}) : super(key: key);
-
+  ImportAccountQr({Key? key,this.data}) : super(key: key);
+  String? data;
   @override
   State<ImportAccountQr> createState() => _ImportAccountQrState();
   
@@ -68,6 +68,8 @@ class _ImportAccountQrState extends State<ImportAccountQr> {
   }
 
   void qr(QRViewController controller){
+    if(widget.data==null){
+
     this.controller = controller;
     controller.scannedDataStream.listen((event)async{
      setState(() {
@@ -84,6 +86,19 @@ class _ImportAccountQrState extends State<ImportAccountQr> {
       print("invalid qr code");
      }
     });
+    }else{
+      
+     String resultStr = widget.data!;
+     if(resultStr[0]=="{"){
+      if(jsonDecode(resultStr)["type"]=="importAccount"){
+      setState(() {
+        isData = true;
+        finalRes = jsonDecode(resultStr);
+      });
+    }
+     }
+    }
+     
 
   }
   
@@ -184,7 +199,7 @@ class _ImportAccountQrState extends State<ImportAccountQr> {
 }
 
 void showImportAccountQrModal(
-    {BuildContext? context}) {
+    {BuildContext? context, String?data}) {
   showModal(context ?? navigatorKey.currentContext,
-      child: ImportAccountQr(), headText: "Import Account from QR");
+      child: ImportAccountQr(data: data), headText: "Import Account from QR");
 }
