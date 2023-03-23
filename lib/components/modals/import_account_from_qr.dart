@@ -8,6 +8,7 @@ import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/account/stored_account.dart';
 import 'package:reef_mobile_app/pages/SplashScreen.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
  final svgData = """
 <svg viewBox='0 0 64 64' xmlns='http://www.w3.org/2000/svg'>
@@ -55,7 +56,6 @@ class _ImportAccountQrState extends State<ImportAccountQr> {
     });
          final response = await ReefAppState.instance.accountCtrl.restoreJson(jsonDecode(finalRes["data"]),_passwordController.text);
         if(response=="error"){
-          print("incorrect password");
         Navigator.pop(context);
         }else{
         response['svg']=svgData;
@@ -83,7 +83,6 @@ class _ImportAccountQrState extends State<ImportAccountQr> {
         finalRes = jsonDecode(resultStr);
       });
       }
-      print("invalid qr code");
      }
     });
     }else{
@@ -175,7 +174,7 @@ class _ImportAccountQrState extends State<ImportAccountQr> {
                   child: Builder(
                     builder: (context) {
                       return Text(
-                        "Import Account",
+                        AppLocalizations.of(context)!.import_the_account,
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,

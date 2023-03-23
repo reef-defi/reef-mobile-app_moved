@@ -1,7 +1,11 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:gap/gap.dart';
 import 'package:reef_mobile_app/components/modal.dart';
+import 'package:reef_mobile_app/components/modals/alert_modal.dart';
 import 'package:reef_mobile_app/pages/SplashScreen.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 
@@ -11,27 +15,34 @@ class QrCodeScanner extends StatefulWidget {
 
   @override
   State<QrCodeScanner> createState() => _QrCodeScannerState();
-  
 }
 
 class _QrCodeScannerState extends State<QrCodeScanner> {
   final GlobalKey _gLobalkey = GlobalKey();
   QRViewController? controller;
   Barcode? result;
-  
+
   void qr(QRViewController controller) {
     this.controller = controller;
     controller.scannedDataStream.listen((event) {
-     setState(() {
-       result = event;
-     });
-     if (widget.onScanned != null) {
-        widget.onScanned!(result!.code!);
-        Navigator.of(context).pop();
-     }
+      if (mounted) {
+        setState(() {
+          result = event;
+        });
+        if (widget.onScanned != null) {
+          final returnJson = jsonDecode(result!.code!);
+          if (returnJson["type"] == "address") {
+            widget.onScanned!(returnJson["data"]);
+            Navigator.of(context).pop();
+          }else{
+            Navigator.of(context).pop();
+            showAlertModal("Invalid QR Code", ["This is an invalid QR code!","You can know more about this QR code from the 'Scan QR' option in Settings "]);
+          }
+        }
+      }
     });
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -49,25 +60,21 @@ class _QrCodeScannerState extends State<QrCodeScanner> {
                 children: [
                   Center(
                     child: Container(
-              height: 200,
-              width: 200,
-              child: QRView(
-                    key: _gLobalkey,
-                    onQRViewCreated: qr
-              ),
-            ),
+                      height: 200,
+                      width: 200,
+                      child: QRView(key: _gLobalkey, onQRViewCreated: qr),
+                    ),
                   ),
                 ],
               ),
             ),
             const Gap(8),
-           
           ],
         ));
   }
 }
 
-void showQrCodeScannerModal(String title,Function(String)? onScanned,
+void showQrCodeScannerModal(String title, Function(String)? onScanned,
     {BuildContext? context}) {
   showModal(context ?? navigatorKey.currentContext,
       child: QrCodeScanner(onScanned: onScanned), headText: title);

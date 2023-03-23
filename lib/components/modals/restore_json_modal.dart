@@ -205,7 +205,7 @@ if (_isButtonPressed)
                   child: Builder(
                     builder: (context) {
                       return Text(
-                        "Import Account",
+                        AppLocalizations.of(context)!.import_the_account,
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
@@ -227,5 +227,5 @@ if (_isButtonPressed)
 void showRestoreJson(
     BuildContext? context) {
   showModal(context ?? navigatorKey.currentContext,
-      child: RestoreJSON(), headText: "Restore from JSON");
+      child: RestoreJSON(), headText: AppLocalizations.of(context!)!.restore_from_json,);
 }
