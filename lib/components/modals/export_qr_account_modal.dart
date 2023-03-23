@@ -8,6 +8,8 @@ import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/pages/SplashScreen.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 
 
 class ExportQrAccount extends StatefulWidget {
@@ -35,7 +37,7 @@ class _ExportQrAccountState extends State<ExportQrAccount> {
     final res = await ReefAppState.instance.accountCtrl.addExternalAccount(widget.address, password);
     if(res == "error"){
       setState(() {
-        errorMessage = "Incorrect Password Entered";
+        errorMessage = AppLocalizations.of(context)!.incorrect_password;
         _isLoading = false;
         _passwordController.text = "";
       });
@@ -64,7 +66,7 @@ class _ExportQrAccountState extends State<ExportQrAccount> {
             if(!_isLoading && !isData)
                         Column(
                           children: [
-            Text("Enter password for ${widget.address}",style: TextStyle(fontSize: 16.0),textAlign: TextAlign.start,),
+            Text("${AppLocalizations.of(context)!.enter_password_for} ${widget.address}",style: TextStyle(fontSize: 16.0),textAlign: TextAlign.start,),
             Gap(8.0),
                             Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
@@ -119,7 +121,7 @@ class _ExportQrAccountState extends State<ExportQrAccount> {
                   child: Builder(
                     builder: (context) {
                       return Text(
-                        "Export Account",
+                        AppLocalizations.of(context)!.export_account,
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,

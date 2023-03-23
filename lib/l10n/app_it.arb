@@ -102,5 +102,7 @@
 "select_account":"selezionare conto",
 "go_to_home_on_account_switch":"Vai a Home al cambio di account",
  "restore_from_json":"Ripristina da JSON",
-  "import_from_qr_code":"Importa da codice QR"
+  "import_from_qr_code":"Importa da codice QR",
+  "enter_password_for":"conto di esportazione",
+  "export_account":"conto di esportazione"
 }

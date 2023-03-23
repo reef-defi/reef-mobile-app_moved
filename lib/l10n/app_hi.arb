@@ -102,5 +102,8 @@
   "select_account":"खाता चुनें",
   "go_to_home_on_account_switch":"अकाउंट स्विच पर होम पर जाएं",
  "restore_from_json":"JSON से पुनर्स्थापित करें",
-  "import_from_qr_code":"क्यूआर कोड से आयात करें"
+  "import_from_qr_code":"क्यूआर कोड से आयात करें",
+    "enter_password_for":"पास वर्ड दर्ज करें",
+  "export_account":"निर्यात खाता"
+
 }

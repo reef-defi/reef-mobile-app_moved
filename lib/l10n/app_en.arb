@@ -102,5 +102,7 @@
   "select_account":"Select Account",
   "go_to_home_on_account_switch":"Go to Home on Account Switch",
   "restore_from_json":"Restore from JSON",
-  "import_from_qr_code":"Import from QR code"
+  "import_from_qr_code":"Import from QR code",
+  "enter_password_for":"Enter Password for",
+  "export_account":"Export Account"
 }
