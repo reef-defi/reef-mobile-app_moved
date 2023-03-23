@@ -65,7 +65,7 @@ class TokenSelectionState extends State<TokenSelection> {
   }
 
   @override
-  void dispose(){
+  void dispose() {
     super.dispose();
     valueContainer.dispose();
   }
@@ -209,8 +209,8 @@ class TokenSelectionState extends State<TokenSelection> {
                                                       onPressed: () {
                                                         Clipboard.setData(
                                                             ClipboardData(
-                                                                text:
-                                                                    e.data.address));
+                                                                text: e.data
+                                                                    .address));
                                                       },
                                                       child: Row(
                                                         mainAxisSize:
@@ -242,7 +242,8 @@ class TokenSelectionState extends State<TokenSelection> {
                               ),
                               if (e.data.address !=
                                   displayTokens[displayTokens.length - 1]
-                                      .data.address)
+                                      .data
+                                      .address)
                                 const Gap(4),
                             ],
                           ))

@@ -66,7 +66,7 @@ class _ChangePasswordState extends State<ChangePassword> {
             }));
   }
 
-   @override
+  @override
   void dispose() {
     super.dispose();
     currPasswordController.dispose();
@@ -82,7 +82,7 @@ class _ChangePasswordState extends State<ChangePassword> {
           if (hasPassword) ...[
             Text(
               AppLocalizations.of(context)!.change_password_current_password,
-              style: TextStyle(
+              style: const TextStyle(
                   fontSize: 10,
                   fontWeight: FontWeight.w500,
                   color: Styles.textLightColor),
@@ -115,7 +115,7 @@ class _ChangePasswordState extends State<ChangePassword> {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(
+                  const Icon(
                     CupertinoIcons.exclamationmark_triangle_fill,
                     color: Styles.errorColor,
                     size: 16,
@@ -123,7 +123,8 @@ class _ChangePasswordState extends State<ChangePassword> {
                   const Gap(8),
                   Flexible(
                     child: Text(
-                      AppLocalizations.of(context)!.change_password_password_incorrect,
+                      AppLocalizations.of(context)!
+                          .change_password_password_incorrect,
                       style: TextStyle(color: Colors.grey[600], fontSize: 13),
                     ),
                   ),
@@ -135,17 +136,15 @@ class _ChangePasswordState extends State<ChangePassword> {
               (confirmCurrPassword.isNotEmpty &&
                   !confirmCurrPasswordError)) ...[
             const Gap(12),
-            Builder(
-              builder: (context) {
-                return Text(
-                  AppLocalizations.of(context)!.new_password,
-                  style: TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w500,
-                      color: Styles.textLightColor),
-                );
-              }
-            ),
+            Builder(builder: (context) {
+              return Text(
+                AppLocalizations.of(context)!.new_password,
+                style: const TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w500,
+                    color: Styles.textLightColor),
+              );
+            }),
             const Gap(8),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
@@ -173,7 +172,7 @@ class _ChangePasswordState extends State<ChangePassword> {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(
+                  const Icon(
                     CupertinoIcons.exclamationmark_triangle_fill,
                     color: Styles.errorColor,
                     size: 16,
@@ -192,7 +191,7 @@ class _ChangePasswordState extends State<ChangePassword> {
               const Gap(16),
               Text(
                 AppLocalizations.of(context)!.repetitive_password,
-                style: TextStyle(
+                style: const TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.w500,
                     color: Styles.textLightColor),
@@ -225,7 +224,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(
+                    const Icon(
                       CupertinoIcons.exclamationmark_triangle_fill,
                       color: Styles.errorColor,
                       size: 16,
@@ -274,18 +273,16 @@ class _ChangePasswordState extends State<ChangePassword> {
                           Navigator.of(context).pop();
                         }
                       },
-                      child: Builder(
-                        builder: (context) {
-                          return Text(
-                            AppLocalizations.of(context)!.change_password,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          );
-                        }
-                      ),
+                      child: Builder(builder: (context) {
+                        return Text(
+                          AppLocalizations.of(context)!.change_password,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        );
+                      }),
                     ),
                   ),
                 ],

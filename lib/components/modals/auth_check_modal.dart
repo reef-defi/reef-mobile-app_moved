@@ -76,7 +76,7 @@ class _AuthCheckState extends State<AuthCheck> {
     }
   }
 
-   @override
+  @override
   void dispose() {
     super.dispose();
     _passwordController.dispose();

@@ -11,27 +11,26 @@ class QrCodeScanner extends StatefulWidget {
 
   @override
   State<QrCodeScanner> createState() => _QrCodeScannerState();
-  
 }
 
 class _QrCodeScannerState extends State<QrCodeScanner> {
   final GlobalKey _gLobalkey = GlobalKey();
   QRViewController? controller;
   Barcode? result;
-  
+
   void qr(QRViewController controller) {
     this.controller = controller;
     controller.scannedDataStream.listen((event) {
-     setState(() {
-       result = event;
-     });
-     if (widget.onScanned != null) {
+      setState(() {
+        result = event;
+      });
+      if (widget.onScanned != null) {
         widget.onScanned!(result!.code!);
         Navigator.of(context).pop();
-     }
+      }
     });
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -49,25 +48,21 @@ class _QrCodeScannerState extends State<QrCodeScanner> {
                 children: [
                   Center(
                     child: Container(
-              height: 200,
-              width: 200,
-              child: QRView(
-                    key: _gLobalkey,
-                    onQRViewCreated: qr
-              ),
-            ),
+                      height: 200,
+                      width: 200,
+                      child: QRView(key: _gLobalkey, onQRViewCreated: qr),
+                    ),
                   ),
                 ],
               ),
             ),
             const Gap(8),
-           
           ],
         ));
   }
 }
 
-void showQrCodeScannerModal(String title,Function(String)? onScanned,
+void showQrCodeScannerModal(String title, Function(String)? onScanned,
     {BuildContext? context}) {
   showModal(context ?? navigatorKey.currentContext,
       child: QrCodeScanner(onScanned: onScanned), headText: title);

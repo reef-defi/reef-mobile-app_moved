@@ -11,6 +11,7 @@ import 'package:reef_mobile_app/model/account/ReefAccount.dart';
 import 'package:reef_mobile_app/model/account/stored_account.dart';
 import 'package:reef_mobile_app/service/StorageService.dart';
 import 'package:reef_mobile_app/utils/elements.dart';
+import 'package:reef_mobile_app/utils/ensureVisibleWhenFocused.dart';
 import 'package:reef_mobile_app/utils/functions.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -114,17 +115,15 @@ class _AccountImportContentState extends State<AccountImportContent> {
             buildAccountBox(account),
             const Gap(12),
           ],
-          Builder(
-            builder: (context) {
-              return Text(
-                AppLocalizations.of(context)!.existing_seed,
-                style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                    color: Styles.textLightColor),
-              );
-            }
-          ),
+          Builder(builder: (context) {
+            return Text(
+              AppLocalizations.of(context)!.existing_seed,
+              style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: Styles.textLightColor),
+            );
+          }),
           const Gap(8),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
@@ -199,17 +198,15 @@ class _AccountImportContentState extends State<AccountImportContent> {
                       widget.next();
                     }
                   },
-                  child: Builder(
-                    builder: (context) {
-                      return Text(
-                        AppLocalizations.of(context)!.next_step,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      );
-                    }
-                  ),
+                  child: Builder(builder: (context) {
+                    return Text(
+                      AppLocalizations.of(context)!.next_step,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    );
+                  }),
                 ),
               ),
               Positioned.fill(
@@ -258,17 +255,15 @@ class _AccountCreationContentState extends State<AccountCreationContent> {
         children: [
           buildAccountBox(widget.account),
           const Gap(12),
-          Builder(
-            builder: (context) {
-              return Text(
-                AppLocalizations.of(context)!.generated_2_word,
-                style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                    color: Styles.textLightColor),
-              );
-            }
-          ),
+          Builder(builder: (context) {
+            return Text(
+              AppLocalizations.of(context)!.generated_2_word,
+              style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: Styles.textLightColor),
+            );
+          }),
           const Gap(8),
           Container(
             width: double.infinity,
@@ -289,7 +284,8 @@ class _AccountCreationContentState extends State<AccountCreationContent> {
             child: Padding(
               padding: const EdgeInsets.all(12.0),
               child: Text(
-                widget.account?.mnemonic ?? AppLocalizations.of(context)!.loading + "...",
+                widget.account?.mnemonic ??
+                    AppLocalizations.of(context)!.loading + "...",
                 style: TextStyle(color: Styles.primaryAccentColorDark),
               ),
             ),
@@ -313,14 +309,12 @@ class _AccountCreationContentState extends State<AccountCreationContent> {
                     color: Styles.textLightColor,
                   ),
                   const Gap(2),
-                  Builder(
-                    builder: (context) {
-                      return Text(
-                        AppLocalizations.of(context)!.copy_to_clipboard,
-                        style: TextStyle(color: Styles.textColor, fontSize: 12),
-                      );
-                    }
-                  ),
+                  Builder(builder: (context) {
+                    return Text(
+                      AppLocalizations.of(context)!.copy_to_clipboard,
+                      style: TextStyle(color: Styles.textColor, fontSize: 12),
+                    );
+                  }),
                 ],
               )),
           const Gap(12),
@@ -334,14 +328,12 @@ class _AccountCreationContentState extends State<AccountCreationContent> {
               ),
               const Gap(8),
               Flexible(
-                child: Builder(
-                  builder: (context) {
-                    return Text(
-                       AppLocalizations.of(context)!.please_write_down,
-                      style: TextStyle(color: Colors.grey[600], fontSize: 13),
-                    );
-                  }
-                ),
+                child: Builder(builder: (context) {
+                  return Text(
+                    AppLocalizations.of(context)!.please_write_down,
+                    style: TextStyle(color: Colors.grey[600], fontSize: 13),
+                  );
+                }),
               ),
             ],
           ),
@@ -363,7 +355,7 @@ class _AccountCreationContentState extends State<AccountCreationContent> {
               const Gap(8),
               Flexible(
                 child: Text(
-                 AppLocalizations.of(context)!.i_saved_mnemonic,
+                  AppLocalizations.of(context)!.i_saved_mnemonic,
                   style: TextStyle(color: Colors.grey[600]!, fontSize: 14),
                 ),
               )
@@ -397,17 +389,15 @@ class _AccountCreationContentState extends State<AccountCreationContent> {
                     if (_checkedValue && widget.account?.mnemonic != null)
                       widget.next();
                   },
-                  child: Builder(
-                    builder: (context) {
-                      return Text(
-                        AppLocalizations.of(context)!.next_step,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      );
-                    }
-                  ),
+                  child: Builder(builder: (context) {
+                    return Text(
+                      AppLocalizations.of(context)!.next_step,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    );
+                  }),
                 ),
               ),
               Positioned.fill(
@@ -448,6 +438,9 @@ class AccountCreationConfirmContent extends StatefulWidget {
 
 class _AccountCreationConfirmContentState
     extends State<AccountCreationConfirmContent> {
+  FocusNode _focusNodeName = new FocusNode();
+  FocusNode _focusNodePassword = new FocusNode();
+  FocusNode _focusNodeConfirmPassword = new FocusNode();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
@@ -509,6 +502,14 @@ class _AccountCreationConfirmContentState
 
   @override
   Widget build(BuildContext context) {
+    final focusedCtx = FocusManager.instance.primaryFocus!.context;
+
+    Future.delayed(const Duration(milliseconds: 400))
+        .then((_) => Scrollable.ensureVisible(
+              focusedCtx!,
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeIn,
+            ));
     return Padding(
       padding: const EdgeInsets.only(top: 0, left: 24, bottom: 24, right: 24),
       child: Column(
@@ -518,35 +519,37 @@ class _AccountCreationConfirmContentState
           const Gap(12),
           Text(
             AppLocalizations.of(context)!.descriptive_account_name,
-            style: TextStyle(
+            style: const TextStyle(
                 fontSize: 10,
                 fontWeight: FontWeight.w500,
                 color: Styles.textLightColor),
           ),
           const Gap(8),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-            decoration: BoxDecoration(
-              color: Styles.whiteColor,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: const Color(0x20000000),
-                width: 1,
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+              decoration: BoxDecoration(
+                color: Styles.whiteColor,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: const Color(0x20000000),
+                  width: 1,
+                ),
               ),
-            ),
-            child: TextField(
-              controller: _nameController,
-              decoration: const InputDecoration.collapsed(hintText: ''),
-              style: const TextStyle(
-                fontSize: 16,
-              ),
-            ),
-          ),
+              child: EnsureVisibleWhenFocused(
+                focusNode: _focusNodeName,
+                child: TextField(
+                  controller: _nameController,
+                  decoration: const InputDecoration.collapsed(hintText: ''),
+                  style: const TextStyle(
+                    fontSize: 16,
+                  ),
+                ),
+              )),
           const Gap(16),
           if (!_hasPassword) ...[
             Text(
               AppLocalizations.of(context)!.password_for_reef_app,
-              style: TextStyle(
+              style: const TextStyle(
                   fontSize: 10,
                   fontWeight: FontWeight.w500,
                   color: Styles.textLightColor),
@@ -564,12 +567,15 @@ class _AccountCreationConfirmContentState
                   width: 1,
                 ),
               ),
-              child: TextField(
-                controller: _passwordController,
-                obscureText: true,
-                decoration: const InputDecoration.collapsed(hintText: ''),
-                style: const TextStyle(
-                  fontSize: 16,
+              child: EnsureVisibleWhenFocused(
+                focusNode: _focusNodePassword,
+                child: TextField(
+                  controller: _passwordController,
+                  obscureText: true,
+                  decoration: const InputDecoration.collapsed(hintText: ''),
+                  style: const TextStyle(
+                    fontSize: 16,
+                  ),
                 ),
               ),
             ),
@@ -578,7 +584,7 @@ class _AccountCreationConfirmContentState
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(
+                  const Icon(
                     CupertinoIcons.exclamationmark_triangle_fill,
                     color: Styles.errorColor,
                     size: 16,
@@ -597,7 +603,7 @@ class _AccountCreationConfirmContentState
               const Gap(16),
               Text(
                 AppLocalizations.of(context)!.repetitive_password,
-                style: TextStyle(
+                style: const TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.w500,
                     color: Styles.textLightColor),
@@ -616,12 +622,15 @@ class _AccountCreationConfirmContentState
                     width: 1,
                   ),
                 ),
-                child: TextField(
-                  controller: _confirmPasswordController,
-                  obscureText: true,
-                  decoration: const InputDecoration.collapsed(hintText: ''),
-                  style: const TextStyle(
-                    fontSize: 16,
+                child: EnsureVisibleWhenFocused(
+                  focusNode: _focusNodeConfirmPassword,
+                  child: TextField(
+                    controller: _confirmPasswordController,
+                    obscureText: true,
+                    decoration: const InputDecoration.collapsed(hintText: ''),
+                    style: const TextStyle(
+                      fontSize: 16,
+                    ),
                   ),
                 ),
               ),
@@ -887,7 +896,9 @@ Widget buildAccountBox(StoredAccount? account, {name = "<No Name>"}) {
 
 void showCreateAccountModal(BuildContext context, {bool fromMnemonic = false}) {
   showModal(context,
-      headText: fromMnemonic ? AppLocalizations.of(context)!.import_the_account : AppLocalizations.of(context)!.create_new_account,
+      headText: fromMnemonic
+          ? AppLocalizations.of(context)!.import_the_account
+          : AppLocalizations.of(context)!.create_new_account,
       dismissible: true,
       child: CurrentScreen(fromMnemonic: fromMnemonic));
 }

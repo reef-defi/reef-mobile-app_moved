@@ -21,44 +21,39 @@ class _SwitchNetworkState extends State<SwitchNetwork> {
       padding: const EdgeInsets.fromLTRB(10.0, 6.0, 10.0, 6.0),
       child: Column(children: [
         Row(children: [
-          Builder(
-            builder: (context) {
-              return Text(AppLocalizations.of(context)!.network,
-                  style: TextStyle(color: Styles.textLightColor, fontSize: 12));
-            }
-          ),
+          Builder(builder: (context) {
+            return Text(AppLocalizations.of(context)!.network,
+                style: TextStyle(color: Styles.textLightColor, fontSize: 12));
+          }),
         ]),
         Observer(builder: (_) {
           if (ReefAppState.instance.model.network.selectedNetworkSwitching) {
-            return Builder(
-              builder: (context) {
-                return Text(AppLocalizations.of(context)!.registering_on_network);
-              }
-            );
+            return Builder(builder: (context) {
+              return Text(AppLocalizations.of(context)!.registering_on_network);
+            });
           }
           return Row(children: [
-            Builder(
-              builder: (context) {
-                return Text(AppLocalizations.of(context)!.testnet, style: Theme.of(context).textTheme.bodyText1);
-              }
-            ),
+            Builder(builder: (context) {
+              return Text(AppLocalizations.of(context)!.testnet,
+                  style: Theme.of(context).textTheme.bodyText1);
+            }),
             Switch(
               // TODO listen to currentNetwork from mobx model
               value: ReefAppState.instance.model.network.selectedNetworkName ==
                   Network.testnet.name,
               onChanged: (value) {
                 setState(() {
-                  var currentNetwork = value ? Network.mainnet : Network.testnet;
+                  var currentNetwork =
+                      value ? Network.mainnet : Network.testnet;
                   ReefAppState.instance.networkCtrl.setNetwork(currentNetwork);
                 });
               },
               activeColor: Styles.primaryAccentColorDark,
             ),
-            Builder(
-              builder: (context) {
-                return Text(AppLocalizations.of(context)!.mainnet, style: Theme.of(context).textTheme.bodyText1);
-              }
-            )
+            Builder(builder: (context) {
+              return Text(AppLocalizations.of(context)!.mainnet,
+                  style: Theme.of(context).textTheme.bodyText1);
+            })
           ]);
         }),
       ]),
