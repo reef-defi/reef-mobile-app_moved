@@ -46,16 +46,21 @@ class _ImportAccountQrState extends State<ImportAccountQr> {
   Barcode? result;
   bool isData = false;
   var finalRes;
+  bool isLoading = false;
   TextEditingController _passwordController = TextEditingController();
   
   void _onPressedNext()async{
+    setState(() {
+      isLoading = true;
+    });
          final response = await ReefAppState.instance.accountCtrl.restoreJson(jsonDecode(finalRes["data"]),_passwordController.text);
         if(response=="error"){
+          print("incorrect password");
         Navigator.pop(context);
         }else{
         response['svg']=svgData;
         response['mnemonic']="";
-        response['name']="imported account";
+        response['name']="Account";
         final importedAccount = StoredAccount.fromString(jsonEncode(response).toString());
         await ReefAppState.instance.accountCtrl.saveAccount(importedAccount);
         Navigator.pop(context);
@@ -86,9 +91,10 @@ class _ImportAccountQrState extends State<ImportAccountQr> {
   Widget build(BuildContext context) {
     return Padding(
         padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-        child: Column(
+        child:Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            if(!isLoading)
             MaterialButton(
               materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
               onPressed: () {
@@ -166,14 +172,15 @@ class _ImportAccountQrState extends State<ImportAccountQr> {
               ),
                
                      ],
-                   ),
+                   )
                     ],
               ),
             ),
-           
+            if(isLoading)
+            CircularProgressIndicator(color: Styles.primaryAccentColor,),
           ],
         ));
-  }
+}
 }
 
 void showImportAccountQrModal(
