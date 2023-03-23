@@ -70,11 +70,13 @@ class _ImportAccountQrState extends State<ImportAccountQr> {
      });
      String resultStr = result!.code!;
      if(resultStr[0]=="{"){
+      if(jsonDecode(resultStr)["type"]=="importAccount"){
       setState(() {
         isData = true;
-        finalRes = jsonDecode(resultStr);
+        finalRes = jsonDecode(resultStr)["data"];
       });
-
+      }
+      print("invalid qr code");
      }
     });
 
