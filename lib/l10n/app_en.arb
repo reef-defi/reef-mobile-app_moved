@@ -104,5 +104,8 @@
   "restore_from_json":"Restore from JSON",
   "import_from_qr_code":"Import from QR code",
   "enter_password_for":"Enter Password for",
-  "export_account":"Export Account"
+  "export_account":"Export Account",
+  "invalid_qr_code":"Invalid QR Code",
+  "invalid_qr_msg1":"This is an invalid QR code!",
+  "invalid_qr_msg2":"You can know more about this QR code from the 'Scan QR' option in Settings"
 }

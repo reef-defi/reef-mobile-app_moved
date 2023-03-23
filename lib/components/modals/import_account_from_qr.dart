@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:gap/gap.dart';
 import 'package:reef_mobile_app/components/modal.dart';
+import 'package:reef_mobile_app/components/modals/alert_modal.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/account/stored_account.dart';
 import 'package:reef_mobile_app/pages/SplashScreen.dart';
@@ -56,7 +57,8 @@ class _ImportAccountQrState extends State<ImportAccountQr> {
     });
          final response = await ReefAppState.instance.accountCtrl.restoreJson(jsonDecode(finalRes["data"]),_passwordController.text);
         if(response=="error"){
-        Navigator.pop(context);
+        Navigator.of(context).pop();
+        showAlertModal("Invalid QR Code", ["This is an invalid QR code!","You can know more about this QR code from the 'Scan QR' option in Settings "]);
         }else{
         response['svg']=svgData;
         response['mnemonic']="";
@@ -82,6 +84,9 @@ class _ImportAccountQrState extends State<ImportAccountQr> {
         isData = true;
         finalRes = jsonDecode(resultStr);
       });
+      }else{
+        Navigator.of(context).pop();
+        showAlertModal(AppLocalizations.of(context)!.invalid_qr_code, [AppLocalizations.of(context)!.invalid_qr_msg1,AppLocalizations.of(context)!.invalid_qr_msg2]);
       }
      }
     });
