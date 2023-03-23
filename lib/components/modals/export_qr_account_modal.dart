@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:reef_mobile_app/components/generateQrJsonValue.dart';
 import 'package:reef_mobile_app/components/modal.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/pages/SplashScreen.dart';
@@ -59,22 +60,7 @@ class _ExportQrAccountState extends State<ExportQrAccount> {
       child: Column(
         children: [
           if(isData)
-          QrImage(
-              data: data,
-              version: QrVersions.auto,
-              size: data.length>50? 400.0:200.0,
-              gapless: false,
-              foregroundColor: Colors.black,
-              embeddedImage: data.length>50?null: const AssetImage('assets/images/reef.png'),
-              embeddedImageStyle:  data.length>50?null:QrEmbeddedImageStyle(
-                size: const Size(40, 40),
-              ),
-              errorStateBuilder: (context, error) => const Text(
-                "Oops! Something went wrong...",
-                style: TextStyle(fontSize: 20.0),
-              ),
-              semanticsLabel: data,
-            ),
+          GenerateQrJsonValue(type: "importAccount", data: data),
             if(!_isLoading && !isData)
                         Column(
                           children: [
