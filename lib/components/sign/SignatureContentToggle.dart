@@ -100,13 +100,18 @@ class SignatureContentToggle extends StatelessObserverWidget {
                         showOptions: false),
                   ],
                 )),
-          Expanded(child: Column(children: [
-            Gap(10),
+          Expanded(
+              child: Column(children: [
+            const Gap(10),
             MethodGeneralDataDisplay(signatureRequest),
             MethodDataLoadingIndicator(signatureRequest),
-            signatureRequest?.payload.type=="bytes"?MethodBytesDataDisplay(signatureRequest,signatureRequest?.bytesData):MethodDataDisplay(signatureRequest),
+            signatureRequest?.payload.type == "bytes"
+                ? MethodBytesDataDisplay(
+                    signatureRequest, signatureRequest?.bytesData)
+                : MethodDataDisplay(signatureRequest),
           ])),
-          if (signatureRequest != null)SignatureControls(
+          if (signatureRequest != null)
+            SignatureControls(
                 signatureRequest,
                 (String password) => _confirmSign(signatureRequest, password),
                 () => _cancel(signatureRequest))

@@ -197,7 +197,7 @@ class _BindEvmState extends State<BindEvm> {
         price: null);
 
     return ReefAppState.instance.transferCtrl.transferTokensStream(
-        selectedAccount?.address ?? transferBalanceFrom?.address,
+        selectedAccount?.address ?? transferBalanceFrom.address,
         widget.bindFor.address,
         tokenToTransfer);
   }

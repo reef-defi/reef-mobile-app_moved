@@ -91,25 +91,26 @@ class _AccountBoxState extends State<AccountBox> {
                     direction: Axis.horizontal,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Column(children: [Container(
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.black12,
-                            ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(64),
-                              child: widget.reefAccountFDM.data.iconSVG != null
-                                  ? SvgPicture.string(
-                                      widget.reefAccountFDM.data.iconSVG!,
-                                      height: 64,
-                                      width: 64,
-                                    )
-                                  : const SizedBox(
-                                      width: 64,
-                                      height: 64,
-                                    ),
-                            ),
+                      Column(children: [
+                        Container(
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.black12,
                           ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(64),
+                            child: widget.reefAccountFDM.data.iconSVG != null
+                                ? SvgPicture.string(
+                                    widget.reefAccountFDM.data.iconSVG!,
+                                    height: 64,
+                                    width: 64,
+                                  )
+                                : const SizedBox(
+                                    width: 64,
+                                    height: 64,
+                                  ),
+                          ),
+                        ),
                       ]),
                       Expanded(
                           child: Padding(

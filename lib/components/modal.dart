@@ -5,12 +5,24 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:reef_mobile_app/utils/elements.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 
-Future<dynamic> showModal(context, {child, dismissible = true, headText, Color background = Styles.primaryBackgroundColor, Color textColor = Styles.textColor}) {
+Future<dynamic> showModal(context,
+    {child,
+    dismissible = true,
+    headText,
+    Color background = Styles.primaryBackgroundColor,
+    Color textColor = Styles.textColor}) {
   return showDialog(
       context: context,
       barrierDismissible: dismissible,
-      builder: (BuildContext context) => CustomModal(
-          child: child, headText: headText, dismissible: dismissible, background: background, textColor: textColor));
+      builder: (BuildContext context) => Center(
+              child: SingleChildScrollView(
+            child: CustomModal(
+                child: child,
+                headText: headText,
+                dismissible: dismissible,
+                background: background,
+                textColor: textColor),
+          )));
 }
 
 class CustomModal extends StatefulWidget {
@@ -20,15 +32,14 @@ class CustomModal extends StatefulWidget {
   final Color background;
   final Color textColor;
 
-  const CustomModal(
-      {Key? key,
-      required this.child,
-      this.headText = "Transaction",
-      this.dismissible = true,
-      this.background = Styles.primaryBackgroundColor,
-      this.textColor = Styles.textColor,
-      })
-      : super(key: key);
+  const CustomModal({
+    Key? key,
+    required this.child,
+    this.headText = "Transaction",
+    this.dismissible = true,
+    this.background = Styles.primaryBackgroundColor,
+    this.textColor = Styles.textColor,
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => CustomModalState();
@@ -74,11 +85,12 @@ class CustomModalState extends State<CustomModal>
     _fadeController.forward();
   }
 
-   @override
+  @override
   void dispose() {
     super.dispose();
     _scaleController.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -86,12 +98,12 @@ class CustomModalState extends State<CustomModal>
         child: Center(
           child: Material(
             color: Colors.transparent,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-              child: FadeTransition(
-                opacity: fadeAnimation,
-                child: ScaleTransition(
-                  scale: scaleAnimation,
+            child: FadeTransition(
+              opacity: fadeAnimation,
+              child: ScaleTransition(
+                scale: scaleAnimation,
+                child: Dialog(
+                  backgroundColor: Colors.transparent,
                   child: ViewBoxContainer(
                     color: widget.background,
                     child: Column(
@@ -114,19 +126,12 @@ class CustomModalState extends State<CustomModal>
                                       height: 24,
                                     ),
                                     const Gap(8),
-                                    SizedBox(
-                                      width: 200,
-                                      child: Text(
+                                    Text(
                                       widget.headText,
-                                      maxLines: null,
-                                      overflow: TextOverflow.visible,
-                                      softWrap: true,
                                       style: GoogleFonts.spaceGrotesk(
-                                        fontSize: 18,
-                                        color: widget.textColor,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
+                                          fontSize: 18,
+                                          color: widget.textColor,
+                                          fontWeight: FontWeight.w500),
                                     ),
                                   ],
                                 ),
@@ -150,7 +155,7 @@ class CustomModalState extends State<CustomModal>
                             ],
                           ),
                         ),
-                        Container( child: widget.child),
+                        Container(child: widget.child),
                       ],
                     ),
                   ),

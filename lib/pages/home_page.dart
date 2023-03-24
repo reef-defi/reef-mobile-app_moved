@@ -103,8 +103,8 @@ class _HomePageState extends State<HomePage> {
                 member["name"] == "Tokens"
                     ? AppLocalizations.of(context)!.balance
                     : member["name"] == "Activity"
-                    ? AppLocalizations.of(context)!.activity
-                    : AppLocalizations.of(context)!.nfts,
+                        ? AppLocalizations.of(context)!.activity
+                        : AppLocalizations.of(context)!.nfts,
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
@@ -229,20 +229,19 @@ class _HomePageState extends State<HomePage> {
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 20),
-          Builder(
-            builder: (context) {
-              return ElevatedButton.icon(
-                  style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.resolveWith(
-                          (states) => Styles.purpleColor)),
-                  onPressed: () {
-                    showAddAccountModal(AppLocalizations.of(context)!.add_account, openModal,
-                        parentContext: context);
-                  },
-                  icon: const Icon(Icons.account_balance_wallet_outlined),
-                  label: Text(AppLocalizations.of(context)!.create_new_account));
-            }
-          ),
+          Builder(builder: (context) {
+            return ElevatedButton.icon(
+                style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.resolveWith(
+                        (states) => Styles.purpleColor)),
+                onPressed: () {
+                  showAddAccountModal(
+                      AppLocalizations.of(context)!.add_account, openModal,
+                      parentContext: context);
+                },
+                icon: const Icon(Icons.account_balance_wallet_outlined),
+                label: Text(AppLocalizations.of(context)!.create_new_account));
+          }),
         ],
       );
 

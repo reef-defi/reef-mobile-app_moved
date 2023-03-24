@@ -64,33 +64,32 @@ class _QrCodeScannerState extends State<QrCodeScanner> {
             Center(
               child: ElevatedButton.icon(
                 icon: Icon(Icons.crop_free),
-                label:  Text(
-    AppLocalizations.of(context)!.scan_from_image,
-    style: const TextStyle(
-      fontSize: 12,
-      fontWeight: FontWeight.w700,
-    ),
-  ),
-                style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(40),
+                label: Text(
+                  AppLocalizations.of(context)!.scan_from_image,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
-                shadowColor: const Color(0x559d6cff),
-                elevation: 5,
-                backgroundColor: Styles.primaryAccentColor,
-                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 28),
-              ),
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(40),
+                  ),
+                  shadowColor: const Color(0x559d6cff),
+                  elevation: 5,
+                  backgroundColor: Styles.primaryAccentColor,
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 12, horizontal: 28),
+                ),
                 onPressed: () async {
                   final res = await scanFile();
-                  if(res!=Null){
-                  widget.onScanned!(res!);
-                  Navigator.of(context).pop();
-                  }else{
-                    ScaffoldMessenger.of(context)
-                      .showSnackBar(SnackBar(content: Text("This image does not have QR in it.")));
+                  if (res != Null) {
+                    widget.onScanned!(res!);
+                    Navigator.of(context).pop();
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text("This image does not have QR in it.")));
                   }
-
-
                 },
               ),
             ),
@@ -106,13 +105,13 @@ void showQrCodeScannerModal(String title, Function(String)? onScanned,
 }
 
 Future<String?> scanFile() async {
-    // Used to pick a file from device storage
-    final pickedFile = await FilePicker.platform.pickFiles();
-    if (pickedFile != null) {
-        final filePath = pickedFile.files.single.path;
-        if (filePath != null) {
-            final res = await BarcodeFinder.scanFile(path: filePath);
-            return res;
-        }
+  // Used to pick a file from device storage
+  final pickedFile = await FilePicker.platform.pickFiles();
+  if (pickedFile != null) {
+    final filePath = pickedFile.files.single.path;
+    if (filePath != null) {
+      final res = await BarcodeFinder.scanFile(path: filePath);
+      return res;
     }
+  }
 }
