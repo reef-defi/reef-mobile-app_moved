@@ -504,6 +504,9 @@ class _AccountCreationConfirmContentState
         ReefAppState.instance.signingCtrl.checkBiometricsSupport().then((value) => setState((){
           _biometricsIsAvailable = value;
         }));
+        setState(() {
+        _hasBioAuth = ReefAppState.instance.model.appConfig.isBiometricAuthEnabled;
+        });
   }
 
   @override
@@ -548,7 +551,7 @@ class _AccountCreationConfirmContentState
             ),
           ),
           const Gap(16),
-          if (!_hasPassword) ...[
+          if (!_hasPassword||_hasBioAuth) ...[
           Row(
             children: [
               if(_biometricsIsAvailable)
@@ -562,6 +565,8 @@ class _AccountCreationConfirmContentState
                   setState(() {
                     _hasBioAuth = value ?? false;
                   });
+                  ReefAppState.instance.appConfigCtrl.setBiometricAuth(value==true);
+                  print("i am here ${value}");
                 },
               ),
               const Gap(8),

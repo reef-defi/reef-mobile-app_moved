@@ -16,6 +16,15 @@ class AppConfigCtrl {
       }
     });
 
+    Future<dynamic> storedBiometricAuth = storage.getValue("biometricAuth");
+    storedBiometricAuth.then((storedValue) {
+      var setVal = storedValue??false;
+      _appConfigModel.setBiometricAuthentication(setVal);
+      if(storedValue==null) {
+        storage.setValue("biometricAuth", setVal);
+      }
+    });
+
     Future<dynamic> storedNavigateValueResult = storage.getValue("navigateOnAccountSwitch");
     storedNavigateValueResult.then((storedValue) {
       // if no value in storage - when app is newly installed - set to true
@@ -36,5 +45,10 @@ class AppConfigCtrl {
   setNavigateOnAccountSwitch(bool value) {
     storage.setValue("navigateOnAccountSwitch", value);
     _appConfigModel.setNavigateOnAccountSwitch(value);
+  }
+
+  setBiometricAuth(bool value) {
+    storage.setValue("biometricAuth", value);
+    _appConfigModel.setBiometricAuthentication(value);
   }
 }
