@@ -438,9 +438,9 @@ class AccountCreationConfirmContent extends StatefulWidget {
 
 class _AccountCreationConfirmContentState
     extends State<AccountCreationConfirmContent> {
-  FocusNode _focusNodeName = new FocusNode();
-  FocusNode _focusNodePassword = new FocusNode();
-  FocusNode _focusNodeConfirmPassword = new FocusNode();
+  FocusNode _focusNodeName = FocusNode();
+  FocusNode _focusNodePassword = FocusNode();
+  FocusNode _focusNodeConfirmPassword = FocusNode();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
@@ -508,7 +508,7 @@ class _AccountCreationConfirmContentState
         .then((_) => Scrollable.ensureVisible(
               focusedCtx!,
               duration: const Duration(milliseconds: 200),
-              curve: Curves.easeIn,
+              curve: Curves.easeInOutQuad,
             ));
     return Padding(
       padding: const EdgeInsets.only(top: 0, left: 24, bottom: 24, right: 24),
@@ -535,14 +535,12 @@ class _AccountCreationConfirmContentState
                   width: 1,
                 ),
               ),
-              child: EnsureVisibleWhenFocused(
+              child: TextField(
                 focusNode: _focusNodeName,
-                child: TextField(
-                  controller: _nameController,
-                  decoration: const InputDecoration.collapsed(hintText: ''),
-                  style: const TextStyle(
-                    fontSize: 16,
-                  ),
+                controller: _nameController,
+                decoration: const InputDecoration.collapsed(hintText: ''),
+                style: const TextStyle(
+                  fontSize: 16,
                 ),
               )),
           const Gap(16),
@@ -567,15 +565,13 @@ class _AccountCreationConfirmContentState
                   width: 1,
                 ),
               ),
-              child: EnsureVisibleWhenFocused(
+              child: TextField(
                 focusNode: _focusNodePassword,
-                child: TextField(
-                  controller: _passwordController,
-                  obscureText: true,
-                  decoration: const InputDecoration.collapsed(hintText: ''),
-                  style: const TextStyle(
-                    fontSize: 16,
-                  ),
+                controller: _passwordController,
+                obscureText: true,
+                decoration: const InputDecoration.collapsed(hintText: ''),
+                style: const TextStyle(
+                  fontSize: 16,
                 ),
               ),
             ),
@@ -622,15 +618,13 @@ class _AccountCreationConfirmContentState
                     width: 1,
                   ),
                 ),
-                child: EnsureVisibleWhenFocused(
+                child: TextField(
                   focusNode: _focusNodeConfirmPassword,
-                  child: TextField(
-                    controller: _confirmPasswordController,
-                    obscureText: true,
-                    decoration: const InputDecoration.collapsed(hintText: ''),
-                    style: const TextStyle(
-                      fontSize: 16,
-                    ),
+                  controller: _confirmPasswordController,
+                  obscureText: true,
+                  decoration: const InputDecoration.collapsed(hintText: ''),
+                  style: const TextStyle(
+                    fontSize: 16,
                   ),
                 ),
               ),
@@ -639,7 +633,7 @@ class _AccountCreationConfirmContentState
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(
+                    const Icon(
                       CupertinoIcons.exclamationmark_triangle_fill,
                       color: Styles.errorColor,
                       size: 16,
@@ -673,7 +667,7 @@ class _AccountCreationConfirmContentState
                       minimumSize: const Size(48, 48),
                       padding: EdgeInsets.zero,
                     ),
-                    child: Icon(
+                    child: const Icon(
                       Icons.arrow_back,
                       color: Styles.textColor,
                       size: 20,
@@ -810,31 +804,22 @@ class _CurrentScreenState extends State<CurrentScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 500),
-      switchInCurve: Curves.easeOutExpo,
-      switchOutCurve: Curves.easeInExpo,
-      transitionBuilder: (Widget child, Animation<double> animation) {
-        return FadeTransition(
-          opacity: animation,
-          child: SlideTransition(
-            position: Tween(
-              begin: const Offset(-1.0, 0.0),
-              end: const Offset(0.0, 0.0),
-            ).animate(animation),
-            child: child,
-          ),
-        );
-      },
-      child: (activeIndex == 0)
-          ? widget.fromMnemonic
-              ? AccountImportContent(next: nextIndex, callback: importAccount)
-              : AccountCreationContent(next: nextIndex, account: account)
-          : AccountCreationConfirmContent(
-              prev: prevIndex,
-              account: account,
-              saveAccount: saveAccount,
-              fromMnemonic: widget.fromMnemonic),
+    return AnimatedCrossFade(
+      crossFadeState: activeIndex == 0
+          ? CrossFadeState.showFirst
+          : CrossFadeState.showSecond,
+      duration: const Duration(milliseconds: 300),
+      firstCurve: Curves.easeInOutQuad,
+      secondCurve: Curves.easeInOutQuad,
+      sizeCurve: Curves.easeInOutQuad,
+      firstChild: widget.fromMnemonic
+          ? AccountImportContent(next: nextIndex, callback: importAccount)
+          : AccountCreationContent(next: nextIndex, account: account),
+      secondChild: AccountCreationConfirmContent(
+          prev: prevIndex,
+          account: account,
+          saveAccount: saveAccount,
+          fromMnemonic: widget.fromMnemonic),
     );
   }
 }
@@ -844,7 +829,8 @@ Widget buildAccountBox(StoredAccount? account, {name = "<No Name>"}) {
       color: Styles.whiteColor,
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 24.0, horizontal: 16.0),
-        child: Row(
+        child: Flex(
+          direction: Axis.horizontal,
           children: [
             Container(
               decoration: const BoxDecoration(
@@ -862,7 +848,8 @@ Widget buildAccountBox(StoredAccount? account, {name = "<No Name>"}) {
                         )),
             ),
             const Gap(12),
-            Column(
+            Flex(
+              direction: Axis.vertical,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
@@ -873,10 +860,12 @@ Widget buildAccountBox(StoredAccount? account, {name = "<No Name>"}) {
                   ),
                 ),
                 const Gap(2),
-                Row(
+                Flex(
+                  direction: Axis.horizontal,
                   children: [
                     Text(
                       "Address: ${account?.address.shorten() ?? "Loading..."}",
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(color: Colors.grey[600]!),
                     ),
                     const Gap(2),

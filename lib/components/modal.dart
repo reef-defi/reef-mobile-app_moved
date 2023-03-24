@@ -126,19 +126,12 @@ class CustomModalState extends State<CustomModal>
                                       height: 24,
                                     ),
                                     const Gap(8),
-                                    SizedBox(
-                                      width: 200,
-                                      child: Text(
+                                    Text(
                                       widget.headText,
-                                      maxLines: null,
-                                      overflow: TextOverflow.visible,
-                                      softWrap: true,
                                       style: GoogleFonts.spaceGrotesk(
-                                        fontSize: 18,
-                                        color: widget.textColor,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
+                                          fontSize: 18,
+                                          color: widget.textColor,
+                                          fontWeight: FontWeight.w500),
                                     ),
                                   ],
                                 ),
