@@ -21,6 +21,7 @@ class SignatureControls extends StatefulWidget {
 class _SignatureControlsState extends State<SignatureControls> {
   bool _passwordMatch=false;
   bool _biometricsIsAvailable = false;
+  bool _isBiometricAuthEnabled = false;
 
   final TextEditingController _passwordController = TextEditingController();
   String password = "";
@@ -39,6 +40,9 @@ class _SignatureControlsState extends State<SignatureControls> {
         _biometricsIsAvailable = value;
       });
     });
+    setState(() {
+    _isBiometricAuthEnabled = ReefAppState.instance.model.appConfig.isBiometricAuthEnabled;
+    });
   }
 
   @override
@@ -46,7 +50,7 @@ class _SignatureControlsState extends State<SignatureControls> {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(children: [
-        if (!_biometricsIsAvailable) ...[
+        if (!(_isBiometricAuthEnabled&&_biometricsIsAvailable)) ...[
           const Divider(
             color: Styles.textLightColor,
             thickness: 1,

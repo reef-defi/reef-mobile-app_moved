@@ -84,8 +84,9 @@ class _SettingsPageState extends State<SettingsPage> {
                 activeColor: Styles.primaryAccentColor,
               );
             }),
+        
             Observer(builder: (_){
-              var biometricAuth =
+              var navigateOnAccountSwitchVal =
                   ReefAppState.instance.model.appConfig.isBiometricAuthEnabled;
 
               return CheckboxListTile(
@@ -97,16 +98,17 @@ class _SettingsPageState extends State<SettingsPage> {
                     size: 22,
                   ),
                   Gap(9),
-                  Text("Enable Biometric Authentication",
+                  Text("Biometric Authentication",
                       style: Theme.of(context).textTheme.bodyText1)
                 ]),
-                value: biometricAuth,
+                value: navigateOnAccountSwitchVal,
                 onChanged: (newValue) {
                   ReefAppState.instance.appConfigCtrl.setBiometricAuth(newValue==true);
                 },
                 activeColor: Styles.primaryAccentColor,
               );
             }),
+        
             Gap(8),
             MaterialButton(
               materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
