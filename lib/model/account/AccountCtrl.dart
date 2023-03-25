@@ -49,7 +49,7 @@ class AccountCtrl {
     return await _jsApi.jsPromise('window.keyring.restoreJson(${jsonEncode(file)},"$password")');
   }
 
-  Future<dynamic> addExternalAccount(String address,String password) async {
+  Future<dynamic> exportAccountQr(String address,String password) async {
     return await _jsApi.jsPromise('window.keyring.exportAccountQr("$address","$password")');
   }
 

@@ -21,8 +21,7 @@ class ExportQrAccount extends StatefulWidget {
 }
 
 class _ExportQrAccountState extends State<ExportQrAccount> {
-  var data = "";
-  bool isData = false;
+  String? data;
   TextEditingController _passwordController = TextEditingController();
   bool _isButtonEnabled = false;
   bool _isLoading = false;
@@ -34,7 +33,7 @@ class _ExportQrAccountState extends State<ExportQrAccount> {
       _isLoading = true;
     });
     String password = _passwordController.text;
-    final res = await ReefAppState.instance.accountCtrl.addExternalAccount(widget.address, password);
+    final res = await ReefAppState.instance.accountCtrl.exportAccountQr(widget.address, password);
     if(res == "error"){
       setState(() {
         errorMessage = AppLocalizations.of(context)!.incorrect_password;
@@ -48,7 +47,6 @@ class _ExportQrAccountState extends State<ExportQrAccount> {
       response['address']=res['exportedJson']['address'];
       final resultToSend = jsonEncode(response);
       setState(() {
-        isData = true;
         data = resultToSend.toString();
         _isLoading = false;
       });
@@ -61,9 +59,9 @@ class _ExportQrAccountState extends State<ExportQrAccount> {
       padding: const EdgeInsets.all(16.0),
       child: Column(
         children: [
-          if(isData)
-          GenerateQrJsonValue(type: "importAccount", data: data),
-            if(!_isLoading && !isData)
+          if(data!=null)
+          GenerateQrJsonValue(type: "importAccount", data: data!),
+            if(!_isLoading && data==null)
                         Column(
                           children: [
             Text("${AppLocalizations.of(context)!.enter_password_for} ${widget.address}",style: TextStyle(fontSize: 16.0),textAlign: TextAlign.start,),
@@ -100,7 +98,7 @@ class _ExportQrAccountState extends State<ExportQrAccount> {
               ),
               if(errorMessage!="")Text(errorMessage,style: TextStyle(fontSize: 12.0,color: Styles.errorColor),),
               SizedBox(height: 16),
-            if(!isData)
+            if(data==null)
             Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),

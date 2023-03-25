@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:gap/gap.dart';
+import 'package:reef_mobile_app/components/getQrTypeData.dart';
 import 'package:reef_mobile_app/components/modal.dart';
 import 'package:reef_mobile_app/components/modals/alert_modal.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
@@ -36,7 +37,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ImportAccountQr extends StatefulWidget {
   ImportAccountQr({Key? key,this.data}) : super(key: key);
-  String? data;
+  ReefQrCode? data;
   @override
   State<ImportAccountQr> createState() => _ImportAccountQrState();
   
@@ -46,8 +47,7 @@ class _ImportAccountQrState extends State<ImportAccountQr> {
   final GlobalKey _gLobalkey = GlobalKey();
   QRViewController? controller;
   Barcode? result;
-  bool isData = false;
-  var finalRes;
+  ReefQrCode? qrCode;
   bool isLoading = false;
   TextEditingController _passwordController = TextEditingController();
   
@@ -55,7 +55,7 @@ class _ImportAccountQrState extends State<ImportAccountQr> {
     setState(() {
       isLoading = true;
     });
-         final response = await ReefAppState.instance.accountCtrl.restoreJson(jsonDecode(finalRes["data"]),_passwordController.text);
+         final response = await ReefAppState.instance.accountCtrl.restoreJson(qrCode!.data as Map<String,dynamic>,_passwordController.text);
         if(response=="error"){
         Navigator.of(context).pop();
         showAlertModal("Invalid QR Code", ["This is an invalid QR code!","You can know more about this QR code from the 'Scan QR' option in Settings "]);
@@ -79,10 +79,10 @@ class _ImportAccountQrState extends State<ImportAccountQr> {
      });
      String resultStr = result!.code!;
      if(resultStr[0]=="{"){
-      if(jsonDecode(resultStr)["type"]=="importAccount"){
+      var decodedStr = jsonDecode(resultStr);
+       if(decodedStr["type"]=="importAccount"){
       setState(() {
-        isData = true;
-        finalRes = jsonDecode(resultStr);
+        qrCode = ReefQrCode(decodedStr["type"], decodedStr["data"]);
       });
       }else{
         Navigator.of(context).pop();
@@ -91,15 +91,10 @@ class _ImportAccountQrState extends State<ImportAccountQr> {
      }
     });
     }else{
-      
-     String resultStr = widget.data!;
-     if(resultStr[0]=="{"){
-      if(jsonDecode(resultStr)["type"]=="importAccount"){
+      if(widget.data?.type=="importAccount"){
       setState(() {
-        isData = true;
-        finalRes = jsonDecode(resultStr);
+        qrCode = widget.data;
       });
-    }
      }
     }
      
@@ -122,7 +117,7 @@ class _ImportAccountQrState extends State<ImportAccountQr> {
               padding: const EdgeInsets.all(2),
               child: Column(
                 children: [
-                  if(!isData)
+                  if(qrCode==null)
                   Center(
                     child: Container(
               height: 200,
@@ -133,7 +128,7 @@ class _ImportAccountQrState extends State<ImportAccountQr> {
               ),
             ),
                   ),
-                  if(isData)
+                  if(qrCode!=null)
                    Column(
                      children: [
                        Container(
@@ -203,7 +198,7 @@ class _ImportAccountQrState extends State<ImportAccountQr> {
 }
 
 void showImportAccountQrModal(
-    {BuildContext? context, String?data}) {
+    {BuildContext? context, ReefQrCode? data}) {
   showModal(context ?? navigatorKey.currentContext,
       child: ImportAccountQr(data: data), headText: "Import Account from QR");
 }

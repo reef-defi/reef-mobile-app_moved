@@ -1,78 +1,75 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:gap/gap.dart';
+import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:reef_mobile_app/components/modal.dart';
 import 'package:reef_mobile_app/components/modals/import_account_from_qr.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/pages/SplashScreen.dart';
-import 'package:reef_mobile_app/utils/styles.dart';
+import 'package:reef_mobile_app/utils/constants.dart';
 
 class GetQrTypeData extends StatefulWidget {
   const GetQrTypeData({Key? key}) : super(key: key);
 
   @override
   State<GetQrTypeData> createState() => _GetQrTypeDataState();
-  
+
 }
 
 class _GetQrTypeDataState extends State<GetQrTypeData> {
   final GlobalKey _gLobalkey = GlobalKey();
   QRViewController? controller;
-  Barcode? result;
-  bool isDataFetched = false;
-  String displayData = "";
+  ReefQrCode? qrCodeValue;
+  String? qrTypeLabel;
 
-  void getQrData(String type){
+  String? getQrDataTypeMessage(String? type){
+    if(type==null) {
+      return 'Qr not recognised.';
+    }
   switch(type){
     case 'address':
-      setState(() {
-        displayData = "This is Account Address , You can send funds here by scanning this QR Code";
-      });
-      break;
+      return "This is Account Address , You can send funds here by scanning this QR Code";
     case 'importAccount':
-      setState(() {
-        displayData = "You can import this Account by scanning this QR code and entering the password.";
-      });
-      break;
-    
-    default:
-      break;
+        return "You can import this Account by scanning this QR code and entering the password.";
 
+    default:
+      return null;
   }
 }
 
-  void _onPressed(String type){
-  switch(type){
+  void actOnQrCodeValue(ReefQrCode qrCode){
+  switch(qrCode.type){
     case 'address':
     Navigator.pop(context);
       ReefAppState.instance.navigationCtrl
                               .navigateToSendPage(
-                                  context: context, preselected: "0x0000000000000000000000000000000001000000",preSelectedTransferAddress: jsonDecode(result!.code!)["data"]);
+                                  context: context, preselected: Constants.REEF_TOKEN_ADDRESS,preSelectedTransferAddress: qrCode.data);
       break;
     case 'importAccount':
       Navigator.pop(context);
-      showImportAccountQrModal(data: result!.code!);
+      showImportAccountQrModal(data: qrCode);
       break;
-    
+
     default:
       break;
 
   }
 }
-  
+
   void qr(QRViewController controller) {
     this.controller = controller;
     controller.scannedDataStream.listen((event) {
      setState(() {
-       result = event;
-       isDataFetched = true;
+       var decoded = jsonDecode(event.code!);
+       if(decoded["type"]!=null && decoded["data"]!=null) {
+         qrCodeValue = ReefQrCode(decoded["type"], decoded["data"]);
+       }
+       qrTypeLabel = getQrDataTypeMessage(qrCodeValue?.type);
      });
-     getQrData(jsonDecode(result!.code!)["type"]);
     });
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -88,7 +85,7 @@ class _GetQrTypeDataState extends State<GetQrTypeData> {
               padding: const EdgeInsets.all(2),
               child: Column(
                 children: [
-                  if(!isDataFetched)
+                  if(qrCodeValue==null)
                   Center(
                     child: Container(
               height: 200,
@@ -99,10 +96,10 @@ class _GetQrTypeDataState extends State<GetQrTypeData> {
               ),
             ),
                   ),
-                  if(isDataFetched)
+                  if(qrCodeValue!=null)
                   Column(
                     children: [
-                      Text(displayData),
+                      Text(qrTypeLabel??''),
                       Gap(16.0),
                    Container(
                 decoration: BoxDecoration(
@@ -118,7 +115,7 @@ class _GetQrTypeDataState extends State<GetQrTypeData> {
                     backgroundColor: const Color(0xff9d6cff),
                     padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
-                  onPressed: ()=>_onPressed(jsonDecode(result!.code!)["type"]),
+                  onPressed: ()=>actOnQrCodeValue(qrCodeValue!),
                   child: Builder(
                     builder: (context) {
                       return Text(
@@ -138,7 +135,7 @@ class _GetQrTypeDataState extends State<GetQrTypeData> {
               ),
             ),
             const Gap(8),
-           
+
           ],
         ));
   }
@@ -148,4 +145,10 @@ void showQrTypeDataModal(String title,
     {BuildContext? context}) {
   showModal(context ?? navigatorKey.currentContext,
       child: GetQrTypeData(), headText: title);
+}
+
+class ReefQrCode{
+  final String type;
+  final String data;
+  const ReefQrCode(this.type, this.data);
 }

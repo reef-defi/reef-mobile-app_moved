@@ -4,13 +4,14 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:gap/gap.dart';
+import 'package:reef_mobile_app/components/getQrTypeData.dart';
 import 'package:reef_mobile_app/components/modal.dart';
 import 'package:reef_mobile_app/components/modals/alert_modal.dart';
 import 'package:reef_mobile_app/pages/SplashScreen.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 
 class QrCodeScanner extends StatefulWidget {
-  final Function(String)? onScanned;
+  final Function(ReefQrCode)? onScanned;
   const QrCodeScanner({Key? key, this.onScanned}) : super(key: key);
 
   @override
@@ -20,24 +21,16 @@ class QrCodeScanner extends StatefulWidget {
 class _QrCodeScannerState extends State<QrCodeScanner> {
   final GlobalKey _gLobalkey = GlobalKey();
   QRViewController? controller;
-  Barcode? result;
 
   void qr(QRViewController controller) {
     this.controller = controller;
-    controller.scannedDataStream.listen((event) {
+    controller.scannedDataStream.listen((Barcode result) {
       if (mounted) {
-        setState(() {
-          result = event;
-        });
         if (widget.onScanned != null) {
           final returnJson = jsonDecode(result!.code!);
-          if (returnJson["type"] == "address") {
-            widget.onScanned!(returnJson["data"]);
-            Navigator.of(context).pop();
-          }else{
-            Navigator.of(context).pop();
-            showAlertModal("Invalid QR Code", ["This is an invalid QR code!","You can know more about this QR code from the 'Scan QR' option in Settings "]);
-          }
+          ReefQrCode qrCode= ReefQrCode(returnJson["type"].toString().trim(), returnJson["data"].toString().trim());
+          widget.onScanned!(qrCode);
+          Navigator.of(context).pop();
         }
       }
     });
@@ -74,7 +67,7 @@ class _QrCodeScannerState extends State<QrCodeScanner> {
   }
 }
 
-void showQrCodeScannerModal(String title, Function(String)? onScanned,
+void showQrCodeScannerModal(String title, Function(ReefQrCode)? onScanned,
     {BuildContext? context}) {
   showModal(context ?? navigatorKey.currentContext,
       child: QrCodeScanner(onScanned: onScanned), headText: title);
