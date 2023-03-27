@@ -366,7 +366,7 @@ showAlertDialog(BuildContext context, ReefAccount signer) {
         ),
       ),
       TextSpan(
-        text: "${signer.name} ${signer.address.shorten()}",
+        text: "${signer.name}",
         style: TextStyle(
           color: Styles.textColor,
           fontSize: 16,
@@ -374,7 +374,7 @@ showAlertDialog(BuildContext context, ReefAccount signer) {
         ),
       ),
       TextSpan(
-        text: " unless you have saved recovery phrase (mnemonic).",
+        text: " ${signer.address.shorten()} unless you have saved recovery phrase (mnemonic).",
         style: TextStyle(
           color: Styles.textColor,
           fontSize: 16,
