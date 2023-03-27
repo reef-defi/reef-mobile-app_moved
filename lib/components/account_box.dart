@@ -4,6 +4,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:reef_mobile_app/components/modal.dart';
 import 'package:reef_mobile_app/components/modals/bind_modal.dart';
 import 'package:reef_mobile_app/components/modals/show_qr_code.dart';
 import 'package:reef_mobile_app/components/modals/export_qr_account_modal.dart';
@@ -307,40 +308,98 @@ class Constants {
 showAlertDialog(BuildContext context, ReefAccount signer) {
   // set up the buttons
   Widget cancelButton = TextButton(
-    child: const Text("Cancel"),
+    child: const Text("Cancel",style:TextStyle(color:Styles.blueColor,) ),
     onPressed: () {
       Navigator.of(context).pop();
     },
   );
-  Widget continueButton = TextButton(
-    child: const Text("Delete Account",
-        style: TextStyle(color: Styles.errorColor)),
-    onPressed: () {
-      ReefAppState.instance.accountCtrl.deleteAccount(signer.address);
-      Navigator.of(context).pop();
-    },
-  );
-
-  // set up the AlertDialog
-  AlertDialog alert = AlertDialog(
-    title: const Text(
-      "Delete Account",
-      style: TextStyle(color: Styles.errorColor),
-    ),
-    content: Text(
-        "You will loose all balance for ${signer.name} ${signer.address.shorten()} unless you have saved recovery phrase (mnemonic). \nContinue?"),
-    actions: [
-      continueButton,
-      cancelButton,
+ Widget continueButton = TextButton(
+  child: Row(
+    children: [
+      Icon(Icons.delete, color: Styles.errorColor),
+      const SizedBox(width: 8.0),
+      Text(
+        "Delete Account",
+        style: TextStyle(color: Styles.errorColor),
+      ),
     ],
+  ),
+  onPressed: () {
+    ReefAppState.instance.accountCtrl.deleteAccount(signer.address);
+    Navigator.of(context).pop();
+  },
+);
+
+
+  // set up the container
+  Container container = Container(
+    decoration: BoxDecoration(
+      color: Styles.primaryBackgroundColor,
+      borderRadius: BorderRadius.circular(8),
+    ),
+    padding: EdgeInsets.fromLTRB(16.0,0.0,16.0,8.0),
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text.rich(
+  TextSpan(
+    children: [
+      TextSpan(
+        text: "You will ",
+        style: TextStyle(
+          color: Styles.textColor,
+          fontSize: 16,
+        ),
+      ),
+      TextSpan(
+        text: "lose",
+        style: TextStyle(
+          color: Styles.errorColor,
+          fontSize: 16,
+        ),
+      ),
+      TextSpan(
+        text: " all balance for ",
+        style: TextStyle(
+          color: Styles.textColor,
+          fontSize: 16,
+        ),
+      ),
+      TextSpan(
+        text: "${signer.name} ${signer.address.shorten()}",
+        style: TextStyle(
+          color: Styles.textColor,
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      TextSpan(
+        text: " unless you have saved recovery phrase (mnemonic).",
+        style: TextStyle(
+          color: Styles.textColor,
+          fontSize: 16,
+        ),
+      ),
+    ],
+  ),
+),
+
+
+        SizedBox(height: 24),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            cancelButton,
+            continueButton,
+          ],
+        ),
+      ],
+    ),
   );
 
   // show the dialog
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return alert;
-    },
+  showModal(
+    context,child: container,headText: "Delete Account"
   );
 }
 
