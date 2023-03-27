@@ -50,6 +50,7 @@ class _ImportAccountQrState extends State<ImportAccountQr> {
   ReefQrCode? qrCode;
   bool isLoading = false;
   TextEditingController _passwordController = TextEditingController();
+  TextEditingController _nameController = TextEditingController();
   
   void _onPressedNext()async{
     setState(() {
@@ -62,7 +63,7 @@ class _ImportAccountQrState extends State<ImportAccountQr> {
         }else{
         response['svg']=svgData;
         response['mnemonic']="";
-        response['name']="Account";
+        response['name']=_nameController.text.trim();
         final importedAccount = StoredAccount.fromString(jsonEncode(response).toString());
         await ReefAppState.instance.accountCtrl.saveAccount(importedAccount);
         Navigator.pop(context);
@@ -142,6 +143,28 @@ class _ImportAccountQrState extends State<ImportAccountQr> {
                   ),
                 ),
                 child:  TextField(
+                controller: _nameController,
+                decoration: const InputDecoration.collapsed(hintText: 'Name your account'),
+                  style: const TextStyle(
+                        fontSize: 16,
+                  ),
+                onChanged: (value) {
+                  
+                },
+              ),
+              ),
+              Gap(16),
+                       Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                decoration: BoxDecoration(
+                  color: Styles.whiteColor,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                        color:  const Color(0x20000000),
+                        width: 1,
+                  ),
+                ),
+                child:  TextField(
                 controller: _passwordController,
                 obscureText: true,
                 decoration: const InputDecoration.collapsed(hintText: 'Password'),
@@ -165,12 +188,12 @@ class _ImportAccountQrState extends State<ImportAccountQr> {
                         borderRadius: BorderRadius.circular(40)),
                     shadowColor: const Color(0x559d6cff),
                     elevation: 5,
-                    backgroundColor:  _passwordController.text.isEmpty 
+                    backgroundColor:  _passwordController.text.isEmpty && _nameController.text.isEmpty
                         ? Styles.secondaryAccentColor
                         : const Color(0xff9d6cff),
                     padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
-                  onPressed: _passwordController.text.isEmpty ? _onPressedNext : null,
+                  onPressed: _passwordController.text.isEmpty && _nameController.text.isEmpty ? _onPressedNext : null,
                   child: Builder(
                     builder: (context) {
                       return Text(
