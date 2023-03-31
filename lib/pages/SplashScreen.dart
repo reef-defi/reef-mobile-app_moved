@@ -6,12 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:reef_mobile_app/components/introduction_page/hero_video.dart';
 import 'package:reef_mobile_app/model/StorageKey.dart';
 import 'package:reef_mobile_app/model/locale/LocaleCtrl.dart';
 import 'package:reef_mobile_app/model/locale/locale_model.dart';
 import 'package:reef_mobile_app/pages/introduction_page.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import '../main.dart';
 import '../model/ReefAppState.dart';
 import '../service/JsApiService.dart';
@@ -26,6 +28,7 @@ final navigatorKey = GlobalKey<NavigatorState>();
 class SplashApp extends StatefulWidget {
   final JsApiService reefJsApiService = JsApiService.reefAppJsApi();
   WidgetCallback displayOnInit;
+  final Widget heroVideo = const HeroVideo();
 
   SplashApp({
     required Key key,
@@ -68,10 +71,13 @@ class _SplashAppState extends State<SplashApp> {
   static final LocalAuthentication localAuth = LocalAuthentication();
 
   Future<bool> _checkBiometricsSupport() async {
-    final isDeviceSupported = await localAuth.isDeviceSupported();
-    final isAvailable = await localAuth.canCheckBiometrics;
-    return isAvailable && isDeviceSupported;
-  }
+  final isDeviceSupported = await localAuth.isDeviceSupported();
+  final isAvailable = await localAuth.canCheckBiometrics;
+  //if it is true - user has registered for bio metrics else didn't
+  final isEnrolled = await localAuth.getAvailableBiometrics().then((value) => value.isNotEmpty);
+  //if biometrics are not enrolled this bool exp will return false
+  return isAvailable && isDeviceSupported && isEnrolled;
+}
 
   Future<bool> _checkRequiresAuth() async {
     final storedPassword =
@@ -151,7 +157,7 @@ class _SplashAppState extends State<SplashApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Reef Chain App',
-      localizationsDelegates: [
+      localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
@@ -245,6 +251,7 @@ class _SplashAppState extends State<SplashApp> {
           loaded == true &&
           _isAuthenticated == true)
         IntroductionPage(
+          heroVideo: widget.heroVideo,
           onDone: () async {
             await ReefAppState.instance.storage.setValue(_firstLaunch, false);
             setState(() {
@@ -293,7 +300,7 @@ class _SplashAppState extends State<SplashApp> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               "PASSWORD FOR REEF APP",
               style: TextStyle(
                   fontSize: 14,
@@ -325,7 +332,7 @@ class _SplashAppState extends State<SplashApp> {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(
+                  const Icon(
                     CupertinoIcons.exclamationmark_triangle_fill,
                     color: Styles.errorColor,
                     size: 16,

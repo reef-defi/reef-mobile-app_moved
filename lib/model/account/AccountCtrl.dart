@@ -19,8 +19,8 @@ class AccountCtrl {
   final StorageService _storage;
 
   AccountCtrl(this._jsApi, this._storage, this._accountModel) {
-    _initSavedDeviceAccountAddress(_storage);
     _initJsObservables(_jsApi, _storage);
+    _initSavedDeviceAccountAddress(_storage);
     _initWasm(_jsApi);
   }
 
@@ -36,7 +36,6 @@ class AccountCtrl {
   }
 
   Future<void> setSelectedAddress(String address) {
-    // TODO check if in signers
     return _jsApi
         .jsCallVoidReturn('window.reefState.setSelectedAddress("$address")');
   }
@@ -159,18 +158,26 @@ class AccountCtrl {
     });
   }
 
-  void _initSavedDeviceAccountAddress(StorageService storage) async {
-    // TODO check if this address also exists in keystore
-    var savedAddress = await storage.getValue(StorageKey.selected_address.name);
-    // TODO if null get first address from storage // https://app.clickup.com/t/37rvnpw
-    if (kDebugMode) {
-      print('SET SAVED ADDRESS=$savedAddress');
+void _initSavedDeviceAccountAddress(StorageService storage) async {
+  var savedAddress = await storage.getValue(StorageKey.selected_address.name);
+
+  if (savedAddress != null) {
+    // check if the saved address exists in the allAccounts list
+    var allAccounts = await storage.getAllAccounts();
+    for(var account in allAccounts){
+      if(account.address == savedAddress){
+        await setSelectedAddress(account.address);
+        return; //return from here after saving the selected address
+      }
     }
-    // TODO check if selected is in accounts
-    if (savedAddress != null) {
-      setSelectedAddress(savedAddress);
+    
+    //if the saved address is not found then set first address as saved
+    if(allAccounts.length>0){
+      await setSelectedAddress(allAccounts[0].address);
     }
   }
+}
+
 
   void _initWasm(JsApiService _jsApi) async {
     await _jsApi.jsPromise('window.keyring.initWasm()');

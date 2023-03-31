@@ -99,6 +99,7 @@
 "delete_account":"खाता हटाएं",
   "share_evm_qr":"EVM पता साझा करें",
   "share_address_qr":"नेटिव पता साझा करें",
+  "scan_from_image":"फोटो से स्कैन करें",
   "select_account":"खाता चुनें",
   "go_to_home_on_account_switch":"अकाउंट स्विच पर होम पर जाएं",
  "restore_from_json":"जे-सो-न से पुनर्स्थापित करें",

@@ -99,6 +99,7 @@
 "delete_account": "Elimina Account",
 "share_evm_qr":"Condividi indirizzo EVM",
 "share_address_qr":"Condividi indirizzo nativo",
+"scan_from_image":"scansione da foto",
 "select_account":"selezionare conto",
 "go_to_home_on_account_switch":"Vai a Home al cambio di account",
  "restore_from_json":"Ripristina da JSON",

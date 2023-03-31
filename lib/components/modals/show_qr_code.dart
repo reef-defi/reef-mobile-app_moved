@@ -78,7 +78,8 @@ class QRCodeGenerator extends StatelessWidget {
 }
 
 void showQrCode(String title, String message, {BuildContext? context}) {
-  showModal(context ?? navigatorKey.currentContext,
+  showModal(
+      context ?? navigatorKey.currentContext,
       child: QRCodeGenerator(
         data: message,
       ),

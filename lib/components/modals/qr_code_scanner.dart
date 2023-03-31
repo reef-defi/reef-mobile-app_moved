@@ -9,6 +9,9 @@ import 'package:reef_mobile_app/components/modal.dart';
 import 'package:reef_mobile_app/components/modals/alert_modal.dart';
 import 'package:reef_mobile_app/pages/SplashScreen.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:barcode_finder/barcode_finder.dart';
 
 class QrCodeScanner extends StatefulWidget {
   final Function(ReefQrCode)? onScanned;
@@ -21,6 +24,8 @@ class QrCodeScanner extends StatefulWidget {
 class _QrCodeScannerState extends State<QrCodeScanner> {
   final GlobalKey _gLobalkey = GlobalKey();
   QRViewController? controller;
+  Barcode? result;
+  String qrcode = '';
 
   void qr(QRViewController controller) {
     this.controller = controller;
@@ -57,8 +62,45 @@ class _QrCodeScannerState extends State<QrCodeScanner> {
                       width: 200,
                       child: QRView(key: _gLobalkey, onQRViewCreated: qr),
                     ),
+                      height: 200,
+                      width: 200,
+                      child: QRView(key: _gLobalkey, onQRViewCreated: qr),
+                    ),
                   ),
                 ],
+              ),
+            ),
+            const Gap(16),
+            Center(
+              child: ElevatedButton.icon(
+                icon: Icon(Icons.crop_free),
+                label: Text(
+                  AppLocalizations.of(context)!.scan_from_image,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(40),
+                  ),
+                  shadowColor: const Color(0x559d6cff),
+                  elevation: 5,
+                  backgroundColor: Styles.primaryAccentColor,
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 12, horizontal: 28),
+                ),
+                onPressed: () async {
+                  final res = await scanFile();
+                  if (res != Null) {
+                    widget.onScanned!(res!);
+                    Navigator.of(context).pop();
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text("This image does not have QR in it.")));
+                  }
+                },
               ),
             ),
             const Gap(8),
@@ -71,4 +113,17 @@ void showQrCodeScannerModal(String title, Function(ReefQrCode)? onScanned,
     {BuildContext? context}) {
   showModal(context ?? navigatorKey.currentContext,
       child: QrCodeScanner(onScanned: onScanned), headText: title);
+}
+
+
+Future<String?> scanFile() async {
+  // Used to pick a file from device storage
+  final pickedFile = await FilePicker.platform.pickFiles();
+  if (pickedFile != null) {
+    final filePath = pickedFile.files.single.path;
+    if (filePath != null) {
+      final res = await BarcodeFinder.scanFile(path: filePath);
+      return res;
+    }
+  }
 }

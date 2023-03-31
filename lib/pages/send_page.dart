@@ -69,7 +69,7 @@ class _SendPageState extends State<SendPage> {
     }
 
 
-    
+
 
     //checking if selected token is REEF or not
     if (widget.preselected == Constants.REEF_TOKEN_ADDRESS) {
@@ -98,7 +98,7 @@ class _SendPageState extends State<SendPage> {
     _focusSecond.removeListener(_onFocusSecondChange);
     _focus.dispose();
     _focusSecond.dispose();
-    
+
   }
 
   /*void _changeSelectedToken(String tokenAddr) {
@@ -174,6 +174,9 @@ class _SendPageState extends State<SendPage> {
     Stream<dynamic> transferTransactionFeedbackStream =
         await executeTransferTransaction(sendToken);
 
+    transferTransactionFeedbackStream =
+        transferTransactionFeedbackStream.asBroadcastStream();
+
     transferTransactionFeedbackStream.listen((txResponse) {
       print('TRANSACTION RESPONSE=$txResponse');
       if (handleExceptionResponse(txResponse)) {
@@ -190,7 +193,7 @@ class _SendPageState extends State<SendPage> {
 
   Future<Stream<dynamic>> executeTransferTransaction(
       TokenWithAmount sendToken) async {
-    final signerAddress = await ReefAppState.instance.storage
+    final signerAddress = await ReefAppState.instance.storageCtrl
         .getValue(StorageKey.selected_address.name);
     TokenWithAmount tokenToTransfer = TokenWithAmount(
         name: sendToken.name,
@@ -204,7 +207,6 @@ class _SendPageState extends State<SendPage> {
         price: 0);
 
     var toAddress = resolvedEvmAddress ?? address;
-    print('SENDDDDD aaa=$address to=$toAddress');
     return ReefAppState.instance.transferCtrl
         .transferTokensStream(signerAddress, toAddress, tokenToTransfer);
   }
