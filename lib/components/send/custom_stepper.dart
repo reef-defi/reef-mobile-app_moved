@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../utils/styles.dart';
+
 enum ReefStepState {
   /// A step that displays its index in its circle.
   indexed,
@@ -525,7 +527,7 @@ class _ReefStepperState extends State<ReefStepper>
                     (Set<MaterialState> states) {
                   return _isDark() || states.contains(MaterialState.disabled)
                       ? null
-                      : colorScheme.primary;
+                      : Styles.primaryAccentColorDark;
                 }),
                 padding: const MaterialStatePropertyAll<EdgeInsetsGeometry>(
                     buttonPadding),

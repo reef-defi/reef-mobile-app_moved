@@ -148,10 +148,10 @@ class SignModal extends StatefulWidget {
       : super(key: key);
 
   @override
-  State<SignModal> createState() => _SignModalState();
+  State<SignModal> createState() => SignModalState();
 }
 
-class _SignModalState extends State<SignModal> {
+class SignModalState extends State<SignModal> {
   bool _wrongPassword = false;
   bool _biometricsIsAvailable = false;
 
@@ -182,7 +182,7 @@ class _SignModalState extends State<SignModal> {
   }
 
   @override
-  void dispose(){
+  void dispose() {
     super.dispose();
     _passwordController.dispose();
   }

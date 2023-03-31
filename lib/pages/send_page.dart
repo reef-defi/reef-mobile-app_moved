@@ -17,7 +17,7 @@ import 'package:reef_mobile_app/utils/icon_url.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 
 class SendPage extends StatefulWidget {
-  final String preselected;
+  final String preselected; 
 
   const SendPage(this.preselected, {Key? key}) : super(key: key);
 
@@ -157,6 +157,9 @@ class _SendPageState extends State<SendPage> {
 
     Stream<dynamic> transferTransactionFeedbackStream =
         await executeTransferTransaction(sendToken);
+
+    transferTransactionFeedbackStream =
+        transferTransactionFeedbackStream.asBroadcastStream();
 
     transferTransactionFeedbackStream.listen((txResponse) {
       print('TRANSACTION RESPONSE=$txResponse');

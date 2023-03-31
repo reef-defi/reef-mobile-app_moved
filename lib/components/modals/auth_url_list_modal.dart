@@ -70,7 +70,8 @@ class _AuthUrlListState extends State<AuthUrlList> {
         children: [
           if (authUrls.isEmpty)
             Center(
-              child: Text(AppLocalizations.of(context)!.auth_url_list_no_website_yet),
+              child: Text(
+                  AppLocalizations.of(context)!.auth_url_list_no_website_yet),
             )
           else ...[
             ...authUrls.map((AuthUrl authUrl) {

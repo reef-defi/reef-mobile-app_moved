@@ -14,9 +14,14 @@ class SelectAccount extends StatelessWidget {
   final String signerAddress;
   final Function(String) callback;
   final bool isTokenReef;
+  final bool Function(StatusDataObject<ReefAccount>) filterCallback;
 
-  const SelectAccount(this.signerAddress, this.callback, this.isTokenReef,
-      {Key? key})
+  const SelectAccount(
+      {required this.signerAddress,
+      required this.callback,
+      required this.isTokenReef,
+      required this.filterCallback,
+      Key? key})
       : super(key: key);
 
   @override
@@ -25,6 +30,7 @@ class SelectAccount extends StatelessWidget {
     if (isTokenReef) {
       accountList = ReefAppState.instance.model.accounts.accountsFDM.data
           .where((accFDM) => accFDM.data.address != signerAddress)
+          .where(filterCallback)
           .toList();
     } else {
       accountList = ReefAppState.instance.model.accounts.accountsFDM.data
@@ -58,7 +64,7 @@ class SelectAccount extends StatelessWidget {
                               Navigator.of(context).pop();
                             },
                             showOptions: false),
-            Gap(10),
+                        const Gap(10),
                       ],
                     ),
                   )
@@ -70,11 +76,18 @@ class SelectAccount extends StatelessWidget {
 
 void showSelectAccountModal(
     String title, Function(String) callback, bool filterEvmAccounts,
-    {BuildContext? context}) async {
+    {bool Function(StatusDataObject<ReefAccount>)? filterCallback,
+    BuildContext? context}) async {
+  filterCallback ??= (p0) => true;
+
   var signerAddress = await ReefAppState.instance.storageCtrl
       .getValue(StorageKey.selected_address.name);
   showModal(context ?? navigatorKey.currentContext,
-      child: SelectAccount(signerAddress, callback, filterEvmAccounts),
+      child: SelectAccount(
+          signerAddress: signerAddress,
+          callback: callback,
+          isTokenReef: filterEvmAccounts,
+          filterCallback: filterCallback),
       headText: title,
       background: Styles.darkBackgroundColor,
       textColor: Styles.textLightColor);
