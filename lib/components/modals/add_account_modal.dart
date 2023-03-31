@@ -31,12 +31,11 @@ class AddAccount extends StatelessWidget {
                     size: 22,
                   ),
                   const Gap(8),
-                  Builder(
-                    builder: (context) {
-                      return Text(AppLocalizations.of(context)!.create_new_account,
-                          style: Theme.of(context).textTheme.bodyText1);
-                    }
-                  ),
+                  Builder(builder: (context) {
+                    return Text(
+                        AppLocalizations.of(context)!.create_new_account,
+                        style: Theme.of(context).textTheme.bodyText1);
+                  }),
                 ],
               ),
             ),
@@ -57,12 +56,12 @@ class AddAccount extends StatelessWidget {
                   ),
                   const Gap(8),
                   Flexible(
-                    child: Builder(
-                      builder: (context) {
-                        return Text(AppLocalizations.of(context)!.import_account_from_pre_existing_seed,
-                            style: Theme.of(context).textTheme.bodyText1);
-                      }
-                    ),
+                    child: Builder(builder: (context) {
+                      return Text(
+                          AppLocalizations.of(context)!
+                              .import_account_from_pre_existing_seed,
+                          style: Theme.of(context).textTheme.bodyText1);
+                    }),
                   ),
                 ],
               ),

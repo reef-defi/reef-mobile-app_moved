@@ -110,25 +110,25 @@ class _SignatureControlsState extends State<SignatureControls> {
 
   Row buildButtons(BuildContext context) {
     return Row(
-    children: [
-      Container(
+  children: [
+    Expanded(
+      flex: 2,
+      child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
         ),
-        width: 240.0,
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(40)),
+              borderRadius: BorderRadius.circular(40)
+            ),
             shadowColor: const Color(0x559d6cff),
             elevation: 5,
             backgroundColor: Styles.secondaryAccentColor,
             padding: const EdgeInsets.symmetric(vertical: 16),
           ),
-          onPressed: ()  {
-            setState(() async{
-              _passwordMatch = await widget._confirm(password);
-            });
+          onPressed: () async {
+            _passwordMatch = await widget._confirm(password);
           },
           child: Text(
             ReefAppState.instance.signingCtrl.isTransaction(widget._signatureReq)
@@ -141,17 +141,23 @@ class _SignatureControlsState extends State<SignatureControls> {
           ),
         ),
       ),
-      Padding(
+    ),
+    const SizedBox(width: 16),
+    Expanded(
+      child: Padding(
         padding: const EdgeInsets.all(2.0),
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(40)),
+              borderRadius: BorderRadius.circular(40)
+            ),
             shadowColor: const Color(0x559d6cff),
             elevation: 5,
             backgroundColor: Styles.primaryAccentColor,
             padding: const EdgeInsets.symmetric(
-                vertical: 16, horizontal: 20),
+              vertical: 16, 
+              horizontal: 20
+            ),
           ),
           onPressed: widget._cancel,
           child: Row(
@@ -170,8 +176,9 @@ class _SignatureControlsState extends State<SignatureControls> {
           ),
         ),
       ),
-    ],
-  );
+    ),
+  ],
+);
   }
 
 }

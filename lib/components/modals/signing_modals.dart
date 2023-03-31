@@ -148,10 +148,10 @@ class SignModal extends StatefulWidget {
       : super(key: key);
 
   @override
-  State<SignModal> createState() => _SignModalState();
+  State<SignModal> createState() => SignModalState();
 }
 
-class _SignModalState extends State<SignModal> {
+class SignModalState extends State<SignModal> {
   bool _wrongPassword = false;
   bool _biometricsIsAvailable = false;
 
@@ -182,14 +182,14 @@ class _SignModalState extends State<SignModal> {
   }
 
   @override
-  void dispose(){
+  void dispose() {
     super.dispose();
     _passwordController.dispose();
   }
 
   Future<void> authenticateWithPassword(String value) async {
     final storedPassword =
-        await ReefAppState.instance.storage.getValue(StorageKey.password.name);
+        await ReefAppState.instance.storageCtrl.getValue(StorageKey.password.name);
     if (storedPassword == value) {
       setState(() {
         _wrongPassword = false;
@@ -354,7 +354,7 @@ Future<TxDecodedData> _getTxDecodedData(SignatureRequest request) async {
   );
 
   // Chain or genesis hash
-  final metadata = await ReefAppState.instance.storage
+  final metadata = await ReefAppState.instance.storageCtrl
       .getMetadata(request.payload.genesisHash);
   if (metadata != null) {
     txDecodedData.chainName = metadata.chain;

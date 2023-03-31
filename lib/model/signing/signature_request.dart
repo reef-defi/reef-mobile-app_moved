@@ -21,6 +21,8 @@ abstract class _SignatureRequest with Store {
   @observable
   dynamic payload;
 
+  dynamic bytesData;
+
   // No need to observe this as we are relying on the fetchMethodDataFuture.status
   dynamic decodedMethod;
 
@@ -46,6 +48,9 @@ abstract class _SignatureRequest with Store {
 
     decodedMethod = await future;
     txDecodedData = await _signingCtrl.getTxDecodedData(payload, decodedMethod);
+    if(toSignatureRequest().payload.type == "bytes"){
+    bytesData = await _signingCtrl.bytesString(toSignatureRequest().payload.data);
+    }
     return decodedMethod;
   }
 

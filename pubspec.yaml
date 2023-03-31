@@ -29,7 +29,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
+  image_picker: ^0.8.4+4
   qr_flutter: ^4.0.0
   qr_code_scanner: ^1.0.1
   # The following adds the Cupertino Icons font to your application.
@@ -62,6 +62,8 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   video_player: ^2.5.1
+  barcode_finder:
+  file_picker:
   #freezed: ^2.0.3+1 #immutable classes
 
 dev_dependencies:
@@ -95,6 +97,7 @@ flutter:
     - lib/js/packages/reef-mobile-js/dist/index.js
     - lib/js/packages/dApp-js/dist/index.js
     - assets/images/
+    - assets/video/
 # An image asset can refer to one or more resolution-specific "variants", see
 # https://flutter.dev/assets-and-images/#resolution-aware
 

@@ -52,7 +52,8 @@ class _AuthUrlAprovalState extends State<AuthUrlAproval> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                AppLocalizations.of(context)!.approve_domain_message,
+                                AppLocalizations.of(context)!
+                                    .approve_domain_message,
                                 style: TextStyle(
                                     fontSize: 16, color: Styles.textColor),
                                 textAlign: TextAlign.justify,
@@ -107,7 +108,6 @@ class _AuthUrlAprovalState extends State<AuthUrlAproval> {
     );
   }
 }
-
 
 Future<dynamic> showAuthUrlAprovalModal({required origin, required url}) {
   return showModal(navigatorKey.currentContext,
