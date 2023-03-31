@@ -166,6 +166,7 @@ class AccountCtrl {
 */
 
 void _initSavedDeviceAccountAddress(StorageService storage) async {
+  // TODO check if this address also exists in keystore
   var savedAddress = await storage.getValue(StorageKey.selected_address.name);
 
   if (kDebugMode) {
@@ -175,13 +176,17 @@ void _initSavedDeviceAccountAddress(StorageService storage) async {
   if (savedAddress != null) {
     // check if the saved address exists in the allAccounts list
     var allAccounts = await storage.getAllAccounts();
-    var selectedAccount = allAccounts.firstWhere(
-      (account) => account.address == savedAddress
-    );
-
-    if (selectedAccount != null) {
-      setSelectedAddress(selectedAccount.address);
-      return;
+    for(var account in allAccounts){
+      if(account.address ==override && account.address!=null){
+        setSelectedAddress(account.address);
+        print("new saved address ${savedAddress}");
+        return; //return from here after saving the selected address
+      }
+    }
+    
+    //if the saved address is not found then set first address as saved
+    if(allAccounts.length>0){
+    setSelectedAddress(allAccounts[0].address);
     }
   }
 }
