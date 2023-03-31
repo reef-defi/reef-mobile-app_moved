@@ -19,8 +19,8 @@ class AccountCtrl {
   final StorageService _storage;
 
   AccountCtrl(this._jsApi, this._storage, this._accountModel) {
-    _initSavedDeviceAccountAddress(_storage);
     _initJsObservables(_jsApi, _storage);
+    _initSavedDeviceAccountAddress(_storage);
     _initWasm(_jsApi);
   }
 
@@ -36,7 +36,6 @@ class AccountCtrl {
   }
 
   Future<void> setSelectedAddress(String address) {
-    // TODO check if in signers
     return _jsApi
         .jsCallVoidReturn('window.reefState.setSelectedAddress("$address")');
   }
@@ -152,27 +151,21 @@ class AccountCtrl {
   }
 
 void _initSavedDeviceAccountAddress(StorageService storage) async {
-  // TODO check if this address also exists in keystore
   var savedAddress = await storage.getValue(StorageKey.selected_address.name);
-
-  if (kDebugMode) {
-    print('SET SAVED ADDRESS=$savedAddress');
-  }
 
   if (savedAddress != null) {
     // check if the saved address exists in the allAccounts list
     var allAccounts = await storage.getAllAccounts();
     for(var account in allAccounts){
-      if(account.address ==override && account.address!=null){
-        setSelectedAddress(account.address);
-        print("new saved address ${savedAddress}");
+      if(account.address == savedAddress){
+        await setSelectedAddress(account.address);
         return; //return from here after saving the selected address
       }
     }
     
     //if the saved address is not found then set first address as saved
     if(allAccounts.length>0){
-    setSelectedAddress(allAccounts[0].address);
+      await setSelectedAddress(allAccounts[0].address);
     }
   }
 }
