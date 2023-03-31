@@ -150,8 +150,8 @@ class AccountCtrl {
       _accountModel.setAccountsFDM(accsListFdm);
     });
   }
-
-  void _initSavedDeviceAccountAddress(StorageService storage) async {
+/*
+ void _initSavedDeviceAccountAddress(StorageService storage) async {
     // TODO check if this address also exists in keystore
     var savedAddress = await storage.getValue(StorageKey.selected_address.name);
     // TODO if null get first address from storage // https://app.clickup.com/t/37rvnpw
@@ -163,6 +163,29 @@ class AccountCtrl {
       setSelectedAddress(savedAddress);
     }
   }
+*/
+
+void _initSavedDeviceAccountAddress(StorageService storage) async {
+  var savedAddress = await storage.getValue(StorageKey.selected_address.name);
+
+  if (kDebugMode) {
+    print('SET SAVED ADDRESS=$savedAddress');
+  }
+
+  if (savedAddress != null) {
+    // check if the saved address exists in the allAccounts list
+    var allAccounts = await storage.getAllAccounts();
+    var selectedAccount = allAccounts.firstWhere(
+      (account) => account.address == savedAddress
+    );
+
+    if (selectedAccount != null) {
+      setSelectedAddress(selectedAccount.address);
+      return;
+    }
+  }
+}
+
 
   void _initWasm(JsApiService _jsApi) async {
     await _jsApi.jsPromise('window.keyring.initWasm()');
