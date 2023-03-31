@@ -35,7 +35,8 @@ class SigningCtrl {
 
   Future<bool> authenticateAndSign(SignatureRequest signatureRequest, String? verifyPassword) async {
     bool authenticated = false;
-    if (await checkBiometricsSupport()) {
+
+    if (await checkBiometricsSupport() && verifyPassword==null) {
       authenticated = await _authenticateWithBiometrics(signatureRequest);
     } else {
       authenticated = await _authenticateWithPassword( signatureRequest, verifyPassword);

@@ -19,12 +19,11 @@ class SignatureControls extends StatefulWidget {
 }
 
 class _SignatureControlsState extends State<SignatureControls> {
-  bool _passwordMatch=false;
+  bool? _passwordSuccess;
   bool _biometricsIsAvailable = false;
   bool _isBiometricAuthEnabled = false;
 
   final TextEditingController _passwordController = TextEditingController();
-  String password = "";
 
   @override
   void initState() {
@@ -32,7 +31,7 @@ class _SignatureControlsState extends State<SignatureControls> {
 
     _passwordController.addListener(() {
       setState(() {
-        password = _passwordController.text;
+        _passwordSuccess = null;
       });
     });
     ReefAppState.instance.signingCtrl.checkBiometricsSupport().then((value) {
@@ -84,7 +83,7 @@ class _SignatureControlsState extends State<SignatureControls> {
             ),
           ),
           const Gap(8),
-          if (_passwordMatch==false&&password.isNotEmpty)
+          if (_passwordSuccess==false&&_passwordController.text.isNotEmpty)
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -128,7 +127,10 @@ class _SignatureControlsState extends State<SignatureControls> {
             padding: const EdgeInsets.symmetric(vertical: 16),
           ),
           onPressed: () async {
-            _passwordMatch = await widget._confirm(password);
+            var success = await widget._confirm(_passwordController.text);
+            setState(() {
+              _passwordSuccess = success;
+            });
           },
           child: Text(
             ReefAppState.instance.signingCtrl.isTransaction(widget._signatureReq)
@@ -181,4 +183,9 @@ class _SignatureControlsState extends State<SignatureControls> {
 );
   }
 
+  @override
+  void dispose() {
+    _passwordController.dispose();
+    super.dispose();
+  }
 }
