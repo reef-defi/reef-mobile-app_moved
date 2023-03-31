@@ -179,7 +179,7 @@ class _TokenViewState extends State<TokenView> {
                           style: TextStyle(
                               color: Colors.white, fontWeight: FontWeight.w700),
                         ),
-                        onPressed: () {
+                        onPressed: () async{
                           ReefAppState.instance.navigationCtrl
                               .navigateToSendPage(
                                   context: context, preselected: address);

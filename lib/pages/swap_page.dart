@@ -250,7 +250,7 @@ class _SwapPageState extends State<SwapPage> {
     if (selectedTopToken!.amount <= BigInt.zero) {
       return;
     }
-    var signerAddress = await ReefAppState.instance.storage
+    var signerAddress = await ReefAppState.instance.storageCtrl
         .getValue(StorageKey.selected_address.name);
     var res = await ReefAppState.instance.swapCtrl.swapTokens(
         signerAddress, selectedTopToken!, selectedBottomToken!, settings);

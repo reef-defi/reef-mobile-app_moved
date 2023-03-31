@@ -189,7 +189,7 @@ class SignModalState extends State<SignModal> {
 
   Future<void> authenticateWithPassword(String value) async {
     final storedPassword =
-        await ReefAppState.instance.storage.getValue(StorageKey.password.name);
+        await ReefAppState.instance.storageCtrl.getValue(StorageKey.password.name);
     if (storedPassword == value) {
       setState(() {
         _wrongPassword = false;
@@ -354,7 +354,7 @@ Future<TxDecodedData> _getTxDecodedData(SignatureRequest request) async {
   );
 
   // Chain or genesis hash
-  final metadata = await ReefAppState.instance.storage
+  final metadata = await ReefAppState.instance.storageCtrl
       .getMetadata(request.payload.genesisHash);
   if (metadata != null) {
     txDecodedData.chainName = metadata.chain;

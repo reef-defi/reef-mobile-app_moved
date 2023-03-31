@@ -18,7 +18,7 @@ class _AuthUrlListState extends State<AuthUrlList> {
   @override
   void initState() {
     super.initState();
-    ReefAppState.instance.storage.getAllAuthUrls().then((value) => setState(() {
+    ReefAppState.instance.storageCtrl.getAllAuthUrls().then((value) => setState(() {
           authUrls = value;
         }));
   }
@@ -85,7 +85,7 @@ class _AuthUrlListState extends State<AuthUrlList> {
                       onChanged: (value) {
                         setState(() {
                           authUrl.isAllowed = value;
-                          ReefAppState.instance.storage.saveAuthUrl(authUrl);
+                          ReefAppState.instance.storageCtrl.saveAuthUrl(authUrl);
                         });
                       },
                       activeColor: Styles.primaryAccentColorDark,
