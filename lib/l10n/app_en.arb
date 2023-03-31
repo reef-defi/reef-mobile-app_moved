@@ -108,7 +108,7 @@
   "invalid_qr_code":"Invalid QR Code",
   "invalid_qr_msg1":"This is an invalid QR code!",
   "invalid_qr_msg2":"You can know more about this QR code from the 'Scan QR' option in Settings",
-  "get_qr_information":"Get QR Information"
+  "get_qr_information":"Get QR Information",
   "go_to_home_on_account_switch":"Go to Home on Account Switch",
   "scan_from_image":"Scan from Image"
 }
