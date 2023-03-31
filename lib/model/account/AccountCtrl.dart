@@ -150,20 +150,6 @@ class AccountCtrl {
       _accountModel.setAccountsFDM(accsListFdm);
     });
   }
-/*
- void _initSavedDeviceAccountAddress(StorageService storage) async {
-    // TODO check if this address also exists in keystore
-    var savedAddress = await storage.getValue(StorageKey.selected_address.name);
-    // TODO if null get first address from storage // https://app.clickup.com/t/37rvnpw
-    if (kDebugMode) {
-      print('SET SAVED ADDRESS=$savedAddress');
-    }
-    // TODO check if selected is in accounts
-    if (savedAddress != null) {
-      setSelectedAddress(savedAddress);
-    }
-  }
-*/
 
 void _initSavedDeviceAccountAddress(StorageService storage) async {
   // TODO check if this address also exists in keystore
