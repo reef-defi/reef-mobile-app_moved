@@ -84,6 +84,31 @@ class _SettingsPageState extends State<SettingsPage> {
                 activeColor: Styles.primaryAccentColor,
               );
             }),
+        
+            Observer(builder: (_){
+              var navigateOnAccountSwitchVal =
+                  ReefAppState.instance.model.appConfig.isBiometricAuthEnabled;
+
+              return CheckboxListTile(
+                contentPadding: EdgeInsets.zero,
+                title: Row(children: [
+                  Icon(
+                    Icons.fingerprint,
+                    color: Styles.textLightColor,
+                    size: 22,
+                  ),
+                  Gap(9),
+                  Text("Biometric Authentication",
+                      style: Theme.of(context).textTheme.bodyText1)
+                ]),
+                value: navigateOnAccountSwitchVal,
+                onChanged: (newValue) {
+                  ReefAppState.instance.appConfigCtrl.setBiometricAuth(newValue==true);
+                },
+                activeColor: Styles.primaryAccentColor,
+              );
+            }),
+        
             Gap(8),
             MaterialButton(
               materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,

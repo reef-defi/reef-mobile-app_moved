@@ -191,7 +191,6 @@ class _SendPageState extends State<SendPage> {
         price: 0);
 
     var toAddress = resolvedEvmAddress ?? address;
-    print('SENDDDDD aaa=$address to=$toAddress');
     return ReefAppState.instance.transferCtrl
         .transferTokensStream(signerAddress, toAddress, tokenToTransfer);
   }

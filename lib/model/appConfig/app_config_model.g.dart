@@ -42,6 +42,23 @@ mixin _$AppConfigModel on _AppConfigModel, Store {
     });
   }
 
+  late final _$isBiometricAuthEnabledAtom =
+      Atom(name: '_AppConfigModel.isBiometricAuthEnabled', context: context);
+
+  @override
+  bool get isBiometricAuthEnabled {
+    _$isBiometricAuthEnabledAtom.reportRead();
+    return super.isBiometricAuthEnabled;
+  }
+
+  @override
+  set isBiometricAuthEnabled(bool value) {
+    _$isBiometricAuthEnabledAtom
+        .reportWrite(value, super.isBiometricAuthEnabled, () {
+      super.isBiometricAuthEnabled = value;
+    });
+  }
+
   late final _$_AppConfigModelActionController =
       ActionController(name: '_AppConfigModel', context: context);
 
@@ -68,10 +85,22 @@ mixin _$AppConfigModel on _AppConfigModel, Store {
   }
 
   @override
+  void setBiometricAuthentication(bool val) {
+    final _$actionInfo = _$_AppConfigModelActionController.startAction(
+        name: '_AppConfigModel.setBiometricAuthentication');
+    try {
+      return super.setBiometricAuthentication(val);
+    } finally {
+      _$_AppConfigModelActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     return '''
 displayBalance: ${displayBalance},
-navigateOnAccountSwitch: ${navigateOnAccountSwitch}
+navigateOnAccountSwitch: ${navigateOnAccountSwitch},
+isBiometricAuthEnabled: ${isBiometricAuthEnabled}
     ''';
   }
 }
