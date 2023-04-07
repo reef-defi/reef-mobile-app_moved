@@ -87,8 +87,9 @@ class CustomModalState extends State<CustomModal>
 
   @override
   void dispose() {
-    super.dispose();
     _scaleController.dispose();
+    _fadeController.dispose();
+    super.dispose();
   }
 
   @override

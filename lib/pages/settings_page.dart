@@ -137,7 +137,7 @@ class _SettingsPageState extends State<SettingsPage> {
               materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
               onPressed: () => showQrTypeDataModal(
                   AppLocalizations.of(context)!.get_qr_information,
-                  context: context),
+                  context),
               padding: const EdgeInsets.all(2),
               child: Row(
                 children: [
