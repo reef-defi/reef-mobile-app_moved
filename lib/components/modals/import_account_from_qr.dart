@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:gap/gap.dart';
 import 'package:reef_mobile_app/components/getQrTypeData.dart';
 import 'package:reef_mobile_app/components/modal.dart';
@@ -45,8 +44,6 @@ class ImportAccountQr extends StatefulWidget {
 
 class _ImportAccountQrState extends State<ImportAccountQr> {
   final GlobalKey _gLobalkey = GlobalKey();
-  QRViewController? controller;
-  Barcode? result;
   ReefQrCode? qrCode;
   bool isLoading = false;
   TextEditingController _passwordController = TextEditingController();
@@ -70,36 +67,10 @@ class _ImportAccountQrState extends State<ImportAccountQr> {
         }
   }
 
-  void qr(QRViewController controller){
-    if(widget.data==null){
-
-    this.controller = controller;
-    controller.scannedDataStream.listen((event)async{
-     setState(() {
-       result = event;
-     });
-     String resultStr = result!.code!;
-     if(resultStr[0]=="{"){
-      var decodedStr = jsonDecode(resultStr);
-       if(decodedStr["type"]=="importAccount"){
-      setState(() {
-        qrCode = ReefQrCode(decodedStr["type"], decodedStr["data"]);
-      });
-      }else{
-        Navigator.of(context).pop();
-        showAlertModal(AppLocalizations.of(context)!.invalid_qr_code, [AppLocalizations.of(context)!.invalid_qr_msg1,AppLocalizations.of(context)!.invalid_qr_msg2]);
-      }
-     }
-    });
-    }else{
-      if(widget.data?.type=="importAccount"){
-      setState(() {
-        qrCode = widget.data;
-      });
-     }
-    }
-     
-
+  @override
+  void initState(){
+    qrCode = widget.data;
+    super.initState();
   }
   
   @override
@@ -118,17 +89,6 @@ class _ImportAccountQrState extends State<ImportAccountQr> {
               padding: const EdgeInsets.all(2),
               child: Column(
                 children: [
-                  if(qrCode==null)
-                  Center(
-                    child: Container(
-              height: 200,
-              width: 200,
-              child: QRView(
-                    key: _gLobalkey,
-                    onQRViewCreated: qr
-              ),
-            ),
-                  ),
                   if(qrCode!=null)
                    Column(
                      children: [
@@ -223,5 +183,5 @@ class _ImportAccountQrState extends State<ImportAccountQr> {
 void showImportAccountQrModal(
     {BuildContext? context, ReefQrCode? data}) {
   showModal(context ?? navigatorKey.currentContext,
-      child: ImportAccountQr(data: data), headText: "Import Account from QR");
+      child: ImportAccountQr(data: data), headText: "Import the Account");
 }
