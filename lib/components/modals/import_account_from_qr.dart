@@ -36,7 +36,7 @@ class _ImportAccountQrState extends State<ImportAccountQr> {
          final response = await ReefAppState.instance.accountCtrl.restoreJson(json.decode(qrCode!.data),_passwordController.text);
         if(response=="error"){
         Navigator.of(context).pop();
-        showAlertModal("Invalid QR Code", ["This is an invalid QR code!","You can know more about this QR code from the 'Scan QR' option in Settings "]);
+        showAlertModal("Incorrect Password", ["The password you entered is Incorrect!","Please enter the same password you entered while exporting this account. "]);
         }else{
         response['svg']=svgData;
         response['mnemonic']="";
