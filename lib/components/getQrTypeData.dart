@@ -67,7 +67,7 @@ class _GetQrTypeDataState extends State<GetQrTypeData> {
         if (decoded["type"] != null && decoded["data"] != null) {
           qrCodeValue = ReefQrCode(decoded["type"], decoded["data"]);
         }
-        if(qrCodeValue?.type!=null && widget.isCalledFromSettingsPage){
+        if(qrCodeValue?.type!=null && !widget.isCalledFromSettingsPage){
           actOnQrCodeValue(qrCodeValue!);
         }else{
         qrTypeLabel = getQrDataTypeMessage(qrCodeValue?.type);

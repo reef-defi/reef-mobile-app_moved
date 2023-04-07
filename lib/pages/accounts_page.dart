@@ -6,6 +6,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:reef_mobile_app/components/accounts/accounts_list.dart';
+import 'package:reef_mobile_app/components/getQrTypeData.dart';
 import 'package:reef_mobile_app/components/modals/account_modals.dart';
 import 'package:reef_mobile_app/components/modals/export_qr_account_modal.dart';
 import 'package:reef_mobile_app/components/modals/import_account_from_qr.dart';
@@ -31,7 +32,7 @@ class AccountsPage extends StatefulWidget {
 }
 
 class _AccountsPageState extends State<AccountsPage> {
-    final svgData = """
+  final svgData = """
 <svg viewBox='0 0 64 64' xmlns='http://www.w3.org/2000/svg'>
   <circle cx='32' cy='32' fill='#eee' r='32' />
   <circle cx='32' cy='8' fill='hsl(45, 40%, 35%)' r='5' />
@@ -66,7 +67,7 @@ class _AccountsPageState extends State<AccountsPage> {
         showRestoreJson(context);
         break;
       case 'importFromQR':
-        showImportAccountQrModal();
+        showQrTypeDataModal(AppLocalizations.of(context)!.import_the_account, context);
         break;
       default:
         break;
@@ -109,8 +110,9 @@ class _AccountsPageState extends State<AccountsPage> {
                     (addr) async {
               await ReefAppState.instance.accountCtrl.setSelectedAddress(addr);
               ReefAppState.instance.navigationCtrl.navigateHomePage(0);
-    
-              var navigateOnAccountSwitch = ReefAppState.instance.model.appConfig.navigateOnAccountSwitch;
+
+              var navigateOnAccountSwitch =
+                  ReefAppState.instance.model.appConfig.navigateOnAccountSwitch;
               if (navigateOnAccountSwitch)
                 ReefAppState.instance.navigationCtrl
                     .navigate(NavigationPage.home);
