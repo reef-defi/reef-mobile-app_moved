@@ -13,15 +13,15 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:barcode_finder/barcode_finder.dart';
 
-class QrCodeScanner extends StatefulWidget {
+class ScanAddress extends StatefulWidget {
   final Function(ReefQrCode)? onScanned;
-  const QrCodeScanner({Key? key, this.onScanned}) : super(key: key);
+  const ScanAddress({Key? key, this.onScanned}) : super(key: key);
 
   @override
-  State<QrCodeScanner> createState() => _QrCodeScannerState();
+  State<ScanAddress> createState() => _ScanAddressState();
 }
 
-class _QrCodeScannerState extends State<QrCodeScanner> {
+class _ScanAddressState extends State<ScanAddress> {
   final GlobalKey _gLobalkey = GlobalKey();
   QRViewController? controller;
   Barcode? result;
@@ -106,10 +106,10 @@ class _QrCodeScannerState extends State<QrCodeScanner> {
   }
 }
 
-void showQrCodeScannerModal(String title, Function(ReefQrCode)? onScanned,
+void showAddressScannerModal(String title, Function(ReefQrCode)? onScanned,
     {BuildContext? context}) {
   showModal(context ?? navigatorKey.currentContext,
-      child: QrCodeScanner(onScanned: onScanned), headText: title);
+      child: ScanAddress(onScanned: onScanned), headText: title);
 }
 
 
