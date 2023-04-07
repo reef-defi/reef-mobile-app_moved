@@ -90,7 +90,8 @@ class _QrCodeScannerState extends State<QrCodeScanner> {
                 onPressed: () async {
                   final res = await scanFile();
                   if (res != Null) {
-                    widget.onScanned!(res!);
+                    ReefQrCode reefQrCode = ReefQrCode(jsonDecode(res!)['type'], jsonDecode(res!)['data']);
+                    widget.onScanned!(reefQrCode);
                     Navigator.of(context).pop();
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
