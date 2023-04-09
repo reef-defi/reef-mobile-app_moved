@@ -46,7 +46,7 @@ List<TableRow> createTable({required keyTexts, required valueTexts}) {
   return rows;
 }
 
-List<TableRow> createTransactionTable(TxDecodedData txData) {
+/*List<TableRow> createTransactionTable(TxDecodedData txData) {
   List<String> keyTexts = [
     txData.chainName != null ? "Chain" : "Genesis",
     "Version",
@@ -76,9 +76,9 @@ List<TableRow> createTransactionTable(TxDecodedData txData) {
   }
 
   return createTable(keyTexts: keyTexts, valueTexts: valueTexts);
-}
+}*/
 
-class EvmNotClaimedModal extends StatefulWidget {
+/*class EvmNotClaimedModal extends StatefulWidget {
   final StatusDataObject<ReefAccount> signer;
 
   const EvmNotClaimedModal(this.signer, {Key? key}) : super(key: key);
@@ -135,9 +135,9 @@ class _EvmNotClaimedModalState extends State<EvmNotClaimedModal> {
           ],
         ));
   }
-}
+}*/
 
-class SignModal extends StatefulWidget {
+/*class SignModal extends StatefulWidget {
   final List<TableRow> detailsTable;
   final bool isTransaction;
   final String signatureIdent;
@@ -238,16 +238,16 @@ class SignModalState extends State<SignModal> {
               onSelected: () => {},
               showOptions: false),
           //Information Section
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16.0),
-            child: Table(
-              columnWidths: const {
-                0: IntrinsicColumnWidth(),
-                1: FlexColumnWidth(4),
-              },
-              children: widget.detailsTable,
-            ),
-          ),
+          // Padding(
+          //   padding: const EdgeInsets.symmetric(vertical: 0.0),
+          //   child: Table(
+          //     columnWidths: const {
+          //       0: IntrinsicColumnWidth(),
+          //       1: FlexColumnWidth(4),
+          //     },
+          //     children: widget.detailsTable,
+          //   ),
+          // ),
           //Password Section
           // TODO: Allow choosing between password and biometrics
           if (!_biometricsIsAvailable) ...[
@@ -345,9 +345,9 @@ class SignModalState extends State<SignModal> {
       ),
     );
   }
-}
+}*/
 
-Future<TxDecodedData> _getTxDecodedData(SignatureRequest request) async {
+/*Future<TxDecodedData> _getTxDecodedData(SignatureRequest request) async {
   TxDecodedData txDecodedData = TxDecodedData(
     specVersion: hexToDecimalString(request.payload.specVersion),
     nonce: hexToDecimalString(request.payload.nonce),
@@ -387,9 +387,9 @@ Future<TxDecodedData> _getTxDecodedData(SignatureRequest request) async {
   // TODO: era should be an object, instead of a string
 
   return txDecodedData;
-}
+}*/
 
-void showSigningModal(context, SignatureRequest signatureRequest) async {
+/*void showSigningModal(context, SignatureRequest signatureRequest) async {
   final account = ReefAppState.instance.model.accounts.accountsFDM.data
       .firstWhere((acc) => acc.data.address == signatureRequest.payload.address,
           orElse: () => throw Exception("Signer not found"));
@@ -426,4 +426,4 @@ void showSigningModal(context, SignatureRequest signatureRequest) async {
           headText: "Sign Transaction");
     }
   }
-}
+}*/

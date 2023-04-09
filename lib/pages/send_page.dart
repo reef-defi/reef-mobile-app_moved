@@ -686,7 +686,7 @@ class _SendPageState extends State<SendPage> {
   SizedBox buildSendStatusButton(TokenWithAmount selectedToken) {
     return SizedBox(
       width: double.infinity,
-      child: ElevatedButton(
+      child: statusValue!=SendStatus.SIGNING?ElevatedButton(
         style: ElevatedButton.styleFrom(
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
@@ -724,7 +724,16 @@ class _SendPageState extends State<SendPage> {
             ),
           ),
         ),
-      ),
+      )
+      :Column(children: [
+        Text('Generating Signature'),
+        Gap(12),
+        LinearProgressIndicator(
+          valueColor:
+          AlwaysStoppedAnimation<Color>(Styles.primaryAccentColor),
+          backgroundColor: Styles.greyColor,
+        )
+      ],),
     );
   }
 
@@ -854,7 +863,7 @@ class _SendPageState extends State<SendPage> {
                   ),
                   Flexible(
                       child: Text(
-                    "Sending Transaction to the network...",
+                    "Sending Transaction to the network ...",
                     style: TextStyle(fontSize: 16, color: Colors.grey.shade700),
                   )),
                 ],
