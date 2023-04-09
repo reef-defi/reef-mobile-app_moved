@@ -155,7 +155,7 @@ class _SignatureControlsState extends State<SignatureControls> {
             ),
             shadowColor: const Color(0x559d6cff),
             elevation: 5,
-            backgroundColor: Styles.primaryAccentColor,
+            backgroundColor: Styles.greyColor,
             padding: const EdgeInsets.symmetric(
               vertical: 16, 
               horizontal: 20
@@ -165,11 +165,12 @@ class _SignatureControlsState extends State<SignatureControls> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.cancel, size: 18),
-              const SizedBox(width: 8),
+              // const Icon(Icons.cancel, size: 18, color: Styles.textColor),
+              // const SizedBox(width: 8),
               Text(
                 AppLocalizations.of(context)!.cancel,
                 style: const TextStyle(
+                  color: Styles.textColor,
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
                 ),

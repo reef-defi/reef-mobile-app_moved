@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:reef_mobile_app/components/modals/signing_modals.dart';
+import 'package:reef_mobile_app/utils/constants.dart';
+import 'package:reef_mobile_app/utils/functions.dart';
 import '../../model/signing/signature_request.dart';
 
 class MethodGeneralDataDisplay extends StatelessWidget {
@@ -10,10 +12,11 @@ class MethodGeneralDataDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Expanded(child: Observer(builder: (_) {
-        if (signatureReq != null && signatureReq!.hasResults) {
+        if (signatureReq != null) {
             final txData = signatureReq?.txDecodedData;
-        final detailsTable = createTransactionTable(txData);
-
+        var labels=['Chain:'];
+        var values=[isMainnet(signatureReq?.payload.genesisHash)?'Reef Mainnet':toShortDisplay(signatureReq?.payload.genesisHash.toString())];
+        var table = createTable(keyTexts: labels, valueTexts: values);
           return Padding(
             padding: EdgeInsets.fromLTRB(16.0,0.0,16.0,0.0),
             child: Table(
@@ -21,7 +24,7 @@ class MethodGeneralDataDisplay extends StatelessWidget {
                   0: IntrinsicColumnWidth(),
                   1: FlexColumnWidth(4),
                 },
-              children: detailsTable,
+              children: table,
             ),
           );
         }
