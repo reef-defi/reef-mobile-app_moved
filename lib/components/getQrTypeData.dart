@@ -10,7 +10,9 @@ import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/pages/SplashScreen.dart';
 import 'package:reef_mobile_app/utils/constants.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
+import 'package:barcode_finder/barcode_finder.dart';
 
 class GetQrTypeData extends StatefulWidget {
   String expectedType;
@@ -46,7 +48,7 @@ class _GetQrTypeDataState extends State<GetQrTypeData> {
   void actOnQrCodeValue(ReefQrCode qrCode) {
     switch (qrCode.type) {
       case 'address':
-      // popping till it is first page or else there will be 2 send page in the stack if we use this widget on SendPage to scan and send
+        // popping till it is first page or else there will be 2 send page in the stack if we use this widget on SendPage to scan and send
         Navigator.pop(context);
         while (Navigator.canPop(context)) {
           Navigator.pop(context);
@@ -66,12 +68,10 @@ class _GetQrTypeDataState extends State<GetQrTypeData> {
     }
   }
 
-  void qr(QRViewController controller) {
-    this.controller = controller;
-    controller.scannedDataStream.listen((event) {
-      setState(() {
+  void handleQrCodeData(String qrCodeData){
+    setState(() {
         try {
-          var decoded = jsonDecode(event.code!);
+          var decoded = jsonDecode(qrCodeData);
           qrCodeValue = ReefQrCode(decoded["type"], decoded["data"]);
         } catch (e) {
           qrCodeValue = const ReefQrCode("invalid", "invalid qr code provided");
@@ -84,11 +84,19 @@ class _GetQrTypeDataState extends State<GetQrTypeData> {
             qrTypeLabel = getQrDataTypeMessage(qrCodeValue?.type);
           } else {
             qrTypeLabel = getQrDataTypeMessage(qrCodeValue?.type);
-            qrTypeLabel = "Not expected QR Code\n\nAbout this QR : " + qrTypeLabel!;
+            qrTypeLabel =
+                "Not expected QR Code\n\nAbout this QR : " + qrTypeLabel!;
           }
         }
       });
-    });
+  }
+
+  void qr(QRViewController controller) {
+    this.controller = controller;
+    controller.scannedDataStream.listen((event) {
+      handleQrCodeData(event.code!);
+    }
+    );
   }
 
   @override
@@ -107,12 +115,50 @@ class _GetQrTypeDataState extends State<GetQrTypeData> {
               child: Column(
                 children: [
                   if (qrCodeValue == null)
-                    Center(
-                      child: Container(
-                        height: 200,
-                        width: 200,
-                        child: QRView(key: _gLobalkey, onQRViewCreated: qr),
-                      ),
+                    Column(
+                      children: [
+                        Center(
+                          child: Container(
+                            height: 200,
+                            width: 200,
+                            child: QRView(key: _gLobalkey, onQRViewCreated: qr),
+                          ),
+                        ),
+                        Gap(16.0),
+                        Center(
+                          child: ElevatedButton.icon(
+                            icon: Icon(Icons.crop_free),
+                            label: Text(
+                              AppLocalizations.of(context)!.scan_from_image,
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(40),
+                              ),
+                              shadowColor: const Color(0x559d6cff),
+                              elevation: 5,
+                              backgroundColor: Styles.primaryAccentColor,
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 12, horizontal: 28),
+                            ),
+                            onPressed: () async {
+                              try {
+                              final res = await scanFile();
+                              if (res != Null) {
+                                  handleQrCodeData(res!);
+                              } 
+                              } catch (e) {
+                                Navigator.pop(context);
+                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("File has no QR code")));
+                              }
+                            },
+                          ),
+                        ),
+                      ],
                     ),
                   if (qrCodeValue != null)
                     Column(
@@ -174,4 +220,17 @@ class ReefQrCode {
   final String type;
   final String data;
   const ReefQrCode(this.type, this.data);
+}
+
+
+Future<String?> scanFile() async {
+  // Used to pick a file from device storage
+  final pickedFile = await FilePicker.platform.pickFiles();
+  if (pickedFile != null) {
+    final filePath = pickedFile.files.single.path;
+    if (filePath != null) {
+      final res = await BarcodeFinder.scanFile(path: filePath);
+      return res;
+    }
+  }
 }
