@@ -348,7 +348,7 @@ class _ReefStepperState extends State<ReefStepper>
   Widget _buildLine(bool visible) {
     return Container(
       width: visible ? 1.0 : 0.0,
-      height: 16.0,
+      height: 24.0,
       color: Colors.grey.shade400,
     );
   }
@@ -358,21 +358,24 @@ class _ReefStepperState extends State<ReefStepper>
         oldState ? _oldStates[index]! : widget.steps[index].state;
     final bool isDarkActive = _isDark() && widget.steps[index].isActive;
     assert(state != null);
+    var editing = state==ReefStepState.editing;
+    var style2 = isDarkActive
+              ? _kStepStyle.copyWith(color: Colors.black87)
+              : _kStepStyle.copyWith(fontSize: editing?21:14, fontWeight: editing?FontWeight.bold:FontWeight.normal);
     switch (state) {
       case ReefStepState.indexed:
       case ReefStepState.disabled:
+      case ReefStepState.editing:
         return Text(
           '${index + 1}',
-          style: isDarkActive
-              ? _kStepStyle.copyWith(color: Colors.black87)
-              : _kStepStyle,
+          style: style2,
         );
-      case ReefStepState.editing:
-        return Icon(
-          Icons.edit,
-          color: isDarkActive ? _kCircleActiveDark : _kCircleActiveLight,
-          size: 18.0,
-        );
+      // case ReefStepState.editing:
+      //   return Icon(
+      //     Icons.,
+      //     color: isDarkActive ? _kCircleActiveDark : _kCircleActiveLight,
+      //     size: 28.0,
+      //   );
       case ReefStepState.complete:
         return Icon(
           Icons.check,
@@ -403,11 +406,20 @@ class _ReefStepperState extends State<ReefStepper>
     }
   }
 
+double _circleSize(int index) {
+    if( widget.steps[index].state==ReefStepState.editing) {
+      return 42;
+    }
+    return 28;
+  }
+
   Widget _buildCircle(int index, bool oldState) {
+    var horizontal2 = widget.steps[index].state == ReefStepState.editing?10:0;
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8.0),
-      width: _kStepSize,
-      height: _kStepSize,
+      // margin: const EdgeInsets.symmetric(vertical: 12.0, horizontal: horizontal2),
+      margin: const EdgeInsets.symmetric(vertical: 12),
+      width: _circleSize(index),
+      height: _circleSize(index),
       child: AnimatedContainer(
         curve: Curves.fastOutSlowIn,
         duration: kThemeAnimationDuration,
@@ -663,6 +675,8 @@ class _ReefStepperState extends State<ReefStepper>
       child: Row(
         children: <Widget>[
           Column(
+            // crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               // Line parts are always added in order for the ink splash to
               // flood the tips of the connector lines.

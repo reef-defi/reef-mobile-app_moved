@@ -116,7 +116,7 @@ class SignatureContentToggle extends StatelessObserverWidget {
           if (signatureRequest != null)
             SignatureControls(
                 signatureRequest,
-                (String password) => _confirmSign(signatureRequest, password),
+                (String? password) => _confirmSign(signatureRequest, password),
                 () => _cancel(signatureRequest))
         ],
       ),
@@ -124,7 +124,7 @@ class SignatureContentToggle extends StatelessObserverWidget {
   }
 
   Future<bool> _confirmSign(
-          SignatureRequest signatureRequest, String password) =>
+          SignatureRequest signatureRequest, String? password) =>
       ReefAppState.instance.signingCtrl
           .authenticateAndSign(signatureRequest, password);
 

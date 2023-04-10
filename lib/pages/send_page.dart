@@ -766,9 +766,11 @@ class _SendPageState extends State<SendPage> {
 
     if (stat == SendStatus.ERROR) {
       //index = 'Transaction Error';
+      print('send tx error');
     }
     if (stat == SendStatus.CANCELED) {
       //title = 'Transaction Canceled';
+      print('send tx canceled');
     }
     if (stat == SendStatus.SENDING) {
       index = 0;
@@ -782,7 +784,7 @@ class _SendPageState extends State<SendPage> {
     if (stat == SendStatus.FINALIZED) {
       index = 3;
     }
-
+//index=2;
     if (stat == SendStatus.NOT_FINALIZED) {
       // title = 'NOT finalized!';
     }
@@ -840,9 +842,7 @@ class _SendPageState extends State<SendPage> {
             state: getStepState(stat, 0, index),
             title: Text(
               'Sending Transaction',
-              style: TextStyle(
-                  fontSize: index == 0 ? 25 : 20,
-                  color: Colors.purple.shade400),
+              style: getStepTitleStyle(index == 0),
             ),
             content: Padding(
               padding: const EdgeInsets.all(20),
@@ -873,9 +873,7 @@ class _SendPageState extends State<SendPage> {
             state: getStepState(stat, 1, index),
             title: Text(
               'Transaction Sent',
-              style: TextStyle(
-                  fontSize: index == 1 ? 25 : 20,
-                  color: Colors.purple.shade400),
+              style: getStepTitleStyle(index == 1),
             ),
             content: Padding(
               padding: const EdgeInsets.all(20),
@@ -884,8 +882,8 @@ class _SendPageState extends State<SendPage> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   const SizedBox(
-                    height: 18,
-                    width: 18,
+                    height: 28,
+                    width: 28,
                     child: CircularProgressIndicator(
                       color: Colors.deepPurple,
                       strokeWidth: 3,
@@ -906,9 +904,7 @@ class _SendPageState extends State<SendPage> {
             state: getStepState(stat, 2, index),
             title: Text(
               'Transaction in Block',
-              style: TextStyle(
-                  fontSize: index == 2 ? 25 : 20,
-                  color: Colors.purple.shade400),
+              style: getStepTitleStyle(index == 2),
             ),
             content: Padding(
               padding: const EdgeInsets.all(20),
@@ -938,12 +934,18 @@ class _SendPageState extends State<SendPage> {
             state: getStepState(stat, 3, index),
             title: Text(
               'Transaction Success',
-              style: TextStyle(
-                  fontSize: index == 3 ? 25 : 20,
-                  color: Colors.purple.shade400),
+              style: getStepTitleStyle(index == 3),
             ),
             content: const SizedBox()),
       ];
+
+  TextStyle getStepTitleStyle(bool selected) {
+    return TextStyle(
+                fontSize: selected ? 28 : 18,
+                color: selected?Styles.primaryColor:Styles.textLightColor,
+                fontWeight: selected?FontWeight.bold:FontWeight.normal
+    );
+  }
 
   ReefStepState getStepState(SendStatus stat, int stepIndex, int currentIndex) {
     switch (stat) {
@@ -966,7 +968,7 @@ class _SendPageState extends State<SendPage> {
         break;
       default:
         if (currentIndex == stepIndex) {
-          return ReefStepState.indexed;
+          return ReefStepState.editing;
         } else if (stepIndex < currentIndex) {
           return ReefStepState.complete;
         }
