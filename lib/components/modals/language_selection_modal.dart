@@ -33,7 +33,7 @@ class _SelectLanguageState extends State<SelectLanguage> {
         const Gap(12),
         Builder(builder: (context) {
           return Text(
-            AppLocalizations.of(context)!.select_language,
+            'Select Language',
             style: TextStyle(
                 fontSize: 10,
                 fontWeight: FontWeight.w500,
