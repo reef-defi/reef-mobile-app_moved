@@ -144,7 +144,7 @@ class _AccountBoxState extends State<AccountBox> {
                                       .share_address_qr,
                                   shareEvmQr: AppLocalizations.of(context)!
                                       .share_evm_qr,
-                                  exportAccount: "Export Account",
+                                  exportAccount: AppLocalizations.of(context)!.export_account,
                                   selectAccount: AppLocalizations.of(context)!.select_account,
                                 ).getConstants().map((String choice) {
                                   return PopupMenuItem<String>(
@@ -310,7 +310,7 @@ class Constants {
 showAlertDialog(BuildContext context, ReefAccount signer) {
   // set up the buttons
   Widget cancelButton = TextButton(
-    child: const Text("Cancel",style:TextStyle(color:Styles.blueColor,) ),
+    child:Text(AppLocalizations.of(context)!.cancel,style:TextStyle(color:Styles.blueColor,) ),
     onPressed: () {
       Navigator.of(context).pop();
     },
@@ -321,7 +321,7 @@ showAlertDialog(BuildContext context, ReefAccount signer) {
       Icon(Icons.delete, color: Styles.errorColor),
       const SizedBox(width: 8.0),
       Text(
-        "Delete Account",
+        AppLocalizations.of(context)!.export_account,
         style: TextStyle(color: Styles.errorColor),
       ),
     ],
@@ -401,7 +401,7 @@ showAlertDialog(BuildContext context, ReefAccount signer) {
 
   // show the dialog
   showModal(
-    context,child: container,headText: "Delete Account"
+    context,child: container,headText: AppLocalizations.of(context)!.delete_account
   );
 }
 
@@ -412,7 +412,7 @@ void choiceAction(String choice, BuildContext context, ReefAccount account,
     shareAddressQr: AppLocalizations.of(context)!.share_address_qr,
     shareEvmQr: AppLocalizations.of(context)!.share_evm_qr,
     selectAccount: AppLocalizations.of(context)!.select_account,
-    exportAccount: "Export Account",
+    exportAccount: AppLocalizations.of(context)!.export_account,
   );
   if (choice == AppLocalizations.of(context)!.delete) {
     showAlertDialog(context, account);
@@ -426,7 +426,7 @@ void choiceAction(String choice, BuildContext context, ReefAccount account,
   } else if (choice == AppLocalizations.of(context)!.select_account) {
     onSelected();
   }
-  else if (choice == "Export Account") {
-    showExportQrAccount("Export Account",account.address);
+  else if (choice == AppLocalizations.of(context)!.export_account) {
+    showExportQrAccount(AppLocalizations.of(context)!.export_account,account.address);
   }
 }
