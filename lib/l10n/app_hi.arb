@@ -113,7 +113,5 @@
    "the_password_you_entered_is_incorrect": "पासवर्ड गलत है",
 "please_enter_same_password": "कृपया उसी पासवर्ड को दर्ज करें जो आपने इस अकाउंट को निर्यात करते समय दर्ज किया था।",
 "name_your_account": "अपने अकाउंट का नाम बताएँ",
-"password": "पासवर्ड",
-"invalid_qr_code_msg": "अमान्य QR कोड\nयह REEF द्वारा नहीं उत्पन्न किया गया है।",
-"biometric_auth": "बायोमेट्रिक प्रमाणीकरण"
+"password": "पासवर्ड"
 }

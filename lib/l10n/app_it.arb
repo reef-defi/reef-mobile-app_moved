@@ -113,7 +113,5 @@
    "the_password_you_entered_is_incorrect": "La password che hai inserito non è corretta",
 "please_enter_same_password": "Inserisci la stessa password che hai inserito durante l'esportazione di questo account.",
 "name_your_account": "Nomina il tuo account",
-"password": "Password",
-"invalid_qr_code_msg": "QR code non valido\nQuesto non è stato generato da REEF.",
-"biometric_auth": "Autenticazione biometrica"
+"password": "Password"
 }

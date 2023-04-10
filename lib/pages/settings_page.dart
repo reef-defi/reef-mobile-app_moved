@@ -99,7 +99,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     size: 22,
                   ),
                   Gap(9),
-                  Text(AppLocalizations.of(context)!.biometric_auth,
+                  Text("Biometric Authentication",
                       style: Theme.of(context).textTheme.bodyText1)
                 ]),
                 value: navigateOnAccountSwitchVal,
