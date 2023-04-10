@@ -5,7 +5,6 @@ import 'package:gap/gap.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:reef_mobile_app/components/modal.dart';
 import 'package:reef_mobile_app/components/modals/import_account_from_qr.dart';
-import 'package:reef_mobile_app/components/modals/qr_code_scanner.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/pages/SplashScreen.dart';
 import 'package:reef_mobile_app/utils/constants.dart';

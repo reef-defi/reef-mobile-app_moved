@@ -10,7 +10,6 @@ import 'package:reef_mobile_app/components/getQrTypeData.dart';
 import 'package:reef_mobile_app/components/modals/account_modals.dart';
 import 'package:reef_mobile_app/components/modals/export_qr_account_modal.dart';
 import 'package:reef_mobile_app/components/modals/import_account_from_qr.dart';
-import 'package:reef_mobile_app/components/modals/qr_code_scanner.dart';
 import 'package:reef_mobile_app/components/modals/restore_json_modal.dart';
 import 'package:reef_mobile_app/components/modals/add_account_modal.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
