@@ -36,7 +36,7 @@ class _ImportAccountQrState extends State<ImportAccountQr> {
          final response = await ReefAppState.instance.accountCtrl.restoreJson(json.decode(qrCode!.data),_passwordController.text);
         if(response=="error"){
         Navigator.of(context).pop();
-        showAlertModal(AppLocalizations.of(context)!.incorrect_password, [AppLocalizations.of(context)!.the_password_you_entered_is_incorrect,AppLocalizations.of(context)!.please_enter_same_password]);
+        showAlertModal("Incorrect Password", ["The password you entered is Incorrect!","Please enter the same password you entered while exporting this account. "]);
         }else{
         response['svg']=svgData;
         response['mnemonic']="";
@@ -61,89 +61,94 @@ class _ImportAccountQrState extends State<ImportAccountQr> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if(!isLoading)
-            Container(
+            MaterialButton(
+              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
               padding: const EdgeInsets.all(2),
               child: Column(
                 children: [
                   if(qrCode!=null)
-                   SingleChildScrollView(
-                     child: Column(
-                       children: [
-                         Container(
-                                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-                                   decoration: BoxDecoration(
-                                     color: Styles.whiteColor,
-                                     borderRadius: BorderRadius.circular(12),
-                                     border: Border.all(
-                          color:  const Color(0x20000000),
-                          width: 1,
-                                     ),
-                                   ),
-                                   child:  TextField(
-                                   controller: _nameController,
-                                   decoration: InputDecoration.collapsed(hintText: AppLocalizations.of(context)!.name_your_account),
-                                     style: const TextStyle(
+                   Column(
+                     children: [
+                       Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                decoration: BoxDecoration(
+                  color: Styles.whiteColor,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                        color:  const Color(0x20000000),
+                        width: 1,
+                  ),
+                ),
+                child:  TextField(
+                controller: _nameController,
+                decoration: const InputDecoration.collapsed(hintText: 'Name your account'),
+                  style: const TextStyle(
+                        fontSize: 16,
+                  ),
+                onChanged: (value) {
+                  
+                },
+              ),
+              ),
+              Gap(16),
+                       Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                decoration: BoxDecoration(
+                  color: Styles.whiteColor,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                        color:  const Color(0x20000000),
+                        width: 1,
+                  ),
+                ),
+                child:  TextField(
+                controller: _passwordController,
+                obscureText: true,
+                decoration: const InputDecoration.collapsed(hintText: 'Password'),
+                  style: const TextStyle(
+                        fontSize: 16,
+                  ),
+                onChanged: (value) {
+                  
+                },
+              ),
+              ),
+                     Gap(16.0),
+                   Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(40)),
+                    shadowColor: const Color(0x559d6cff),
+                    elevation: 5,
+                    backgroundColor:  _passwordController.text.isEmpty && _nameController.text.isEmpty
+                        ? Styles.secondaryAccentColor
+                        : const Color(0xff9d6cff),
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                  ),
+                  onPressed: _passwordController.text.isEmpty && _nameController.text.isEmpty ? _onPressedNext : null,
+                  child: Builder(
+                    builder: (context) {
+                      return Text(
+                        AppLocalizations.of(context)!.import_the_account,
+                        style: TextStyle(
                           fontSize: 16,
-                                     ),
-                                 ),
-                                 ),
-                                 Gap(16),
-                         Container(
-                                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-                                   decoration: BoxDecoration(
-                                     color: Styles.whiteColor,
-                                     borderRadius: BorderRadius.circular(12),
-                                     border: Border.all(
-                          color:  const Color(0x20000000),
-                          width: 1,
-                                     ),
-                                   ),
-                                   child:  TextField(
-                                   controller: _passwordController,
-                                   obscureText: true,
-                                   decoration:  InputDecoration.collapsed(hintText: AppLocalizations.of(context)!.password),
-                                     style: const TextStyle(
-                          fontSize: 16,
-                                     ),
-                                   onChanged: (value) {
-                                     
-                                   },
-                                 ),
-                                 ),
-                       Gap(16.0),
-                     Container(
-                                   decoration: BoxDecoration(
-                                     borderRadius: BorderRadius.circular(12),
-                                   ),
-                                   width: double.infinity,
-                                   child: ElevatedButton(
-                                     style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(40)),
-                      shadowColor: const Color(0x559d6cff),
-                      elevation: 5,
-                      backgroundColor:  _passwordController.text.isEmpty && _nameController.text.isEmpty
-                          ? Styles.secondaryAccentColor
-                          : const Color(0xff9d6cff),
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                                     ),
-                                     onPressed: _passwordController.text.isEmpty && _nameController.text.isEmpty ? _onPressedNext : null,
-                                     child: Builder(
-                      builder: (context) {
-                        return Text(
-                          AppLocalizations.of(context)!.import_the_account,
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        );
-                      }
-                                     ),
-                                   ),
-                                 ),
-                                  
-                       ],
-                     ),
+                          fontWeight: FontWeight.w700,
+                        ),
+                      );
+                    }
+                  ),
+                ),
+              ),
+               
+                     ],
                    )
                     ],
               ),
@@ -158,5 +163,5 @@ class _ImportAccountQrState extends State<ImportAccountQr> {
 void showImportAccountQrModal(
     {BuildContext? context, ReefQrCode? data}) {
   showModal(context ?? navigatorKey.currentContext,
-      child: ImportAccountQr(data: data), headText:AppLocalizations.of(context!)!.import_the_account);
+      child: ImportAccountQr(data: data), headText: "Import the Account");
 }

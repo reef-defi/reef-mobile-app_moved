@@ -72,9 +72,11 @@ class _GetQrTypeDataState extends State<GetQrTypeData> {
         } catch (e) {
           qrCodeValue = const ReefQrCode("invalid", "invalid qr code provided");
         }
+        print("anuna ${widget.expectedType}");
         if (widget.expectedType == qrCodeValue?.type) {
           actOnQrCodeValue(qrCodeValue!);
         } else {
+          print("anuna ${qrCodeValue?.type}");
           if (widget.expectedType == "info") {
             qrTypeLabel = getQrDataTypeMessage(qrCodeValue?.type);
             if(qrTypeLabel==null){
