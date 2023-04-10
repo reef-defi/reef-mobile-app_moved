@@ -225,7 +225,7 @@ class ReefQrCode {
 
 Future<String?> scanFile() async {
   // Used to pick a file from device storage
-  final pickedFile = await FilePicker.platform.pickFiles();
+  final pickedFile = await FilePicker.platform.pickFiles(type: FileType.image); //can pick image files only
   if (pickedFile != null) {
     final filePath = pickedFile.files.single.path;
     if (filePath != null) {
