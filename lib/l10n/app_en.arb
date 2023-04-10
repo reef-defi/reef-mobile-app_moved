@@ -110,5 +110,9 @@
   "invalid_qr_msg2":"You can know more about this QR code from the 'Scan QR' option in Settings",
   "get_qr_information":"Get QR Information",
   "go_to_home_on_account_switch":"Go to Home on Account Switch",
-  "scan_from_image":"Scan from Image"
+  "scan_from_image":"Scan from Image",
+  "the_password_you_entered_is_incorrect":"The password you entered is incorrect",
+  "please_enter_same_password":"Please enter the same password you entered while exporting this account. ",
+  "name_your_account":"Name your account",
+  "password":"Password"
 }
