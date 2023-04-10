@@ -15,12 +15,12 @@ class GenerateQrJsonValue extends StatelessWidget {
             data: jsonEncode({"type":type,"data":data}).toString(),
             version: QrVersions.auto,
             // importAccount QR should be larger otherwise wrong value might be scanned
-            size:type!="importAccount"? 200.0:400,
+            size:type!="account-json"? 200.0:400,
             gapless: false,
             foregroundColor: Colors.black,
             //conditionally showing the REEF icon because the importAccount QR code is really sensitive as it consists of long string as data
-            embeddedImage: type!="importAccount"?const AssetImage('assets/images/reef.png'):null,
-            embeddedImageStyle: type!="importAccount"?QrEmbeddedImageStyle(
+            embeddedImage: type!="account-json"?const AssetImage('assets/images/reef.png'):null,
+            embeddedImageStyle: type!="account-json"?QrEmbeddedImageStyle(
               size: const Size(40, 40),
             ):null,
             errorStateBuilder: (context, error) => const Text(

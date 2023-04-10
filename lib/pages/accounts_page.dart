@@ -47,7 +47,7 @@ class _AccountsPageState extends State<AccountsPage> {
         showRestoreJson(context);
         break;
       case 'importFromQR':
-        showQrTypeDataModal(AppLocalizations.of(context)!.import_the_account, context,expectedType: "importAccount");
+        showQrTypeDataModal(AppLocalizations.of(context)!.import_the_account, context,expectedType: "account-json");
         break;
       default:
         break;

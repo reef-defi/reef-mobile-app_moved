@@ -60,7 +60,7 @@ class _ExportQrAccountState extends State<ExportQrAccount> {
       child: Column(
         children: [
           if(data!=null)
-          GenerateQrJsonValue(type: "importAccount", data: data!),
+          GenerateQrJsonValue(type: "account-json", data: data!),
             if(!_isLoading && data==null)
                         Column(
                           children: [
