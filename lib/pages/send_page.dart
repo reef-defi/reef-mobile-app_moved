@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -871,7 +872,7 @@ index=2;
         ReefStep(
             state: getStepState(stat, 1, index),
             title: Text(
-              'Transaction Sent',
+              'Adding to Chain',
             ),
             content: Padding(
               padding: const EdgeInsets.all(20),
@@ -892,7 +893,7 @@ index=2;
                   ),
                   Flexible(
                       child: Text(
-                    "Waiting to be included in a Block...",
+                    "Waiting to be included in next Block...",
                     style: TextStyle(fontSize: 16, color: Colors.grey.shade700),
                   )),
                 ],
@@ -901,7 +902,7 @@ index=2;
         ReefStep(
             state: getStepState(stat, 2, index),
             title: Text(
-              'Transaction in Block',
+              'Sealing the Block',
             ),
             content: Padding(
               padding: const EdgeInsets.all(20),
@@ -921,7 +922,7 @@ index=2;
                     width: 8,
                   ),
                   Text(
-                    "Waiting for finalization...",
+                    "After this transaction has unreversible finality.",
                     style: TextStyle(fontSize: 16, color: Colors.grey.shade700),
                   ),
                 ],
@@ -930,9 +931,11 @@ index=2;
         ReefStep(
             state: getStepState(stat, 3, index),
             title: Text(
-              'Transaction Success',
+              'Transaction Finalized',
             ),
-            content: const SizedBox()),
+            content: const SizedBox(),
+            icon: Icons.lock
+        ),
       ];
 
   ReefStepState getStepState(SendStatus stat, int stepIndex, int currentIndex) {

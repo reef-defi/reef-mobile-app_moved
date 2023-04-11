@@ -117,6 +117,7 @@ class ReefStep {
     this.state = ReefStepState.indexed,
     this.isActive = false,
     this.label,
+    this.icon,
   })  : assert(title != null),
         assert(content != null),
         assert(state != null);
@@ -145,6 +146,7 @@ class ReefStep {
   /// Only [StepperType.horizontal], Optional widget that appears under the [title].
   /// By default, uses the `bodyLarge` theme.
   final Widget? label;
+  final IconData? icon;
 }
 
 /// A material stepper widget that displays progress through a sequence of
@@ -357,6 +359,7 @@ class _ReefStepperState extends State<ReefStepper>
   Widget _buildCircleChild(int index, bool oldState) {
     final ReefStepState state =
         oldState ? _oldStates[index]! : widget.steps[index].state;
+    var icon = widget.steps[index].icon;
     final bool isDarkActive = _isDark() && widget.steps[index].isActive;
     assert(state != null);
     var editing = state == ReefStepState.editing;
@@ -365,6 +368,7 @@ class _ReefStepperState extends State<ReefStepper>
         : _kStepStyle.copyWith(
             fontSize: editing ? 24 : 14,
             fontWeight: editing ? FontWeight.bold : FontWeight.normal);
+
     switch (state) {
       case ReefStepState.indexed:
       case ReefStepState.disabled:
@@ -381,7 +385,7 @@ class _ReefStepperState extends State<ReefStepper>
       //   );
       case ReefStepState.complete:
         return Icon(
-          Icons.check,
+          icon??Icons.check,
           color: isDarkActive ? _kCircleActiveDark : _kCircleActiveLight,
           size: 18.0,
         );
@@ -456,10 +460,10 @@ class _ReefStepperState extends State<ReefStepper>
   }
 
   double _circleSize(int index) {
-    if (widget.steps[index].state == ReefStepState.editing) {
-      return 45;
+    if (widget.steps[index].state == ReefStepState.editing || (widget.steps[index].state == ReefStepState.complete && widget.steps.length==index+1)) {
+      return 60;
     }
-    return 28;
+    return 38;
   }
 
   Widget _buildCircle(int index, bool oldState) {
@@ -477,7 +481,7 @@ class _ReefStepperState extends State<ReefStepper>
         decoration: BoxDecoration(
           //color: _circleColor(index),
           shape: BoxShape.circle,
-          border: Border.all(color: Colors.white, width: borderSize, strokeAlign: BorderSide.strokeAlignOutside),
+          border: Border.all(color: Colors.white, width: borderSize, strokeAlign: BorderSide.strokeAlignInside),
           gradient: _circleGradient(index)
         ),
         child: Center(
@@ -643,7 +647,7 @@ class _ReefStepperState extends State<ReefStepper>
       case ReefStepState.complete:
         return textTheme.bodyLarge!.copyWith(
           color: Styles.greenColor,
-          fontSize: 18,
+          fontSize: widget.steps.length==index+1?28:18,
         );
       case ReefStepState.disabled:
         return textTheme.bodyLarge!.copyWith(
@@ -737,6 +741,7 @@ class _ReefStepperState extends State<ReefStepper>
   }
 
   Widget _buildVerticalHeader(int index) {
+    double circleMaxSize = 60;
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 24.0),
       child: Row(
@@ -744,7 +749,7 @@ class _ReefStepperState extends State<ReefStepper>
         // crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Container(
-            width: 49,
+            width: circleMaxSize,
             child: Column(
               // crossAxisAlignment: CrossAxisAlignment.center,
               // mainAxisAlignment: MainAxisAlignment.center,
@@ -772,7 +777,7 @@ class _ReefStepperState extends State<ReefStepper>
     return Stack(
       children: <Widget>[
         PositionedDirectional(
-          start: 36.5,
+          start: 42,
           top: 0.0,
           bottom: 0.0,
           child: SizedBox(
