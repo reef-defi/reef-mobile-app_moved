@@ -170,6 +170,8 @@ class ReefStep {
 ///  * [ReefStep]
 ///  * <https://material.io/archive/guidelines/components/steppers.html>
 class ReefStepper extends StatefulWidget {
+
+  final double _circleMaxSize = 60;
   /// Creates a stepper from a list of steps.
   ///
   /// This widget is not meant to be rebuilt with a different list of steps
@@ -189,6 +191,8 @@ class ReefStepper extends StatefulWidget {
     this.controlsBuilder,
     this.elevation,
     this.margin,
+    this.displayStepProgressIndicator,
+    
   })  : assert(steps != null),
         assert(type != null),
         assert(currentStep != null),
@@ -290,6 +294,8 @@ class ReefStepper extends StatefulWidget {
 
   /// custom margin on vertical stepper.
   final EdgeInsetsGeometry? margin;
+  
+  final bool? displayStepProgressIndicator;
 
   @override
   State<ReefStepper> createState() => _ReefStepperState();
@@ -385,7 +391,7 @@ class _ReefStepperState extends State<ReefStepper>
       //   );
       case ReefStepState.complete:
         return Icon(
-          icon??Icons.check,
+          icon ?? Icons.check,
           color: isDarkActive ? _kCircleActiveDark : _kCircleActiveLight,
           size: 18.0,
         );
@@ -424,46 +430,40 @@ class _ReefStepperState extends State<ReefStepper>
   }
 
   LinearGradient _circleGradient(int index) {
-    List<Color> colors=[];
+    List<Color> colors = [];
     // final ColorScheme colorScheme = Theme.of(context).colorScheme;
     // if (!_isDark()) {
-      if (widget.steps[index].state == ReefStepState.complete) {
-        var color = Styles.greenColor;
-        final hsl = HSLColor.fromColor(color);
-        final hslDark = hsl.withLightness((hsl.lightness - 0.12).clamp(0.0, 1.0));
-        colors=[
-          color,
-          hslDark.toColor(),
-        ];
-
-      }else if (widget.steps[index].state == ReefStepState.editing) {
-        colors=[
-          Styles.buttonColor,
-          Styles.primaryAccentColor
-        ];
-
-      } else {
-        var color = Styles.greyColor;
-        final hsl = HSLColor.fromColor(color);
-        final hslDark = hsl.withLightness((hsl.lightness - 0.12).clamp(0.0, 1.0));
-        colors=[
-          color,
-          hslDark.toColor()
-        ];
-      }
+    if (widget.steps[index].state == ReefStepState.complete) {
+      var color = Styles.greenColor;
+      final hsl = HSLColor.fromColor(color);
+      final hslDark = hsl.withLightness((hsl.lightness - 0.12).clamp(0.0, 1.0));
+      colors = [
+        color,
+        hslDark.toColor(),
+      ];
+    } else if (widget.steps[index].state == ReefStepState.editing) {
+      colors = [Styles.buttonColor, Styles.primaryAccentColor];
+    } else {
+      var color = Styles.greyColor;
+      final hsl = HSLColor.fromColor(color);
+      final hslDark = hsl.withLightness((hsl.lightness - 0.12).clamp(0.0, 1.0));
+      colors = [color, hslDark.toColor()];
+    }
 
     return LinearGradient(
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
-      colors:colors,
+      colors: colors,
     );
   }
 
   double _circleSize(int index) {
-    if (widget.steps[index].state == ReefStepState.editing || (widget.steps[index].state == ReefStepState.complete && widget.steps.length==index+1)) {
-      return 60;
+    if (widget.steps[index].state == ReefStepState.editing ||
+        (widget.steps[index].state == ReefStepState.complete &&
+            widget.steps.length == index + 1)) {
+      return widget._circleMaxSize;
     }
-    return 38;
+    return widget._circleMaxSize/1.62;
   }
 
   Widget _buildCircle(int index, bool oldState) {
@@ -471,24 +471,40 @@ class _ReefStepperState extends State<ReefStepper>
         widget.steps[index].state == ReefStepState.editing ? 5 : 3;
 
     var circleSize = _circleSize(index);
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 12),
-      width: circleSize,
-      height: circleSize,
-      child: AnimatedContainer(
-        curve: Curves.fastOutSlowIn,
-        duration: kThemeAnimationDuration,
-        decoration: BoxDecoration(
-          //color: _circleColor(index),
-          shape: BoxShape.circle,
-          border: Border.all(color: Colors.white, width: borderSize, strokeAlign: BorderSide.strokeAlignInside),
-          gradient: _circleGradient(index)
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Center(
+            child: Container(
+          margin: const EdgeInsets.symmetric(vertical: 12),
+          width: circleSize,
+          height: circleSize,
+          child: AnimatedContainer(
+            curve: Curves.fastOutSlowIn,
+            duration: kThemeAnimationDuration,
+            decoration: BoxDecoration(
+                //color: _circleColor(index),
+                shape: BoxShape.circle,
+                border: Border.all(
+                    color: Colors.white,
+                    width: borderSize,
+                    strokeAlign: BorderSide.strokeAlignInside),
+                gradient: _circleGradient(index)),
+            child: Center(
+              child: _buildCircleChild(index,
+                  oldState && widget.steps[index].state == ReefStepState.error),
+            ),
+          ),
+        )),
+        if(widget.displayStepProgressIndicator==true && widget.steps[index].state == ReefStepState.editing)Container(
+          width: widget._circleMaxSize-5,
+          height: widget._circleMaxSize-5,
+          child: CircularProgressIndicator(
+            color: Colors.deepPurple,
+            strokeWidth: 5,
+          ),
         ),
-        child: Center(
-          child: _buildCircleChild(index,
-              oldState && widget.steps[index].state == ReefStepState.error),
-        ),
-      ),
+      ],
     );
   }
 
@@ -635,19 +651,18 @@ class _ReefStepperState extends State<ReefStepper>
     switch (widget.steps[index].state) {
       case ReefStepState.indexed:
         return textTheme.bodyLarge!.copyWith(
-            color: Styles.textLightColor,
+          color: Styles.textLightColor,
           fontSize: 14,
         );
       case ReefStepState.editing:
-      return textTheme.bodyLarge!.copyWith(
-        color: Styles.primaryColor,
-        fontSize: 28,
-        fontWeight: FontWeight.bold
-      );
+        return textTheme.bodyLarge!.copyWith(
+            color: Styles.primaryColor,
+            fontSize: 28,
+            fontWeight: FontWeight.bold);
       case ReefStepState.complete:
         return textTheme.bodyLarge!.copyWith(
           color: Styles.greenColor,
-          fontSize: widget.steps.length==index+1?28:18,
+          fontSize: widget.steps.length == index + 1 ? 28 : 18,
         );
       case ReefStepState.disabled:
         return textTheme.bodyLarge!.copyWith(
@@ -741,7 +756,6 @@ class _ReefStepperState extends State<ReefStepper>
   }
 
   Widget _buildVerticalHeader(int index) {
-    double circleMaxSize = 60;
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 24.0),
       child: Row(
@@ -749,7 +763,7 @@ class _ReefStepperState extends State<ReefStepper>
         // crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Container(
-            width: circleMaxSize,
+            width: widget._circleMaxSize,
             child: Column(
               // crossAxisAlignment: CrossAxisAlignment.center,
               // mainAxisAlignment: MainAxisAlignment.center,
