@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:reef_mobile_app/utils/elements.dart';
 
 import '../../utils/styles.dart';
 
@@ -358,10 +359,12 @@ class _ReefStepperState extends State<ReefStepper>
         oldState ? _oldStates[index]! : widget.steps[index].state;
     final bool isDarkActive = _isDark() && widget.steps[index].isActive;
     assert(state != null);
-    var editing = state==ReefStepState.editing;
+    var editing = state == ReefStepState.editing;
     var style2 = isDarkActive
-              ? _kStepStyle.copyWith(color: Colors.black87)
-              : _kStepStyle.copyWith(fontSize: editing?21:14, fontWeight: editing?FontWeight.bold:FontWeight.normal);
+        ? _kStepStyle.copyWith(color: Colors.black87)
+        : _kStepStyle.copyWith(
+            fontSize: editing ? 24 : 14,
+            fontWeight: editing ? FontWeight.bold : FontWeight.normal);
     switch (state) {
       case ReefStepState.indexed:
       case ReefStepState.disabled:
@@ -393,6 +396,11 @@ class _ReefStepperState extends State<ReefStepper>
       if (widget.steps[index].state == ReefStepState.complete) {
         return Colors.green.shade600;
       }
+
+      if (widget.steps[index].state == ReefStepState.editing) {
+        return Styles.primaryAccentColorDark;
+      }
+
       return widget.steps[index].isActive
           ? colorScheme.primary
           : colorScheme.onSurface.withOpacity(0.38);
@@ -400,32 +408,77 @@ class _ReefStepperState extends State<ReefStepper>
       if (widget.steps[index].state == ReefStepState.complete) {
         return Colors.green;
       }
+
+      if (widget.steps[index].state == ReefStepState.editing) {
+        return Styles.primaryAccentColorDark;
+      }
+
       return widget.steps[index].isActive
           ? colorScheme.secondary
           : colorScheme.background;
     }
   }
 
-double _circleSize(int index) {
-    if( widget.steps[index].state==ReefStepState.editing) {
-      return 42;
+  LinearGradient _circleGradient(int index) {
+    List<Color> colors=[];
+    // final ColorScheme colorScheme = Theme.of(context).colorScheme;
+    // if (!_isDark()) {
+      if (widget.steps[index].state == ReefStepState.complete) {
+        var color = Styles.greenColor;
+        final hsl = HSLColor.fromColor(color);
+        final hslDark = hsl.withLightness((hsl.lightness - 0.12).clamp(0.0, 1.0));
+        colors=[
+          color,
+          hslDark.toColor(),
+        ];
+
+      }else if (widget.steps[index].state == ReefStepState.editing) {
+        colors=[
+          Styles.buttonColor,
+          Styles.primaryAccentColor
+        ];
+
+      } else {
+        var color = Styles.greyColor;
+        final hsl = HSLColor.fromColor(color);
+        final hslDark = hsl.withLightness((hsl.lightness - 0.12).clamp(0.0, 1.0));
+        colors=[
+          color,
+          hslDark.toColor()
+        ];
+      }
+
+    return LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors:colors,
+    );
+  }
+
+  double _circleSize(int index) {
+    if (widget.steps[index].state == ReefStepState.editing) {
+      return 45;
     }
     return 28;
   }
 
   Widget _buildCircle(int index, bool oldState) {
-    var horizontal2 = widget.steps[index].state == ReefStepState.editing?10:0;
+    double borderSize =
+        widget.steps[index].state == ReefStepState.editing ? 5 : 3;
+
+    var circleSize = _circleSize(index);
     return Container(
-      // margin: const EdgeInsets.symmetric(vertical: 12.0, horizontal: horizontal2),
       margin: const EdgeInsets.symmetric(vertical: 12),
-      width: _circleSize(index),
-      height: _circleSize(index),
+      width: circleSize,
+      height: circleSize,
       child: AnimatedContainer(
         curve: Curves.fastOutSlowIn,
         duration: kThemeAnimationDuration,
         decoration: BoxDecoration(
-          color: _circleColor(index),
+          //color: _circleColor(index),
           shape: BoxShape.circle,
+          border: Border.all(color: Colors.white, width: borderSize, strokeAlign: BorderSide.strokeAlignOutside),
+          gradient: _circleGradient(index)
         ),
         child: Center(
           child: _buildCircleChild(index,
@@ -577,16 +630,30 @@ double _circleSize(int index) {
     assert(widget.steps[index].state != null);
     switch (widget.steps[index].state) {
       case ReefStepState.indexed:
+        return textTheme.bodyLarge!.copyWith(
+            color: Styles.textLightColor,
+          fontSize: 14,
+        );
       case ReefStepState.editing:
+      return textTheme.bodyLarge!.copyWith(
+        color: Styles.primaryColor,
+        fontSize: 28,
+        fontWeight: FontWeight.bold
+      );
       case ReefStepState.complete:
-        return textTheme.bodyLarge!;
+        return textTheme.bodyLarge!.copyWith(
+          color: Styles.greenColor,
+          fontSize: 18,
+        );
       case ReefStepState.disabled:
         return textTheme.bodyLarge!.copyWith(
           color: _isDark() ? _kDisabledDark : _kDisabledLight,
+          fontSize: 18,
         );
       case ReefStepState.error:
         return textTheme.bodyLarge!.copyWith(
           color: _isDark() ? _kErrorDark : _kErrorLight,
+          fontSize: 18,
         );
     }
   }
@@ -673,17 +740,22 @@ double _circleSize(int index) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 24.0),
       child: Row(
+        // mainAxisAlignment: MainAxisAlignment.end,
+        // crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Column(
-            // crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              // Line parts are always added in order for the ink splash to
-              // flood the tips of the connector lines.
-              _buildLine(!_isFirst(index)),
-              _buildIcon(index),
-              _buildLine(!_isLast(index)),
-            ],
+          Container(
+            width: 49,
+            child: Column(
+              // crossAxisAlignment: CrossAxisAlignment.center,
+              // mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                // Line parts are always added in order for the ink splash to
+                // flood the tips of the connector lines.
+                _buildLine(!_isFirst(index)),
+                _buildIcon(index),
+                _buildLine(!_isLast(index)),
+              ],
+            ),
           ),
           Expanded(
             child: Container(
@@ -700,7 +772,7 @@ double _circleSize(int index) {
     return Stack(
       children: <Widget>[
         PositionedDirectional(
-          start: 24.0,
+          start: 36.5,
           top: 0.0,
           bottom: 0.0,
           child: SizedBox(

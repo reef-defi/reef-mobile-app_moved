@@ -784,7 +784,7 @@ class _SendPageState extends State<SendPage> {
     if (stat == SendStatus.FINALIZED) {
       index = 3;
     }
-//index=2;
+index=2;
     if (stat == SendStatus.NOT_FINALIZED) {
       // title = 'NOT finalized!';
     }
@@ -842,7 +842,6 @@ class _SendPageState extends State<SendPage> {
             state: getStepState(stat, 0, index),
             title: Text(
               'Sending Transaction',
-              style: getStepTitleStyle(index == 0),
             ),
             content: Padding(
               padding: const EdgeInsets.all(20),
@@ -873,7 +872,6 @@ class _SendPageState extends State<SendPage> {
             state: getStepState(stat, 1, index),
             title: Text(
               'Transaction Sent',
-              style: getStepTitleStyle(index == 1),
             ),
             content: Padding(
               padding: const EdgeInsets.all(20),
@@ -904,7 +902,6 @@ class _SendPageState extends State<SendPage> {
             state: getStepState(stat, 2, index),
             title: Text(
               'Transaction in Block',
-              style: getStepTitleStyle(index == 2),
             ),
             content: Padding(
               padding: const EdgeInsets.all(20),
@@ -934,18 +931,9 @@ class _SendPageState extends State<SendPage> {
             state: getStepState(stat, 3, index),
             title: Text(
               'Transaction Success',
-              style: getStepTitleStyle(index == 3),
             ),
             content: const SizedBox()),
       ];
-
-  TextStyle getStepTitleStyle(bool selected) {
-    return TextStyle(
-                fontSize: selected ? 28 : 18,
-                color: selected?Styles.primaryColor:Styles.textLightColor,
-                fontWeight: selected?FontWeight.bold:FontWeight.normal
-    );
-  }
 
   ReefStepState getStepState(SendStatus stat, int stepIndex, int currentIndex) {
     switch (stat) {
