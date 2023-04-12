@@ -21,13 +21,15 @@ class AccountBox extends StatefulWidget {
   final bool selected;
   final VoidCallback onSelected;
   final bool showOptions;
+  final bool lightTheme;
 
   const AccountBox(
       {Key? key,
       required this.reefAccountFDM,
       required this.selected,
       required this.onSelected,
-      required this.showOptions})
+      required this.showOptions,
+      this.lightTheme = false})
       : super(key: key);
 
   @override
@@ -42,6 +44,13 @@ class _AccountBoxState extends State<AccountBox> {
 
   @override
   Widget build(BuildContext context) {
+    var gradientColors = widget.lightTheme ? [
+                      Color.fromARGB(255, 231, 223, 248),
+                      Color.fromARGB(194, 200, 220, 250),
+                    ]:[
+                      Color.fromARGB(198, 37, 19, 79),
+                      Color.fromARGB(53, 110, 27, 117),
+                    ];
     return InkWell(
       onTap: widget.onSelected,
       child: PhysicalModel(
@@ -51,17 +60,12 @@ class _AccountBoxState extends State<AccountBox> {
           child: Container(
             width: double.infinity,
             decoration: BoxDecoration(
-                gradient: const LinearGradient(
+                gradient: LinearGradient(
                     begin: Alignment(0, 0.2),
                     end: Alignment(0.1, 1.3),
-                    colors: [
-                      Color.fromARGB(198, 37, 19, 79),
-                      Color.fromARGB(53, 110, 27, 117),
-                    ]),
+                    colors: gradientColors),
                 border: Border.all(
-                    color: !widget.selected
-                        ? Color(Styles.purpleColor.value)
-                        : Color(Styles.purpleColor.value),
+                    color: Color(Styles.purpleColor.value),
                     width: widget.selected ? 3 : 0),
                 borderRadius: BorderRadius.circular(15)),
             child: Stack(
@@ -117,7 +121,7 @@ class _AccountBoxState extends State<AccountBox> {
                       Expanded(
                           child: Padding(
                         padding: const EdgeInsets.only(left: 10),
-                        child: buildCentralColumn(widget.reefAccountFDM),
+                        child: buildCentralColumn(widget.reefAccountFDM, widget.lightTheme),
                       )),
                       if (widget.showOptions)
                         Column(
@@ -173,7 +177,9 @@ class _AccountBoxState extends State<AccountBox> {
     );
   }
 
-  Widget buildCentralColumn(StatusDataObject<ReefAccount> reefAccount) {
+  Widget buildCentralColumn(StatusDataObject<ReefAccount> reefAccount, bool lightTheme) {
+    var textColor1 = lightTheme?Styles.textColor: Colors.white;
+    var textColor2 = lightTheme? Colors.black38:Styles.textLightColor;
     return Flex(
         direction: Axis.vertical,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -185,7 +191,7 @@ class _AccountBoxState extends State<AccountBox> {
               Flexible(
                   child: Text(reefAccount.data.name,
                       style: GoogleFonts.poppins(
-                        color: Colors.white,
+                        color: textColor1,
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
                       ))),
@@ -201,7 +207,7 @@ class _AccountBoxState extends State<AccountBox> {
                       Text(
                         '${formatAmountToDisplayBigInt(reefAccount.data.balance)} REEF',
                         style: GoogleFonts.poppins(
-                          color: Styles.whiteColor,
+                          color: textColor1,
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
                         ),
@@ -225,7 +231,7 @@ class _AccountBoxState extends State<AccountBox> {
                   TextSpan(
                     text: AppLocalizations.of(context)!.address,
                     style:
-                        TextStyle(fontSize: 10, color: Styles.textLightColor),
+                        TextStyle(fontSize: 10, color: textColor2),
                     children: <TextSpan>[
                       TextSpan(
                           text:
@@ -242,7 +248,7 @@ class _AccountBoxState extends State<AccountBox> {
                     TextSpan(
                       text: AppLocalizations.of(context)!.reef_evm,
                       style:
-                          TextStyle(fontSize: 10, color: Styles.textLightColor),
+                          TextStyle(fontSize: 10, color: textColor2),
                       children: <TextSpan>[
                         TextSpan(
                           text:

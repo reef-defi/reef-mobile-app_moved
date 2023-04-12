@@ -11,7 +11,7 @@ class SignatureControls extends StatefulWidget {
   const SignatureControls(this._signatureReq, this._confirm, this._cancel, {Key? key}) : super(key: key);
 
   final SignatureRequest _signatureReq;
-  final Future<bool> Function(String password) _confirm;
+  final Future<bool> Function(String? password) _confirm;
   final Function() _cancel;
 
   @override
@@ -49,7 +49,7 @@ class _SignatureControlsState extends State<SignatureControls> {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(children: [
-        if (!(_isBiometricAuthEnabled&&_biometricsIsAvailable)) ...[
+        if (!(useBiometrics)) ...[
           const Divider(
             color: Styles.textLightColor,
             thickness: 1,
@@ -107,6 +107,8 @@ class _SignatureControlsState extends State<SignatureControls> {
     );
   }
 
+  bool get useBiometrics => _isBiometricAuthEnabled&&_biometricsIsAvailable;
+
   Row buildButtons(BuildContext context) {
     return Row(
   children: [
@@ -127,7 +129,7 @@ class _SignatureControlsState extends State<SignatureControls> {
             padding: const EdgeInsets.symmetric(vertical: 16),
           ),
           onPressed: () async {
-            var success = await widget._confirm(_passwordController.text);
+            var success = await widget._confirm(useBiometrics ? null : _passwordController.text);
             setState(() {
               _passwordSuccess = success;
             });
@@ -155,7 +157,7 @@ class _SignatureControlsState extends State<SignatureControls> {
             ),
             shadowColor: const Color(0x559d6cff),
             elevation: 5,
-            backgroundColor: Styles.primaryAccentColor,
+            backgroundColor: Styles.greyColor,
             padding: const EdgeInsets.symmetric(
               vertical: 16, 
               horizontal: 20
@@ -165,11 +167,12 @@ class _SignatureControlsState extends State<SignatureControls> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.cancel, size: 18),
-              const SizedBox(width: 8),
+              // const Icon(Icons.cancel, size: 18, color: Styles.textColor),
+              // const SizedBox(width: 8),
               Text(
                 AppLocalizations.of(context)!.cancel,
                 style: const TextStyle(
+                  color: Styles.textColor,
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
                 ),

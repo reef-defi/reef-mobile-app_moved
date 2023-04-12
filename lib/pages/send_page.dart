@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -709,45 +710,58 @@ class _SendPageState extends State<SendPage> {
   SizedBox buildSendStatusButton(TokenWithAmount selectedToken) {
     return SizedBox(
       width: double.infinity,
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-          shadowColor: const Color(0x559d6cff),
-          elevation: 0,
-          backgroundColor: (statusValue == SendStatus.READY)
-              ? const Color(0xffe6e2f1)
-              : Colors.transparent,
-          padding: const EdgeInsets.all(0),
-        ),
-        onPressed: () => {_onConfirmSend(selectedToken)},
-        child: Ink(
-          width: double.infinity,
-          padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 22),
-          decoration: BoxDecoration(
-            color: const Color(0xffe6e2f1),
-            gradient: (statusValue == SendStatus.READY)
-                ? const LinearGradient(colors: [
-                    Color(0xffae27a5),
-                    Color(0xff742cb2),
-                  ])
-                : null,
-            borderRadius: const BorderRadius.all(Radius.circular(14.0)),
-          ),
-          child: Center(
-            child: Text(
-              getSendBtnLabel(statusValue),
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-                color: (statusValue != SendStatus.READY)
-                    ? const Color(0x65898e9c)
-                    : Colors.white,
+      child: statusValue != SendStatus.SIGNING
+          ? ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14)),
+                shadowColor: const Color(0x559d6cff),
+                elevation: 0,
+                backgroundColor: (statusValue == SendStatus.READY)
+                    ? const Color(0xffe6e2f1)
+                    : Colors.transparent,
+                padding: const EdgeInsets.all(0),
               ),
+              onPressed: () => {_onConfirmSend(selectedToken)},
+              child: Ink(
+                width: double.infinity,
+                padding:
+                    const EdgeInsets.symmetric(vertical: 15, horizontal: 22),
+                decoration: BoxDecoration(
+                  color: const Color(0xffe6e2f1),
+                  gradient: (statusValue == SendStatus.READY)
+                      ? const LinearGradient(colors: [
+                          Color(0xffae27a5),
+                          Color(0xff742cb2),
+                        ])
+                      : null,
+                  borderRadius: const BorderRadius.all(Radius.circular(14.0)),
+                ),
+                child: Center(
+                  child: Text(
+                    getSendBtnLabel(statusValue),
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: (statusValue != SendStatus.READY)
+                          ? const Color(0x65898e9c)
+                          : Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            )
+          : Column(
+              children: [
+                Text('Generating Signature'),
+                Gap(12),
+                LinearProgressIndicator(
+                  valueColor:
+                      AlwaysStoppedAnimation<Color>(Styles.primaryAccentColor),
+                  backgroundColor: Styles.greyColor,
+                )
+              ],
             ),
-          ),
-        ),
-      ),
     );
   }
 
@@ -780,9 +794,11 @@ class _SendPageState extends State<SendPage> {
 
     if (stat == SendStatus.ERROR) {
       //index = 'Transaction Error';
+      print('send tx error');
     }
     if (stat == SendStatus.CANCELED) {
       //title = 'Transaction Canceled';
+      print('send tx canceled');
     }
     if (stat == SendStatus.SENDING) {
       index = 0;
@@ -796,7 +812,7 @@ class _SendPageState extends State<SendPage> {
     if (stat == SendStatus.FINALIZED) {
       index = 3;
     }
-
+    // index = 2;
     if (stat == SendStatus.NOT_FINALIZED) {
       // title = 'NOT finalized!';
     }
@@ -811,6 +827,7 @@ class _SendPageState extends State<SendPage> {
           child: ReefStepper(
             currentStep: index,
             steps: steps(stat, index),
+            displayStepProgressIndicator: true,
             controlsBuilder: (context, details) {
               if ((index ?? 0) >= 3) {
                 return Padding(
@@ -854,9 +871,6 @@ class _SendPageState extends State<SendPage> {
             state: getStepState(stat, 0, index),
             title: Text(
               'Sending Transaction',
-              style: TextStyle(
-                  fontSize: index == 0 ? 25 : 20,
-                  color: Colors.purple.shade400),
             ),
             content: Padding(
               padding: const EdgeInsets.all(20),
@@ -864,7 +878,7 @@ class _SendPageState extends State<SendPage> {
                 direction: Axis.horizontal,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const SizedBox(
+                  /*const SizedBox(
                     height: 18,
                     width: 18,
                     child: CircularProgressIndicator(
@@ -874,10 +888,10 @@ class _SendPageState extends State<SendPage> {
                   ),
                   const SizedBox(
                     width: 8,
-                  ),
+                  ),*/
                   Flexible(
                       child: Text(
-                    "Sending Transaction to the network...",
+                    "Sending Transaction to the network ...",
                     style: TextStyle(fontSize: 16, color: Colors.grey.shade700),
                   )),
                 ],
@@ -886,10 +900,7 @@ class _SendPageState extends State<SendPage> {
         ReefStep(
             state: getStepState(stat, 1, index),
             title: Text(
-              'Transaction Sent',
-              style: TextStyle(
-                  fontSize: index == 1 ? 25 : 20,
-                  color: Colors.purple.shade400),
+              'Adding to Chain',
             ),
             content: Padding(
               padding: const EdgeInsets.all(20),
@@ -897,9 +908,9 @@ class _SendPageState extends State<SendPage> {
                 direction: Axis.horizontal,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const SizedBox(
-                    height: 18,
-                    width: 18,
+                  /*const SizedBox(
+                    height: 28,
+                    width: 28,
                     child: CircularProgressIndicator(
                       color: Colors.deepPurple,
                       strokeWidth: 3,
@@ -907,10 +918,10 @@ class _SendPageState extends State<SendPage> {
                   ),
                   const SizedBox(
                     width: 8,
-                  ),
+                  ),*/
                   Flexible(
                       child: Text(
-                    "Waiting to be included in a Block...",
+                    "Waiting to be included in next Block...",
                     style: TextStyle(fontSize: 16, color: Colors.grey.shade700),
                   )),
                 ],
@@ -919,10 +930,7 @@ class _SendPageState extends State<SendPage> {
         ReefStep(
             state: getStepState(stat, 2, index),
             title: Text(
-              'Transaction in Block',
-              style: TextStyle(
-                  fontSize: index == 2 ? 25 : 20,
-                  color: Colors.purple.shade400),
+              'Sealing the Block',
             ),
             content: Padding(
               padding: const EdgeInsets.all(20),
@@ -930,7 +938,7 @@ class _SendPageState extends State<SendPage> {
                 direction: Axis.horizontal,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const SizedBox(
+                  /*const SizedBox(
                     height: 18,
                     width: 18,
                     child: CircularProgressIndicator(
@@ -940,23 +948,22 @@ class _SendPageState extends State<SendPage> {
                   ),
                   const SizedBox(
                     width: 8,
-                  ),
-                  Text(
-                    "Waiting for finalization...",
+                  ),*/
+                  Flexible(
+                      child: Text(
+                    "After this transaction has unreversible finality.",
                     style: TextStyle(fontSize: 16, color: Colors.grey.shade700),
-                  ),
+                  )),
                 ],
               ),
             )),
         ReefStep(
             state: getStepState(stat, 3, index),
             title: Text(
-              'Transaction Success',
-              style: TextStyle(
-                  fontSize: index == 3 ? 25 : 20,
-                  color: Colors.purple.shade400),
+              'Transaction Finalized',
             ),
-            content: const SizedBox()),
+            content: const SizedBox(),
+            icon: Icons.lock),
       ];
 
   ReefStepState getStepState(SendStatus stat, int stepIndex, int currentIndex) {
@@ -980,7 +987,7 @@ class _SendPageState extends State<SendPage> {
         break;
       default:
         if (currentIndex == stepIndex) {
-          return ReefStepState.indexed;
+          return ReefStepState.editing;
         } else if (stepIndex < currentIndex) {
           return ReefStepState.complete;
         }
