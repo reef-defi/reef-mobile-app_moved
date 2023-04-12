@@ -5,7 +5,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:gap/gap.dart';
 import 'package:mobx/mobx.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:reef_mobile_app/components/modals/qr_code_scanner.dart';
+import 'package:reef_mobile_app/components/getQrTypeData.dart';
 import 'package:reef_mobile_app/components/modals/select_account_modal.dart';
 import 'package:reef_mobile_app/components/send/custom_stepper.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
@@ -17,10 +17,14 @@ import 'package:reef_mobile_app/utils/functions.dart';
 import 'package:reef_mobile_app/utils/icon_url.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 
+import '../components/modals/alert_modal.dart';
+
 class SendPage extends StatefulWidget {
   final String preselected;
+  String? preSelectedTransferAddress;
 
-  const SendPage(this.preselected, {Key? key}) : super(key: key);
+  SendPage(this.preselected, {Key? key, this.preSelectedTransferAddress})
+      : super(key: key);
 
   @override
   State<SendPage> createState() => _SendPageState();
@@ -56,6 +60,14 @@ class _SendPageState extends State<SendPage> {
     setState(() {
       selectedTokenAddress = widget.preselected;
     });
+
+    if (widget.preSelectedTransferAddress != null) {
+      setState(() {
+        valueController.text = widget.preSelectedTransferAddress!;
+        address = widget.preSelectedTransferAddress!;
+        statusValue = SendStatus.NO_AMT;
+      });
+    }
 
     //checking if selected token is REEF or not
     if (widget.preselected == Constants.REEF_TOKEN_ADDRESS) {
@@ -434,7 +446,8 @@ class _SendPageState extends State<SendPage> {
                 controller: valueController,
                 onChanged: (text) async {
                   setState(() {
-                    address = valueController.text.trim();
+                    address = text
+                        .trim(); // update the address variable with the new value
                   });
 
                   var state = await _validate(address, selectedToken, amount);
@@ -472,15 +485,25 @@ class _SendPageState extends State<SendPage> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
+                  // onPressed: () {
+                  //   showAddressScannerModal(
+                  //       AppLocalizations.of(context)!.scan_address,
+                  //       (ReefQrCode qrCode) async {
+                  //     setState(() {
+                  //       if (qrCode.type == "address") {
+                  //         address = qrCode.data;
+                  //         valueController.text = address;
+                  //       }else{
+                  //         Navigator.of(context).pop();
+                  //         showAlertModal("Invalid QR Code", ["This is an invalid QR code!","You can know more about this QR code from the 'Scan QR' option in Settings "]);
+                  //       }
+                  //     });
+                  //   });
+                  // },
                   onPressed: () {
-                    showQrCodeScannerModal(
-                        AppLocalizations.of(context)!.scan_address,
-                        (selectedAddress) async {
-                      setState(() {
-                        address = selectedAddress.trim();
-                        valueController.text = address;
-                      });
-                    });
+                    showQrTypeDataModal(
+                        AppLocalizations.of(context)!.scan_address, context,
+                        expectedType: ReefQrCodeType.address);
                   },
                   child: const Icon(
                     Icons.qr_code_scanner_sharp,

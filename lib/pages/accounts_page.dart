@@ -1,15 +1,23 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:reef_mobile_app/components/accounts/accounts_list.dart';
+import 'package:reef_mobile_app/components/getQrTypeData.dart';
 import 'package:reef_mobile_app/components/modals/account_modals.dart';
+import 'package:reef_mobile_app/components/modals/export_qr_account_modal.dart';
+import 'package:reef_mobile_app/components/modals/import_account_from_qr.dart';
+import 'package:reef_mobile_app/components/modals/restore_json_modal.dart';
 import 'package:reef_mobile_app/components/modals/add_account_modal.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/account/AccountCtrl.dart';
+import 'package:reef_mobile_app/model/account/stored_account.dart';
 import 'package:reef_mobile_app/model/navigation/navigation_model.dart';
 import 'package:reef_mobile_app/model/status-data-object/StatusDataObject.dart';
+import 'package:reef_mobile_app/utils/account_profile.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 
 import '../components/sign/SignatureContentToggle.dart';
@@ -24,6 +32,8 @@ class AccountsPage extends StatefulWidget {
 }
 
 class _AccountsPageState extends State<AccountsPage> {
+  final svgData = AccountProfile.iconSvg;
+
   // TODO replace strings with enum
   void openModal(String modalName) {
     switch (modalName) {
@@ -32,6 +42,14 @@ class _AccountsPageState extends State<AccountsPage> {
         break;
       case 'importAccount':
         showCreateAccountModal(context, fromMnemonic: true);
+        break;
+      case 'restoreJSON':
+        showRestoreJson(context);
+        break;
+      case 'importFromQR':
+        showQrTypeDataModal(
+            AppLocalizations.of(context)!.import_the_account, context,
+            expectedType: ReefQrCodeType.accountJson);
         break;
       default:
         break;
@@ -74,8 +92,9 @@ class _AccountsPageState extends State<AccountsPage> {
                     (addr) async {
               await ReefAppState.instance.accountCtrl.setSelectedAddress(addr);
               ReefAppState.instance.navigationCtrl.navigateHomePage(0);
-    
-              var navigateOnAccountSwitch = ReefAppState.instance.model.appConfig.navigateOnAccountSwitch;
+
+              var navigateOnAccountSwitch =
+                  ReefAppState.instance.model.appConfig.navigateOnAccountSwitch;
               if (navigateOnAccountSwitch)
                 ReefAppState.instance.navigationCtrl
                     .navigate(NavigationPage.home);

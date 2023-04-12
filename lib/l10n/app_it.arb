@@ -101,5 +101,13 @@
 "share_address_qr":"Condividi indirizzo nativo",
 "scan_from_image":"scansione da foto",
 "select_account":"selezionare conto",
-"go_to_home_on_account_switch":"Vai a Home al cambio di account"
+"go_to_home_on_account_switch":"Vai a Home al cambio di account",
+ "restore_from_json":"Ripristina da JSON",
+  "import_from_qr_code":"Importa da codice QR",
+  "enter_password_for":"conto di esportazione",
+  "export_account":"conto di esportazione",
+  "invalid_qr_code":"Codice QR non valido",
+  "invalid_qr_msg1":"Questo è un codice QR non valido!",
+  "invalid_qr_msg2":"Puoi saperne di più su questo codice QR dall'opzione 'Scansiona QR' in Impostazioni",
+   "get_qr_information":"Ottieni informazioni QR"
 }

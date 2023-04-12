@@ -7,7 +7,6 @@ import 'package:mobx/mobx.dart';
 import 'package:reef_mobile_app/components/modals/signing_modals.dart';
 import '../sign/SignatureContentToggle.dart';
 import 'package:reef_mobile_app/components/modal.dart';
-import 'package:reef_mobile_app/components/modals/qr_code_scanner.dart';
 import 'package:reef_mobile_app/components/modals/select_account_modal.dart';
 import 'package:reef_mobile_app/components/send/custom_stepper.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';

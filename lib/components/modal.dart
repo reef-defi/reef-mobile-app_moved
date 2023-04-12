@@ -87,8 +87,9 @@ class CustomModalState extends State<CustomModal>
 
   @override
   void dispose() {
-    super.dispose();
     _scaleController.dispose();
+    _fadeController.dispose();
+    super.dispose();
   }
 
   @override
@@ -129,9 +130,9 @@ class CustomModalState extends State<CustomModal>
                                     Text(
                                       widget.headText,
                                       style: GoogleFonts.spaceGrotesk(
-                                          fontSize: 18,
+                                          fontSize: 24,
                                           color: widget.textColor,
-                                          fontWeight: FontWeight.w500),
+                                          fontWeight: FontWeight.bold),
                                     ),
                                   ],
                                 ),

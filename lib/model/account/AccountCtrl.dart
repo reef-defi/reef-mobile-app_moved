@@ -44,6 +44,14 @@ class AccountCtrl {
     return await _jsApi.jsPromise('window.keyring.generate()');
   }
 
+  Future<dynamic> restoreJson(Map<String,dynamic> file,String password) async {
+    return await _jsApi.jsPromise('window.keyring.restoreJson(${jsonEncode(file)},"$password")');
+  }
+
+  Future<dynamic> exportAccountQr(String address,String password) async {
+    return await _jsApi.jsPromise('window.keyring.exportAccountQr("$address","$password")');
+  }
+
   Future<bool> checkMnemonicValid(String mnemonic) async {
     var isValid = await _jsApi
         .jsPromise('window.keyring.checkMnemonicValid("$mnemonic")');
@@ -189,8 +197,8 @@ void _initSavedDeviceAccountAddress(StorageService storage) async {
       StatusDataObject<List<StatusDataObject<ReefAccount>>> accsListFdm) async {
     var accIcons = [];
 
-    (await _storage.getAllAccounts()).forEach(((account) => {
-          accIcons.add({"address": account.address, "svg": account.svg})
+    (await _storage.getAllAccounts()).forEach(((account){
+          accIcons.add({"address": account.address, "svg": account.svg});
         }));
 
     accsListFdm.data.forEach((accFdm) {
