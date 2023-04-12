@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:reef_mobile_app/components/generateQrJsonValue.dart';
+import 'package:reef_mobile_app/components/getQrTypeData.dart';
 import 'package:reef_mobile_app/components/modal.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/pages/SplashScreen.dart';
@@ -60,7 +61,7 @@ class _ExportQrAccountState extends State<ExportQrAccount> {
       child: Column(
         children: [
           if(data!=null)
-          GenerateQrJsonValue(type: "account-json", data: data!),
+          GenerateQrJsonValue(type: ReefQrCodeType.accountJson, data: data!),
             if(!_isLoading && data==null)
                         Column(
                           children: [

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:reef_mobile_app/components/generateQrJsonValue.dart';
+import 'package:reef_mobile_app/components/getQrTypeData.dart';
 import 'package:reef_mobile_app/components/modal.dart';
 import 'package:reef_mobile_app/pages/SplashScreen.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
@@ -18,7 +19,7 @@ class QRCodeGenerator extends StatelessWidget {
     return Center(
       child: Column(
         children: [
-          GenerateQrJsonValue(type: "address", data: data),
+          GenerateQrJsonValue(type: ReefQrCodeType.address, data: data),
           const SizedBox(
             height: 8,
           ),

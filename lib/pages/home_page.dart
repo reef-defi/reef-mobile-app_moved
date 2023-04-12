@@ -253,6 +253,7 @@ class _HomePageState extends State<HomePage> {
         child: AddAccount(callback: callback), headText: title);
   }
 
+  // TODO convert modal name to Enum vlaue
   void openModal(String modalName) {
     switch (modalName) {
       case 'addAccount':
@@ -265,7 +266,9 @@ class _HomePageState extends State<HomePage> {
         showRestoreJson(context);
         break;
       case 'importFromQR':
-        showQrTypeDataModal(AppLocalizations.of(context)!.import_the_account, context,expectedType: "account-json");
+        showQrTypeDataModal(
+            AppLocalizations.of(context)!.import_the_account, context,
+            expectedType: ReefQrCodeType.accountJson);
         break;
       default:
         break;

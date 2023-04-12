@@ -33,6 +33,7 @@ class AccountsPage extends StatefulWidget {
 
 class _AccountsPageState extends State<AccountsPage> {
   final svgData = AccountProfile.iconSvg;
+
   // TODO replace strings with enum
   void openModal(String modalName) {
     switch (modalName) {
@@ -46,7 +47,9 @@ class _AccountsPageState extends State<AccountsPage> {
         showRestoreJson(context);
         break;
       case 'importFromQR':
-        showQrTypeDataModal(AppLocalizations.of(context)!.import_the_account, context,expectedType: "account-json");
+        showQrTypeDataModal(
+            AppLocalizations.of(context)!.import_the_account, context,
+            expectedType: ReefQrCodeType.accountJson);
         break;
       default:
         break;
