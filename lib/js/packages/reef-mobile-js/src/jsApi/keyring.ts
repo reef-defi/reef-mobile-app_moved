@@ -1,3 +1,5 @@
+import { u8aToHex , hexToU8a } from "@polkadot/util";
+import { naclKeypairFromSeed  } from "@polkadot/util-crypto";
 import { Keyring as ReefKeyring } from "@reef-defi/keyring";
 import {
     mnemonicGenerate,
@@ -98,14 +100,43 @@ function checkMnemonicValid(mnemonic: string): any {
     return mnemonicValidate(mnemonic).toString();
 }
 
+// Check if private key is valid or not
+function checkKeyValidity(privateKey: string): boolean {
+    try {
+      // Convert the private key from hex to Uint8Array format
+      const privateKeyBytes = hexToU8a(privateKey);
+  
+      // Generate the keypair from the seed (private key)
+      const keypair = naclKeypairFromSeed(privateKeyBytes);
+  
+      // Convert the public key to hex format and verify it starts with the Polkadot prefix "0x" followed by 64 hexadecimal characters
+      const publicKeyHex = u8aToHex(keypair.publicKey);
+      if (publicKeyHex.length !== 66 || !publicKeyHex.startsWith('0x')) {
+        return false;
+      }
+  
+      // The private key is valid if no errors were thrown
+      return true;
+    } catch {
+      // An error was thrown, so the private key is invalid
+      return false;
+    }
+  }
+
 // Restore account from JSON
 async function restoreJson(file:KeyringPair$Json,password:string):Promise<any> {
     try {
-        return kr.restoreAccount(file, password);
+        const pair = kr.getPair(file.address);
+        pair.decodePkcs8(password);
+        const privateKey = u8aToHex(pair.publicKey);
+        const data = kr.restoreAccount(file, password);
+        data["privateKey"] = privateKey;
+        return data;
     } catch (error) {
         return "error";
     }
 }
+
 
 // Add External account
 function exportAccountQr(address:string, password:string): any  {
@@ -138,5 +169,6 @@ export default {
     accountFromMnemonic,
     checkMnemonicValid,
     restoreJson,
-    exportAccountQr
+    exportAccountQr,
+    checkKeyValidity
 };
