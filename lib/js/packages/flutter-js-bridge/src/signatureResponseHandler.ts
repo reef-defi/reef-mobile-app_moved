@@ -1,8 +1,9 @@
 import {Handler} from "./FlutterConnector";
 import signer from "reef-mobile-js/src/jsApi/signing/signer";
 import {SignerPayloadJSON, SignerPayloadRaw} from "@polkadot/types/types";
+import {KeyringPair$Json } from '@polkadot/keyring/types';
 
-export default function signatureResponseMsgHandler(handlerObj: Handler, value: any): Promise<any> {
+export default function signatureResponseMsgHandler(handlerObj: Handler, value:any): Promise<any> {
     let signaturePromise: Promise<string>;
     if (value==='_canceled') {
         return Promise.reject(new Error('_canceled'));
