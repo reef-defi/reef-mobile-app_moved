@@ -77,9 +77,6 @@ class _QrDataDisplayState extends State<QrDataDisplay> {
         actOnQrCodeValue(qrCodeValue!);
         return;
       }
-
-      print("anuna ${qrCodeValue?.type}");
-
       qrTypeLabel = getQrDataTypeMessage(qrCodeValue?.type);
     });
   }

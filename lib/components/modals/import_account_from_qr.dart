@@ -39,7 +39,7 @@ class _ImportAccountQrState extends State<ImportAccountQr> {
         showAlertModal("Incorrect Password", ["The password you entered is Incorrect!","Please enter the same password you entered while exporting this account. "]);
         }else{
         response['svg']=svgData;
-        response['mnemonic']="";
+        response['mnemonic']=json.decode(qrCode!.data)["address"]+"+"+_passwordController.text;
         response['name']=_nameController.text.trim();
         final importedAccount = StoredAccount.fromString(jsonEncode(response).toString());
         await ReefAppState.instance.accountCtrl.saveAccount(importedAccount);
