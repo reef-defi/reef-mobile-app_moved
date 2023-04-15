@@ -87,8 +87,10 @@ Future<void> _selectFile() async {
           ),
         );
         }
+        
         response['svg']=svgData;
-        response['mnemonic']="";
+        // while importing from account.json file we won't get mnemonics but we are extracting meaningful info with which we can sign tx : address and pass
+        response['mnemonic']=jsonData["address"]+"+"+password;
         response['name']=response['meta']['name'];
         final importedAccount = StoredAccount.fromString(jsonEncode(response).toString());
         await ReefAppState.instance.accountCtrl.saveAccount(importedAccount);
