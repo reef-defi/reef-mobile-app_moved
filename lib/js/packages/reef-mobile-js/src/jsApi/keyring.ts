@@ -126,12 +126,7 @@ function checkKeyValidity(privateKey: string): boolean {
 // Restore account from JSON
 async function restoreJson(file:KeyringPair$Json,password:string):Promise<any> {
     try {
-        const pair = kr.getPair(file.address);
-        pair.decodePkcs8(password);
-        const privateKey = u8aToHex(pair.publicKey);
-        const data = kr.restoreAccount(file, password);
-        data["privateKey"] = privateKey;
-        return data;
+        return kr.restoreAccount(file, password);
     } catch (error) {
         return "error";
     }
@@ -178,5 +173,6 @@ export default {
     checkMnemonicValid,
     restoreJson,
     exportAccountQr,
-    checkKeyValidity
+    checkKeyValidity,
+    krFromJson
 };
