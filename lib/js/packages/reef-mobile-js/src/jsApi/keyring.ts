@@ -136,6 +136,14 @@ async function restoreJson(file:KeyringPair$Json,password:string):Promise<any> {
         return "error";
     }
 }
+// create keyring from json
+async function krFromJson(file:KeyringPair$Json):Promise<any> {
+    try {
+        return kr.createFromJson(file);
+    } catch (error) {
+        return "error";
+    }
+}
 
 
 // Add External account
