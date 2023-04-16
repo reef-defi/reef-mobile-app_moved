@@ -165,6 +165,20 @@ function genIcons(addresses: string[]): string[][] {
     });
 }
 
+function changeAccountPassword (address:string, newPass:string, oldPass:string ): boolean {
+    const pair = kr.getPair(address);
+    try {
+      if (!pair.isLocked) {
+        pair.lock();
+      }
+      pair.decodePkcs8(oldPass);
+    } catch (error) {
+      throw new Error('oldPass is invalid');
+    }
+    kr.encryptAccount(pair, newPass);
+    return true;
+  }
+
 export default {
     initWasm,
     generate,
@@ -174,5 +188,6 @@ export default {
     restoreJson,
     exportAccountQr,
     checkKeyValidity,
-    krFromJson
+    krFromJson,
+    changeAccountPassword
 };
