@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:reef_mobile_app/components/modal.dart';
+import 'package:reef_mobile_app/model/StorageKey.dart';
 import 'package:reef_mobile_app/model/account/stored_account.dart';
 import 'package:reef_mobile_app/pages/SplashScreen.dart';
+import 'package:reef_mobile_app/utils/password_manager.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:path/path.dart' as path;
@@ -95,6 +97,8 @@ Future<void> _selectFile() async {
         final importedAccount = StoredAccount.fromString(jsonEncode(response).toString());
         await ReefAppState.instance.accountCtrl.saveAccount(importedAccount);
 
+        //update the password in this stored instance and for account json in backend
+        PasswordManager.updateAccountPassword(importedAccount, await ReefAppState.instance.storageCtrl.getValue(StorageKey.password.name));
         Navigator.pop(context);
 
         // Show success message

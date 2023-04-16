@@ -53,7 +53,7 @@ class AccountCtrl {
   }
 
   Future<dynamic> changeAccountPassword(String address,String newPass,String oldPass) async {
-    return await _jsApi.jsPromise('window.keyring.exportAccountQr("$address","$newPass","$oldPass")');
+    return await _jsApi.jsPromise('window.keyring.changeAccountPassword("$address","$newPass","$oldPass")');
   }
 
   Future<bool> checkMnemonicValid(String mnemonic) async {
