@@ -102,6 +102,8 @@ class _ExportQrAccountState extends State<ExportQrAccount> {
                         setState(() {
                           _exportWithDiffPass = value ?? false;
                           exportingText = value!?"exporting with custom password":"exporting with app password";
+                        _isButtonEnabled =
+                            _passwordController.text.isEmpty || (_exportPasswordController.text.isEmpty && _exportWithDiffPass) ? false : true;
                         });
                       },
                     ),
