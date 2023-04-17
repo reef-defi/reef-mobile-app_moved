@@ -6,6 +6,7 @@ import 'package:reef_mobile_app/components/generateQrJsonValue.dart';
 import 'package:reef_mobile_app/components/getQrTypeData.dart';
 import 'package:reef_mobile_app/components/modal.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
+import 'package:reef_mobile_app/model/StorageKey.dart';
 import 'package:reef_mobile_app/pages/SplashScreen.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:reef_mobile_app/utils/password_manager.dart';
@@ -33,10 +34,11 @@ class _ExportQrAccountState extends State<ExportQrAccount> {
   void _onPressedNext() async {
     setState(() {
       _isLoading = true;
+      errorMessage = "";
     });
     String password = _passwordController.text;
     String differentPassword = _exportPasswordController.text;
-    if (_exportWithDiffPass) {
+    if (_exportWithDiffPass && password == await ReefAppState.instance.storageCtrl.getValue(StorageKey.password.name)) {
       print("EXPORTING WITH DIFFERENT PASSWORD");
       await ReefAppState.instance.accountCtrl
           .changeAccountPassword(widget.address, differentPassword, password);
@@ -51,6 +53,7 @@ class _ExportQrAccountState extends State<ExportQrAccount> {
         errorMessage = AppLocalizations.of(context)!.incorrect_password;
         _isLoading = false;
         _passwordController.text = "";
+        _exportPasswordController.text = "";
       });
     } else {
       Map<String, dynamic> response = {};
