@@ -6,8 +6,10 @@ import 'package:reef_mobile_app/components/getQrTypeData.dart';
 import 'package:reef_mobile_app/components/modal.dart';
 import 'package:reef_mobile_app/components/modals/alert_modal.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
+import 'package:reef_mobile_app/model/StorageKey.dart';
 import 'package:reef_mobile_app/model/account/stored_account.dart';
 import 'package:reef_mobile_app/pages/SplashScreen.dart';
+import 'package:reef_mobile_app/utils/password_manager.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 import 'package:reef_mobile_app/utils/account_profile.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -30,9 +32,10 @@ class _ImportAccountQrState extends State<ImportAccountQr> {
   TextEditingController _nameController = TextEditingController();
   
   void _onPressedNext()async{
-    setState(() {
-      isLoading = true;
-    });
+    if(await PasswordManager.checkIfPassword()){
+      setState(() {
+        isLoading = true;
+      });
          final response = await ReefAppState.instance.accountCtrl.restoreJson(json.decode(qrCode!.data),_passwordController.text);
         if(response=="error"){
         Navigator.of(context).pop();
@@ -43,8 +46,24 @@ class _ImportAccountQrState extends State<ImportAccountQr> {
         response['name']=_nameController.text.trim();
         final importedAccount = StoredAccount.fromString(jsonEncode(response).toString());
         await ReefAppState.instance.accountCtrl.saveAccount(importedAccount);
+        
+        //update the password in this stored instance and for account json in backend
+        PasswordManager.updateAccountPassword(importedAccount, await ReefAppState.instance.storageCtrl.getValue(StorageKey.password.name));
+
         Navigator.pop(context);
+
+        // Show success message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Account Imported Successfully.'),
+            duration: Duration(seconds: 2),
+          ),
+        );
         }
+    }else{
+      Navigator.pop(context);
+          showAlertModal("Error Encountered", ["You need to set a password before importing accounts!","Go to Settings → Change Password\nchoose a password for all your accounts"]);
+    }
   }
 
   @override
