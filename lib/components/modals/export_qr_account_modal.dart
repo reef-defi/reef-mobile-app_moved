@@ -28,6 +28,7 @@ class _ExportQrAccountState extends State<ExportQrAccount> {
   bool _isLoading = false;
   bool _exportWithDiffPass = false;
   String errorMessage = "";
+  String exportingText = "Exporting with app password";
 
   void _onPressedNext() async {
     setState(() {
@@ -97,6 +98,7 @@ class _ExportQrAccountState extends State<ExportQrAccount> {
                       onChanged: (bool? value) {
                         setState(() {
                           _exportWithDiffPass = value ?? false;
+                          exportingText = value!?"exporting with custom password":"exporting with app password";
                         });
                       },
                     ),
@@ -168,7 +170,7 @@ class _ExportQrAccountState extends State<ExportQrAccount> {
                     onChanged: (value) {
                       setState(() {
                         _isButtonEnabled =
-                            _passwordController.text.isEmpty ? false : true;
+                            _passwordController.text.isEmpty  ? false : true;
                       });
                     },
                   ),
@@ -176,9 +178,16 @@ class _ExportQrAccountState extends State<ExportQrAccount> {
               ],
             ),
           if (_isLoading)
-            CircularProgressIndicator(
-              color: Styles.primaryAccentColor,
-            ),
+            Center(
+              child: Column(children: [
+              Text(exportingText),
+              Gap(8),
+              LinearProgressIndicator(
+                valueColor:
+                    AlwaysStoppedAnimation<Color>(Styles.primaryAccentColor),
+                backgroundColor: Styles.greyColor,
+              )
+            ])),
           if (errorMessage != "")
             Text(
               errorMessage,
