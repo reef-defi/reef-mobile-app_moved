@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:reef_mobile_app/components/modal.dart';
+import 'package:reef_mobile_app/components/modals/alert_modal.dart';
 import 'package:reef_mobile_app/model/StorageKey.dart';
 import 'package:reef_mobile_app/model/account/stored_account.dart';
 import 'package:reef_mobile_app/pages/SplashScreen.dart';
@@ -25,6 +26,7 @@ class _RestoreJSONState extends State<RestoreJSON> {
   File? _selectedFile;
   TextEditingController _passwordController = TextEditingController();
   bool _isButtonEnabled = false;
+
   final svgData = """
 <svg viewBox='0 0 64 64' xmlns='http://www.w3.org/2000/svg'>
   <circle cx='32' cy='32' fill='#eee' r='32' />
@@ -74,6 +76,7 @@ Future<void> _selectFile() async {
 
      if (_selectedFile != null && password.isNotEmpty) {
       try {
+        if(await PasswordManager.checkIfPassword()){
         // Read JSON file
         String jsonString = _selectedFile!.readAsStringSync();
         Map<String, dynamic> jsonData = jsonDecode(jsonString);
@@ -96,7 +99,7 @@ Future<void> _selectFile() async {
         response['name']=response['meta']['name'];
         final importedAccount = StoredAccount.fromString(jsonEncode(response).toString());
         await ReefAppState.instance.accountCtrl.saveAccount(importedAccount);
-
+        
         //update the password in this stored instance and for account json in backend
         PasswordManager.updateAccountPassword(importedAccount, await ReefAppState.instance.storageCtrl.getValue(StorageKey.password.name));
         Navigator.pop(context);
@@ -108,6 +111,10 @@ Future<void> _selectFile() async {
             duration: Duration(seconds: 2),
           ),
         );
+        }else{
+          Navigator.pop(context);
+          showAlertModal("Error", ["You need to set a password before importing accounts!"]);
+        }
       } catch (e) {
         // Show error message
               ScaffoldMessenger.of(context).showSnackBar(
