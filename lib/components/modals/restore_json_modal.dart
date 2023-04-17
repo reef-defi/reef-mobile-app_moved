@@ -87,7 +87,7 @@ Future<void> _selectFile() async {
           Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Incorrect File Selected!'),
+            content: Text('Incorrect Password!'),
             duration: Duration(seconds: 2),
           ),
         );
@@ -116,13 +116,7 @@ Future<void> _selectFile() async {
           showAlertModal("Error Encountered", ["You need to set a password before importing accounts!","Go to Settings → Change Password\nchoose a password for all your accounts"]);
         }
       } catch (e) {
-        // Show error message
-              ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Wrong Password!'),
-          duration: Duration(seconds: 2),
-        ),
-      );
+        print("ENCOUNTERED AN ERROR: $e");
     }
   }
   setState(() {
