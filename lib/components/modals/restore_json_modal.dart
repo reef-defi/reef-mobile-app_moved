@@ -113,7 +113,7 @@ Future<void> _selectFile() async {
         );
         }else{
           Navigator.pop(context);
-          showAlertModal("Error", ["You need to set a password before importing accounts!"]);
+          showAlertModal("Error Encountered", ["You need to set a password before importing accounts!","Go to Settings → Change Password\nchoose a password for all your accounts"]);
         }
       } catch (e) {
         // Show error message
