@@ -24,8 +24,10 @@ class ExportQrAccount extends StatefulWidget {
 class _ExportQrAccountState extends State<ExportQrAccount> {
   String? data;
   TextEditingController _passwordController = TextEditingController();
+  TextEditingController _exportPasswordController = TextEditingController();
   bool _isButtonEnabled = false;
   bool _isLoading = false;
+  bool _exportWithDiffPass = false;
   String errorMessage="";
 
 
@@ -66,6 +68,61 @@ class _ExportQrAccountState extends State<ExportQrAccount> {
                         Column(
                           children: [
             Text("${AppLocalizations.of(context)!.enter_password_for} ${widget.address}",style: TextStyle(fontSize: 16.0),textAlign: TextAlign.start,),
+            Gap(8.0),
+            Row(
+            children: [
+              Checkbox(
+                visualDensity:
+                    const VisualDensity(horizontal: -4, vertical: -4),
+                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                fillColor: MaterialStateProperty.all<Color>(Styles.primaryAccentColor),
+                value: _exportWithDiffPass,
+                onChanged: (bool? value) {
+                  setState(() {
+                    _exportWithDiffPass = value ?? false;
+                  });
+                },
+              ),
+              const Gap(8),
+              Flexible(
+                child: Text(
+                  "Export with different Password",
+                  style: TextStyle(color: Colors.grey[600]!, fontSize: 14),
+                ),
+              )
+            ],
+          ),
+            if(_exportWithDiffPass)
+            Column(
+              children: [
+              Gap(8.0),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                decoration: BoxDecoration(
+                  color: Styles.whiteColor,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color:  const Color(0x20000000),
+                    width: 1,
+                  ),
+                ),
+                child:  TextField(
+                controller: _exportPasswordController,
+                obscureText: true,
+                decoration: const InputDecoration.collapsed(hintText: 'Export Password'),
+                  style: const TextStyle(
+                    fontSize: 16,
+                  ),
+                onChanged: (value) {
+                  setState(() {
+                    _isButtonEnabled = _passwordController.text.isEmpty?false:true;
+                  });
+                },
+              ),
+              ),
+              ],
+            ),
+                  
             Gap(8.0),
                             Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
