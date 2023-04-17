@@ -141,7 +141,7 @@ class _ExportQrAccountState extends State<ExportQrAccount> {
                           onChanged: (value) {
                             setState(() {
                               _isButtonEnabled =
-                                  _passwordController.text.isEmpty
+                                  (_passwordController.text.isEmpty || (_exportPasswordController.text.isEmpty && _exportWithDiffPass))
                                       ? false
                                       : true;
                             });
@@ -173,7 +173,7 @@ class _ExportQrAccountState extends State<ExportQrAccount> {
                     onChanged: (value) {
                       setState(() {
                         _isButtonEnabled =
-                            _passwordController.text.isEmpty  ? false : true;
+                            _passwordController.text.isEmpty || (_exportPasswordController.text.isEmpty && _exportWithDiffPass) ? false : true;
                       });
                     },
                   ),
