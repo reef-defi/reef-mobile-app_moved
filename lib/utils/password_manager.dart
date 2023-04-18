@@ -17,15 +17,20 @@ class PasswordManager {
     }
   }
 
-  static void updateAccountPassword(
-      StoredAccount account, String newPass) async {
+  static String getOldPass(StoredAccount account){
     // to only split from the first occurence considering that password might contain '+' in it    
     int delimiterIdx = account.mnemonic.indexOf("+");
     List<String> accountElems = [
       account.mnemonic.substring(0, delimiterIdx),
       account.mnemonic.substring(delimiterIdx + 1),
     ];
-    String oldPass = accountElems[1];
+    return accountElems[1];
+  }
+
+  // updates password for json imported account
+  static void updateAccountPassword(
+      StoredAccount account, String newPass) async {
+    final oldPass =getOldPass(account);
     Map<String, dynamic> updatedAccountObj = {
       'name': account.name,
       'svg': account.svg,
@@ -34,7 +39,7 @@ class PasswordManager {
     };
     final updatedAccount =
         StoredAccount.fromString(jsonEncode(updatedAccountObj).toString());
-    ReefAppState.instance.storage.deleteAccount(account.address);
+    ReefAppState.instance.accountCtrl.deleteAccount(account.address);
     ReefAppState.instance.accountCtrl.saveAccount(updatedAccount);
     final accountPassChanged = await ReefAppState.instance.accountCtrl
         .changeAccountPassword(account.address, newPass, oldPass);
@@ -42,12 +47,19 @@ class PasswordManager {
         "CHANGING ACCOUNT PASSWORD FOR ${account.address} - CHANGED PASSWORD :  $accountPassChanged");
   }
 
+  // changes password for all json imported accounts
   static void changePasswordForAll(String newPass) async {
     final allAccounts = await ReefAppState.instance.storage.getAllAccounts();
     for (StoredAccount account in allAccounts) {
-      if (account.mnemonic.contains("+")) {
+      if (isJsonImportedAccount(account.mnemonic)) {
         updateAccountPassword(account, newPass);
       }
     }
+  }
+
+  // checks if account is generated from mnemonic or json
+  static bool isJsonImportedAccount(String accountMnemonic){
+    if(accountMnemonic.contains("+"))return true;
+    return false;
   }
 }
