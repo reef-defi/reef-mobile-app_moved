@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:reef_mobile_app/components/modal.dart';
 import 'package:reef_mobile_app/components/modals/alert_modal.dart';
+import 'package:reef_mobile_app/components/modals/change_password_modal.dart';
 import 'package:reef_mobile_app/model/StorageKey.dart';
 import 'package:reef_mobile_app/model/account/stored_account.dart';
 import 'package:reef_mobile_app/pages/SplashScreen.dart';
@@ -14,7 +15,6 @@ import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:file_picker/file_picker.dart';
 import 'dart:io';
 
-
 class RestoreJSON extends StatefulWidget {
   const RestoreJSON({super.key});
 
@@ -26,6 +26,7 @@ class _RestoreJSONState extends State<RestoreJSON> {
   File? _selectedFile;
   TextEditingController _passwordController = TextEditingController();
   bool _isButtonEnabled = false;
+  bool _isPasswordSet = false;
 
   final svgData = """
 <svg viewBox='0 0 64 64' xmlns='http://www.w3.org/2000/svg'>
@@ -53,55 +54,68 @@ class _RestoreJSONState extends State<RestoreJSON> {
   String _fileButtonText = 'Select file';
   bool _isButtonPressed = false;
 
-Future<void> _selectFile() async {
-  final result = await FilePicker.platform.pickFiles(
-    type: FileType.custom,
-    allowedExtensions: ['json'],
-  );
-
-  if (result != null) {
-    setState(() {
-      _selectedFile = File(result.files.single.path ?? '');
-      _fileButtonText = 'File Selected';
-    });
+  @override
+  void initState() {
+    PasswordManager.checkIfPassword().then((value) => {
+          setState(() {
+            _isPasswordSet = value;
+          })
+        });
+    super.initState();
   }
-}
 
+  Future<void> _selectFile() async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['json'],
+    );
 
-  void _onPressedNext() async{
+    if (result != null) {
       setState(() {
-    _isButtonPressed = true;
-  });
+        _selectedFile = File(result.files.single.path ?? '');
+        _fileButtonText = 'File Selected';
+      });
+    }
+  }
+
+  void _onPressedNext() async {
+    setState(() {
+      _isButtonPressed = true;
+    });
     String password = _passwordController.text;
 
-     if (_selectedFile != null && password.isNotEmpty) {
+    if (_selectedFile != null && password.isNotEmpty) {
       try {
-        if(await PasswordManager.checkIfPassword()){
         // Read JSON file
         String jsonString = _selectedFile!.readAsStringSync();
         Map<String, dynamic> jsonData = jsonDecode(jsonString);
 
         // Decrypt data with password
-        final response = await ReefAppState.instance.accountCtrl.restoreJson(jsonData,password);
-        if(response=="error"){
+        final response = await ReefAppState.instance.accountCtrl
+            .restoreJson(jsonData, password);
+        if (response == "error") {
           Navigator.pop(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Incorrect Password!'),
-            duration: Duration(seconds: 2),
-          ),
-        );
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Incorrect Password!'),
+              duration: Duration(seconds: 2),
+            ),
+          );
         }
-        
-        response['svg']=svgData;
+
+        response['svg'] = svgData;
         // while importing from account.json file we won't get mnemonics but we are extracting meaningful info with which we can sign tx : address and pass
-        response['mnemonic']=jsonData["address"]+"+"+password;
-        response['name']=response['meta']['name'];
-        final importedAccount = StoredAccount.fromString(jsonEncode(response).toString());
+        response['mnemonic'] = jsonData["address"] + "+" + password;
+        response['name'] = response['meta']['name'];
+        final importedAccount =
+            StoredAccount.fromString(jsonEncode(response).toString());
         await ReefAppState.instance.accountCtrl.saveAccount(importedAccount);
-        
+
         //update the password in this stored instance and for account json in backend
-        PasswordManager.updateAccountPassword(importedAccount, await ReefAppState.instance.storageCtrl.getValue(StorageKey.password.name));
+        PasswordManager.updateAccountPassword(
+            importedAccount,
+            await ReefAppState.instance.storageCtrl
+                .getValue(StorageKey.password.name));
         Navigator.pop(context);
 
         // Show success message
@@ -111,128 +125,132 @@ Future<void> _selectFile() async {
             duration: Duration(seconds: 2),
           ),
         );
-        }else{
-          Navigator.pop(context);
-          showAlertModal("Error Encountered", ["You need to set a password before importing accounts!","Go to Settings → Change Password\nchoose a password for all your accounts"]);
-        }
       } catch (e) {
         print("ENCOUNTERED AN ERROR: $e");
+      }
     }
+    setState(() {
+      _isButtonPressed = false;
+    });
   }
-  setState(() {
-    _isButtonPressed = false;
-  });
-}
 
   @override
-Widget build(BuildContext context) {
-  return Stack(
-    
-    children: [
-if (_isButtonPressed)
-        Expanded(
-          child: Container(
-            height: 100,
-            child: Center(
-              child: CircularProgressIndicator(color: Styles.primaryAccentColor,),
-            ),
-          ),
-        ),
-        if (!_isButtonPressed)
-        Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(40)),
-                    shadowColor: const Color(0x559d6cff),
-                    elevation: 5,
-                    backgroundColor: const Color(0xff9d6cff),
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                  ),
-                  onPressed:_selectFile,
-                  child: Builder(
-                    builder: (context) {
-                      return  Text(_fileButtonText,style: TextStyle(fontSize: 16.0),);
-                    }
+  Widget build(BuildContext context) {
+    return Stack(
+      children: !_isPasswordSet
+          ? [
+              ChangePassword(onChanged: () => showRestoreJson(context)),
+            ]
+          : [
+              if (_isButtonPressed)
+                Expanded(
+                  child: Container(
+                    height: 100,
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        color: Styles.primaryAccentColor,
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            SizedBox(height: 16),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-              decoration: BoxDecoration(
-                color: Styles.whiteColor,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color:  const Color(0x20000000),
-                  width: 1,
-                ),
-              ),
-              child:  TextField(
-              controller: _passwordController,
-              obscureText: true,
-              decoration: const InputDecoration.collapsed(hintText: 'Password'),
-                style: const TextStyle(
-                  fontSize: 16,
-                ),
-              onChanged: (value) {
-                setState(() {
-                  _isButtonEnabled = _selectedFile != null && value.isNotEmpty;
-                });
-              },
-            ),
-            ),
-            SizedBox(height: 16),
-            Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(40)),
-                    shadowColor: const Color(0x559d6cff),
-                    elevation: 5,
-                    backgroundColor: _isButtonEnabled
-                        ? const Color(0xff9d6cff)
-                        : Styles.secondaryAccentColor,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                  ),
-                  onPressed: _isButtonEnabled ? _onPressedNext : null,
-                  child: Builder(
-                    builder: (context) {
-                      return Text(
-                        AppLocalizations.of(context)!.import_the_account,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
+              if (!_isButtonPressed)
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                      );
-                    }
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(40)),
+                            shadowColor: const Color(0x559d6cff),
+                            elevation: 5,
+                            backgroundColor: const Color(0xff9d6cff),
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                          ),
+                          onPressed: _selectFile,
+                          child: Builder(builder: (context) {
+                            return Text(
+                              _fileButtonText,
+                              style: TextStyle(fontSize: 16.0),
+                            );
+                          }),
+                        ),
+                      ),
+                      SizedBox(height: 16),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 14),
+                        decoration: BoxDecoration(
+                          color: Styles.whiteColor,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: const Color(0x20000000),
+                            width: 1,
+                          ),
+                        ),
+                        child: TextField(
+                          controller: _passwordController,
+                          obscureText: true,
+                          decoration: const InputDecoration.collapsed(
+                              hintText: 'Password'),
+                          style: const TextStyle(
+                            fontSize: 16,
+                          ),
+                          onChanged: (value) {
+                            setState(() {
+                              _isButtonEnabled =
+                                  _selectedFile != null && value.isNotEmpty;
+                            });
+                          },
+                        ),
+                      ),
+                      SizedBox(height: 16),
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(40)),
+                            shadowColor: const Color(0x559d6cff),
+                            elevation: 5,
+                            backgroundColor: _isButtonEnabled
+                                ? const Color(0xff9d6cff)
+                                : Styles.secondaryAccentColor,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                          ),
+                          onPressed: _isButtonEnabled ? _onPressedNext : null,
+                          child: Builder(builder: (context) {
+                            return Text(
+                              AppLocalizations.of(context)!.import_the_account,
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            );
+                          }),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ),
-             
-          ],
-        ),
-      ),
-      
-      
-    ],
-    );}
+            ],
+    );
+  }
 }
-void showRestoreJson(
-    BuildContext? context) {
-  showModal(context ?? navigatorKey.currentContext,
-      child: RestoreJSON(), headText: AppLocalizations.of(context!)!.restore_from_json,);
+
+void showRestoreJson(BuildContext? context) {
+  showModal(
+    context ?? navigatorKey.currentContext,
+    child: RestoreJSON(),
+    headText: AppLocalizations.of(context!)!.restore_from_json,
+  );
 }
