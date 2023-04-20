@@ -4,11 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:reef_mobile_app/components/modal.dart';
+import 'package:reef_mobile_app/components/modals/change_password_modal.dart';
 import 'package:reef_mobile_app/components/modals/import_account_from_qr.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/utils/constants.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:reef_mobile_app/utils/password_manager.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 import 'package:barcode_finder/barcode_finder.dart';
 
@@ -39,7 +41,7 @@ class _QrDataDisplayState extends State<QrDataDisplay> {
     }
   }
 
-  void actOnQrCodeValue(ReefQrCode qrCode) {
+  void actOnQrCodeValue(ReefQrCode qrCode) async {
     switch (qrCode.type) {
       case ReefQrCodeType.address:
         // popping till it is first page or else there will be 2 send page in the stack if we use this widget on SendPage to scan and send
@@ -54,7 +56,15 @@ class _QrDataDisplayState extends State<QrDataDisplay> {
         break;
       case ReefQrCodeType.accountJson:
         Navigator.pop(context);
-        showImportAccountQrModal(data: qrCode);
+        if (await PasswordManager.checkIfPassword()) {
+          showImportAccountQrModal(data: qrCode);
+        } else {
+          showModal(context,
+              headText: "Choose Password",
+              child: ChangePassword(
+                onChanged: () => showImportAccountQrModal(data: qrCode),
+              ));
+        }
         break;
 
       default:
@@ -157,7 +167,7 @@ class _QrDataDisplayState extends State<QrDataDisplay> {
                         Text(qrTypeLabel ?? ''),
                         Gap(16.0),
                         if (qrCodeValue?.type != "invalid" &&
-                            widget.expectedType == "info")
+                            widget.expectedType == ReefQrCodeType.info)
                           Container(
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(12),
@@ -227,7 +237,4 @@ Future<String?> scanFile() async {
   }
 }
 
-enum ReefQrCodeType {
-  address,
-  accountJson,
-}
+enum ReefQrCodeType { address, accountJson, info }
