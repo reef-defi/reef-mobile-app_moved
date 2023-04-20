@@ -79,7 +79,7 @@ class _QrDataDisplayState extends State<QrDataDisplay> {
         var qrCodeType = ReefQrCodeType.values.byName(decoded["type"]);
         qrCodeValue = ReefQrCode(qrCodeType, decoded["data"]);
       } catch (e) {
-        qrCodeValue = null;
+        qrCodeValue = ReefQrCode(ReefQrCodeType.invalid, "");
       }
 
       if (widget.expectedType != null &&
@@ -166,7 +166,7 @@ class _QrDataDisplayState extends State<QrDataDisplay> {
                       children: [
                         Text(qrTypeLabel ?? ''),
                         Gap(16.0),
-                        if (qrCodeValue?.type != "invalid" &&
+                        if (qrCodeValue?.type != ReefQrCodeType.invalid &&
                             widget.expectedType == ReefQrCodeType.info)
                           Container(
                             decoration: BoxDecoration(
@@ -237,4 +237,4 @@ Future<String?> scanFile() async {
   }
 }
 
-enum ReefQrCodeType { address, accountJson, info }
+enum ReefQrCodeType { address, accountJson, info, invalid }
