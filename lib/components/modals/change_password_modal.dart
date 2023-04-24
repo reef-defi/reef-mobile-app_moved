@@ -5,11 +5,13 @@ import 'package:reef_mobile_app/components/modal.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/StorageKey.dart';
 import 'package:reef_mobile_app/pages/SplashScreen.dart';
+import 'package:reef_mobile_app/utils/password_manager.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ChangePassword extends StatefulWidget {
-  const ChangePassword({Key? key}) : super(key: key);
+  final void Function()? onChanged;
+  ChangePassword({this.onChanged});
   @override
   State<ChangePassword> createState() => _ChangePasswordState();
 }
@@ -270,7 +272,12 @@ class _ChangePasswordState extends State<ChangePassword> {
                             !confirmNewPasswordError) {
                           ReefAppState.instance.storageCtrl
                               .setValue(StorageKey.password.name, newPassword);
+                          // will change password for all the accounts as well
+                          PasswordManager.changePasswordForAll(newPassword);
                           Navigator.of(context).pop();
+                          if (widget.onChanged != null) {
+                            widget.onChanged!();
+                          }
                         }
                       },
                       child: Builder(builder: (context) {
@@ -295,5 +302,5 @@ class _ChangePasswordState extends State<ChangePassword> {
 
 void showChangePasswordModal(String title, {BuildContext? context}) {
   showModal(context ?? navigatorKey.currentContext,
-      child: const ChangePassword(), headText: title);
+      child: ChangePassword(), headText: title);
 }

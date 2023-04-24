@@ -8,6 +8,7 @@ import 'package:reef_mobile_app/components/modals/auth_url_list_modal.dart';
 import 'package:reef_mobile_app/components/modals/change_password_modal.dart';
 import 'package:reef_mobile_app/components/modals/language_selection_modal.dart';
 import 'package:reef_mobile_app/components/switch_network.dart';
+import 'package:reef_mobile_app/utils/password_manager.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
@@ -62,7 +63,7 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
             ),*/
             const Gap(24),
-            Observer(builder: (_){
+            Observer(builder: (_) {
               var navigateOnAccountSwitchVal =
                   ReefAppState.instance.model.appConfig.navigateOnAccountSwitch;
 
@@ -75,18 +76,20 @@ class _SettingsPageState extends State<SettingsPage> {
                     size: 22,
                   ),
                   Gap(9),
-                  Text(AppLocalizations.of(context)!.go_to_home_on_account_switch,
+                  Text(
+                      AppLocalizations.of(context)!
+                          .go_to_home_on_account_switch,
                       style: Theme.of(context).textTheme.bodyText1)
                 ]),
                 value: navigateOnAccountSwitchVal,
                 onChanged: (newValue) {
-                  ReefAppState.instance.appConfigCtrl.setNavigateOnAccountSwitch(newValue==true);
+                  ReefAppState.instance.appConfigCtrl
+                      .setNavigateOnAccountSwitch(newValue == true);
                 },
                 activeColor: Styles.primaryAccentColor,
               );
             }),
-        
-            Observer(builder: (_){
+            Observer(builder: (_) {
               var navigateOnAccountSwitchVal =
                   ReefAppState.instance.model.appConfig.isBiometricAuthEnabled;
 
@@ -104,12 +107,12 @@ class _SettingsPageState extends State<SettingsPage> {
                 ]),
                 value: navigateOnAccountSwitchVal,
                 onChanged: (newValue) {
-                  ReefAppState.instance.appConfigCtrl.setBiometricAuth(newValue==true);
+                  ReefAppState.instance.appConfigCtrl
+                      .setBiometricAuth(newValue == true);
                 },
                 activeColor: Styles.primaryAccentColor,
               );
             }),
-        
             Gap(8),
             MaterialButton(
               materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -136,6 +139,7 @@ class _SettingsPageState extends State<SettingsPage> {
             MaterialButton(
               materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
               onPressed: () => showQrTypeDataModal(
+                  expectedType: ReefQrCodeType.info,
                   AppLocalizations.of(context)!.get_qr_information,
                   context),
               padding: const EdgeInsets.all(2),
@@ -148,7 +152,8 @@ class _SettingsPageState extends State<SettingsPage> {
                   ),
                   const Gap(8),
                   Builder(builder: (context) {
-                    return Text(AppLocalizations.of(context)!.get_qr_information,
+                    return Text(
+                        AppLocalizations.of(context)!.get_qr_information,
                         style: Theme.of(context).textTheme.bodyText1);
                   }),
                 ],
