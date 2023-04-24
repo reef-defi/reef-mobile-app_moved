@@ -438,7 +438,7 @@ class _BindEvmState extends State<BindEvm> {
               ),
             ),
             SizedBox(width: 12),
-            Flexible(child: Text("Waiting for bound to complete..."))
+            Flexible(child: Text("Waiting for binding to complete..."))
           ],
         )
     ]);
