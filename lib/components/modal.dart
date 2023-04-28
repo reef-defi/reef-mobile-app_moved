@@ -130,11 +130,11 @@ class CustomModalState extends State<CustomModal>
                                     Text(
                                       widget.headText,
                                       style: GoogleFonts.spaceGrotesk(
-                                          fontSize: widget.headText.length>16?20: 24,
+                                          fontSize: 24,
                                           color: widget.textColor,
                                           fontWeight: FontWeight.bold),
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
                                     ),
                                   ],
                                 ),
