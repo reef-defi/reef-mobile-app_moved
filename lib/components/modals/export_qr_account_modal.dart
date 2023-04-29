@@ -52,7 +52,6 @@ class _ExportQrAccountState extends State<ExportQrAccount> {
       await ReefAppState.instance.accountCtrl
           .changeAccountPassword(widget.address, differentPassword, password);
     }
-    print("anuna is here $_exportWithDiffPass");
     final res = _exportWithDiffPass
         ? await ReefAppState.instance.accountCtrl
             .exportAccountQr(widget.address, differentPassword)
