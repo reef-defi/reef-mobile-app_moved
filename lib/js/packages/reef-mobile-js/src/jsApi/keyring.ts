@@ -24,6 +24,14 @@ export interface Account {
     svg: string
 }
 
+export interface RequestAccountCreateSuri {
+    name: string;
+    genesisHash?: string | null;
+    password: string;
+    suri: string;
+    type?: KeypairType;
+  }
+
 async function initWasm(): Promise<boolean> {
     // we only need to do this once per app, somewhere in our init code
     // (when using the API and waiting on `isReady` this is done automatically)
@@ -92,6 +100,19 @@ async function accountFromMnemonic(mnemonic: string): Promise<string> {
         return null;
     }
 }
+const ETH_DERIVE_DEFAULT = "/m/44'/60'/0'/0/0";
+
+function getSuri (seed: string, type?: KeypairType): string {
+    return type === 'ethereum'
+      ? `${seed}${ETH_DERIVE_DEFAULT}`
+      : seed;
+  }
+
+function accountsCreateSuri (suri:string, password:string): boolean {
+    kr.addUri(getSuri(suri, 'sr25519'), password, { genesisHash:'', name:'accountFromMnemonic' }, 'sr25519');
+
+    return true;
+  }
 
 /**
  * Check if mnemonic is valid.
@@ -150,7 +171,6 @@ function exportAccountQr(address:string, password:string): any  {
     }
 }
 
-
 /**
  * Get SVG icons of addresses.
  */
@@ -189,5 +209,6 @@ export default {
     exportAccountQr,
     checkKeyValidity,
     krFromJson,
-    changeAccountPassword
+    changeAccountPassword,
+    accountsCreateSuri
 };
