@@ -129,7 +129,7 @@ class CustomModalState extends State<CustomModal>
                                     const Gap(8),
                                     SizedBox(
                                       width: MediaQuery.of(context).size.width /
-                                          1.9,
+                                          2.2,
                                       child: Text(
                                         widget.headText,
                                         style: GoogleFonts.spaceGrotesk(
