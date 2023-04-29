@@ -44,16 +44,26 @@ class AccountCtrl {
     return await _jsApi.jsPromise('window.keyring.generate()');
   }
 
-  Future<dynamic> restoreJson(Map<String,dynamic> file,String password) async {
-    return await _jsApi.jsPromise('window.keyring.restoreJson(${jsonEncode(file)},"$password")');
+  Future<dynamic> restoreJson(
+      Map<String, dynamic> file, String password) async {
+    return await _jsApi.jsPromise(
+        'window.keyring.restoreJson(${jsonEncode(file)},"$password")');
   }
 
-  Future<dynamic> exportAccountQr(String address,String password) async {
-    return await _jsApi.jsPromise('window.keyring.exportAccountQr("$address","$password")');
+  Future<dynamic> exportAccountQr(String address, String password) async {
+    return await _jsApi
+        .jsPromise('window.keyring.exportAccountQr("$address","$password")');
   }
 
-  Future<dynamic> changeAccountPassword(String address,String newPass,String oldPass) async {
-    return await _jsApi.jsPromise('window.keyring.changeAccountPassword("$address","$newPass","$oldPass")');
+  Future<dynamic> changeAccountPassword(
+      String address, String newPass, String oldPass) async {
+    return await _jsApi.jsPromise(
+        'window.keyring.changeAccountPassword("$address","$newPass","$oldPass")');
+  }
+
+  Future<dynamic> accountsCreateSuri(String mnemonic, String password) async {
+    return await _jsApi.jsPromise(
+        'window.keyring.accountsCreateSuri("$mnemonic","$password")');
   }
 
   Future<bool> checkMnemonicValid(String mnemonic) async {
@@ -162,26 +172,25 @@ class AccountCtrl {
     });
   }
 
-void _initSavedDeviceAccountAddress(StorageService storage) async {
-  var savedAddress = await storage.getValue(StorageKey.selected_address.name);
+  void _initSavedDeviceAccountAddress(StorageService storage) async {
+    var savedAddress = await storage.getValue(StorageKey.selected_address.name);
 
-  if (savedAddress != null) {
-    // check if the saved address exists in the allAccounts list
-    var allAccounts = await storage.getAllAccounts();
-    for(var account in allAccounts){
-      if(account.address == savedAddress){
-        await setSelectedAddress(account.address);
-        return; //return from here after saving the selected address
+    if (savedAddress != null) {
+      // check if the saved address exists in the allAccounts list
+      var allAccounts = await storage.getAllAccounts();
+      for (var account in allAccounts) {
+        if (account.address == savedAddress) {
+          await setSelectedAddress(account.address);
+          return; //return from here after saving the selected address
+        }
+      }
+
+      //if the saved address is not found then set first address as saved
+      if (allAccounts.length > 0) {
+        await setSelectedAddress(allAccounts[0].address);
       }
     }
-    
-    //if the saved address is not found then set first address as saved
-    if(allAccounts.length>0){
-      await setSelectedAddress(allAccounts[0].address);
-    }
   }
-}
-
 
   void _initWasm(JsApiService _jsApi) async {
     await _jsApi.jsPromise('window.keyring.initWasm()');
@@ -201,9 +210,9 @@ void _initSavedDeviceAccountAddress(StorageService storage) async {
       StatusDataObject<List<StatusDataObject<ReefAccount>>> accsListFdm) async {
     var accIcons = [];
 
-    (await _storage.getAllAccounts()).forEach(((account){
-          accIcons.add({"address": account.address, "svg": account.svg});
-        }));
+    (await _storage.getAllAccounts()).forEach(((account) {
+      accIcons.add({"address": account.address, "svg": account.svg});
+    }));
 
     accsListFdm.data.forEach((accFdm) {
       var accIcon = accIcons.firstWhere(

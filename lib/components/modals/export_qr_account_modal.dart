@@ -32,13 +32,22 @@ class _ExportQrAccountState extends State<ExportQrAccount> {
   String exportingText = "Exporting with app password";
 
   void _onPressedNext() async {
+    final _storedAccountInstance =
+        await ReefAppState.instance.storage.getAccount(widget.address);
+    final appPassword = await ReefAppState.instance.storageCtrl
+        .getValue(StorageKey.password.name);
+    if (!PasswordManager.isJsonImportedAccount(
+        _storedAccountInstance.mnemonic)) {
+      ReefAppState.instance.accountCtrl
+          .accountsCreateSuri(_storedAccountInstance.mnemonic, appPassword);
+    }
     setState(() {
       _isLoading = true;
       errorMessage = "";
     });
     String password = _passwordController.text;
     String differentPassword = _exportPasswordController.text;
-    if (_exportWithDiffPass && password == await ReefAppState.instance.storageCtrl.getValue(StorageKey.password.name)) {
+    if (_exportWithDiffPass && password == appPassword) {
       print("EXPORTING WITH DIFFERENT PASSWORD");
       await ReefAppState.instance.accountCtrl
           .changeAccountPassword(widget.address, differentPassword, password);
@@ -101,9 +110,14 @@ class _ExportQrAccountState extends State<ExportQrAccount> {
                       onChanged: (bool? value) {
                         setState(() {
                           _exportWithDiffPass = value ?? false;
-                          exportingText = value!?"exporting with custom password":"exporting with app password";
-                        _isButtonEnabled =
-                            _passwordController.text.isEmpty || (_exportPasswordController.text.isEmpty && _exportWithDiffPass) ? false : true;
+                          exportingText = value!
+                              ? "exporting with custom password"
+                              : "exporting with app password";
+                          _isButtonEnabled = _passwordController.text.isEmpty ||
+                                  (_exportPasswordController.text.isEmpty &&
+                                      _exportWithDiffPass)
+                              ? false
+                              : true;
                         });
                       },
                     ),
@@ -142,10 +156,12 @@ class _ExportQrAccountState extends State<ExportQrAccount> {
                           ),
                           onChanged: (value) {
                             setState(() {
-                              _isButtonEnabled =
-                                  (_passwordController.text.isEmpty || (_exportPasswordController.text.isEmpty && _exportWithDiffPass))
-                                      ? false
-                                      : true;
+                              _isButtonEnabled = (_passwordController
+                                          .text.isEmpty ||
+                                      (_exportPasswordController.text.isEmpty &&
+                                          _exportWithDiffPass))
+                                  ? false
+                                  : true;
                             });
                           },
                         ),
@@ -174,8 +190,11 @@ class _ExportQrAccountState extends State<ExportQrAccount> {
                     ),
                     onChanged: (value) {
                       setState(() {
-                        _isButtonEnabled =
-                            _passwordController.text.isEmpty || (_exportPasswordController.text.isEmpty && _exportWithDiffPass) ? false : true;
+                        _isButtonEnabled = _passwordController.text.isEmpty ||
+                                (_exportPasswordController.text.isEmpty &&
+                                    _exportWithDiffPass)
+                            ? false
+                            : true;
                       });
                     },
                   ),
@@ -184,7 +203,7 @@ class _ExportQrAccountState extends State<ExportQrAccount> {
             ),
           if (_isLoading)
             Center(
-              child: Column(children: [
+                child: Column(children: [
               Text(exportingText),
               Gap(8),
               LinearProgressIndicator(
