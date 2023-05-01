@@ -40,7 +40,6 @@ class _ChangePasswordState extends State<ChangePassword> {
       if (confirmCurrPassword == currPasswordController.text) return;
       setState(() {
         confirmCurrPassword = currPasswordController.text;
-        // confirmCurrPasswordError = currPassword != confirmCurrPassword;
       });
     });
 
@@ -109,28 +108,6 @@ class _ChangePasswordState extends State<ChangePassword> {
                 ),
               ),
             ),
-            const Gap(8),
-            // if (confirmCurrPasswordError) ...[
-            //   const Gap(8),
-            //   Row(
-            //     crossAxisAlignment: CrossAxisAlignment.start,
-            //     children: [
-            //       const Icon(
-            //         CupertinoIcons.exclamationmark_triangle_fill,
-            //         color: Styles.errorColor,
-            //         size: 16,
-            //       ),
-            //       const Gap(8),
-            //       Flexible(
-            //         child: Text(
-            //           AppLocalizations.of(context)!
-            //               .change_password_password_incorrect,
-            //           style: TextStyle(color: Colors.grey[600], fontSize: 13),
-            //         ),
-            //       ),
-            //     ],
-            //   ),
-            // ],
           ],
           ...[
             const Gap(12),
