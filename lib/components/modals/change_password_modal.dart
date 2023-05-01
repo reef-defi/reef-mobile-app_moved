@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:reef_mobile_app/components/modal.dart';
+import 'package:reef_mobile_app/components/modals/alert_modal.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/StorageKey.dart';
 import 'package:reef_mobile_app/pages/SplashScreen.dart';
@@ -28,7 +29,6 @@ class _ChangePasswordState extends State<ChangePassword> {
   String confirmNewPassword = "";
 
   bool hasPassword = false;
-  bool confirmCurrPasswordError = false;
   bool newPasswordError = false;
   bool confirmNewPasswordError = false;
 
@@ -40,7 +40,7 @@ class _ChangePasswordState extends State<ChangePassword> {
       if (confirmCurrPassword == currPasswordController.text) return;
       setState(() {
         confirmCurrPassword = currPasswordController.text;
-        confirmCurrPasswordError = currPassword != confirmCurrPassword;
+        // confirmCurrPasswordError = currPassword != confirmCurrPassword;
       });
     });
 
@@ -96,9 +96,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                 color: Styles.whiteColor,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: confirmCurrPasswordError
-                      ? Styles.errorColor
-                      : const Color(0x20000000),
+                  color: const Color(0x20000000),
                   width: 1,
                 ),
               ),
@@ -112,31 +110,29 @@ class _ChangePasswordState extends State<ChangePassword> {
               ),
             ),
             const Gap(8),
-            if (confirmCurrPasswordError) ...[
-              const Gap(8),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Icon(
-                    CupertinoIcons.exclamationmark_triangle_fill,
-                    color: Styles.errorColor,
-                    size: 16,
-                  ),
-                  const Gap(8),
-                  Flexible(
-                    child: Text(
-                      AppLocalizations.of(context)!
-                          .change_password_password_incorrect,
-                      style: TextStyle(color: Colors.grey[600], fontSize: 13),
-                    ),
-                  ),
-                ],
-              ),
-            ],
+            // if (confirmCurrPasswordError) ...[
+            //   const Gap(8),
+            //   Row(
+            //     crossAxisAlignment: CrossAxisAlignment.start,
+            //     children: [
+            //       const Icon(
+            //         CupertinoIcons.exclamationmark_triangle_fill,
+            //         color: Styles.errorColor,
+            //         size: 16,
+            //       ),
+            //       const Gap(8),
+            //       Flexible(
+            //         child: Text(
+            //           AppLocalizations.of(context)!
+            //               .change_password_password_incorrect,
+            //           style: TextStyle(color: Colors.grey[600], fontSize: 13),
+            //         ),
+            //       ),
+            //     ],
+            //   ),
+            // ],
           ],
-          if (!hasPassword ||
-              (confirmCurrPassword.isNotEmpty &&
-                  !confirmCurrPasswordError)) ...[
+          ...[
             const Gap(12),
             Builder(builder: (context) {
               return Text(
@@ -268,7 +264,11 @@ class _ChangePasswordState extends State<ChangePassword> {
                         padding: const EdgeInsets.symmetric(vertical: 16),
                       ),
                       onPressed: () {
-                        if (confirmNewPassword.isNotEmpty &&
+                        if (currPassword != currPasswordController.text) {
+                          Navigator.of(context).pop();
+                          showAlertModal("Incorrect Password",
+                              ["The password you entered is incorrect"]);
+                        } else if (confirmNewPassword.isNotEmpty &&
                             !confirmNewPasswordError) {
                           ReefAppState.instance.storageCtrl
                               .setValue(StorageKey.password.name, newPassword);
