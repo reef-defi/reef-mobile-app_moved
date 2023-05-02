@@ -1,3 +1,5 @@
+import 'package:reef_mobile_app/model/network/NetworkCtrl.dart';
+import 'package:reef_mobile_app/model/network/network_model.dart';
 import 'package:reef_mobile_app/model/status-data-object/StatusDataObject.dart';
 import 'package:reef_mobile_app/model/tokens/TokenActivity.dart';
 import 'package:reef_mobile_app/model/tokens/TokenNFT.dart';
@@ -8,8 +10,11 @@ import 'token_model.dart';
 
 class TokenCtrl {
   final JsApiService jsApi;
+  final NetworkModel _networkModel;
+  final NetworkCtrl _networkCtrl;
 
-  TokenCtrl(this.jsApi, TokenModel tokenModel) {
+  TokenCtrl(this.jsApi, TokenModel tokenModel, this._networkModel,
+      this._networkCtrl) {
     jsApi
         .jsObservable('window.reefState.selectedTokenPrices_status\$')
         .listen((tokens) {
@@ -57,5 +62,17 @@ class TokenCtrl {
 
   Future<dynamic> findToken(String address) async {
     return jsApi.jsPromise('window.utils.findToken("$address")');
+  }
+
+  void reload() {
+    jsApi.jsCallVoidReturn('window.reefState.reloadTokens()');
+    // var networkName = _networkModel.selectedNetworkName;
+    // print('snn1 $networkName');
+    // if (networkName != null) {
+    //   var network = networkName == Network.testnet.name
+    //       ? Network.testnet
+    //       : Network.mainnet;
+    //   _networkCtrl.setNetwork(network);
+    // }
   }
 }

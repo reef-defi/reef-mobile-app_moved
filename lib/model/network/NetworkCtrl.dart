@@ -27,6 +27,6 @@ class NetworkCtrl {
 
   Future<void> setNetwork(Network network) async {
     networkModel.setSelectedNetworkSwitching(true);
-    jsApi.jsCall('window.utils.setSelectedNetwork(`${network.name}`)');
+    jsApi.jsCallVoidReturn('window.utils.setSelectedNetwork(`${network.name}`)');
   }
 }

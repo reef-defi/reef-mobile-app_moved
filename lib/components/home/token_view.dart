@@ -24,6 +24,7 @@ class TokenView extends StatefulWidget {
 }
 
 class _TokenViewState extends State<TokenView> {
+
   Widget tokenCard(String name, String address,
       {String? iconURL,
       BigInt? balance,
@@ -207,6 +208,9 @@ class _TokenViewState extends State<TokenView> {
         return MultiSliver(
           pushPinnedChildren: false,
           children: [
+        SliverToBoxAdapter(
+        child: ElevatedButton(onPressed: ReefAppState.instance.tokensCtrl.reload, child: const Text("Reload"))
+        ),
             if (message != null)
               SliverToBoxAdapter(
                 child: Padding(
@@ -217,11 +221,15 @@ class _TokenViewState extends State<TokenView> {
                           child: Padding(
                     padding: const EdgeInsets.symmetric(
                         vertical: 24.0, horizontal: 16),
-                    child: Text(
+                    child: Column(children: [
+                      Text(
                       message,
                       style: TextStyle(
                           color: Styles.textLightColor,
                           fontWeight: FontWeight.w500),
+                    ),
+                      if(selectedERC20s.hasStatus(StatusCode.error))ElevatedButton(onPressed: ReefAppState.instance.tokensCtrl.reload, child: const Text("Reload"))
+                    ],
                     ),
                   ))),
                 ),
