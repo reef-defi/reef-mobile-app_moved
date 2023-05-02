@@ -243,8 +243,10 @@ class _ChangePasswordState extends State<ChangePassword> {
                       onPressed: () {
                         if (currPassword != currPasswordController.text) {
                           Navigator.of(context).pop();
-                          showAlertModal("Incorrect Password",
-                              ["The password you entered is incorrect"]);
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text('Incorrect password entered!'),
+                            duration: Duration(seconds: 2),
+                          ));
                         } else if (confirmNewPassword.isNotEmpty &&
                             !confirmNewPasswordError) {
                           ReefAppState.instance.storageCtrl
@@ -254,6 +256,11 @@ class _ChangePasswordState extends State<ChangePassword> {
                           Navigator.of(context).pop();
                           if (widget.onChanged != null) {
                             widget.onChanged!();
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text('Password changed successfully!'),
+                              duration: Duration(seconds: 2),
+                            ));
                           }
                         }
                       },
