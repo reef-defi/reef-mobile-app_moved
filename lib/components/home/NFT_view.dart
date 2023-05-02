@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
+import 'package:reef_mobile_app/components/NFT_videoplayer.dart';
 import 'package:reef_mobile_app/components/home/NFT_zoom_viewer.dart';
 import 'package:reef_mobile_app/model/status-data-object/StatusDataObject.dart';
 import 'package:reef_mobile_app/utils/elements.dart';
@@ -23,7 +24,8 @@ class NFTView extends StatefulWidget {
 class _NFTViewState extends State<NFTView> {
   OverlayEntry? _popupDialog;
 
-  Widget _createGridTileCard(String name, String url, int balance) {
+  Widget _createGridTileCard(
+      String name, String mimetype, String url, int balance) {
     final dialogKey = GlobalKey<AnimatedDialogState>();
     return Builder(
       builder: (context) => GestureDetector(
@@ -41,7 +43,7 @@ class _NFTViewState extends State<NFTView> {
             elevation: 4,
             borderRadius: BorderRadius.circular(15),
             color: Colors.black.withOpacity(0.5),
-            child: nftCard(name, url, balance)),
+            child: nftCard(name, mimetype, url, balance)),
       ),
     );
   }
@@ -101,60 +103,59 @@ class _NFTViewState extends State<NFTView> {
         ),
       );
 
-  Widget nftCard(String name, String iconURL, int balance) {
-    return ImageBoxContainer(
-        imageUrl: iconURL,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+  Widget nftCard(String name, String mimetype, String iconURL, int balance) {
+    Widget child = Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                    child: Padding(
-                  padding: const EdgeInsets.only(left: 8),
-                  child: Text(
-                    name,
-                    style: const TextStyle(
-                        color: Styles.textColor,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700),
-                    overflow: TextOverflow.fade,
-                    maxLines: 1,
-                    softWrap: false,
-                  ),
-                )),
-                Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 8),
-                    decoration: const BoxDecoration(
-                        color: Colors.purple,
-                        borderRadius: BorderRadius.all(Radius.circular(50))),
-                    child: Row(
-                      children: [
-                        const Gap(8),
-                        Observer(builder: (context) {
-                          return BlurableContent(
-                              Text(
-                                NumberFormat.compact().format(balance),
-                                style: const TextStyle(color: Colors.white),
-                              ),
-                              ReefAppState
-                                  .instance.model.appConfig.displayBalance);
-                        }),
-                        const Gap(8),
-                      ],
-                    ))
-              ],
-            ),
+            Expanded(
+                child: Padding(
+              padding: const EdgeInsets.only(left: 8),
+              child: Text(
+                name,
+                style: const TextStyle(
+                    color: Styles.textColor,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700),
+                overflow: TextOverflow.fade,
+                maxLines: 1,
+                softWrap: false,
+              ),
+            )),
+            Container(
+                margin: const EdgeInsets.symmetric(horizontal: 8),
+                decoration: const BoxDecoration(
+                    color: Colors.purple,
+                    borderRadius: BorderRadius.all(Radius.circular(50))),
+                child: Row(
+                  children: [
+                    const Gap(8),
+                    Observer(builder: (context) {
+                      return BlurableContent(
+                          Text(
+                            NumberFormat.compact().format(balance),
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                          ReefAppState.instance.model.appConfig.displayBalance);
+                    }),
+                    const Gap(8),
+                  ],
+                ))
           ],
-        ));
+        ),
+      ],
+    );
+    return mimetype == "image/png"
+        ? ImageBoxContainer(imageUrl: iconURL, child: child)
+        : NFTsVideoPlayer(iconURL, child);
   }
 
   @override
   Widget build(BuildContext context) {
     return Observer(builder: (context) {
       final selectedNFTs = ReefAppState.instance.model.tokens.selectedNFTs;
-
       String? message = getFdmListMessage(
           ReefAppState.instance.model.tokens.selectedNFTs,
           AppLocalizations.of(context)!.nfts,
@@ -190,6 +191,7 @@ class _NFTViewState extends State<NFTView> {
                   final tkn = selectedNFTs.data[index];
                   return _createGridTileCard(
                     tkn.data.name,
+                    tkn.data.mimetype ?? '',
                     tkn.data.iconUrl ?? '',
                     tkn.data.balance.toInt(),
                   );
