@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:reef_mobile_app/utils/styles.dart';
 import 'package:video_player/video_player.dart';
 
 class NFTsVideoPlayer extends StatefulWidget {
@@ -13,18 +14,20 @@ class NFTsVideoPlayer extends StatefulWidget {
 
 class _NFTsVideoPlayerState extends State<NFTsVideoPlayer> {
   late VideoPlayerController _controller;
+  bool _isLoading = true;
+  bool _isVideoPlaying = false;
 
   @override
   void initState() {
     super.initState();
     _controller = VideoPlayerController.network(widget.url);
-
     _controller.addListener(() {
       setState(() {});
     });
     _controller.setLooping(true);
-    _controller.initialize().then((_) => setState(() {}));
-    _controller.play();
+    _controller.initialize().then((_) => setState(() {
+          _isLoading = false;
+        }));
   }
 
   @override
@@ -39,17 +42,56 @@ class _NFTsVideoPlayerState extends State<NFTsVideoPlayer> {
       Container(
           width: double.infinity,
           height: widget.url != '' ? 150 : null,
-          child: Container(
-  child: ClipRRect(
-    borderRadius: BorderRadius.vertical(
-      top: new Radius.circular(15.0),
-    ),
-    child: AspectRatio(
-  aspectRatio: _controller.value.aspectRatio,
-  child: VideoPlayer(_controller),
-),
-  ),
-),
+          child: GestureDetector(
+            onTap: () {
+              print(_controller.value.duration);
+              if (_isVideoPlaying) {
+                _controller.pause();
+                setState(() {
+                  _isVideoPlaying = false;
+                });
+              } else {
+                _controller.play();
+                setState(() {
+                  _isVideoPlaying = true;
+                });
+              }
+            },
+            child: Container(
+              child: _isLoading
+                  ? Center(
+                      child: CircularProgressIndicator(
+                      color: Styles.primaryAccentColor,
+                    ))
+                  : ClipRRect(
+                      borderRadius: BorderRadius.vertical(
+                        top: new Radius.circular(15.0),
+                      ),
+                      child: AspectRatio(
+                        aspectRatio: _controller.value.aspectRatio,
+                        child: Stack(children: [
+                          VideoPlayer(_controller),
+                          if (!_isVideoPlaying)
+                            Center(
+                              child: Image.asset(
+                                'assets/images/video_icon_white.png',
+                                width: 30,
+                              ),
+                            ),
+                          if (_isVideoPlaying)
+                            Positioned(
+                                bottom: 3,
+                                right: 3,
+                                child: Icon(
+                                  Icons.pause_circle,
+                                  color: Styles.whiteColor,
+                                  size: 25,
+                                )),
+                        ]),
+                      ),
+                    ),
+            ),
+          ),
           decoration: BoxDecoration(
             shape: BoxShape.rectangle,
             boxShadow: const [
@@ -61,9 +103,7 @@ class _NFTsVideoPlayerState extends State<NFTsVideoPlayer> {
             ],
             borderRadius: new BorderRadius.vertical(
               top: new Radius.circular(15.0),
-              //right: new Radius.circular(20.0),
             ),
-            // borderRadius: BorderRadius.circular(15)
           )),
       Container(
           width: double.infinity,
