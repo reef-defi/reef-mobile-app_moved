@@ -28,6 +28,10 @@ class FeedbackStatus {
   FeedbackStatus(this.code, this.message, {String? this.propertyName});
 
   static List<FeedbackStatus> fromJson<T>(List<dynamic> json) {
+    if(json == null){
+      return [];
+    }
+
     return json.map((dynamic e) {
       // if(e is List)
       try {
@@ -81,7 +85,7 @@ class StatusDataObject<T> {
   StatusDataObject(this.data, this.statusList);
 
   static StatusDataObject<T>? fromJson<T>(dynamic json, ParseFn<T> parsableFn) {
-    if (json == null) {
+    if (json == null || (json is Map && !json.containsKey('data'))) {
       return null;
     }
     T data = parsableFn(json['data']);
