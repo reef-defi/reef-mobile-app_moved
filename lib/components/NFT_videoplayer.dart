@@ -13,26 +13,18 @@ class NFTsVideoPlayer extends StatefulWidget {
 }
 
 class _NFTsVideoPlayerState extends State<NFTsVideoPlayer> {
-  late VideoPlayerController _controller;
+  VideoPlayerController? _controller;
   bool _isLoading = true;
   bool _isVideoPlaying = false;
 
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.network(widget.url);
-    _controller.addListener(() {
-      setState(() {});
-    });
-    _controller.setLooping(true);
-    _controller.initialize().then((_) => setState(() {
-          _isLoading = false;
-        }));
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _controller?.dispose();
     super.dispose();
   }
 
@@ -44,33 +36,53 @@ class _NFTsVideoPlayerState extends State<NFTsVideoPlayer> {
           height: widget.url != '' ? 150 : null,
           child: GestureDetector(
             onTap: () {
-              print(_controller.value.duration);
               if (_isVideoPlaying) {
-                _controller.pause();
+                _controller?.pause();
                 setState(() {
                   _isVideoPlaying = false;
                 });
               } else {
-                _controller.play();
+                _controller?.play();
                 setState(() {
                   _isVideoPlaying = true;
                 });
               }
+
+              if (_controller == null) {
+                _controller = VideoPlayerController.network(widget.url);
+                _controller?.addListener(() {
+                  setState(() {});
+                });
+                _controller?.setLooping(true);
+                _controller?.initialize().then((_) => setState(() {
+                      _isLoading = false;
+                      _isVideoPlaying = true;
+                      _controller?.play();
+                    }));
+              }
             },
             child: Container(
               child: _isLoading
-                  ? Center(
-                      child: CircularProgressIndicator(
-                      color: Styles.primaryAccentColor,
-                    ))
+                  ? Container(
+                      decoration: BoxDecoration(
+                          color: Styles.primaryAccentColor,
+                          borderRadius:
+                              BorderRadius.vertical(top: Radius.circular(15))),
+                      child: Center(
+                        child: Image.asset(
+                          'assets/images/video_icon_white.png',
+                          width: 30,
+                        ),
+                      ),
+                    )
                   : ClipRRect(
                       borderRadius: BorderRadius.vertical(
                         top: new Radius.circular(15.0),
                       ),
                       child: AspectRatio(
-                        aspectRatio: _controller.value.aspectRatio,
+                        aspectRatio: _controller?.value?.aspectRatio ?? 1,
                         child: Stack(children: [
-                          VideoPlayer(_controller),
+                          VideoPlayer(_controller!),
                           if (!_isVideoPlaying)
                             Center(
                               child: Image.asset(
