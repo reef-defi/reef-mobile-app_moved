@@ -10,9 +10,72 @@ import 'package:reef_mobile_app/utils/elements.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:video_player/video_player.dart';
 
 import '../../model/ReefAppState.dart';
 import '../BlurContent.dart';
+
+class ZoomedNFTsVIdeoPlayer extends StatefulWidget {
+  final String url;
+  ZoomedNFTsVIdeoPlayer(this.url);
+
+  @override
+  State<ZoomedNFTsVIdeoPlayer> createState() => _ZoomedNFTsVIdeoPlayerState();
+}
+
+class _ZoomedNFTsVIdeoPlayerState extends State<ZoomedNFTsVIdeoPlayer> {
+  late VideoPlayerController _controller;
+  bool _isVideoLoaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = VideoPlayerController.network(widget.url);
+    _controller.addListener(() {
+      if (_controller.value.isInitialized && !_isVideoLoaded) {
+        setState(() {
+          _isVideoLoaded = true;
+        });
+      }
+    });
+    _controller.setLooping(true);
+    _controller.initialize().then((_) => setState(() {}));
+    _controller.play();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final Size size = MediaQuery.of(context).size;
+    final double videoAspectRatio = _controller.value.aspectRatio;
+    Widget videoPlayerWidget;
+    if (_isVideoLoaded) {
+      videoPlayerWidget = VideoPlayer(_controller);
+    } else {
+      videoPlayerWidget = Container(
+        color: Styles.primaryAccentColorDark,
+        child: Center(
+            child: CircularProgressIndicator(
+          color: Styles.whiteColor,
+        )),
+      );
+    }
+
+    return AspectRatio(
+      aspectRatio: videoAspectRatio,
+      child: Container(
+        width: size.width,
+        height: size.width / videoAspectRatio,
+        child: videoPlayerWidget,
+      ),
+    );
+  }
+}
 
 class NFTView extends StatefulWidget {
   const NFTView({Key? key}) : super(key: key);
@@ -30,7 +93,8 @@ class _NFTViewState extends State<NFTView> {
     return Builder(
       builder: (context) => GestureDetector(
         onLongPress: () {
-          _popupDialog = _createPopupDialog(dialogKey, name, url, balance);
+          _popupDialog =
+              _createPopupDialog(dialogKey, name, mimetype, url, balance);
           HapticFeedback.lightImpact();
           Overlay.of(context).insert(_popupDialog!);
         },
@@ -49,16 +113,18 @@ class _NFTViewState extends State<NFTView> {
   }
 
   OverlayEntry _createPopupDialog(
-      Key key, String name, String url, int balance) {
+      Key key, String name, String mimetype, String url, int balance) {
     return OverlayEntry(
       builder: (context) => AnimatedDialog(
         key: key,
-        child: _createPopupContent(name, url, balance),
+        child: _createPopupContent(name, mimetype, url, balance),
       ),
     );
   }
 
-  Widget _createPopupContent(String name, String url, int balance) => Container(
+  Widget _createPopupContent(
+          String name, String mimetype, String url, int balance) =>
+      Container(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(16.0),
@@ -66,7 +132,9 @@ class _NFTViewState extends State<NFTView> {
             mainAxisSize: MainAxisSize.min,
             children: [
               _createNFTHeader(balance, name),
-              Image.network(url, fit: BoxFit.fitWidth),
+              mimetype == "image/png"
+                  ? Image.network(url, fit: BoxFit.fitWidth)
+                  : ZoomedNFTsVIdeoPlayer(url),
             ],
           ),
         ),
