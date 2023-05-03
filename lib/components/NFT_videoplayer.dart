@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:gap/gap.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 import 'package:video_player/video_player.dart';
 
@@ -16,6 +17,7 @@ class _NFTsVideoPlayerState extends State<NFTsVideoPlayer> {
   VideoPlayerController? _controller;
   bool _isLoading = true;
   bool _isVideoPlaying = false;
+  bool _isFirstTap = true;
 
   @override
   void initState() {
@@ -36,7 +38,12 @@ class _NFTsVideoPlayerState extends State<NFTsVideoPlayer> {
           height: widget.url != '' ? 150 : null,
           child: GestureDetector(
             onTap: () {
-              if (_isVideoPlaying) {
+              if (_isFirstTap) {
+                setState(() {
+                  _isFirstTap = false;
+                });
+              }
+              if (_isVideoPlaying && _controller != null) {
                 _controller?.pause();
                 setState(() {
                   _isVideoPlaying = false;
@@ -44,7 +51,7 @@ class _NFTsVideoPlayerState extends State<NFTsVideoPlayer> {
               } else {
                 _controller?.play();
                 setState(() {
-                  _isVideoPlaying = true;
+                  _controller != null ? _isVideoPlaying = true : null;
                 });
               }
 
@@ -69,10 +76,25 @@ class _NFTsVideoPlayerState extends State<NFTsVideoPlayer> {
                           borderRadius:
                               BorderRadius.vertical(top: Radius.circular(15))),
                       child: Center(
-                        child: Image.asset(
-                          'assets/images/video_icon_white.png',
-                          width: 30,
-                        ),
+                        child: _isFirstTap
+                            ? Image.asset(
+                                'assets/images/video_icon_white.png',
+                                width: 30,
+                              )
+                            : Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  CircularProgressIndicator(
+                                    color: Styles.whiteColor,
+                                  ),
+                                  Gap(16),
+                                  Text(
+                                    "Retrieving video ...",
+                                    style: TextStyle(
+                                        color: Styles.whiteColor, fontSize: 12),
+                                  )
+                                ],
+                              ),
                       ),
                     )
                   : ClipRRect(
