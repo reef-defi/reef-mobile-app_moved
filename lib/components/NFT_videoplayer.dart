@@ -39,7 +39,14 @@ class _NFTsVideoPlayerState extends State<NFTsVideoPlayer> {
       Container(
           width: double.infinity,
           height: widget.url != '' ? 150 : null,
-          child: VideoPlayer(_controller),
+          child: Container(
+  child: ClipRRect(
+    borderRadius: BorderRadius.vertical(
+      top: new Radius.circular(15.0),
+    ),
+    child: VideoPlayer(_controller),
+  ),
+),
           decoration: BoxDecoration(
             shape: BoxShape.rectangle,
             boxShadow: const [
