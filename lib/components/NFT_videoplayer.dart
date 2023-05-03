@@ -44,7 +44,10 @@ class _NFTsVideoPlayerState extends State<NFTsVideoPlayer> {
     borderRadius: BorderRadius.vertical(
       top: new Radius.circular(15.0),
     ),
-    child: VideoPlayer(_controller),
+    child: AspectRatio(
+  aspectRatio: _controller.value.aspectRatio,
+  child: VideoPlayer(_controller),
+),
   ),
 ),
           decoration: BoxDecoration(
