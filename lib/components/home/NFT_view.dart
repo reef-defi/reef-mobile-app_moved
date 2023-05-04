@@ -88,17 +88,16 @@ class NFTView extends StatefulWidget {
 
 class _NFTViewState extends State<NFTView> {
   OverlayEntry? _popupDialog;
-  var _remountNFTsVideoPlayer = 0;
+  bool _remountNFTsVideoPlayer = false;
 
   Widget _createGridTileCard(
       String name, String mimetype, String url, int balance) {
     final dialogKey = GlobalKey<AnimatedDialogState>();
-    var random = Random();
     return Builder(
       builder: (context) => GestureDetector(
         onLongPress: () {
           setState(() {
-            _remountNFTsVideoPlayer = random.nextInt(100000000);
+            _remountNFTsVideoPlayer = !_remountNFTsVideoPlayer;
           });
           _popupDialog =
               _createPopupDialog(dialogKey, name, mimetype, url, balance);
