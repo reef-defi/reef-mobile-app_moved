@@ -134,14 +134,23 @@ class _NFTViewState extends State<NFTView> {
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _createNFTHeader(balance, name),
-            mimetype == "video/mp4"
-                ? ZoomedNFTsVIdeoPlayer(url)
-                : Image.network(url, fit: BoxFit.fitWidth),
-          ],
+        child: Container(
+          decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                color: Styles.whiteColor,
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _createNFTHeader(balance, name),
+              mimetype == "video/mp4"
+                  ? ZoomedNFTsVIdeoPlayer(url)
+                  : Image.network(url, fit: BoxFit.fitWidth),
+            ],
+          ),
         ),
       ),
     );
