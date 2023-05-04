@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -86,13 +88,18 @@ class NFTView extends StatefulWidget {
 
 class _NFTViewState extends State<NFTView> {
   OverlayEntry? _popupDialog;
+  var _remountNFTsVideoPlayer = 0;
 
   Widget _createGridTileCard(
       String name, String mimetype, String url, int balance) {
     final dialogKey = GlobalKey<AnimatedDialogState>();
+    var random = Random();
     return Builder(
       builder: (context) => GestureDetector(
         onLongPress: () {
+          setState(() {
+            _remountNFTsVideoPlayer = random.nextInt(100000000);
+          });
           _popupDialog =
               _createPopupDialog(dialogKey, name, mimetype, url, balance);
           HapticFeedback.lightImpact();
@@ -123,22 +130,23 @@ class _NFTViewState extends State<NFTView> {
   }
 
   Widget _createPopupContent(
-          String name, String mimetype, String url, int balance) =>
-      Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(16.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _createNFTHeader(balance, name),
-              mimetype == "image/png"
-                  ? Image.network(url, fit: BoxFit.fitWidth)
-                  : ZoomedNFTsVIdeoPlayer(url),
-            ],
-          ),
+      String name, String mimetype, String url, int balance) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _createNFTHeader(balance, name),
+            mimetype == "video/mp4"
+                ? ZoomedNFTsVIdeoPlayer(url)
+                : Image.network(url, fit: BoxFit.fitWidth),
+          ],
         ),
-      );
+      ),
+    );
+  }
 
   Widget _createNFTHeader(int balance, String name) => Container(
         padding: const EdgeInsets.fromLTRB(12.0, 8.0, 12.0, 8.0),
@@ -215,9 +223,15 @@ class _NFTViewState extends State<NFTView> {
         ),
       ],
     );
-    return mimetype == "image/png"
-        ? ImageBoxContainer(imageUrl: iconURL, child: child)
-        : NFTsVideoPlayer(iconURL, child);
+    return mimetype == "video/mp4"
+        ? Container(
+            key: Key(_remountNFTsVideoPlayer.toString()),
+            child: NFTsVideoPlayer(iconURL, child))
+        : ImageBoxContainer(imageUrl: iconURL, child: child);
+  }
+
+  void forceStop() {
+    setState(() {});
   }
 
   @override
