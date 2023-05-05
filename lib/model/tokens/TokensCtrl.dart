@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:reef_mobile_app/model/network/NetworkCtrl.dart';
 import 'package:reef_mobile_app/model/network/network_model.dart';
 import 'package:reef_mobile_app/model/status-data-object/StatusDataObject.dart';
@@ -22,9 +23,11 @@ class TokenCtrl {
           getParsableListFn(TokenWithAmount.fromJson);
       var tokensListFdm = StatusDataObject.fromJsonList(tokens, parsableListFn);
 
-      // print('GOT TOKENS ${tokensListFdm.data.length}');
+      if (kDebugMode) {
+        print('GOT TOKENS ${tokensListFdm.statusList.map((s){s.code.toString()+s.propertyName.toString();}).toString()}');
+      }
       // print(
-      //     'GOT TOKENS ${tokensListFdm.statusList.map((e) => e.code)} msg = ${tokensListFdm.statusList[0].message}');
+      //     'GOT TOKENS ${tokensListFdm.statusList.map((e) => e.code)} msg = ${tokensListFdm.statusList[0].propertyName}');
       tokenModel.setSelectedErc20s(tokensListFdm);
     });
 
@@ -34,7 +37,7 @@ class TokenCtrl {
       ParseListFn<StatusDataObject<TokenNFT>> parsableListFn =
           getParsableListFn(TokenNFT.fromJson);
       var tokensListFdm = StatusDataObject.fromJsonList(tokens, parsableListFn);
-      print('NFTs=${tokensListFdm.data.length}');
+      // print('NFTs=${tokensListFdm.data.length}');
       tokenModel.setSelectedNFTs(tokensListFdm);
     });
 

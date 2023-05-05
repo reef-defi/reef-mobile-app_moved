@@ -65,13 +65,13 @@ ParseListFn<StatusDataObject<T>> getParsableListFn<T>(ParseFn<T> fn) {
 
 String? getFdmListMessage(
     StatusDataObject<List> list, String itemName, String loading) {
-  String? message = null;
+  String? message;
   if (list.hasStatus(StatusCode.completeData) && list.data.isEmpty) {
     message = 'No ${itemName}s found.';
   }
-  if (list.hasStatus(StatusCode.loading)) {
-    message = '${loading} ${itemName}...';
-  }
+  // if (list.hasStatus(StatusCode.loading)) {
+  //   message = '${loading} ${itemName}...';
+  // }
   if (list.hasStatus(StatusCode.error)) {
     message = 'Error ${loading} ${itemName}s (${list.statusList[0].message})';
   }
@@ -103,9 +103,7 @@ class StatusDataObject<T> {
   bool hasStatus(StatusCode code, {String? propertyName}) {
     return statusList.indexWhere((element) {
           return element.code == code &&
-              (propertyName == null
-                  ? true
-                  : element.propertyName == propertyName);
+              (element.propertyName == propertyName);
         }) !=
         -1;
   }

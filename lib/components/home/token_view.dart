@@ -70,7 +70,9 @@ class _TokenViewState extends State<TokenView> {
                                 fontWeight: FontWeight.w700,
                               )),
                         ),
-                        // Text(token.statusList.map((e) => e.code.toString()).toString()),
+                        // Column(children:token.statusList.map((e) =>Text(e.code.toString())).toList()),
+                        Column(children:token.statusList.map((e) =>Text(e.propertyName.toString())).toList()),
+                        // Text(token.statusList.map((e) => e.code.toString()+e.propertyName.toString()).toString()),
                         Text(
                           // TODO allow conversionRate to be null for no data
                           price != 0
@@ -99,7 +101,7 @@ class _TokenViewState extends State<TokenView> {
                                           .format(
                                               getBalanceValueBI(balance, price))
                                           .toString()
-                                      : "N/A",
+                                      : "NA",
                                   gradient: textGradient(),
                                   style: GoogleFonts.poppins(
                                     color: Styles.textColor,
@@ -216,7 +218,7 @@ class _TokenViewState extends State<TokenView> {
             SliverToBoxAdapter(
                 child: ElevatedButton(
                     onPressed: ReefAppState.instance.tokensCtrl.reload,
-                    child: const Text("Reload1"))),
+                    child: const Text("ReloadTEST"))),
             if (message != null)
               SliverToBoxAdapter(
                 child: Padding(
@@ -253,13 +255,6 @@ class _TokenViewState extends State<TokenView> {
                   delegate: SliverChildBuilderDelegate(
                     (context, index) {
                       final tkn = selectedERC20s.data[index];
-                      // return tokenCard(tkn.data.name, tkn.data.address,
-                      //     tokenName: tkn.data.symbol,
-                      //     iconURL: tkn.data.iconUrl,
-                      //     price: tkn.data.price ?? 0,
-                      //     balance: tkn.data.balance,
-                      //     status: tkn.
-                      // );
                       return tokenCard(tkn);
                     },
                     childCount: selectedERC20s.data.length,
