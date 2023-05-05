@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:reef_mobile_app/components/BlurableContent.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/status-data-object/StatusDataObject.dart';
+import 'package:reef_mobile_app/model/tokens/TokenWithAmount.dart';
 import 'package:reef_mobile_app/utils/elements.dart';
 import 'package:reef_mobile_app/utils/functions.dart';
 import 'package:reef_mobile_app/utils/gradient_text.dart';
@@ -24,108 +25,112 @@ class TokenView extends StatefulWidget {
 }
 
 class _TokenViewState extends State<TokenView> {
+  Widget tokenCard(StatusDataObject<TokenWithAmount> token) {
+    String name = token.data.name;
+    String address = token.data.address;
+    String? iconURL = token.data.iconUrl;
+    BigInt? balance = token.data.balance;
+    double price = token.data.price ?? 0.0;
+    String tokenName = token.data.symbol ?? "";
+    // bool isLoading = token.hasStatus(StatusCode.loading);
 
-  Widget tokenCard(String name, String address,
-      {String? iconURL,
-      BigInt? balance,
-      double price = 0.0,
-      String tokenName = ""}) {
     return ViewBoxContainer(
-      child: Padding(
-        padding:
-            const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
+        child: Padding(
+            padding:
+                const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
               children: [
-                GestureDetector(
-                    onDoubleTap: () {
-                      showQrCode(
-                          '$name Contract \n(don\'t send funds here)',
-                          address);
-                    },
-                    child: SizedBox(
-                        height: 48,
-                        width: 48,
-                        child: IconFromUrl(iconURL))),
-                const SizedBox(width: 15),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
+                Row(
                   children: [
-                    Container(
-                      constraints: const BoxConstraints(maxWidth: 100),
-                      child: Text(name,
-                          overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.poppins(
-                            color: Styles.textColor,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w700,
-                          )),
-                    ),
-                    Text(
-                      // TODO allow conversionRate to be null for no data
-                      price != 0
-                          ? NumberFormat.simpleCurrency(decimalDigits: 4)
-                              .format(price)
-                              .toString()
-                          : 'No pool data',
-                      style: GoogleFonts.poppins(
-                          fontWeight: FontWeight.normal,
-                          color: Styles.textLightColor,
-                          fontSize: 14),
-                    )
-                  ],
-                ),
-                const Spacer(),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Observer(builder: (context) {
-                      return BlurableContent(
-                          GradientText(
-                              price != 0
-                                  ? NumberFormat.compactLong()
-                                      .format(
-                                          getBalanceValueBI(balance, price))
-                                      .toString()
-                                  : "N/A",
-                              gradient: textGradient(),
+                    GestureDetector(
+                        onDoubleTap: () {
+                          showQrCode(
+                              '$name Contract \n(don\'t send funds here)',
+                              address);
+                        },
+                        child: SizedBox(
+                            height: 48,
+                            width: 48,
+                            child: IconFromUrl(iconURL))),
+                    const SizedBox(width: 15),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          constraints: const BoxConstraints(maxWidth: 100),
+                          child: Text(name,
+                              overflow: TextOverflow.ellipsis,
                               style: GoogleFonts.poppins(
                                 color: Styles.textColor,
                                 fontSize: 18,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w700,
                               )),
-                          ReefAppState.instance.model.appConfig
-                              .displayBalance);
-                    }),
-                    Observer(builder: (context) {
-                      return BlurableContent(
-                          Text(
-                            "${balance != null && balance > BigInt.zero ? NumberFormat.compact().format((balance) / BigInt.from(10).pow(18)).toString() : 0} ${tokenName != "" ? tokenName : name.toUpperCase()}",
-                            style: GoogleFonts.poppins(
-                              color: Styles.textColor,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          ReefAppState.instance.model.appConfig
-                              .displayBalance);
-                    })
+                        ),
+                        // Text(token.statusList.map((e) => e.code.toString()).toString()),
+                        Text(
+                          // TODO allow conversionRate to be null for no data
+                          price != 0
+                              ? NumberFormat.simpleCurrency(decimalDigits: 4)
+                                  .format(price)
+                                  .toString()
+                              : 'No pool data',
+                          style: GoogleFonts.poppins(
+                              fontWeight: FontWeight.normal,
+                              color: Styles.textLightColor,
+                              fontSize: 14),
+                        )
+                      ],
+                    ),
+                    const Spacer(),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Observer(builder: (context) {
+                          return BlurableContent(
+                              GradientText(
+                                  price != 0
+                                      ? NumberFormat.compactLong()
+                                          .format(
+                                              getBalanceValueBI(balance, price))
+                                          .toString()
+                                      : "N/A",
+                                  gradient: textGradient(),
+                                  style: GoogleFonts.poppins(
+                                    color: Styles.textColor,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w900,
+                                  )),
+                              ReefAppState
+                                  .instance.model.appConfig.displayBalance);
+                        }),
+                        Observer(builder: (context) {
+                          return BlurableContent(
+                              Text(
+                                "${balance != null && balance > BigInt.zero ? NumberFormat.compact().format((balance) / BigInt.from(10).pow(18)).toString() : 0} ${tokenName != "" ? tokenName : name.toUpperCase()}",
+                                style: GoogleFonts.poppins(
+                                  color: Styles.textColor,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              ReefAppState
+                                  .instance.model.appConfig.displayBalance);
+                        })
+                      ],
+                    ),
                   ],
                 ),
-              ],
-            ),
-            const SizedBox(height: 15),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                        /*ElevatedButton.icon(
+                const SizedBox(height: 15),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    /*ElevatedButton.icon(
                       icon: const Icon(
                         CupertinoIcons.repeat,
                         color: Color(0xffa93185),
@@ -180,7 +185,7 @@ class _TokenViewState extends State<TokenView> {
                           style: TextStyle(
                               color: Colors.white, fontWeight: FontWeight.w700),
                         ),
-                        onPressed: () async{
+                        onPressed: () async {
                           ReefAppState.instance.navigationCtrl
                               .navigateToSendPage(
                                   context: context, preselected: address);
@@ -208,9 +213,10 @@ class _TokenViewState extends State<TokenView> {
         return MultiSliver(
           pushPinnedChildren: false,
           children: [
-        SliverToBoxAdapter(
-        child: ElevatedButton(onPressed: ReefAppState.instance.tokensCtrl.reload, child: const Text("Reload"))
-        ),
+            SliverToBoxAdapter(
+                child: ElevatedButton(
+                    onPressed: ReefAppState.instance.tokensCtrl.reload,
+                    child: const Text("Reload1"))),
             if (message != null)
               SliverToBoxAdapter(
                 child: Padding(
@@ -221,15 +227,20 @@ class _TokenViewState extends State<TokenView> {
                           child: Padding(
                     padding: const EdgeInsets.symmetric(
                         vertical: 24.0, horizontal: 16),
-                    child: Column(children: [
-                      Text(
-                      message,
-                      style: TextStyle(
-                          color: Styles.textLightColor,
-                          fontWeight: FontWeight.w500),
-                    ),
-                      if(selectedERC20s.hasStatus(StatusCode.error))ElevatedButton(onPressed: ReefAppState.instance.tokensCtrl.reload, child: const Text("Reload"))
-                    ],
+                    child: Column(
+                      children: [
+                        Text(
+                          message,
+                          style: TextStyle(
+                              color: Styles.textLightColor,
+                              fontWeight: FontWeight.w500),
+                        ),
+                        if (selectedERC20s.hasStatus(StatusCode.error))
+                          ElevatedButton(
+                              onPressed:
+                                  ReefAppState.instance.tokensCtrl.reload,
+                              child: const Text("Reload"))
+                      ],
                     ),
                   ))),
                 ),
@@ -242,11 +253,14 @@ class _TokenViewState extends State<TokenView> {
                   delegate: SliverChildBuilderDelegate(
                     (context, index) {
                       final tkn = selectedERC20s.data[index];
-                      return tokenCard(tkn.data.name, tkn.data.address,
-                          tokenName: tkn.data.symbol,
-                          iconURL: tkn.data.iconUrl,
-                          price: tkn.data.price ?? 0,
-                          balance: tkn.data.balance);
+                      // return tokenCard(tkn.data.name, tkn.data.address,
+                      //     tokenName: tkn.data.symbol,
+                      //     iconURL: tkn.data.iconUrl,
+                      //     price: tkn.data.price ?? 0,
+                      //     balance: tkn.data.balance,
+                      //     status: tkn.
+                      // );
+                      return tokenCard(tkn);
                     },
                     childCount: selectedERC20s.data.length,
                   ),

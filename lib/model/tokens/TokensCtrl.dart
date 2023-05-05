@@ -66,13 +66,5 @@ class TokenCtrl {
 
   void reload() {
     jsApi.jsCallVoidReturn('window.reefState.reloadTokens()');
-    // var networkName = _networkModel.selectedNetworkName;
-    // print('snn1 $networkName');
-    // if (networkName != null) {
-    //   var network = networkName == Network.testnet.name
-    //       ? Network.testnet
-    //       : Network.mainnet;
-    //   _networkCtrl.setNetwork(network);
-    // }
   }
 }
