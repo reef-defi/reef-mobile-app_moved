@@ -214,10 +214,10 @@ class _TokenViewState extends State<TokenView> {
         return MultiSliver(
           pushPinnedChildren: false,
           children: [
-            SliverToBoxAdapter(
-                child: ElevatedButton(
-                    onPressed: ReefAppState.instance.tokensCtrl.reload,
-                    child: const Text("ReloadTEST"))),
+            // SliverToBoxAdapter(
+            //     child: ElevatedButton(
+            //         onPressed: ReefAppState.instance.tokensCtrl.reload,
+            //         child: const Text("ReloadTEST"))),
             if (message != null)
               SliverToBoxAdapter(
                 child: Padding(
