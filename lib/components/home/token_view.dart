@@ -5,6 +5,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:reef_mobile_app/components/BlurableContent.dart';
+import 'package:reef_mobile_app/components/jumping_dots.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/status-data-object/StatusDataObject.dart';
 import 'package:reef_mobile_app/model/tokens/TokenWithAmount.dart';
@@ -25,6 +26,7 @@ class TokenView extends StatefulWidget {
 }
 
 class _TokenViewState extends State<TokenView> {
+
   Widget tokenCard(StatusDataObject<TokenWithAmount> token) {
     String name = token.data.name;
     String address = token.data.address;
@@ -32,7 +34,7 @@ class _TokenViewState extends State<TokenView> {
     BigInt? balance = token.data.balance;
     double price = token.data.price ?? 0.0;
     String tokenName = token.data.symbol ?? "";
-    // bool isLoading = token.hasStatus(StatusCode.loading);
+    bool isLoading = token.hasStatus(StatusCode.loading);
 
     return ViewBoxContainer(
         child: Padding(
@@ -63,23 +65,19 @@ class _TokenViewState extends State<TokenView> {
                         Container(
                           constraints: const BoxConstraints(maxWidth: 100),
                           child: Text(name,
-                              overflow: TextOverflow.ellipsis,
+                              overflow: TextOverflow.fade,
                               style: GoogleFonts.poppins(
                                 color: Styles.textColor,
                                 fontSize: 18,
                                 fontWeight: FontWeight.w700,
                               )),
                         ),
-                        // Column(children:token.statusList.map((e) =>Text(e.code.toString())).toList()),
-                        Column(children:token.statusList.map((e) =>Text(e.propertyName.toString())).toList()),
-                        // Text(token.statusList.map((e) => e.code.toString()+e.propertyName.toString()).toString()),
                         Text(
-                          // TODO allow conversionRate to be null for no data
                           price != 0
                               ? NumberFormat.simpleCurrency(decimalDigits: 4)
                                   .format(price)
                                   .toString()
-                              : 'No pool data',
+                              : isLoading?'Loading pool data':'No pool data',
                           style: GoogleFonts.poppins(
                               fontWeight: FontWeight.normal,
                               color: Styles.textLightColor,
@@ -94,7 +92,8 @@ class _TokenViewState extends State<TokenView> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Observer(builder: (context) {
-                          return BlurableContent(
+                          return isLoading?JumpingDots(animationDuration: const Duration(milliseconds: 200), verticalOffset: 5, radius: 5, color: Styles.purpleColor,innerPadding: 2,)
+                              :BlurableContent(
                               GradientText(
                                   price != 0
                                       ? NumberFormat.compactLong()
@@ -247,7 +246,7 @@ class _TokenViewState extends State<TokenView> {
                   ))),
                 ),
               )
-            else if (selectedERC20s.data.isNotEmpty || true)
+            else if (selectedERC20s.data.isNotEmpty)
               SliverPadding(
                 padding:
                     const EdgeInsets.symmetric(vertical: 32, horizontal: 12),

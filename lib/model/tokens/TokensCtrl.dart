@@ -24,7 +24,12 @@ class TokenCtrl {
       var tokensListFdm = StatusDataObject.fromJsonList(tokens, parsableListFn);
 
       if (kDebugMode) {
-        print('GOT TOKENS ${tokensListFdm.statusList.map((s){s.code.toString()+s.propertyName.toString();}).toString()}');
+        try {
+          var tkn = tokensListFdm.data.firstWhere((t) =>
+          t.data.address == '0x9250BA0e7616357D6d98825186CF7723D38D8B23');
+          print('GOT TOKENS ${tkn.statusList.map((e) => e.code.toString()).toString()}');
+
+        }catch(e){}
       }
       // print(
       //     'GOT TOKENS ${tokensListFdm.statusList.map((e) => e.code)} msg = ${tokensListFdm.statusList[0].propertyName}');
@@ -37,7 +42,9 @@ class TokenCtrl {
       ParseListFn<StatusDataObject<TokenNFT>> parsableListFn =
           getParsableListFn(TokenNFT.fromJson);
       var tokensListFdm = StatusDataObject.fromJsonList(tokens, parsableListFn);
-      // print('NFTs=${tokensListFdm.data.length}');
+      if (kDebugMode) {
+        print('NFTs=${tokensListFdm.data.length}');
+      }
       tokenModel.setSelectedNFTs(tokensListFdm);
     });
 
@@ -59,7 +66,9 @@ class TokenCtrl {
       var tokensListFdm = StatusDataObject.fromJsonList(items, parsableFn);
 
       tokenModel.setTxHistory(tokensListFdm);
-      print('GOT HISTORY=${tokensListFdm.data.length}');
+      if (kDebugMode) {
+        print('GOT HISTORY=${tokensListFdm.data.length}');
+      }
     });
   }
 

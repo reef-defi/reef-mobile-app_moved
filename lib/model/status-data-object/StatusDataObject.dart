@@ -69,9 +69,9 @@ String? getFdmListMessage(
   if (list.hasStatus(StatusCode.completeData) && list.data.isEmpty) {
     message = 'No ${itemName}s found.';
   }
-  // if (list.hasStatus(StatusCode.loading)) {
-  //   message = '${loading} ${itemName}...';
-  // }
+  if (list.hasStatus(StatusCode.loading)) {
+    message = '${loading} ${itemName}...';
+  }
   if (list.hasStatus(StatusCode.error)) {
     message = 'Error ${loading} ${itemName}s (${list.statusList[0].message})';
   }
