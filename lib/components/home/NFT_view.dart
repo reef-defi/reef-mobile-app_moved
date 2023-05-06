@@ -170,11 +170,20 @@ class _NFTViewState extends State<NFTView> {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
                         vertical: 24.0, horizontal: 16),
-                    child: Text(
-                      message,
-                      style: const TextStyle(
-                          color: Styles.textLightColor,
-                          fontWeight: FontWeight.w500),
+                    child: Column(
+                      children: [
+                        Text(
+                          message,
+                          style: TextStyle(
+                              color: Styles.textLightColor,
+                              fontWeight: FontWeight.w500),
+                        ),
+                        if (selectedNFTs.hasStatus(StatusCode.error))
+                          ElevatedButton(
+                              onPressed:
+                              ReefAppState.instance.tokensCtrl.reload,
+                              child: const Text("Reload"))
+                      ],
                     ),
                   ),
                 ),

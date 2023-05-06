@@ -44,7 +44,8 @@ class ReefAppState {
   init(JsApiService jsApi, StorageService storage) async {
     this.storage = storage;
     await _initReefObservables(jsApi);
-    tokensCtrl = TokenCtrl(jsApi, model.tokens);
+    networkCtrl = NetworkCtrl(storage, jsApi, model.network);
+    tokensCtrl = TokenCtrl(jsApi, model.tokens, model.network, networkCtrl);
     accountCtrl = AccountCtrl(jsApi, storage, model.accounts);
     signingCtrl = SigningCtrl(jsApi, storage, model.signatureRequests, model.accounts);
     transferCtrl = TransferCtrl(jsApi);
@@ -56,7 +57,6 @@ class ReefAppState {
         await storage.getValue(StorageKey.network.name) == Network.testnet.name
             ? Network.testnet
             : Network.mainnet;
-    networkCtrl = NetworkCtrl(storage, jsApi, model.network);
     await _initReefState(jsApi, currentNetwork);
     appConfigCtrl = AppConfigCtrl(storage, model.appConfig);
     localeCtrl = LocaleCtrl(storage, model.locale);

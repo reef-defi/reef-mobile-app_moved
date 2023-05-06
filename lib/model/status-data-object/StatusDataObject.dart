@@ -28,6 +28,10 @@ class FeedbackStatus {
   FeedbackStatus(this.code, this.message, {String? this.propertyName});
 
   static List<FeedbackStatus> fromJson<T>(List<dynamic> json) {
+    if(json == null){
+      return [];
+    }
+
     return json.map((dynamic e) {
       // if(e is List)
       try {
@@ -61,7 +65,7 @@ ParseListFn<StatusDataObject<T>> getParsableListFn<T>(ParseFn<T> fn) {
 
 String? getFdmListMessage(
     StatusDataObject<List> list, String itemName, String loading) {
-  String? message = null;
+  String? message;
   if (list.hasStatus(StatusCode.completeData) && list.data.isEmpty) {
     message = 'No ${itemName}s found.';
   }
@@ -81,7 +85,7 @@ class StatusDataObject<T> {
   StatusDataObject(this.data, this.statusList);
 
   static StatusDataObject<T>? fromJson<T>(dynamic json, ParseFn<T> parsableFn) {
-    if (json == null) {
+    if (json == null || (json is Map && !json.containsKey('data'))) {
       return null;
     }
     T data = parsableFn(json['data']);
@@ -99,9 +103,7 @@ class StatusDataObject<T> {
   bool hasStatus(StatusCode code, {String? propertyName}) {
     return statusList.indexWhere((element) {
           return element.code == code &&
-              (propertyName == null
-                  ? true
-                  : element.propertyName == propertyName);
+              (element.propertyName == propertyName);
         }) !=
         -1;
   }
