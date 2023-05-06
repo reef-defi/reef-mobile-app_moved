@@ -181,10 +181,9 @@ class _ActivityViewState extends State<ActivityView> {
     //     ]));
 
     return Observer(builder: (_) {
+      var txHistory = ReefAppState.instance.model.tokens.txHistory;
       String? message = getFdmListMessage(
-          ReefAppState.instance.model.tokens.txHistory,
-          AppLocalizations.of(context)!.activity,
-          AppLocalizations.of(context)!.loading);
+          txHistory, AppLocalizations.of(context)!.activity, AppLocalizations.of(context)!.loading);
 
       return SliverList(
         delegate: SliverChildListDelegate([
@@ -198,8 +197,7 @@ class _ActivityViewState extends State<ActivityView> {
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     child: message == null
                         ? Column(
-                            children: ReefAppState
-                                .instance.model.tokens.txHistory.data
+                            children: txHistory.data
                                 .map((item) => Column(
                                       children: [
                                         activityItem(
@@ -221,8 +219,7 @@ class _ActivityViewState extends State<ActivityView> {
                                               ? false
                                               : true,
                                         ),
-                                        if (ReefAppState.instance.model.tokens
-                                                .txHistory.data.last !=
+                                        if (txHistory.data.last !=
                                             item)
                                           const Divider(
                                             height: 32,
@@ -236,11 +233,20 @@ class _ActivityViewState extends State<ActivityView> {
                         : Center(
                             child: Padding(
                             padding: const EdgeInsets.symmetric(vertical: 8.0),
-                            child: Text(
-                              message,
-                              style: TextStyle(
-                                  color: Styles.textLightColor,
-                                  fontWeight: FontWeight.w500),
+                            child: Column(
+                              children: [
+                                Text(
+                                  message,
+                                  style: TextStyle(
+                                      color: Styles.textLightColor,
+                                      fontWeight: FontWeight.w500),
+                                ),
+                                if (txHistory.hasStatus(StatusCode.error))
+                                  ElevatedButton(
+                                      onPressed:
+                                      ReefAppState.instance.tokensCtrl.reload,
+                                      child: const Text("Reload"))
+                              ],
                             ),
                           ))),
               ),
