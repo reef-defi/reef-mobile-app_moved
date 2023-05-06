@@ -10,10 +10,10 @@
     "@jridgewell/gen-mapping" "^0.3.0"
     "@jridgewell/trace-mapping" "^0.3.9"
 
-"@apollo/client@^3.6.9":
-  version "3.7.13"
-  resolved "https://registry.yarnpkg.com/@apollo/client/-/client-3.7.13.tgz#2cd3508d8030f7cb0c3d357dc3f57b5cf8390c66"
-  integrity sha512-wi63WnO2mhb6uHGB/8x1qIOL4ZtZocrxdHS0VBQ9KwBDkwoP/TdVVgZ29J2WkiAPmJ0SK07ju4R2AjHor1gPxQ==
+"@apollo/client@^3.6.9", "@apollo/client@^3.7.14":
+  version "3.7.14"
+  resolved "https://registry.yarnpkg.com/@apollo/client/-/client-3.7.14.tgz#40ef90390e6690e94917457cd82bdeb29e8b6af9"
+  integrity sha512-BRvdkwq5PAXBkjXjboO12uksDm3nrZEqDi4xF97Fk3Mnaa0zDOEfJa7hoKTY9b9KA1EkeWv9BL3i7hSd4SfGBg==
   dependencies:
     "@graphql-typed-document-node/core" "^3.1.1"
     "@wry/context" "^0.7.0"
@@ -2992,6 +2992,23 @@
   resolved "https://registry.yarnpkg.com/@popperjs/core/-/core-2.11.7.tgz#ccab5c8f7dc557a52ca3288c10075c9ccd37fff7"
   integrity sha512-Cr4OjIkipTtcXKjAsm8agyleBuDHvxzeBoa1v543lbv1YaIwQjESsVcmjiWiPEbC1FIeHOG/Op9kdCmAmiS3Kw==
 
+"@reef-chain/util-lib@^0.10.0":
+  version "0.10.0"
+  resolved "https://registry.yarnpkg.com/@reef-chain/util-lib/-/util-lib-0.10.0.tgz#6ed23caf2ae0513cf133dd05be7704f7ec269818"
+  integrity sha512-jSQ1t0+4p51IDBj+1AcVGbI+a03MHHUrQC8Q/1572WcCq4hnxBZqB7WySe+Af19i21RLaaPkVz/sx5TMEIcchA==
+  dependencies:
+    "@apollo/client" "^3.7.14"
+    "@polkadot/extension-inject" "^0.44.6"
+    "@reef-defi/evm-provider" "^1.0.9"
+    "@reef-defi/extension-base" "^1.0.10"
+    "@reef-defi/extension-dapp" "^1.0.16"
+    "@reef-defi/extension-inject" "^1.0.16"
+    axios "^0.27.2"
+    bignumber.js "^9.1.0"
+    crypto-browserify "^3.12.0"
+    graphql "^16.6.0"
+    graphql-ws "^5.12.1"
+
 "@reef-chain/util-lib@^0.4.0":
   version "0.4.2"
   resolved "https://registry.yarnpkg.com/@reef-chain/util-lib/-/util-lib-0.4.2.tgz#5782af19bc8f1dc120f82ed7da92220c630f6dbc"
@@ -3008,23 +3025,6 @@
     crypto-browserify "^3.12.0"
     graphql "^16.6.0"
     subscriptions-transport-ws "^0.11.0"
-
-"@reef-chain/util-lib@^0.9.2":
-  version "0.9.3"
-  resolved "https://registry.yarnpkg.com/@reef-chain/util-lib/-/util-lib-0.9.3.tgz#a0676ebb93fa2d0cabe998ee24a22cc4eae5d6bb"
-  integrity sha512-8AFfSpyE2XImOBPphLfphY5dltksl+b0X9l1y+DVuQEEjZjkxi4/EGX8wtrqgM6TNuWfDoLyjczlbWF2o89BrQ==
-  dependencies:
-    "@apollo/client" "^3.6.9"
-    "@polkadot/extension-inject" "^0.44.6"
-    "@reef-defi/evm-provider" "^1.0.9"
-    "@reef-defi/extension-base" "^1.0.10"
-    "@reef-defi/extension-dapp" "^1.0.16"
-    "@reef-defi/extension-inject" "^1.0.16"
-    axios "^0.27.2"
-    bignumber.js "^9.1.0"
-    crypto-browserify "^3.12.0"
-    graphql "^16.6.0"
-    graphql-ws "^5.11.2"
 
 "@reef-defi/api-derive@^1.0.4", "@reef-defi/api-derive@^1.1.0":
   version "1.1.0"
@@ -3367,9 +3367,9 @@
     form-data "^3.0.0"
 
 "@types/node@*":
-  version "18.16.3"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.16.3.tgz#6bda7819aae6ea0b386ebc5b24bdf602f1b42b01"
-  integrity sha512-OPs5WnnT1xkCBiuQrZA4+YAV4HEJejmHneyraIaxsbev5yCEr6KMwINNFP9wQeFIw8FWcoTqF3vQsa5CDaI+8Q==
+  version "20.1.0"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-20.1.0.tgz#258805edc37c327cf706e64c6957f241ca4c4c20"
+  integrity sha512-O+z53uwx64xY7D6roOi4+jApDGFg0qn6WHcxe5QeqjMaTezBO/mxdfFXIVAVVyNWKx84OmPB3L8kbVYOTeN34A==
 
 "@types/node@10.12.18":
   version "10.12.18"
@@ -3520,16 +3520,16 @@
     prettier "^1.18.2 || ^2.0.0"
 
 "@wry/context@^0.7.0":
-  version "0.7.0"
-  resolved "https://registry.yarnpkg.com/@wry/context/-/context-0.7.0.tgz#be88e22c0ddf62aeb0ae9f95c3d90932c619a5c8"
-  integrity sha512-LcDAiYWRtwAoSOArfk7cuYvFXytxfVrdX7yxoUmK7pPITLk5jYh2F8knCwS7LjgYL8u1eidPlKKV6Ikqq0ODqQ==
+  version "0.7.2"
+  resolved "https://registry.yarnpkg.com/@wry/context/-/context-0.7.2.tgz#732fa01cf11d08c07114ddf51d67c3757d68f31d"
+  integrity sha512-WBGObg2bxt9UYGX4Dh3heUpHeULiFIP/yLpKrcebPfwaLuwCSj6rS7kpQegQ/K7jbkTQ1nLGZnfyAvY1T2LG4g==
   dependencies:
     tslib "^2.3.0"
 
 "@wry/equality@^0.5.0":
-  version "0.5.3"
-  resolved "https://registry.yarnpkg.com/@wry/equality/-/equality-0.5.3.tgz#fafebc69561aa2d40340da89fa7dc4b1f6fb7831"
-  integrity sha512-avR+UXdSrsF2v8vIqIgmeTY0UR91UT+IyablCyKe/uk22uOJ8fusKZnH9JH9e1/EtLeNJBtagNmL3eJdnOV53g==
+  version "0.5.5"
+  resolved "https://registry.yarnpkg.com/@wry/equality/-/equality-0.5.5.tgz#523a15f670e6d15408bf8f67259682e18a5543f0"
+  integrity sha512-tI95+tJlL2LoOY27EHy0V0zKRVgbPp6vk9p6ZqWZOCSVslEhYEGeI+gaskc2rnjQxfszsXhtgYZTQ1xAUrMkOg==
   dependencies:
     tslib "^2.3.0"
 
@@ -4352,9 +4352,9 @@ camelcase@^6.0.0, camelcase@^6.2.0, camelcase@^6.2.1:
   integrity sha512-Gmy6FhYlCY7uOElZUSbxo2UCDH8owEk996gkbrpsgGtrJLM3J7jGxl9Ic7Qwwj4ivOE5AWZWRMecDdF7hqGjFA==
 
 caniuse-lite@^1.0.30001449:
-  version "1.0.30001482"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001482.tgz#8b3fad73dc35b2674a5c96df2d4f9f1c561435de"
-  integrity sha512-F1ZInsg53cegyjroxLNW9DmrEQ1SuGRTO1QlpA0o2/6OpQ0gFeDRoq1yFmnr8Sakn9qwwt9DmbxHB6w167OSuQ==
+  version "1.0.30001485"
+  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001485.tgz#026bb7319f1e483391872dc303a973d4f513f619"
+  integrity sha512-8aUpZ7sjhlOyiNsg+pgcrTTPUXKh+rg544QYHSvQErljVEKJzvkYkCR/hUFeeVoEfTToUtY9cUKNRC7+c45YkA==
 
 capture-exit@^2.0.0:
   version "2.0.0"
@@ -5128,9 +5128,9 @@ ed2curve@^0.3.0:
     tweetnacl "1.x.x"
 
 electron-to-chromium@^1.4.284:
-  version "1.4.380"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.380.tgz#195dc59d930c6b74efbee6f0e6a267ce4af5ed91"
-  integrity sha512-XKGdI4pWM78eLH2cbXJHiBnWUwFSzZM7XujsB6stDiGu9AeSqziedP6amNLpJzE3i0rLTcfAwdCTs5ecP5yeSg==
+  version "1.4.385"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.385.tgz#1afd8d6280d510145148777b899ff481c65531ff"
+  integrity sha512-L9zlje9bIw0h+CwPQumiuVlfMcV4boxRjFIWDcLfFqTZNbkwOExBzfmswytHawObQX4OUhtNv8gIiB21kOurIg==
 
 elliptic@6.5.4, elliptic@^6.4.0, elliptic@^6.4.1, elliptic@^6.5.3, elliptic@^6.5.4:
   version "6.5.4"
@@ -6534,7 +6534,7 @@ graphql-tag@^2.12.6:
   dependencies:
     tslib "^2.1.0"
 
-graphql-ws@^5.11.2:
+graphql-ws@^5.12.1:
   version "5.12.1"
   resolved "https://registry.yarnpkg.com/graphql-ws/-/graphql-ws-5.12.1.tgz#c62d5ac54dbd409cc6520b0b39de374b3d59d0dd"
   integrity sha512-umt4f5NnMK46ChM2coO36PTFhHouBrK9stWWBczERguwYrGnPNxJ9dimU6IyOBfOkC6Izhkg4H8+F51W/8CYDg==
