@@ -8,4 +8,5 @@ class MetadataCtrl {
   MetadataCtrl(this.jsApi, this.storage);
 
   Future<dynamic> getMetadata() => jsApi.jsPromise('window.metadata.getMetadata();');
+  Future<dynamic> getJsVersions() => jsApi.jsCall('window.getReefJsVer();');
 }

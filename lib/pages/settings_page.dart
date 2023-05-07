@@ -215,6 +215,15 @@ class _SettingsPageState extends State<SettingsPage> {
                 padding: const EdgeInsets.only(left: 12.0, bottom: 4.0),
                 child: Column(
                   children: [
+                    FutureBuilder<dynamic>(
+                        future:ReefAppState.instance.metadataCtrl.getJsVersions(),
+                        builder: (context, AsyncSnapshot<dynamic> snapshot){
+                          if(snapshot.hasData) {
+                            return Text(snapshot.data);
+                          }
+                          return Text('getting version...');
+                    }),
+
                     const Gap(12),
                     MaterialButton(
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
