@@ -46,6 +46,7 @@ class SelectAccount extends StatelessWidget {
       child: accountList.isEmpty
           ? Text(
               AppLocalizations.of(context)!.no_other_accounts,
+              style: TextStyle(color: Styles.textLightColor),
             )
           : ListView(
               physics: const BouncingScrollPhysics(),
