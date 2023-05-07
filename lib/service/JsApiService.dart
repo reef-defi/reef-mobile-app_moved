@@ -76,7 +76,7 @@ class JsApiService {
     return _controller.then((ctrl) => ctrl.runJavascript(executeJs));
   }
 
-  Future<String> jsCall(String executeJs) {
+  Future jsCall(String executeJs) {
     return _controller
         .then((ctrl) => ctrl.runJavascriptReturningResult(executeJs));
   }

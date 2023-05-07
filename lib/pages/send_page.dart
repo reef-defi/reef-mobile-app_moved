@@ -107,11 +107,8 @@ class _SendPageState extends State<SendPage> {
   Future<bool> _isValidAddress(String address) async {
     //checking if selected address is not evm
     if (address.startsWith("5")) {
-      //if length of address == native address length
-      print("verifying for substrate addr");
-      return true;
+      return await ReefAppState.instance.accountCtrl.isValidSubstrateAddress(address);
     } else if (address.startsWith("0x")) {
-      print("verifying for evm addr");
       return await ReefAppState.instance.accountCtrl.isValidEvmAddress(address);
     }
     return false;

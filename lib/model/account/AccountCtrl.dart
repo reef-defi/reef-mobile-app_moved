@@ -121,13 +121,13 @@ class AccountCtrl {
   Future<bool> isValidEvmAddress(String address) async {
     var res =
         await _jsApi.jsCall('window.account.isValidEvmAddress("$address")');
-    return res == 'true';
+    return res==true || res == 'true';
   }
 
   Future<bool> isValidSubstrateAddress(String address) async {
     var res = await _jsApi
         .jsCall('window.account.isValidSubstrateAddress("$address")');
-    return res == 'true';
+    return res==true || res == 'true';
   }
 
   Future<String?> resolveToNativeAddress(String evmAddress) async {

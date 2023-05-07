@@ -98,11 +98,12 @@ export const innitApi = (signingKey: Signer) => {
         },
 
         isValidEvmAddress: (address: string) => {
-            return ethers.utils.isAddress(address);
+            let res = ethers.utils.isAddress(address);
+            return res.toString();
         },
 
         isValidSubstrateAddress: (address: string) => {
-            return isSubstrateAddress(address);
+            return isSubstrateAddress(address).toString();
         },
     };
 }
