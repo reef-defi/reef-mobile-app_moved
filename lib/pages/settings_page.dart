@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:gap/gap.dart';
@@ -22,6 +23,19 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   bool _showDeveloperSettings = false;
+  String? gqlState;
+
+  /*@override
+  void initState() {
+    super.initState();
+    print('SETTTTTT');
+    ReefAppState.instance.metadataCtrl.apolloState.stream.listen((event) {
+      print('EEEE ${event}');
+      setState(() {
+        gqlState = event;
+      });
+    });
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -221,9 +235,20 @@ class _SettingsPageState extends State<SettingsPage> {
                           if(snapshot.hasData) {
                             return Text(snapshot.data);
                           }
-                          return Text('getting version...');
+                          return const Text('getting version...');
                     }),
-
+                    const Gap(12),
+                    StreamBuilder<dynamic>(
+                        stream: ReefAppState.instance.metadataCtrl.apolloState.stream,
+                        builder: (context, sshot){
+                          if(sshot.hasError){
+                            return const Text('gql ws obs err (not connection)');
+                          }
+                          if(sshot.connectionState == ConnectionState.active){
+                            return Text('GQL=${sshot.data.toString()}');
+                          }
+                          return Text('getting gql ws state: ${sshot.connectionState}');
+                    }),
                     const Gap(12),
                     MaterialButton(
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,

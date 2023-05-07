@@ -1,14 +1,8 @@
-import {graphql, network, reefState, tokenUtil, signatureUtils} from '@reef-chain/util-lib';
-import {map, switchMap, take} from "rxjs/operators";
+import {graphql, network, reefState, signatureUtils, tokenUtil} from '@reef-chain/util-lib';
+import {map, switchMap, take, tap} from "rxjs/operators";
 import {combineLatest, firstValueFrom} from "rxjs";
 import {fetchTokenData} from './utils/tokenUtils';
-import {ethers} from 'ethers';
-import {Metadata, TypeRegistry} from '@polkadot/types';
-import type {AnyJson} from "@polkadot/types/types";
-import type {Call} from "@polkadot/types/interfaces";
 import {Provider} from "@reef-defi/evm-provider";
-import {getSpecTypes} from "@polkadot/types-known";
-import {base64Decode, base64Encode} from '@reef-defi/util-crypto';
 import {isAscii, u8aToString, u8aUnwrapBytes} from '@reef-defi/util';
 import {ERC20} from "./abi/ERC20";
 
@@ -54,6 +48,7 @@ export const initApi = () => {
         },
         bytesString: (bytes: string) => {
             return isAscii(bytes) ? u8aToString(u8aUnwrapBytes(bytes)) : bytes;
-        }
+        },
+        apolloClientWsState$: graphql.apolloClientWsState$.pipe(tap(value => console.log('SSS app',value))),
     }
 }

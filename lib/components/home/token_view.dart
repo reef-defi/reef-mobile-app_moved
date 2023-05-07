@@ -91,9 +91,9 @@ class _TokenViewState extends State<TokenView> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Observer(builder: (context) {
-                          return isLoading?JumpingDots(animationDuration: const Duration(milliseconds: 200), verticalOffset: 5, radius: 5, color: Styles.purpleColor,innerPadding: 2,)
-                              :BlurableContent(
+                        isLoading?JumpingDots(animationDuration: const Duration(milliseconds: 200), verticalOffset: 5, radius: 5, color: Styles.purpleColor,innerPadding: 2,)
+                            :Observer(builder: (context) {
+                          return BlurableContent(
                               GradientText(
                                   price != 0
                                       ? NumberFormat.compactLong()
