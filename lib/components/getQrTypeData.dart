@@ -10,6 +10,7 @@ import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/utils/constants.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:reef_mobile_app/utils/functions.dart';
 import 'package:reef_mobile_app/utils/password_manager.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 import 'package:barcode_finder/barcode_finder.dart';
@@ -79,7 +80,7 @@ class _QrDataDisplayState extends State<QrDataDisplay> {
         var qrCodeType = ReefQrCodeType.values.byName(decoded["type"]);
         qrCodeValue = ReefQrCode(qrCodeType, decoded["data"]);
       } on FormatException catch (e) {
-        if( qrCodeData.startsWith('5') && await ReefAppState.instance.accountCtrl.isValidSubstrateAddress(qrCodeData)){
+        if( isReefAddrPrefix(qrCodeData) && await ReefAppState.instance.accountCtrl.isValidSubstrateAddress(qrCodeData)){
           qrCodeValue = ReefQrCode(ReefQrCodeType.address, qrCodeData);
         }else{
           qrCodeValue = ReefQrCode(ReefQrCodeType.invalid, "");

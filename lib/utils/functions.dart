@@ -124,3 +124,7 @@ String stripUrl(String? url) {
 String hexToDecimalString(String hex) {
   return BigInt.parse(hex.substring(2), radix: 16).toString();
 }
+
+bool isReefAddrPrefix(String address) {
+  return address.startsWith('5');
+}
