@@ -73,13 +73,17 @@ class _QrDataDisplayState extends State<QrDataDisplay> {
   }
 
   void handleQrCodeData(String qrCodeData) {
-    setState(() {
+    setState(() async {
       try {
         var decoded = jsonDecode(qrCodeData);
         var qrCodeType = ReefQrCodeType.values.byName(decoded["type"]);
         qrCodeValue = ReefQrCode(qrCodeType, decoded["data"]);
-      } catch (e) {
-        qrCodeValue = ReefQrCode(ReefQrCodeType.invalid, "");
+      } on FormatException catch (e) {
+        if( qrCodeData.startsWith('5') && await ReefAppState.instance.accountCtrl.isValidSubstrateAddress(qrCodeData)){
+          qrCodeValue = ReefQrCode(ReefQrCodeType.address, qrCodeData);
+        }else{
+          qrCodeValue = ReefQrCode(ReefQrCodeType.invalid, "");
+        }
       }
 
       if (widget.expectedType != null &&
