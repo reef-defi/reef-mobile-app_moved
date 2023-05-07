@@ -103,15 +103,19 @@ class CustomModalState extends State<CustomModal>
               child: ScaleTransition(
                 scale: scaleAnimation,
                 child: Dialog(
+                  insetPadding: EdgeInsets.all(16),
                   backgroundColor: Colors.transparent,
                   child: ViewBoxContainer(
                     color: widget.background,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
+                    child: Padding(
+                      padding: EdgeInsets.all(10),
+                      child: Column(
+                      // mainAxisSize: MainAxisSize.min,
                       children: [
                         buildHeader(context),
                         Container(child: widget.child),
                       ],
+                    ),
                     ),
                   ),
                 ),
