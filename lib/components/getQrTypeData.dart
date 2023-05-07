@@ -73,20 +73,22 @@ class _QrDataDisplayState extends State<QrDataDisplay> {
     }
   }
 
-  void handleQrCodeData(String qrCodeData) {
-    setState(() async {
-      try {
-        var decoded = jsonDecode(qrCodeData);
-        var qrCodeType = ReefQrCodeType.values.byName(decoded["type"]);
-        qrCodeValue = ReefQrCode(qrCodeType, decoded["data"]);
-      } on FormatException catch (e) {
-        if( isReefAddrPrefix(qrCodeData) && await ReefAppState.instance.accountCtrl.isValidSubstrateAddress(qrCodeData)){
-          qrCodeValue = ReefQrCode(ReefQrCodeType.address, qrCodeData);
-        }else{
-          qrCodeValue = ReefQrCode(ReefQrCodeType.invalid, "");
-        }
+  Future<void> handleQrCodeData(String qrCodeData) async {
+    ReefQrCode? qrCode;
+    try {
+      var decoded = jsonDecode(qrCodeData);
+      var qrCodeType = ReefQrCodeType.values.byName(decoded["type"]);
+      qrCode = ReefQrCode(qrCodeType, decoded["data"]);
+    } on FormatException catch (e) {
+      var isAddr = await ReefAppState.instance.accountCtrl
+          .isValidSubstrateAddress(qrCodeData);
+      if (isAddr && isReefAddrPrefix(qrCodeData)) {
+        qrCode = ReefQrCode(ReefQrCodeType.address, qrCodeData);
       }
+    }
 
+    setState(() {
+      qrCodeValue = qrCode??ReefQrCode(ReefQrCodeType.invalid, "");
       if (widget.expectedType != null &&
           widget.expectedType == qrCodeValue?.type) {
         actOnQrCodeValue(qrCodeValue!);
@@ -96,11 +98,14 @@ class _QrDataDisplayState extends State<QrDataDisplay> {
     });
   }
 
-  void qr(QRViewController controller) {
+  void qr(QRViewController controller) async {
     this.controller = controller;
-    controller.scannedDataStream.listen((event) {
+    /*controller.scannedDataStream.listen((event) {
       handleQrCodeData(event.code!);
-    });
+    });*/
+    var scanRes = await controller.scannedDataStream.first;
+      await handleQrCodeData(scanRes.code!);
+      this.controller?.dispose();
   }
 
   @override
@@ -123,8 +128,8 @@ class _QrDataDisplayState extends State<QrDataDisplay> {
                       children: [
                         Center(
                           child: Container(
-                            height: 200,
                             width: 200,
+                            height: 200,
                             child: QRView(key: _gLobalkey, onQRViewCreated: qr),
                           ),
                         ),
@@ -153,13 +158,13 @@ class _QrDataDisplayState extends State<QrDataDisplay> {
                               try {
                                 final res = await scanFile();
                                 if (res != Null) {
-                                  handleQrCodeData(res!);
+                                  await handleQrCodeData(res!);
                                 }
                               } catch (e) {
                                 Navigator.pop(context);
                                 ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
-                                        content: Text("File has no QR code")));
+                                        content: Text("No Reef QR code")));
                               }
                             },
                           ),
