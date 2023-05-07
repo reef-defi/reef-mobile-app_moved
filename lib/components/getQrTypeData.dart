@@ -38,7 +38,7 @@ class _QrDataDisplayState extends State<QrDataDisplay> {
       case ReefQrCodeType.accountJson:
         return "You can import this Account by scanning this QR code and entering the password.";
       default:
-        return "Unrecognised Reef QR Code.";
+        return "Not Reef QR Code.";
     }
   }
 
