@@ -482,21 +482,6 @@ class _SendPageState extends State<SendPage> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  // onPressed: () {
-                  //   showAddressScannerModal(
-                  //       AppLocalizations.of(context)!.scan_address,
-                  //       (ReefQrCode qrCode) async {
-                  //     setState(() {
-                  //       if (qrCode.type == "address") {
-                  //         address = qrCode.data;
-                  //         valueController.text = address;
-                  //       }else{
-                  //         Navigator.of(context).pop();
-                  //         showAlertModal("Invalid QR Code", ["This is an invalid QR code!","You can know more about this QR code from the 'Scan QR' option in Settings "]);
-                  //       }
-                  //     });
-                  //   });
-                  // },
                   onPressed: () {
                     showQrTypeDataModal(
                         AppLocalizations.of(context)!.scan_address, context,
