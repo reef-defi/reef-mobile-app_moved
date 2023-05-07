@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "resolveJsonModule": true,
     "paths": {
       "crypto": [
         "../../node_modules/crypto-browserify"
@@ -14,5 +15,5 @@
       "scripthost",
       "es2015.promise"
     ],
-  }
+  },
 }
