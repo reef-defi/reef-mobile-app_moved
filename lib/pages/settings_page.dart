@@ -47,7 +47,8 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   void dispose() {
-    // gqlSubs?.cancel();
+    gqlConnStateSubs?.cancel();
+    providerConnStateSubs?.cancel();
     super.dispose();
   }
 

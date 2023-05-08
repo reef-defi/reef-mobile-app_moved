@@ -78,6 +78,7 @@ class TokenCtrl {
   }
 
   void reload() {
+    print('RELOADING');
     jsApi.jsCallVoidReturn('window.reefState.reloadTokens()');
   }
 }
