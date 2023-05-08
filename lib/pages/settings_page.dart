@@ -25,15 +25,21 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   bool _showDeveloperSettings = false;
-  String? gqlState;
-  StreamSubscription? gqlSubs;
-
+  String? gqlConnState;
+  StreamSubscription? gqlConnStateSubs;
+  String? providerConnState;
+  StreamSubscription? providerConnStateSubs;
 
   @override
   void initState() {
-    gqlSubs = ReefAppState.instance.metadataCtrl.getApolloConnLogs().listen((event) {
+    gqlConnStateSubs = ReefAppState.instance.metadataCtrl.getApolloConnLogs().listen((event) {
       setState(() {
-        gqlState = event.toString();
+        gqlConnState = event.toString();
+      });
+    });
+    providerConnStateSubs = ReefAppState.instance.metadataCtrl.getProviderConnLogs().listen((event) {
+      setState(() {
+        providerConnState = event.toString();
       });
     });
     super.initState();
@@ -246,7 +252,8 @@ class _SettingsPageState extends State<SettingsPage> {
                           return const Text('getting version...');
                     }),
                     const Gap(12),
-                    Text('GQL conn: $gqlState'??'getting gql status'),const Gap(12),
+                    Text('GQL conn: $gqlConnState'??'getting gql status'),const Gap(12),
+                    Text('Provider conn: $providerConnState'??'getting provider status'),const Gap(12),
                     MaterialButton(
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       onPressed: () => showSwitchNetworkModal(

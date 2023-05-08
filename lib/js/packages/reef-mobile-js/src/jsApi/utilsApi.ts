@@ -49,6 +49,7 @@ export const initApi = () => {
         bytesString: (bytes: string) => {
             return isAscii(bytes) ? u8aToString(u8aUnwrapBytes(bytes)) : bytes;
         },
-        apolloClientWsState$: graphql.apolloClientWsState$.pipe(tap(value => console.log('SSS app',value))),
+        apolloClientWsConnState$: graphql.apolloClientWsConnState$,
+        providerConnState$: reefState.providerConnState$,
     }
 }

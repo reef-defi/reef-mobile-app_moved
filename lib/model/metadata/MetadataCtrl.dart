@@ -13,6 +13,7 @@ class MetadataCtrl {
   MetadataCtrl(this.jsApi, this.storage) {
     // need to listen here so other subscriptions immediately receive last value
     getApolloConnLogs().listen((event) {print('GQL CONN=$event');});
+    getProviderConnLogs().listen((event) {print('PROV CONN=$event');});
   }
 
   Future<dynamic> getMetadata() =>
@@ -20,5 +21,6 @@ class MetadataCtrl {
 
   Future<dynamic> getJsVersions() => jsApi.jsCall('window.getReefJsVer();');
 
-  Stream<dynamic> getApolloConnLogs()=> jsApi.jsObservable('window.utils.apolloClientWsState\$');
+  Stream<dynamic> getApolloConnLogs()=> jsApi.jsObservable('window.utils.apolloClientWsConnState\$');
+  Stream<dynamic> getProviderConnLogs()=> jsApi.jsObservable('window.utils.providerConnState\$');
 }
