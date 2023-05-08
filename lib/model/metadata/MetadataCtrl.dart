@@ -7,7 +7,7 @@ import 'package:reef_mobile_app/service/StorageService.dart';
 class MetadataCtrl {
   final JsApiService jsApi;
   final StorageService storage;
-  final StreamController<dynamic> apolloState = StreamController();
+  final StreamController<dynamic> apolloState = StreamController.broadcast();
 
   MetadataCtrl(this.jsApi, this.storage) {
     var aState = jsApi.jsObservable('window.utils.apolloClientWsState\$');
@@ -16,7 +16,7 @@ class MetadataCtrl {
       if (kDebugMode) {
         print('GOT GQL WS STATE $event');
       }
-      apolloState.add(event);
+      apolloState.sink.add(event);
     });
   }
 

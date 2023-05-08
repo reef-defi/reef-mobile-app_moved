@@ -25,9 +25,10 @@ class TokenCtrl {
 
       if (kDebugMode) {
         try {
-          var tkn = tokensListFdm.data.firstWhere((t) =>
+          /*var tkn = tokensListFdm.data.firstWhere((t) =>
           t.data.address == '0x9250BA0e7616357D6d98825186CF7723D38D8B23');
-          print('GOT TOKENS ${tkn.statusList.map((e) => e.code.toString()).toString()}');
+          print('GOT TOKENS ${tkn.statusList.map((e) => e.code.toString()).toString()}');*/
+          print('GOT TOKENS ${tokensListFdm.data.length}');
 
         }catch(e){}
       }
