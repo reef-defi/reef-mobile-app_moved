@@ -7,21 +7,18 @@ import 'package:reef_mobile_app/service/StorageService.dart';
 class MetadataCtrl {
   final JsApiService jsApi;
   final StorageService storage;
-  final StreamController<dynamic> apolloState = StreamController.broadcast();
+  final StreamController<dynamic> apolloState = StreamController();
+
 
   MetadataCtrl(this.jsApi, this.storage) {
-    var aState = jsApi.jsObservable('window.utils.apolloClientWsState\$');
-
-    aState.listen((event) {
-      if (kDebugMode) {
-        print('GOT GQL WS STATE $event');
-      }
-      apolloState.sink.add(event);
-    });
+    // need to listen here so other subscriptions immediately receive last value
+    getApolloConnLogs().listen((event) {print('GQL CONN=$event');});
   }
 
   Future<dynamic> getMetadata() =>
       jsApi.jsPromise('window.metadata.getMetadata();');
 
   Future<dynamic> getJsVersions() => jsApi.jsCall('window.getReefJsVer();');
+
+  Stream<dynamic> getApolloConnLogs()=> jsApi.jsObservable('window.utils.apolloClientWsState\$');
 }
