@@ -102,7 +102,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     size: 22,
                   ),
                   Gap(9),
-                  Text("Biometric Authentication",
+                  Text(AppLocalizations.of(context)!.biometric_auth,
                       style: Theme.of(context).textTheme.bodyText1)
                 ]),
                 value: navigateOnAccountSwitchVal,
@@ -216,14 +216,14 @@ class _SettingsPageState extends State<SettingsPage> {
                 child: Column(
                   children: [
                     FutureBuilder<dynamic>(
-                        future:ReefAppState.instance.metadataCtrl.getJsVersions(),
-                        builder: (context, AsyncSnapshot<dynamic> snapshot){
-                          if(snapshot.hasData) {
+                        future:
+                            ReefAppState.instance.metadataCtrl.getJsVersions(),
+                        builder: (context, AsyncSnapshot<dynamic> snapshot) {
+                          if (snapshot.hasData) {
                             return Text(snapshot.data);
                           }
                           return Text('getting version...');
-                    }),
-
+                        }),
                     const Gap(12),
                     MaterialButton(
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
