@@ -4,14 +4,18 @@ import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:gap/gap.dart';
 import 'package:reef_mobile_app/components/modals/signing_modals.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
+import 'package:reef_mobile_app/utils/elements.dart';
 import 'package:reef_mobile_app/utils/functions.dart';
+import 'package:reef_mobile_app/utils/gradient_text.dart';
 import 'package:reef_mobile_app/utils/icon_url.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 
 class TxInfo extends StatefulWidget {
   final String unparsedTimestamp;
   final String? imageUrl;
-  TxInfo(this.unparsedTimestamp, this.imageUrl, {Key? key}) : super(key: key);
+  final String? iconUrl;
+  TxInfo(this.unparsedTimestamp, this.imageUrl, this.iconUrl, {Key? key})
+      : super(key: key);
 
   @override
   State<TxInfo> createState() => _TxInfoState();
@@ -26,7 +30,6 @@ class _TxInfoState extends State<TxInfo> {
     ReefAppState.instance.tokensCtrl
         .getTxInfo(widget.unparsedTimestamp)
         .then((value) {
-      print("anuna" + value.toString());
       setState(() {
         isDataFetched = true;
         txData = value;
@@ -63,6 +66,7 @@ class _TxInfoState extends State<TxInfo> {
                       size: 240,
                     ),
                   ),
+                if (widget.iconUrl != null) IconFromUrl(widget.iconUrl!),
                 Gap(16),
                 Padding(
                   padding: EdgeInsets.fromLTRB(4.0, 0.0, 4.0, 0.0),
@@ -91,7 +95,7 @@ class _TxInfoState extends State<TxInfo> {
                           ? formatAmountToDisplayBigInt(
                               BigInt.parse(txData['amount']),
                               fractionDigits: 2)
-                          : txData['amount'],
+                          : txData['amount'] + 'x NFT',
                       formatAmountToDisplayBigInt(BigInt.parse(txData['fee']),
                           fractionDigits: 2),
                       txData['token_address'],
@@ -101,6 +105,35 @@ class _TxInfoState extends State<TxInfo> {
                     ], fontSizeLabel: 16, fontSizeValue: 16),
                   ),
                 ),
+                // if (widget.iconUrl != null)
+                //   Table(children: [
+                //     TableRow(
+                //       children: [
+                //         Padding(
+                //           padding: const EdgeInsets.symmetric(
+                //               horizontal: 4.0, vertical: 4.0),
+                //           child: GradientText(
+                //             "Icon",
+                //             gradient: textGradient(),
+                //             textAlign: TextAlign.center,
+                //             style: TextStyle(
+                //                 fontWeight: FontWeight.w600, fontSize: 16),
+                //           ),
+                //         ),
+                //         Expanded(
+                //           child: Padding(
+                //               padding: const EdgeInsets.all(12),
+                //               child: Align(
+                //                 alignment: Alignment.topLeft,
+                //                 child: IconFromUrl(
+                //                   widget.iconUrl!,
+                //                   size: 18,
+                //                 ),
+                //               )),
+                //         ),
+                //       ],
+                //     ),
+                //   ])
               ],
             ),
           if (!isDataFetched)

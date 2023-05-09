@@ -212,7 +212,8 @@ class _ActivityViewState extends State<ActivityView> {
                                               context: context,
                                               unparsedTimestamp:
                                                   item.unparsedTimestamp,
-                                              imageUrl: item.tokenNFT?.iconUrl),
+                                              imageUrl: item.tokenNFT?.iconUrl,
+                                              iconUrl: item.token?.iconUrl),
                                       // onTap: () async {
                                       //   dynamic x = await ReefAppState
                                       //       .instance.tokensCtrl
