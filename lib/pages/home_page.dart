@@ -161,12 +161,12 @@ class _HomePageState extends State<HomePage> {
       child: Padding(
         padding: const EdgeInsets.all(12.0),
         child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-          rowMember({
-            "key": null,
-            "name": "Reload",
-            "component": null,
-            "function": () => ReefAppState.instance.tokensCtrl.reload(true)
-          }),
+          // rowMember({
+          //   "key": null,
+          //   "name": "Reload",
+          //   "component": null,
+          //   "function": () => ReefAppState.instance.tokensCtrl.reload(true)
+          // }),
           ..._viewsMap.map<Widget>((e) => rowMember(e)).toList()
         ]),
       ),
