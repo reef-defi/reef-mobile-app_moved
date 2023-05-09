@@ -97,13 +97,9 @@ export const innitApi = (signingKey: Signer) => {
             return nativeAddress||null;
         },
 
-        isValidEvmAddress: (address: string) => {
-            return ethers.utils.isAddress(address);
-        },
+        isValidEvmAddress: (address: string) =>  ethers.utils.isAddress(address),
 
-        isValidSubstrateAddress: (address: string) => {
-            return isSubstrateAddress(address);
-        },
+        isValidSubstrateAddress: (address: string) => isSubstrateAddress(address),
     };
 }
 

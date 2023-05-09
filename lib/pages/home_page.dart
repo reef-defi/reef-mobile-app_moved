@@ -4,7 +4,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:reef_mobile_app/components/dapp_browser/tabs_manager.dart';
+import 'package:reef_mobile_app/components/getQrTypeData.dart';
 import 'package:reef_mobile_app/components/sign/SignatureContentToggle.dart';
 import 'package:reef_mobile_app/components/home/NFT_view.dart';
 import 'package:reef_mobile_app/components/home/activity_view.dart';
@@ -21,6 +21,7 @@ import 'package:reef_mobile_app/utils/gradient_text.dart';
 import 'package:reef_mobile_app/utils/size_config.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 import 'package:sliver_tools/sliver_tools.dart';
+import 'package:reef_mobile_app/components/modals/restore_json_modal.dart';
 
 import '../components/BlurableContent.dart';
 import 'DAppPage.dart';
@@ -252,6 +253,7 @@ class _HomePageState extends State<HomePage> {
         child: AddAccount(callback: callback), headText: title);
   }
 
+  // TODO convert modal name to Enum vlaue
   void openModal(String modalName) {
     switch (modalName) {
       case 'addAccount':
@@ -259,6 +261,14 @@ class _HomePageState extends State<HomePage> {
         break;
       case 'importAccount':
         showCreateAccountModal(context, fromMnemonic: true);
+        break;
+      case 'restoreJSON':
+        showRestoreJson(context);
+        break;
+      case 'importFromQR':
+        showQrTypeDataModal(
+            AppLocalizations.of(context)!.import_the_account, context,
+            expectedType: ReefQrCodeType.accountJson);
         break;
       default:
         break;

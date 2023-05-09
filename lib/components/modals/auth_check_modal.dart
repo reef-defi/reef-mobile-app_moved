@@ -17,6 +17,7 @@ class AuthCheck extends StatefulWidget {
 }
 
 class _AuthCheckState extends State<AuthCheck> {
+  
   bool _isAuthenticated = false;
   bool _wrongPassword = false;
   bool _biometricsIsAvailable = false;
@@ -35,22 +36,25 @@ class _AuthCheckState extends State<AuthCheck> {
       });
     });
     _checkBiometricsSupport().then((value) {
-      if (value) authenticateWithBiometrics();
-      setState(() {
-        _biometricsIsAvailable = value;
-      });
+    setState(() {
+      _biometricsIsAvailable = value;
     });
+    if (value) {
+      authenticateWithBiometrics();
+    }
+  });
   }
 
   Future<bool> _checkBiometricsSupport() async {
-    final isDeviceSupported = await localAuth.isDeviceSupported();
-    final isAvailable = await localAuth.canCheckBiometrics;
-    return isAvailable && isDeviceSupported;
-  }
+  final isDeviceSupported = await localAuth.isDeviceSupported();
+  final isAvailable = await localAuth.canCheckBiometrics;
+  return isAvailable && isDeviceSupported;
+}
+
 
   Future<void> authenticateWithPassword(String value) async {
     final storedPassword =
-        await ReefAppState.instance.storage.getValue(StorageKey.password.name);
+        await ReefAppState.instance.storageCtrl.getValue(StorageKey.password.name);
     if (storedPassword == value) {
       setState(() {
         _wrongPassword = false;
@@ -63,7 +67,10 @@ class _AuthCheckState extends State<AuthCheck> {
     }
   }
 
+
   Future<void> authenticateWithBiometrics() async {
+  final isAvailable = await _checkBiometricsSupport();
+  if (isAvailable) {
     final isValid = await localAuth.authenticate(
         localizedReason: 'Authenticate with biometrics',
         options: const AuthenticationOptions(
@@ -75,6 +82,7 @@ class _AuthCheckState extends State<AuthCheck> {
       });
     }
   }
+}
 
   @override
   void dispose() {

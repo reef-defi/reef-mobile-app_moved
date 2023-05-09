@@ -46,6 +46,7 @@ class SelectAccount extends StatelessWidget {
       child: accountList.isEmpty
           ? Text(
               AppLocalizations.of(context)!.no_other_accounts,
+              style: TextStyle(color: Styles.textLightColor),
             )
           : ListView(
               physics: const BouncingScrollPhysics(),
@@ -80,7 +81,7 @@ void showSelectAccountModal(
     BuildContext? context}) async {
   filterCallback ??= (p0) => true;
 
-  var signerAddress = await ReefAppState.instance.storage
+  var signerAddress = await ReefAppState.instance.storageCtrl
       .getValue(StorageKey.selected_address.name);
   showModal(context ?? navigatorKey.currentContext,
       child: SelectAccount(

@@ -48,8 +48,9 @@ export const initApi = () => {
             ));
         },
         setSelectedNetwork: (networkName: string) => {
-            const network: Network = network.AVAILABLE_NETWORKS[networkName] || network.AVAILABLE_NETWORKS.mainnet;
-            return reefState.setSelectedNetwork(network);
+            const net: network.Network = network.AVAILABLE_NETWORKS[networkName] || network.AVAILABLE_NETWORKS.mainnet;
+            console.log('setSelectedNetwork=',net)
+            return reefState.setSelectedNetwork(net);
         },
         bytesString: (bytes: string) => {
             return isAscii(bytes) ? u8aToString(u8aUnwrapBytes(bytes)) : bytes;

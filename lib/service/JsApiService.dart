@@ -86,13 +86,15 @@ class JsApiService {
     return _controller.then((ctrl) => ctrl.runJavascript(executeJs));
   }
 
-  Future<String> jsCall(String executeJs) {
-    return _controller
+  Future<dynamic> jsCall<T>(String executeJs) async {
+    dynamic res = await _controller
         .then((ctrl) => ctrl.runJavascriptReturningResult(executeJs));
+    return T == bool?_resolveBooleanValue(res) : res;
   }
 
-  Future jsPromise(String jsObsRefName) {
-    return jsObservable(jsObsRefName).first;
+  Future jsPromise<T>(String jsObsRefName) async {
+    dynamic res = await jsObservable(jsObsRefName).first;
+    return T == bool?_resolveBooleanValue(res) : res;
   }
 
   Stream jsObservable(String jsObsRefName) {
@@ -111,6 +113,15 @@ class JsApiService {
 
   void sendDappMsgResponse(String reqId, dynamic value) {
     jsCall('${DAPP_MSG_CONFIRMATION_JS_FN_NAME}(`$reqId`, `$value`)');
+  }
+
+  dynamic _resolveBooleanValue(dynamic res){
+      print(' CALL $res');
+      return res == true ||
+          res == 'true' ||
+          res == 1 ||
+          res == '1' ||
+          res == '"true"';
   }
 
   Future<String> _getFlutterJsHeaderTags(String assetsFilePath) async {

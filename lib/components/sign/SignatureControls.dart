@@ -11,7 +11,7 @@ class SignatureControls extends StatefulWidget {
   const SignatureControls(this._signatureReq, this._confirm, this._cancel, {Key? key}) : super(key: key);
 
   final SignatureRequest _signatureReq;
-  final Future<bool> Function(String password) _confirm;
+  final Future<bool> Function(String? password) _confirm;
   final Function() _cancel;
 
   @override
@@ -19,11 +19,11 @@ class SignatureControls extends StatefulWidget {
 }
 
 class _SignatureControlsState extends State<SignatureControls> {
-  bool _passwordMatch=false;
+  bool? _passwordSuccess;
   bool _biometricsIsAvailable = false;
+  bool _isBiometricAuthEnabled = false;
 
   final TextEditingController _passwordController = TextEditingController();
-  String password = "";
 
   @override
   void initState() {
@@ -31,13 +31,16 @@ class _SignatureControlsState extends State<SignatureControls> {
 
     _passwordController.addListener(() {
       setState(() {
-        password = _passwordController.text;
+        _passwordSuccess = null;
       });
     });
     ReefAppState.instance.signingCtrl.checkBiometricsSupport().then((value) {
       setState(() {
         _biometricsIsAvailable = value;
       });
+    });
+    setState(() {
+    _isBiometricAuthEnabled = ReefAppState.instance.model.appConfig.isBiometricAuthEnabled;
     });
   }
 
@@ -46,7 +49,7 @@ class _SignatureControlsState extends State<SignatureControls> {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(children: [
-        if (!_biometricsIsAvailable) ...[
+        if (!(useBiometrics)) ...[
           const Divider(
             color: Styles.textLightColor,
             thickness: 1,
@@ -80,7 +83,7 @@ class _SignatureControlsState extends State<SignatureControls> {
             ),
           ),
           const Gap(8),
-          if (_passwordMatch==false&&password.isNotEmpty)
+          if (_passwordSuccess==false&&_passwordController.text.isNotEmpty)
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -104,6 +107,8 @@ class _SignatureControlsState extends State<SignatureControls> {
     );
   }
 
+  bool get useBiometrics => _isBiometricAuthEnabled&&_biometricsIsAvailable;
+
   Row buildButtons(BuildContext context) {
     return Row(
   children: [
@@ -124,7 +129,10 @@ class _SignatureControlsState extends State<SignatureControls> {
             padding: const EdgeInsets.symmetric(vertical: 16),
           ),
           onPressed: () async {
-            _passwordMatch = await widget._confirm(password);
+            var success = await widget._confirm(useBiometrics ? null : _passwordController.text);
+            setState(() {
+              _passwordSuccess = success;
+            });
           },
           child: Text(
             ReefAppState.instance.signingCtrl.isTransaction(widget._signatureReq)
@@ -149,7 +157,7 @@ class _SignatureControlsState extends State<SignatureControls> {
             ),
             shadowColor: const Color(0x559d6cff),
             elevation: 5,
-            backgroundColor: Styles.primaryAccentColor,
+            backgroundColor: Styles.greyColor,
             padding: const EdgeInsets.symmetric(
               vertical: 16, 
               horizontal: 20
@@ -159,11 +167,12 @@ class _SignatureControlsState extends State<SignatureControls> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.cancel, size: 18),
-              const SizedBox(width: 8),
+              // const Icon(Icons.cancel, size: 18, color: Styles.textColor),
+              // const SizedBox(width: 8),
               Text(
                 AppLocalizations.of(context)!.cancel,
                 style: const TextStyle(
+                  color: Styles.textColor,
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
                 ),
@@ -177,4 +186,9 @@ class _SignatureControlsState extends State<SignatureControls> {
 );
   }
 
+  @override
+  void dispose() {
+    _passwordController.dispose();
+    super.dispose();
+  }
 }

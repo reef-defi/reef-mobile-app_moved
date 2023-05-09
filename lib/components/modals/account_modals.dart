@@ -449,6 +449,8 @@ class _AccountCreationConfirmContentState
   String password = "";
   String confirmPassword = "";
   bool _hasPassword = false;
+  bool _hasBioAuth = false;
+  bool _biometricsIsAvailable = false;
   bool _passwordError = false;
   bool _confirmPasswordError = false;
 
@@ -487,11 +489,20 @@ class _AccountCreationConfirmContentState
         _confirmPasswordError = password != confirmPassword;
       });
     });
-    ReefAppState.instance.storage
+    ReefAppState.instance.storageCtrl
         .getValue(StorageKey.password.name)
         .then((value) => setState(() {
               _hasPassword = value != null && value.isNotEmpty;
             }));
+    ReefAppState.instance.signingCtrl
+        .checkBiometricsSupport()
+        .then((value) => setState(() {
+              _biometricsIsAvailable = value;
+            }));
+    setState(() {
+      _hasBioAuth =
+          ReefAppState.instance.model.appConfig.isBiometricAuthEnabled;
+    });
   }
 
   @override
@@ -544,37 +555,73 @@ class _AccountCreationConfirmContentState
                 ),
               )),
           const Gap(16),
-          if (!_hasPassword) ...[
-            Text(
-              AppLocalizations.of(context)!.password_for_reef_app,
-              style: const TextStyle(
-                  fontSize: 10,
-                  fontWeight: FontWeight.w500,
-                  color: Styles.textLightColor),
+          if (!_hasPassword || _hasBioAuth) ...[
+            Row(
+              children: [
+                if (_biometricsIsAvailable)
+                  Checkbox(
+                    visualDensity:
+                        const VisualDensity(horizontal: -4, vertical: -4),
+                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    fillColor:
+                        MaterialStateProperty.all<Color>(Colors.grey[800]!),
+                    value: _hasBioAuth,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        _hasBioAuth = value ?? false;
+                      });
+                      ReefAppState.instance.appConfigCtrl
+                          .setBiometricAuth(value == true);
+                      print("i am here ${value}");
+                    },
+                  ),
+                const Gap(8),
+                Flexible(
+                  child: Text(
+                    "Enable Biometric Authentication",
+                    style: TextStyle(color: Colors.grey[600]!, fontSize: 12),
+                  ),
+                )
+              ],
             ),
-            const Gap(8),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-              decoration: BoxDecoration(
-                color: Styles.whiteColor,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: _passwordError
-                      ? Styles.errorColor
-                      : const Color(0x20000000),
-                  width: 1,
-                ),
+            if (_biometricsIsAvailable) const Gap(16),
+            if (!_hasBioAuth)
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    AppLocalizations.of(context)!.password_for_reef_app,
+                    style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w500,
+                        color: Styles.textLightColor),
+                  ),
+                  const Gap(8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 12, vertical: 14),
+                    decoration: BoxDecoration(
+                      color: Styles.whiteColor,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: _passwordError
+                            ? Styles.errorColor
+                            : const Color(0x20000000),
+                        width: 1,
+                      ),
+                    ),
+                    child: TextField(
+                      focusNode: _focusNodePassword,
+                      controller: _passwordController,
+                      obscureText: true,
+                      decoration: const InputDecoration.collapsed(hintText: ''),
+                      style: const TextStyle(
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              child: TextField(
-                focusNode: _focusNodePassword,
-                controller: _passwordController,
-                obscureText: true,
-                decoration: const InputDecoration.collapsed(hintText: ''),
-                style: const TextStyle(
-                  fontSize: 16,
-                ),
-              ),
-            ),
             if (_passwordError) ...[
               const Gap(8),
               Row(
@@ -700,13 +747,14 @@ class _AccountCreationConfirmContentState
                                     !_passwordError &&
                                     !_confirmPasswordError &&
                                     _confirmPasswordController.text ==
-                                        _passwordController.text)))
+                                        _passwordController.text) ||
+                                _hasBioAuth))
                         ? () {
                             if (widget.account != null) {
                               widget
                                   .saveAccount(widget.account as StoredAccount);
                               if (!_hasPassword && password.isNotEmpty) {
-                                ReefAppState.instance.storage.setValue(
+                                ReefAppState.instance.storageCtrl.setValue(
                                     StorageKey.password.name, password);
                               }
 
@@ -887,7 +935,8 @@ Widget buildAccountBox(StoredAccount? account, {name = "<No Name>"}) {
       ));
 }
 
-void showCreateAccountModal(BuildContext context, {bool fromMnemonic = false}) {
+void showCreateAccountModal(BuildContext context,
+    {bool fromMnemonic = false, bool fromJson = false}) {
   showModal(context,
       headText: fromMnemonic
           ? AppLocalizations.of(context)!.import_the_account

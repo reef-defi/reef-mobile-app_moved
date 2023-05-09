@@ -23,12 +23,12 @@ class ActivityView extends StatefulWidget {
   State<ActivityView> createState() => _ActivityViewState();
 }
 
-
 Future<IconData> getIconData(String imageUrl) async {
   final response = await http.get(Uri.parse(imageUrl));
   final bytes = response.bodyBytes;
   final base64String = base64Encode(bytes);
-  final IconData iconData = IconData(int.parse(base64String.substring(0, 10)), fontFamily: 'MaterialIcons');
+  final IconData iconData = IconData(int.parse(base64String.substring(0, 10)),
+      fontFamily: 'MaterialIcons');
   return iconData;
 }
 
@@ -58,10 +58,10 @@ class _ActivityViewState extends State<ActivityView> {
           amountText =
               "+ ${formatAmountToDisplayBigInt(amount, fractionDigits: 2)}";
         } else {
-          if(isTokenNFT!){
+          if (isTokenNFT!) {
             amountText = "";
-          }else{
-          amountText = "0";
+          } else {
+            amountText = "0";
           }
         }
         // amountText =
@@ -74,16 +74,16 @@ class _ActivityViewState extends State<ActivityView> {
         if (amount != null) {
           amountText = "- ${formatAmountToDisplayBigInt(amount)}";
         } else {
-          if(isTokenNFT!){
+          if (isTokenNFT!) {
             amountText = "";
-          }else{
-          amountText = "0";
+          } else {
+            amountText = "0";
           }
         }
         // amountText =
         //     "- ${amount != null ? toAmountDisplayBigInt(amount!, fractionDigits: 2) : 0}";
-        
-        icon =  CupertinoIcons.arrow_up_right;
+
+        icon = CupertinoIcons.arrow_up_right;
         bgColor = const Color(0x8cd8dce6);
         iconColor = const Color(0xffb2b0c8);
     }
@@ -95,68 +95,75 @@ class _ActivityViewState extends State<ActivityView> {
       // decoration: BoxDecoration(
       //   border: Border.all(color: Colors.black12),
       // ),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  Container(
-                    height: 46,
-                    width: 46,
-                    decoration: BoxDecoration(
-                      color: bgColor,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Center(
-                        child: Icon(
-                      icon,
-                      color: iconColor,
-                    )),
-                  ),
-                  const Gap(18),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+      child: Expanded(
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Row(
                     children: [
-                      Text(
-                        "$titleText $tokenName",
-                        style: TextStyle(
-                            fontWeight: FontWeight.w800,
-                            fontSize: 15,
-                            color: Styles.textColor),
+                      Container(
+                        height: 46,
+                        width: 46,
+                        decoration: BoxDecoration(
+                          color: bgColor,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Center(
+                            child: Icon(
+                          icon,
+                          color: iconColor,
+                        )),
                       ),
-                      const Gap(1),
-                      Text(
-                        timeStampText,
-                        style: TextStyle(
-                            fontSize: 10, color: Styles.textLightColor),
-                      )
+                      const Gap(18),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "$titleText $tokenName",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 15,
+                                  color: Styles.textColor),
+                              overflow: TextOverflow.fade,
+                            ),
+                            const Gap(1),
+                            Text(
+                              timeStampText,
+                              style: TextStyle(
+                                  fontSize: 10, color: Styles.textLightColor),
+                            )
+                          ],
+                        ),
+                      ),
                     ],
                   ),
-                ],
-              ),
-              Row(children: [
-                Observer(builder: (context) {
-                  return BlurableContent(
-                      Text(
-                        amountText,
-                        style: GoogleFonts.spaceGrotesk(
-                            fontWeight: FontWeight.w700,
-                            color: isReceived ? Color(0xff35c57d) : iconColor,
-                            fontSize: 18),
-                      ),
-                      ReefAppState.instance.model.appConfig.displayBalance);
-                }),
-                const SizedBox(width: 4),
-                IconFromUrl(
-                  iconUrl,
-                  size:isTokenNFT!? 45:18,
-                )
-              ]),
-            ],
-          ),
-        ],
+                ),
+                Row(children: [
+                  Observer(builder: (context) {
+                    return BlurableContent(
+                        Text(
+                          amountText,
+                          style: GoogleFonts.spaceGrotesk(
+                              fontWeight: FontWeight.w700,
+                              color: isReceived ? Color(0xff35c57d) : iconColor,
+                              fontSize: 18),
+                        ),
+                        ReefAppState.instance.model.appConfig.displayBalance);
+                  }),
+                  const SizedBox(width: 4),
+                  IconFromUrl(
+                    iconUrl,
+                    size: isTokenNFT! ? 45 : 18,
+                  )
+                ]),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -172,10 +179,11 @@ class _ActivityViewState extends State<ActivityView> {
     //       item.url,
     //       item.token?.iconUrl ?? item.tokenNFT?.iconUrl,
     //     ]));
-     
+
     return Observer(builder: (_) {
+      var txHistory = ReefAppState.instance.model.tokens.txHistory;
       String? message = getFdmListMessage(
-          ReefAppState.instance.model.tokens.txHistory, AppLocalizations.of(context)!.activity, AppLocalizations.of(context)!.loading);
+          txHistory, AppLocalizations.of(context)!.activity, AppLocalizations.of(context)!.loading);
 
       return SliverList(
         delegate: SliverChildListDelegate([
@@ -189,22 +197,29 @@ class _ActivityViewState extends State<ActivityView> {
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     child: message == null
                         ? Column(
-                            children: ReefAppState
-                                .instance.model.tokens.txHistory.data
+                            children: txHistory.data
                                 .map((item) => Column(
                                       children: [
                                         activityItem(
-                                          tokenName: item.token?.name ?? (item.tokenNFT!.balance==BigInt.one? item.tokenNFT!.name: "${item.tokenNFT!.balance} ${item.tokenNFT!.name}s"),
+                                          tokenName: item.token?.name ??
+                                              (item.tokenNFT!.balance ==
+                                                      BigInt.one
+                                                  ? item.tokenNFT!.name
+                                                  : "${item.tokenNFT!.balance} ${item.tokenNFT!.name}s"),
                                           type: item.isInbound
                                               ? 'received'
                                               : 'sent',
                                           timeStamp: item.timestamp.toLocal(),
-                                          amount: item.tokenNFT?.iconUrl==""?item.token?.balance:item.token?.balance,
-                                          iconUrl: item.token?.iconUrl??item.tokenNFT?.iconUrl,
-                                          isTokenNFT: item.tokenNFT==null?false:true,
+                                          amount: item.tokenNFT?.iconUrl == ""
+                                              ? item.token?.balance
+                                              : item.token?.balance,
+                                          iconUrl: item.token?.iconUrl ??
+                                              item.tokenNFT?.iconUrl,
+                                          isTokenNFT: item.tokenNFT == null
+                                              ? false
+                                              : true,
                                         ),
-                                        if (ReefAppState.instance.model.tokens
-                                                .txHistory.data.last !=
+                                        if (txHistory.data.last !=
                                             item)
                                           const Divider(
                                             height: 32,
@@ -218,11 +233,20 @@ class _ActivityViewState extends State<ActivityView> {
                         : Center(
                             child: Padding(
                             padding: const EdgeInsets.symmetric(vertical: 8.0),
-                            child: Text(
-                              message,
-                              style: TextStyle(
-                                  color: Styles.textLightColor,
-                                  fontWeight: FontWeight.w500),
+                            child: Column(
+                              children: [
+                                Text(
+                                  message,
+                                  style: TextStyle(
+                                      color: Styles.textLightColor,
+                                      fontWeight: FontWeight.w500),
+                                ),
+                                if (txHistory.hasStatus(StatusCode.error))
+                                  ElevatedButton(
+                                      onPressed:
+                                      ReefAppState.instance.tokensCtrl.reload,
+                                      child: const Text("Reload"))
+                              ],
                             ),
                           ))),
               ),

@@ -101,5 +101,13 @@
   "share_address_qr":"नेटिव पता साझा करें",
   "scan_from_image":"फोटो से स्कैन करें",
   "select_account":"खाता चुनें",
-  "go_to_home_on_account_switch":"अकाउंट स्विच पर होम पर जाएं"
+  "go_to_home_on_account_switch":"अकाउंट स्विच पर होम पर जाएं",
+ "restore_from_json":"जे-सो-न से पुनर्स्थापित करें",
+  "import_from_qr_code":"क्यूआर कोड से आयात करें",
+    "enter_password_for":"पास वर्ड दर्ज करें",
+  "export_account":"निर्यात खाता",
+    "invalid_qr_code":"अमान्य क्यूआर कोड",
+  "invalid_qr_msg1":"यह एक अमान्य क्यूआर कोड है!",
+  "invalid_qr_msg2":"आप सेटिंग में 'स्कैन क्यूआर' विकल्प से इस क्यूआर कोड के बारे में अधिक जान सकते हैं",
+   "get_qr_information":"क्यूआर जानकारी प्राप्त करें"
 }

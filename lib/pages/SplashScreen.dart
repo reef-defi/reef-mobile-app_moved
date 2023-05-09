@@ -71,10 +71,13 @@ class _SplashAppState extends State<SplashApp> {
   static final LocalAuthentication localAuth = LocalAuthentication();
 
   Future<bool> _checkBiometricsSupport() async {
-    final isDeviceSupported = await localAuth.isDeviceSupported();
-    final isAvailable = await localAuth.canCheckBiometrics;
-    return isAvailable && isDeviceSupported;
-  }
+  final isDeviceSupported = await localAuth.isDeviceSupported();
+  final isAvailable = await localAuth.canCheckBiometrics;
+  //if it is true - user has registered for bio metrics else didn't
+  final isEnrolled = await localAuth.getAvailableBiometrics().then((value) => value.isNotEmpty);
+  //if biometrics are not enrolled this bool exp will return false
+  return isAvailable && isDeviceSupported && isEnrolled;
+}
 
   Future<bool> _checkRequiresAuth() async {
     final storedPassword =

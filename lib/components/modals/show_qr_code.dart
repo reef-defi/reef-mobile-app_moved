@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:reef_mobile_app/components/generateQrJsonValue.dart';
+import 'package:reef_mobile_app/components/getQrTypeData.dart';
 import 'package:reef_mobile_app/components/modal.dart';
 import 'package:reef_mobile_app/pages/SplashScreen.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
@@ -17,22 +19,7 @@ class QRCodeGenerator extends StatelessWidget {
     return Center(
       child: Column(
         children: [
-          QrImage(
-            data: data,
-            version: QrVersions.auto,
-            size: 200.0,
-            gapless: false,
-            foregroundColor: Colors.black,
-            embeddedImage: const AssetImage('assets/images/reef.png'),
-            embeddedImageStyle: QrEmbeddedImageStyle(
-              size: const Size(40, 40),
-            ),
-            errorStateBuilder: (context, error) => const Text(
-              "Oops! Something went wrong...",
-              style: TextStyle(fontSize: 20.0),
-            ),
-            semanticsLabel: data,
-          ),
+          GenerateQrJsonValue(type: ReefQrCodeType.address, data: data),
           const SizedBox(
             height: 8,
           ),
@@ -47,25 +34,6 @@ class QRCodeGenerator extends StatelessWidget {
           const SizedBox(
             height: 8,
           ),
-          // ElevatedButton.icon(
-          //   icon: Icon(Icons.copy),
-          //   onPressed: () async {
-          //     var isEvm = data.startsWith('0x');
-          //     var addressToCopy = isEvm == true
-          //         ? await ReefAppState.instance.accountCtrl
-          //             .toReefEVMAddressWithNotificationString(data)
-          //         : data;
-          //     Clipboard.setData(ClipboardData(text: addressToCopy)).then((_) {
-          //       var message = isEvm == true
-          //           ? "EVM address copied to clipboard.\nUse it ONLY on Reef Chain!"
-          //           : "Native address copied to clipboard.";
-
-          //       ScaffoldMessenger.of(context)
-          //           .showSnackBar(SnackBar(content: Text(message)));
-          //     });
-          //   },
-          //   label: Text('Copy to clipboard'),
-          // ),
           ElevatedButton.icon(
             icon: const Icon(Icons.copy),
             label: Text(

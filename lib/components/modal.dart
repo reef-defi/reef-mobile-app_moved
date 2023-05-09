@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:reef_mobile_app/utils/elements.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
@@ -87,8 +86,9 @@ class CustomModalState extends State<CustomModal>
 
   @override
   void dispose() {
-    super.dispose();
     _scaleController.dispose();
+    _fadeController.dispose();
+    super.dispose();
   }
 
   @override
@@ -103,60 +103,19 @@ class CustomModalState extends State<CustomModal>
               child: ScaleTransition(
                 scale: scaleAnimation,
                 child: Dialog(
+                  insetPadding: EdgeInsets.all(16),
                   backgroundColor: Colors.transparent,
                   child: ViewBoxContainer(
                     color: widget.background,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 12.0, vertical: 8),
-                                child: Row(
-                                  children: [
-                                    const Image(
-                                      image: AssetImage(
-                                          "./assets/images/reef.png"),
-                                      width: 24,
-                                      height: 24,
-                                    ),
-                                    const Gap(8),
-                                    Text(
-                                      widget.headText,
-                                      style: GoogleFonts.spaceGrotesk(
-                                          fontSize: 18,
-                                          color: widget.textColor,
-                                          fontWeight: FontWeight.w500),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              if (widget.dismissible)
-                                ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                      shape: const CircleBorder(),
-                                      padding: const EdgeInsets.all(8),
-                                      minimumSize: const Size.fromRadius(4),
-                                      backgroundColor: Styles.whiteColor,
-                                      foregroundColor: Colors.grey[300],
-                                      elevation: 2,
-                                      shadowColor: Colors.black12),
-                                  child: const Icon(CupertinoIcons.xmark,
-                                      color: Colors.black87, size: 12),
-                                )
-                            ],
-                          ),
-                        ),
-                        Container(child: widget.child),
-                      ],
+                    child: Padding(
+                      padding: EdgeInsets.all(10),
+                      child: Column(
+                        // mainAxisSize: MainAxisSize.min,
+                        children: [
+                          buildHeader(context),
+                          Container(child: widget.child),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -164,5 +123,65 @@ class CustomModalState extends State<CustomModal>
             ),
           ),
         ));
+  }
+
+  Padding buildHeader(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Padding(
+              padding: EdgeInsets.only(right: 8),
+              child: Image(
+                image: AssetImage("./assets/images/reef.png"),
+                width: 31,
+                height: 31,
+              )),
+          Expanded(
+              child: Text(
+            widget.headText,
+            style: GoogleFonts.spaceGrotesk(
+                fontSize: 24,
+                color: widget.textColor,
+                fontWeight: FontWeight.bold),
+            overflow: TextOverflow.fade,
+          )),
+          if (widget.dismissible)
+            GestureDetector(
+                onTap: () {
+                  Navigator.of(context).pop();
+                },
+                child: Container(
+                    decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(99)),
+                      color: Colors.white,
+                    ),
+                    child: const Padding(
+                        padding: EdgeInsets.all(10),
+                        child: Icon(CupertinoIcons.xmark,
+                            color: Colors.black87, size: 12))
+
+                    /*child: ElevatedButton(
+                                    ,
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                style: ElevatedButton.styleFrom(
+
+                                    shape: const CircleBorder(),
+                                    padding: const EdgeInsets.all(8),
+                                    minimumSize: const Size.fromRadius(4),
+                                    backgroundColor: Styles.whiteColor,
+                                    foregroundColor: Colors.grey[300],
+                                    elevation: 2,
+                                    shadowColor: Colors.black12),
+                                child: const Icon(CupertinoIcons.xmark,
+                                    color: Colors.black87, size: 12),
+                              )*/
+                    ))
+        ],
+      ),
+    );
   }
 }

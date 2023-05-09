@@ -14,6 +14,7 @@ import 'package:reef_mobile_app/model/signing/signature_request.dart';
 import 'package:reef_mobile_app/model/status-data-object/StatusDataObject.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 
+import '../../utils/functions.dart';
 import 'MethodDataDisplay.dart';
 import 'MethodDataLoadingIndicator.dart';
 
@@ -52,15 +53,16 @@ class SignatureContentToggle extends StatelessObserverWidget {
           padding: const EdgeInsets.all(2.0),
           child: Text(
             AppLocalizations.of(context)!.sign_transaction,
-            style: const TextStyle(color: Styles.textColor),
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Styles.textColor,
+            ),
           ),
         ),
-        leading: IconButton(
-          icon: Image.asset('assets/images/reef.png'),
-          onPressed: () {
-            // TODO: implement menu button action
-          },
-        ),
+        leading: Padding(
+            padding: EdgeInsets.all(6),
+            child: Image.asset('assets/images/reef.png')),
         backgroundColor: Styles.primaryBackgroundColor,
         elevation: 0.0,
         actions: [
@@ -79,14 +81,10 @@ class SignatureContentToggle extends StatelessObserverWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
+          Gap(74),
           const Text(
             // AppLocalizations.of(context)!.transaction_details,
-            'Tx details',
-            style: TextStyle(
-              fontSize: 26,
-              fontWeight: FontWeight.bold,
-              color: Styles.textColor,
-            ),
+            'Signing with account:',
           ),
           if (account != null)
             Padding(
@@ -97,13 +95,18 @@ class SignatureContentToggle extends StatelessObserverWidget {
                         reefAccountFDM: account,
                         selected: false,
                         onSelected: () => {},
-                        showOptions: false),
+                        showOptions: false,
+                        lightTheme: true),
                   ],
                 )),
           Expanded(
               child: Column(children: [
-            const Gap(10),
-            MethodGeneralDataDisplay(signatureRequest),
+            const Gap(48),
+            Text(
+                "Transaction on ${isMainnet(signatureRequest?.payload.genesisHash) ? 'Reef Mainnet' : toShortDisplay(signatureRequest?.payload.genesisHash?.toString())}",
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+            const Gap(24),
             MethodDataLoadingIndicator(signatureRequest),
             signatureRequest?.payload.type == "bytes"
                 ? MethodBytesDataDisplay(
@@ -113,7 +116,7 @@ class SignatureContentToggle extends StatelessObserverWidget {
           if (signatureRequest != null)
             SignatureControls(
                 signatureRequest,
-                (String password) => _confirmSign(signatureRequest, password),
+                (String? password) => _confirmSign(signatureRequest, password),
                 () => _cancel(signatureRequest))
         ],
       ),
@@ -121,7 +124,7 @@ class SignatureContentToggle extends StatelessObserverWidget {
   }
 
   Future<bool> _confirmSign(
-          SignatureRequest signatureRequest, String password) =>
+          SignatureRequest signatureRequest, String? password) =>
       ReefAppState.instance.signingCtrl
           .authenticateAndSign(signatureRequest, password);
 

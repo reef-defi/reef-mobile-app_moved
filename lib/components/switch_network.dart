@@ -40,7 +40,7 @@ class _SwitchNetworkState extends State<SwitchNetwork> {
             Switch(
               // TODO listen to currentNetwork from mobx model
               value: ReefAppState.instance.model.network.selectedNetworkName ==
-                  Network.testnet.name,
+                  Network.mainnet.name,
               onChanged: (value) {
                 setState(() {
                   var currentNetwork =
