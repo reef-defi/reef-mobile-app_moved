@@ -143,5 +143,9 @@
   "decoding_sign":"decoding signature data",
   "copy_native":"Native address copied to clipboard.",
   "evm_copy":"EVM address copied to clipboard.",
-  "reef_only":"Use it ONLY on Reef Chain!"
+  "reef_only":"Use it ONLY on Reef Chain!",
+  "name_your_account":"Name your account",
+  "account_imported_successfully":"Account imported succesfully!",
+  "the_pass_is_incorrect":"The password you entered is Incorrect!",
+  "enter_same_pass":"Please enter the same password you entered while exporting this account. "
 }
