@@ -26,10 +26,10 @@ class TokenCtrl {
       if (kDebugMode) {
         try {
           var tkn = tokensListFdm.data.firstWhere((t) =>
-          t.data.address == '0x9250BA0e7616357D6d98825186CF7723D38D8B23');
-          print('GOT TOKENS ${tkn.statusList.map((e) => e.code.toString()).toString()}');
-
-        }catch(e){}
+              t.data.address == '0x9250BA0e7616357D6d98825186CF7723D38D8B23');
+          print(
+              'GOT TOKENS ${tkn.statusList.map((e) => e.code.toString()).toString()}');
+        } catch (e) {}
       }
       // print(
       //     'GOT TOKENS ${tokensListFdm.statusList.map((e) => e.code)} msg = ${tokensListFdm.statusList[0].propertyName}');
@@ -74,6 +74,10 @@ class TokenCtrl {
 
   Future<dynamic> findToken(String address) async {
     return jsApi.jsPromise('window.utils.findToken("$address")');
+  }
+
+  Future<dynamic> getTxInfo(String timestamp) async {
+    return jsApi.jsPromise('window.utils.getTxInfo("$timestamp")');
   }
 
   void reload() {
