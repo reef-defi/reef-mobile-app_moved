@@ -50,7 +50,7 @@ class _BottomNavState extends State<BottomNav> with WidgetsBindingObserver {
       print('APP STATE=$state');
     }
     if(state==AppLifecycleState.resumed) {
-      ReefAppState.instance.tokensCtrl.reload();
+      ReefAppState.instance.tokensCtrl.reload(false);
     }
   }
 

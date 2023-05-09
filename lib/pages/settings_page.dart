@@ -32,14 +32,21 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   void initState() {
-    gqlConnStateSubs = ReefAppState.instance.metadataCtrl.getApolloConnLogs().listen((event) {
+    gqlConnStateSubs =
+        ReefAppState.instance.metadataCtrl.getApolloConnLogs().listen((event) {
       setState(() {
-        gqlConnState = event.toString();
+        gqlConnState = event != null && event.isConnected
+            ? kDebugMode?event?.toString():'connected'
+            : event?.toString();
       });
     });
-    providerConnStateSubs = ReefAppState.instance.metadataCtrl.getProviderConnLogs().listen((event) {
+    providerConnStateSubs = ReefAppState.instance.metadataCtrl
+        .getProviderConnLogs()
+        .listen((event) {
       setState(() {
-        providerConnState = event.toString();
+        providerConnState = event != null && event.isConnected
+            ? kDebugMode?event?.toString():'connected'
+            : event?.toString();
       });
     });
     super.initState();
@@ -164,30 +171,6 @@ class _SettingsPageState extends State<SettingsPage> {
                 ],
               ),
             ),
-            Gap(24),
-            MaterialButton(
-              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              onPressed: () => showQrTypeDataModal(
-                  expectedType: ReefQrCodeType.info,
-                  AppLocalizations.of(context)!.get_qr_information,
-                  context),
-              padding: const EdgeInsets.all(2),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.crop_free,
-                    color: Styles.textLightColor,
-                    size: 22,
-                  ),
-                  const Gap(8),
-                  Builder(builder: (context) {
-                    return Text(
-                        AppLocalizations.of(context)!.get_qr_information,
-                        style: Theme.of(context).textTheme.bodyText1);
-                  }),
-                ],
-              ),
-            ),
             const Gap(24),
             MaterialButton(
               materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -245,16 +228,20 @@ class _SettingsPageState extends State<SettingsPage> {
                 child: Column(
                   children: [
                     FutureBuilder<dynamic>(
-                        future:ReefAppState.instance.metadataCtrl.getJsVersions(),
-                        builder: (context, AsyncSnapshot<dynamic> snapshot){
-                          if(snapshot.hasData) {
+                        future:
+                            ReefAppState.instance.metadataCtrl.getJsVersions(),
+                        builder: (context, AsyncSnapshot<dynamic> snapshot) {
+                          if (snapshot.hasData) {
                             return Text(snapshot.data);
                           }
                           return const Text('getting version...');
-                    }),
+                        }),
                     const Gap(12),
-                    Text('GQL conn: $gqlConnState'??'getting gql status'),const Gap(12),
-                    Text('Provider conn: $providerConnState'??'getting provider status'),const Gap(12),
+                    Text('GQL conn: $gqlConnState' ?? 'getting gql status'),
+                    const Gap(12),
+                    Text('Provider conn: $providerConnState' ??
+                        'getting provider status'),
+                    const Gap(12),
                     MaterialButton(
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       onPressed: () => showSwitchNetworkModal(

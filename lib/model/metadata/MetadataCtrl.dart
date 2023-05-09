@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
+import 'package:reef_mobile_app/model/metadata/ws-conn-state.dart';
 import 'package:reef_mobile_app/service/JsApiService.dart';
 import 'package:reef_mobile_app/service/StorageService.dart';
 
@@ -21,6 +22,6 @@ class MetadataCtrl {
 
   Future<dynamic> getJsVersions() => jsApi.jsCall('window.getReefJsVer();');
 
-  Stream<dynamic> getApolloConnLogs()=> jsApi.jsObservable('window.utils.apolloClientWsConnState\$');
-  Stream<dynamic> getProviderConnLogs()=> jsApi.jsObservable('window.utils.providerConnState\$');
+  Stream<WsConnState?> getApolloConnLogs()=> jsApi.jsObservable('window.utils.apolloClientWsConnState\$').map((event) => WsConnState.fromJson(event));
+  Stream<WsConnState?> getProviderConnLogs()=> jsApi.jsObservable('window.utils.providerConnState\$').map((event) => WsConnState.fromJson(event));
 }

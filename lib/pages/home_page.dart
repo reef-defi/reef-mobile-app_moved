@@ -5,13 +5,14 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:reef_mobile_app/components/getQrTypeData.dart';
-import 'package:reef_mobile_app/components/sign/SignatureContentToggle.dart';
 import 'package:reef_mobile_app/components/home/NFT_view.dart';
 import 'package:reef_mobile_app/components/home/activity_view.dart';
 import 'package:reef_mobile_app/components/home/token_view.dart';
 import 'package:reef_mobile_app/components/modal.dart';
 import 'package:reef_mobile_app/components/modals/account_modals.dart';
 import 'package:reef_mobile_app/components/modals/add_account_modal.dart';
+import 'package:reef_mobile_app/components/modals/restore_json_modal.dart';
+import 'package:reef_mobile_app/components/sign/SignatureContentToggle.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/tokens/TokenWithAmount.dart';
 import 'package:reef_mobile_app/pages/test_page.dart';
@@ -21,7 +22,6 @@ import 'package:reef_mobile_app/utils/gradient_text.dart';
 import 'package:reef_mobile_app/utils/size_config.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
 import 'package:sliver_tools/sliver_tools.dart';
-import 'package:reef_mobile_app/components/modals/restore_json_modal.dart';
 
 import '../components/BlurableContent.dart';
 import 'DAppPage.dart';
@@ -66,52 +66,67 @@ class _HomePageState extends State<HomePage> {
 
   Widget rowMember(Map member) {
     return InkWell(
-      onTap: () {
-        HapticFeedback.selectionClick();
-        ReefAppState.instance.navigationCtrl
-            .navigateHomePage(member["key"] as int);
-        // List temp = _viewsMap;
-        // for (var element in temp) {
-        //   element["active"] = (element["name"] == member["name"]);
-        // }
-        // setState(() {
-        //   _viewsMap = temp;
-        // });
-      },
+      onTap: member['function'] ??
+          () {
+            HapticFeedback.selectionClick();
+            ReefAppState.instance.navigationCtrl
+                .navigateHomePage(member["key"] as int);
+          },
       child: Observer(builder: (_) {
         final index =
             ReefAppState.instance.model.homeNavigationModel.currentIndex;
+        var color = member["key"] == index
+            ? Styles.whiteColor
+            : Styles.primaryBackgroundColor;
+        List<BoxShadow> boxShadow = member["key"] == index
+            ? [
+                const BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 5,
+                  offset: Offset(0, 2.5),
+                )
+              ]
+            : [];
+
+        var opacity = member["key"] == index ? 1.0 : 0.5;
+
+        var textStyle = const TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w700,
+          color: Styles.textColor,
+        );
+
+        if (member["key"] == null) {
+          color = Styles.purpleColor;
+          boxShadow = [
+            const BoxShadow(
+              color: Colors.black12,
+              blurRadius: 5,
+              offset: Offset(0, 2.5),
+            )
+          ];
+          opacity = 1.0;
+          textStyle = textStyle.copyWith(color: Styles.whiteColor);
+        }
         return AnimatedContainer(
             padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(9),
-              color: member["key"] == index
-                  ? Styles.whiteColor
-                  : Styles.primaryBackgroundColor,
-              boxShadow: member["key"] == index
-                  ? [
-                      const BoxShadow(
-                        color: Colors.black12,
-                        blurRadius: 5,
-                        offset: Offset(0, 2.5),
-                      )
-                    ]
-                  : [],
+              color: color,
+              boxShadow: boxShadow,
             ),
             duration: const Duration(milliseconds: 200),
             child: Opacity(
-              opacity: member["key"] == index ? 1 : 0.5,
+              opacity: opacity,
               child: Text(
-                member["name"] == "Tokens"
-                    ? AppLocalizations.of(context)!.balance
-                    : member["name"] == "Activity"
-                        ? AppLocalizations.of(context)!.activity
-                        : AppLocalizations.of(context)!.nfts,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                  color: Styles.textColor,
-                ),
+                member["name"] == "Reload"
+                    ? "Reload"
+                    : member["name"] == "Tokens"
+                        ? AppLocalizations.of(context)!.tokens
+                        : member["name"] == "Activity"
+                            ? AppLocalizations.of(context)!.activity
+                            : AppLocalizations.of(context)!.nfts,
+                style: textStyle,
               ),
             ));
       }),
@@ -145,9 +160,15 @@ class _HomePageState extends State<HomePage> {
           ]),
       child: Padding(
         padding: const EdgeInsets.all(12.0),
-        child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: _viewsMap.map<Widget>((e) => rowMember(e)).toList()),
+        child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+          rowMember({
+            "key": null,
+            "name": "Reload",
+            "component": null,
+            "function": () => ReefAppState.instance.tokensCtrl.reload(true)
+          }),
+          ..._viewsMap.map<Widget>((e) => rowMember(e)).toList()
+        ]),
       ),
     );
   }
