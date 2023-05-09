@@ -140,5 +140,8 @@
   "reject":"Reject",
   "retrieving_video":"Retrieving video",
   "unless_saved": "unless you have saved recovery phrase (mnemonic).",
-  "decoding_sign":"decoding signature data"
+  "decoding_sign":"decoding signature data",
+  "copy_native":"Native address copied to clipboard.",
+  "evm_copy":"EVM address copied to clipboard.",
+  "reef_only":"Use it ONLY on Reef Chain!"
 }
