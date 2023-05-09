@@ -3,6 +3,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:gap/gap.dart';
 import 'package:mobx/mobx.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../model/signing/signature_request.dart';
 
@@ -18,7 +19,7 @@ class MethodDataLoadingIndicator extends StatelessWidget {
               FutureStatus.pending
           ? Center(
               child: Column(children: [
-              Text('Decoding signature data'),
+              Text(AppLocalizations.of(context)!.decoding_sign),
               Gap(8),
               LinearProgressIndicator(
                 valueColor:

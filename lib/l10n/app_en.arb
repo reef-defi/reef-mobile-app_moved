@@ -134,5 +134,11 @@
   "export_app_pass":"exporting with app password!",
   "export_diff_pass":"Export with different password",
   "export_pass":"Export password",
-  "password":"Password"
+  "password":"Password",
+  "metadata_up_to_date":"Metadata is already up to date",
+  "approve_metadata":"This approval will add the metadata to your mobile app, allowing future requests to be decoded using this metadata.",
+  "reject":"Reject",
+  "retrieving_video":"Retrieving video",
+  "unless_saved": "unless you have saved recovery phrase (mnemonic).",
+  "decoding_sign":"decoding signature data"
 }

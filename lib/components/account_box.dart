@@ -44,13 +44,15 @@ class _AccountBoxState extends State<AccountBox> {
 
   @override
   Widget build(BuildContext context) {
-    var gradientColors = widget.lightTheme ? [
-                      Color.fromARGB(255, 231, 223, 248),
-                      Color.fromARGB(194, 200, 220, 250),
-                    ]:[
-                      Color.fromARGB(198, 37, 19, 79),
-                      Color.fromARGB(53, 110, 27, 117),
-                    ];
+    var gradientColors = widget.lightTheme
+        ? [
+            Color.fromARGB(255, 231, 223, 248),
+            Color.fromARGB(194, 200, 220, 250),
+          ]
+        : [
+            Color.fromARGB(198, 37, 19, 79),
+            Color.fromARGB(53, 110, 27, 117),
+          ];
     return InkWell(
       onTap: widget.onSelected,
       child: PhysicalModel(
@@ -121,7 +123,8 @@ class _AccountBoxState extends State<AccountBox> {
                       Expanded(
                           child: Padding(
                         padding: const EdgeInsets.only(left: 10),
-                        child: buildCentralColumn(widget.reefAccountFDM, widget.lightTheme),
+                        child: buildCentralColumn(
+                            widget.reefAccountFDM, widget.lightTheme),
                       )),
                       if (widget.showOptions)
                         Column(
@@ -148,8 +151,10 @@ class _AccountBoxState extends State<AccountBox> {
                                       .share_address_qr,
                                   shareEvmQr: AppLocalizations.of(context)!
                                       .share_evm_qr,
-                                  exportAccount: "Export Account",
-                                  selectAccount: AppLocalizations.of(context)!.select_account,
+                                  exportAccount: AppLocalizations.of(context)!
+                                      .export_account,
+                                  selectAccount: AppLocalizations.of(context)!
+                                      .select_account,
                                 ).getConstants().map((String choice) {
                                   return PopupMenuItem<String>(
                                     value: choice,
@@ -177,9 +182,10 @@ class _AccountBoxState extends State<AccountBox> {
     );
   }
 
-  Widget buildCentralColumn(StatusDataObject<ReefAccount> reefAccount, bool lightTheme) {
-    var textColor1 = lightTheme?Styles.textColor: Colors.white;
-    var textColor2 = lightTheme? Colors.black38:Styles.textLightColor;
+  Widget buildCentralColumn(
+      StatusDataObject<ReefAccount> reefAccount, bool lightTheme) {
+    var textColor1 = lightTheme ? Styles.textColor : Colors.white;
+    var textColor2 = lightTheme ? Colors.black38 : Styles.textLightColor;
     return Flex(
         direction: Axis.vertical,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -230,8 +236,7 @@ class _AccountBoxState extends State<AccountBox> {
                     child: Text.rich(
                   TextSpan(
                     text: AppLocalizations.of(context)!.address,
-                    style:
-                        TextStyle(fontSize: 10, color: textColor2),
+                    style: TextStyle(fontSize: 10, color: textColor2),
                     children: <TextSpan>[
                       TextSpan(
                           text:
@@ -247,8 +252,7 @@ class _AccountBoxState extends State<AccountBox> {
                       child: Text.rich(
                     TextSpan(
                       text: AppLocalizations.of(context)!.reef_evm,
-                      style:
-                          TextStyle(fontSize: 10, color: textColor2),
+                      style: TextStyle(fontSize: 10, color: textColor2),
                       children: <TextSpan>[
                         TextSpan(
                           text:
@@ -309,35 +313,37 @@ class Constants {
   });
 
   List<String> getConstants() {
-    return [selectAccount,shareEvmQr, shareAddressQr, delete,exportAccount];
+    return [selectAccount, shareEvmQr, shareAddressQr, delete, exportAccount];
   }
 }
 
 showAlertDialog(BuildContext context, ReefAccount signer) {
   // set up the buttons
   Widget cancelButton = TextButton(
-    child: const Text("Cancel",style:TextStyle(color:Styles.blueColor,) ),
+    child: Text(AppLocalizations.of(context)!.cancel,
+        style: TextStyle(
+          color: Styles.blueColor,
+        )),
     onPressed: () {
       Navigator.of(context).pop();
     },
   );
- Widget continueButton = TextButton(
-  child: Row(
-    children: [
-      Icon(Icons.delete, color: Styles.errorColor),
-      const SizedBox(width: 8.0),
-      Text(
-        "Delete Account",
-        style: TextStyle(color: Styles.errorColor),
-      ),
-    ],
-  ),
-  onPressed: () {
-    ReefAppState.instance.accountCtrl.deleteAccount(signer.address);
-    Navigator.of(context).pop();
-  },
-);
-
+  Widget continueButton = TextButton(
+    child: Row(
+      children: [
+        Icon(Icons.delete, color: Styles.errorColor),
+        const SizedBox(width: 8.0),
+        Text(
+          "Delete Account",
+          style: TextStyle(color: Styles.errorColor),
+        ),
+      ],
+    ),
+    onPressed: () {
+      ReefAppState.instance.accountCtrl.deleteAccount(signer.address);
+      Navigator.of(context).pop();
+    },
+  );
 
   // set up the container
   Container container = Container(
@@ -345,54 +351,53 @@ showAlertDialog(BuildContext context, ReefAccount signer) {
       color: Styles.primaryBackgroundColor,
       borderRadius: BorderRadius.circular(8),
     ),
-    padding: EdgeInsets.fromLTRB(16.0,0.0,16.0,8.0),
+    padding: EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 8.0),
     child: Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         Text.rich(
-  TextSpan(
-    children: [
-      TextSpan(
-        text: "You will ",
-        style: TextStyle(
-          color: Styles.textColor,
-          fontSize: 16,
+          TextSpan(
+            children: [
+              TextSpan(
+                text: "You will ",
+                style: TextStyle(
+                  color: Styles.textColor,
+                  fontSize: 16,
+                ),
+              ),
+              TextSpan(
+                text: "lose",
+                style: TextStyle(
+                  color: Styles.errorColor,
+                  fontSize: 16,
+                ),
+              ),
+              TextSpan(
+                text: " all balance for ",
+                style: TextStyle(
+                  color: Styles.textColor,
+                  fontSize: 16,
+                ),
+              ),
+              TextSpan(
+                text: "${signer.name}",
+                style: TextStyle(
+                  color: Styles.textColor,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              TextSpan(
+                text:
+                    " ${signer.address.shorten()} ${AppLocalizations.of(context)!.unless_saved}",
+                style: TextStyle(
+                  color: Styles.textColor,
+                  fontSize: 16,
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
-      TextSpan(
-        text: "lose",
-        style: TextStyle(
-          color: Styles.errorColor,
-          fontSize: 16,
-        ),
-      ),
-      TextSpan(
-        text: " all balance for ",
-        style: TextStyle(
-          color: Styles.textColor,
-          fontSize: 16,
-        ),
-      ),
-      TextSpan(
-        text: "${signer.name}",
-        style: TextStyle(
-          color: Styles.textColor,
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-      TextSpan(
-        text: " ${signer.address.shorten()} unless you have saved recovery phrase (mnemonic).",
-        style: TextStyle(
-          color: Styles.textColor,
-          fontSize: 16,
-        ),
-      ),
-    ],
-  ),
-),
-
-
         SizedBox(height: 24),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -406,9 +411,8 @@ showAlertDialog(BuildContext context, ReefAccount signer) {
   );
 
   // show the dialog
-  showModal(
-    context,child: container,headText: "Delete Account"
-  );
+  showModal(context,
+      child: container, headText: AppLocalizations.of(context)!.delete_account);
 }
 
 void choiceAction(String choice, BuildContext context, ReefAccount account,
@@ -418,7 +422,7 @@ void choiceAction(String choice, BuildContext context, ReefAccount account,
     shareAddressQr: AppLocalizations.of(context)!.share_address_qr,
     shareEvmQr: AppLocalizations.of(context)!.share_evm_qr,
     selectAccount: AppLocalizations.of(context)!.select_account,
-    exportAccount: "Export Account",
+    exportAccount: AppLocalizations.of(context)!.export_account,
   );
   if (choice == AppLocalizations.of(context)!.delete) {
     showAlertDialog(context, account);
@@ -431,8 +435,8 @@ void choiceAction(String choice, BuildContext context, ReefAccount account,
     showQrCode(AppLocalizations.of(context)!.share_address_qr, account.address);
   } else if (choice == AppLocalizations.of(context)!.select_account) {
     onSelected();
-  }
-  else if (choice == "Export Account") {
-    showExportQrAccount("Export Account",account.address);
+  } else if (choice == AppLocalizations.of(context)!.export_account) {
+    showExportQrAccount(
+        AppLocalizations.of(context)!.export_account, account.address);
   }
 }
