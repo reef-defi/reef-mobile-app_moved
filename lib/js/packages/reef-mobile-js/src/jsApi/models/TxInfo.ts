@@ -11,4 +11,6 @@ interface TxInfo {
     status:string;
     timestamp:string;
     nftId:string;
+    extrinsicIdx:string;
+    eventIdx:string;
 }

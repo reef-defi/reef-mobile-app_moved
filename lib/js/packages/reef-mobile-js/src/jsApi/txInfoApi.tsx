@@ -26,7 +26,9 @@ export const fetchTxInfo = (
           status:vContract.extrinsic.status,
           token_name:vContract.token.name,
           timestamp:vContract.timestamp,
-          nftId:vContract.nftId
+          nftId:vContract.nftId,
+          extrinsicIdx:vContract.extrinsic.index,
+          eventIdx:vContract.block.events[0].index
         } as TxInfo;
         return txInfo;
     })
@@ -39,6 +41,9 @@ query FETCH_TX_Info_anukul($timestamp: DateTime!) {
       id
       amount
       block {
+        events(limit:1){
+          index
+        }
         height
       }
       nftId
@@ -50,6 +55,7 @@ query FETCH_TX_Info_anukul($timestamp: DateTime!) {
       }
       extrinsic {
         id
+        index
         signedData
         status
       }
