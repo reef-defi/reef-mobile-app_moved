@@ -272,8 +272,8 @@ class _NFTViewState extends State<NFTView> {
                         if (selectedNFTs.hasStatus(StatusCode.error))
                           ElevatedButton(
                               onPressed:
-                              ReefAppState.instance.tokensCtrl.reload,
-                              child: const Text("Reload"))
+                                  ReefAppState.instance.tokensCtrl.reload,
+                              child: Text(AppLocalizations.of(context)!.reload))
                       ],
                     ),
                   ),

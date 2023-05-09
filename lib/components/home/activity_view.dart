@@ -183,7 +183,9 @@ class _ActivityViewState extends State<ActivityView> {
     return Observer(builder: (_) {
       var txHistory = ReefAppState.instance.model.tokens.txHistory;
       String? message = getFdmListMessage(
-          txHistory, AppLocalizations.of(context)!.activity, AppLocalizations.of(context)!.loading);
+          txHistory,
+          AppLocalizations.of(context)!.activity,
+          AppLocalizations.of(context)!.loading);
 
       return SliverList(
         delegate: SliverChildListDelegate([
@@ -219,8 +221,7 @@ class _ActivityViewState extends State<ActivityView> {
                                               ? false
                                               : true,
                                         ),
-                                        if (txHistory.data.last !=
-                                            item)
+                                        if (txHistory.data.last != item)
                                           const Divider(
                                             height: 32,
                                             color: Color(0x20000000),
@@ -243,9 +244,10 @@ class _ActivityViewState extends State<ActivityView> {
                                 ),
                                 if (txHistory.hasStatus(StatusCode.error))
                                   ElevatedButton(
-                                      onPressed:
-                                      ReefAppState.instance.tokensCtrl.reload,
-                                      child: const Text("Reload"))
+                                      onPressed: ReefAppState
+                                          .instance.tokensCtrl.reload,
+                                      child: Text(
+                                          AppLocalizations.of(context)!.reload))
                               ],
                             ),
                           ))),

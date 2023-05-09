@@ -17,7 +17,6 @@ class AuthCheck extends StatefulWidget {
 }
 
 class _AuthCheckState extends State<AuthCheck> {
-  
   bool _isAuthenticated = false;
   bool _wrongPassword = false;
   bool _biometricsIsAvailable = false;
@@ -36,25 +35,24 @@ class _AuthCheckState extends State<AuthCheck> {
       });
     });
     _checkBiometricsSupport().then((value) {
-    setState(() {
-      _biometricsIsAvailable = value;
+      setState(() {
+        _biometricsIsAvailable = value;
+      });
+      if (value) {
+        authenticateWithBiometrics();
+      }
     });
-    if (value) {
-      authenticateWithBiometrics();
-    }
-  });
   }
 
   Future<bool> _checkBiometricsSupport() async {
-  final isDeviceSupported = await localAuth.isDeviceSupported();
-  final isAvailable = await localAuth.canCheckBiometrics;
-  return isAvailable && isDeviceSupported;
-}
-
+    final isDeviceSupported = await localAuth.isDeviceSupported();
+    final isAvailable = await localAuth.canCheckBiometrics;
+    return isAvailable && isDeviceSupported;
+  }
 
   Future<void> authenticateWithPassword(String value) async {
-    final storedPassword =
-        await ReefAppState.instance.storageCtrl.getValue(StorageKey.password.name);
+    final storedPassword = await ReefAppState.instance.storageCtrl
+        .getValue(StorageKey.password.name);
     if (storedPassword == value) {
       setState(() {
         _wrongPassword = false;
@@ -67,22 +65,22 @@ class _AuthCheckState extends State<AuthCheck> {
     }
   }
 
-
   Future<void> authenticateWithBiometrics() async {
-  final isAvailable = await _checkBiometricsSupport();
-  if (isAvailable) {
-    final isValid = await localAuth.authenticate(
-        localizedReason: 'Authenticate with biometrics',
-        options: const AuthenticationOptions(
-            useErrorDialogs: true, stickyAuth: true, biometricOnly: true));
-    if (isValid) {
-      setState(() {
-        _wrongPassword = false;
-        _isAuthenticated = true;
-      });
+    final isAvailable = await _checkBiometricsSupport();
+    if (isAvailable) {
+      final isValid = await localAuth.authenticate(
+          localizedReason:
+              AppLocalizations.of(context)!.authenticate_with_biometrics,
+          options: const AuthenticationOptions(
+              useErrorDialogs: true, stickyAuth: true, biometricOnly: true));
+      if (isValid) {
+        setState(() {
+          _wrongPassword = false;
+          _isAuthenticated = true;
+        });
+      }
     }
   }
-}
 
   @override
   void dispose() {
