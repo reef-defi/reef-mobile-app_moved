@@ -3,6 +3,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:reef_mobile_app/components/dapp_browser/tabs_manager.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/utils/size_config.dart';
 
@@ -61,11 +62,44 @@ Widget topBar(BuildContext context) {
                       child: Wrap(
                         alignment: WrapAlignment.end,
                         children: [
+                          IconButton(
+                              style: ButtonStyle(
+                                  iconColor: MaterialStateProperty.resolveWith(
+                                      (states) => Colors.white)),
+                              onPressed: () {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => const TabsManager(),
+                                    fullscreenDialog: true));
+                              },
+                              icon: const Icon(
+                                Icons.search,
+                                color: Colors.white,
+                              )),
                           accountPill(context, selSignerList.first.name)
                         ],
                       ),
                     )
-                  : const SizedBox.shrink();
+                  : Padding(
+                      padding: const EdgeInsets.only(top: 4, left: 8),
+                      child: Wrap(
+                        alignment: WrapAlignment.end,
+                        children: [
+                          IconButton(
+                              style: ButtonStyle(
+                                  iconColor: MaterialStateProperty.resolveWith(
+                                      (states) => Colors.white)),
+                              onPressed: () {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => const TabsManager(),
+                                    fullscreenDialog: true));
+                              },
+                              icon: const Icon(
+                                Icons.search,
+                                color: Colors.white,
+                              ))
+                        ],
+                      ),
+                    );
             }))
           ],
         ),

@@ -14,12 +14,14 @@ class WebViewFlutterJS extends StatefulWidget {
   final Completer<void> loaded;
   final Set<JavascriptChannel> jsChannels;
   final bool hidden;
+  final NavigationDelegate? navigationDelegate;
 
-  WebViewFlutterJS({
+  const WebViewFlutterJS({
     required this.hidden,
     required this.controller,
     required this.loaded,
     required this.jsChannels,
+    this.navigationDelegate,
     Key? key,
   }) : super(key: key); // Modify
 
@@ -53,7 +55,7 @@ class _WebViewFlutterJSState extends State<WebViewFlutterJS> {
                   Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                 Text(
                   AppLocalizations.of(context)!.you_disabled_this_dapp_domain,
-                  style: TextStyle(color: Colors.white),
+                  style: const TextStyle(color: Colors.white),
                 ),
                 const Gap(4),
                 TextButton(
@@ -83,6 +85,13 @@ class _WebViewFlutterJSState extends State<WebViewFlutterJS> {
             child: WebView(
           javascriptMode: JavascriptMode.unrestricted,
           javascriptChannels: widget.jsChannels,
+          navigationDelegate: (navigation) async {
+            print("BEEN THERE");
+            if (widget.navigationDelegate != null) {
+              await widget.navigationDelegate!(navigation);
+            }
+            return NavigationDecision.navigate;
+          },
           onWebViewCreated: (webViewController) {
             _controller = webViewController;
             if (!widget.controller.isCompleted) {
@@ -100,7 +109,9 @@ class _WebViewFlutterJSState extends State<WebViewFlutterJS> {
                 }
               });
             }
-            widget.loaded.complete(_controller);
+            if (!widget.loaded.isCompleted) {
+              widget.loaded.complete(_controller);
+            }
           },
         )),
       ]),
