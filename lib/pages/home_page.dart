@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:reef_mobile_app/components/getQrTypeData.dart';
@@ -14,6 +15,7 @@ import 'package:reef_mobile_app/components/modals/add_account_modal.dart';
 import 'package:reef_mobile_app/components/modals/restore_json_modal.dart';
 import 'package:reef_mobile_app/components/sign/SignatureContentToggle.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
+import 'package:reef_mobile_app/model/network/ws-conn-state.dart';
 import 'package:reef_mobile_app/model/tokens/TokenWithAmount.dart';
 import 'package:reef_mobile_app/pages/test_page.dart';
 import 'package:reef_mobile_app/utils/elements.dart';
@@ -51,6 +53,23 @@ class _HomePageState extends State<HomePage> {
 
   final double _textSize = 120.0;
   final bool _isScrolling = false;
+  WsConnState? providerConn;
+  WsConnState? gqlConn;
+
+  @override
+  void initState() {
+    ReefAppState.instance.networkCtrl.getProviderConnLogs().listen((event) {
+      setState(() {
+        providerConn = event;
+      });
+    });
+    ReefAppState.instance.networkCtrl.getGqlConnLogs().listen((event) {
+      setState(() {
+        gqlConn = event;
+      });
+    });
+    super.initState();
+  }
 
   final List _viewsMap = const [
     {"key": 0, "name": "Tokens", "component": TokenView()},
@@ -118,15 +137,20 @@ class _HomePageState extends State<HomePage> {
             duration: const Duration(milliseconds: 200),
             child: Opacity(
               opacity: opacity,
-              child: Text(
-                member["name"] == "Reload"
-                    ? "Reload"
-                    : member["name"] == "Tokens"
-                        ? AppLocalizations.of(context)!.tokens
-                        : member["name"] == "Activity"
-                            ? AppLocalizations.of(context)!.activity
-                            : AppLocalizations.of(context)!.nfts,
-                style: textStyle,
+              child: Row(
+                children: [
+                  if(member["icon"]!=null)...[Icon(member["icon"], color: Styles.textLightColor), const Gap(4)],
+                  Text(
+                    member["name"] == "Reload"
+                        ? "Reload"
+                        : member["name"] == "Tokens"
+                            ? AppLocalizations.of(context)!.tokens
+                            : member["name"] == "Activity"
+                                ? AppLocalizations.of(context)!.activity
+                                : AppLocalizations.of(context)!.nfts,
+                    style: textStyle,
+                  ),
+                ],
               ),
             ));
       }),
@@ -161,12 +185,13 @@ class _HomePageState extends State<HomePage> {
       child: Padding(
         padding: const EdgeInsets.all(12.0),
         child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-          // rowMember({
-          //   "key": null,
-          //   "name": "Reload",
-          //   "component": null,
-          //   "function": () => ReefAppState.instance.tokensCtrl.reload(true)
-          // }),
+          if(gqlConn!=null && providerConn!=null && (!gqlConn!.isConnected==true || !providerConn!.isConnected))rowMember({
+            "key": null,
+            "name": "Reload",
+            "component": null,
+            "icon": Icons.refresh,
+            "function": () => ReefAppState.instance.tokensCtrl.reload(true)
+          }),
           ..._viewsMap.map<Widget>((e) => rowMember(e)).toList()
         ]),
       ),

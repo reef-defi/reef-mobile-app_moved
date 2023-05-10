@@ -76,9 +76,9 @@ class TokenCtrl {
 
   void reload(bool force) async {
     var isProvConn =
-        await ReefAppState.instance.metadataCtrl.getProviderConnLogs().first;
+        await ReefAppState.instance.networkCtrl.getProviderConnLogs().first;
     var isGqlConn =
-        await ReefAppState.instance.metadataCtrl.getApolloConnLogs().first;
+        await ReefAppState.instance.networkCtrl.getGqlConnLogs().first;
     if (force ||
         isProvConn == null ||
         !isProvConn.isConnected ||

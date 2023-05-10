@@ -50,7 +50,7 @@ class ReefAppState {
     signingCtrl = SigningCtrl(jsApi, storage, model.signatureRequests, model.accounts);
     transferCtrl = TransferCtrl(jsApi);
     swapCtrl = SwapCtrl(jsApi);
-    metadataCtrl = MetadataCtrl(jsApi, storage);
+    metadataCtrl = MetadataCtrl(jsApi);
     navigationCtrl =
         NavigationCtrl(model.navigationModel, model.homeNavigationModel);
     Network currentNetwork =

@@ -31,32 +31,31 @@ class _SettingsPageState extends State<SettingsPage> {
   StreamSubscription? providerConnStateSubs;
 
   @override
-  void initState() {
-    gqlConnStateSubs =
-        ReefAppState.instance.metadataCtrl.getApolloConnLogs().listen((event) {
-      setState(() {
-        gqlConnState = event != null && event.isConnected
-            ? kDebugMode?event?.toString():'connected'
-            : event?.toString();
-      });
-    });
-    providerConnStateSubs = ReefAppState.instance.metadataCtrl
-        .getProviderConnLogs()
-        .listen((event) {
-      setState(() {
-        providerConnState = event != null && event.isConnected
-            ? kDebugMode?event?.toString():'connected'
-            : event?.toString();
-      });
-    });
-    super.initState();
-  }
-
-  @override
   void dispose() {
     gqlConnStateSubs?.cancel();
     providerConnStateSubs?.cancel();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    gqlConnStateSubs =
+        ReefAppState.instance.networkCtrl.getGqlConnLogs().listen((event) {
+      setState(() {
+        gqlConnState = event != null && event.isConnected
+            ? 'connected'
+            : event?.toString();
+      });
+    });
+
+    providerConnStateSubs = ReefAppState.instance.networkCtrl.getProviderConnLogs().listen((event) {
+    setState(() {
+        providerConnState = event != null && event.isConnected
+            ? 'connected'
+            : event?.toString();
+      });
+    });
+    super.initState();
   }
 
   @override
