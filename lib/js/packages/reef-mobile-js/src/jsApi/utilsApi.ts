@@ -5,6 +5,8 @@ import {fetchTokenData} from './utils/tokenUtils';
 import {Provider} from "@reef-defi/evm-provider";
 import {isAscii, u8aToString, u8aUnwrapBytes} from '@reef-defi/util';
 import {ERC20} from "./abi/ERC20";
+import { gql } from '@apollo/client';
+import { fetchTxInfo } from './txInfoApi';
 
 function lagWhenDisconnected() {
     return status => {
@@ -30,6 +32,17 @@ export const initApi = () => {
                     take(1),
                     switchMap(async ([apolloInstance, net, provider, reefPrice]: [any, network.Network, Provider, number]) => {
                         return await fetchTokenData(apolloInstance, tokenAddress, provider, network.getReefswapNetworkConfig(net).factoryAddress, reefPrice);
+                    }),
+                    take(1)
+                )
+            );
+        },
+        getTxInfo: async (timestamp: string) => {
+            return firstValueFrom(
+                combineLatest([graphql.apolloClientInstance$,timestamp]).pipe(
+                    take(1),
+                    switchMap(async ([apolloInstance, abc]:[any, string]) => {
+                        return await fetchTxInfo(apolloInstance, timestamp);
                     }),
                     take(1)
                 )

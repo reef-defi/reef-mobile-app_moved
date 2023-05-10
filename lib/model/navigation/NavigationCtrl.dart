@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:reef_mobile_app/components/home/tx_info.dart';
 import 'package:reef_mobile_app/model/navigation/homepage_navigation_model.dart';
 import 'package:reef_mobile_app/model/navigation/nav_swipe_compute.dart';
 import 'package:reef_mobile_app/model/navigation/navigation_model.dart';
@@ -53,7 +54,9 @@ class NavigationCtrl with NavSwipeCompute {
   }
 
   void navigateToSendPage(
-      {required BuildContext context, required String preselected,String? preSelectedTransferAddress}) {
+      {required BuildContext context,
+      required String preselected,
+      String? preSelectedTransferAddress}) {
     Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => SignatureContentToggle(Scaffold(
               appBar: AppBar(
@@ -67,7 +70,34 @@ class NavigationCtrl with NavSwipeCompute {
               body: Padding(
                 padding:
                     const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
-                child: SendPage(preselected,preSelectedTransferAddress: preSelectedTransferAddress,),
+                child: SendPage(
+                  preselected,
+                  preSelectedTransferAddress: preSelectedTransferAddress,
+                ),
+              ),
+              backgroundColor: Styles.greyColor,
+            ))));
+  }
+
+  void navigateToTxInfo(
+      {required BuildContext context,
+      required String unparsedTimestamp,
+      required String? imageUrl,
+      required String? iconUrl}) {
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => SignatureContentToggle(Scaffold(
+              appBar: AppBar(
+                title: Text("Transaction Info",
+                    style: GoogleFonts.spaceGrotesk(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 24,
+                    )),
+                backgroundColor: Colors.deepPurple.shade700,
+              ),
+              body: Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
+                child: TxInfo(unparsedTimestamp, imageUrl, iconUrl),
               ),
               backgroundColor: Styles.greyColor,
             ))));

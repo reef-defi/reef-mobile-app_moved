@@ -74,6 +74,10 @@ class TokenCtrl {
     return jsApi.jsPromise('window.utils.findToken("$address")');
   }
 
+  Future<dynamic> getTxInfo(String timestamp) async {
+    return jsApi.jsPromise('window.utils.getTxInfo("$timestamp")');
+  }
+
   void reload(bool force) async {
     var isProvConn =
         await ReefAppState.instance.networkCtrl.getProviderConnLogs().first;
