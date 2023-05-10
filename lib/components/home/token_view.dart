@@ -26,7 +26,6 @@ class TokenView extends StatefulWidget {
 }
 
 class _TokenViewState extends State<TokenView> {
-
   Widget tokenCard(StatusDataObject<TokenWithAmount> token) {
     String name = token.data.name;
     String address = token.data.address;
@@ -77,7 +76,9 @@ class _TokenViewState extends State<TokenView> {
                               ? NumberFormat.simpleCurrency(decimalDigits: 4)
                                   .format(price)
                                   .toString()
-                              : isLoading?'Loading pool data':'No pool data',
+                              : isLoading
+                                  ? 'Loading pool data'
+                                  : 'No pool data',
                           style: GoogleFonts.poppins(
                               fontWeight: FontWeight.normal,
                               color: Styles.textLightColor,
@@ -92,23 +93,31 @@ class _TokenViewState extends State<TokenView> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Observer(builder: (context) {
-                          return isLoading?JumpingDots(animationDuration: const Duration(milliseconds: 200), verticalOffset: 5, radius: 5, color: Styles.purpleColor,innerPadding: 2,)
-                              :BlurableContent(
-                              GradientText(
-                                  price != 0
-                                      ? NumberFormat.compactLong()
-                                          .format(
-                                              getBalanceValueBI(balance, price))
-                                          .toString()
-                                      : "NA",
-                                  gradient: textGradient(),
-                                  style: GoogleFonts.poppins(
-                                    color: Styles.textColor,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w900,
-                                  )),
-                              ReefAppState
-                                  .instance.model.appConfig.displayBalance);
+                          return isLoading
+                              ? JumpingDots(
+                                  animationDuration:
+                                      const Duration(milliseconds: 200),
+                                  verticalOffset: 5,
+                                  radius: 5,
+                                  color: Styles.purpleColor,
+                                  innerPadding: 2,
+                                )
+                              : BlurableContent(
+                                  GradientText(
+                                      price != 0
+                                          ? NumberFormat.compactLong()
+                                              .format(getBalanceValueBI(
+                                                  balance, price))
+                                              .toString()
+                                          : "NA",
+                                      gradient: textGradient(),
+                                      style: GoogleFonts.poppins(
+                                        color: Styles.textColor,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w900,
+                                      )),
+                                  ReefAppState
+                                      .instance.model.appConfig.displayBalance);
                         }),
                         Observer(builder: (context) {
                           return BlurableContent(
@@ -250,21 +259,38 @@ class _TokenViewState extends State<TokenView> {
               SliverPadding(
                 padding:
                     const EdgeInsets.symmetric(vertical: 32, horizontal: 12),
-                sliver: SliverGrid(
+                sliver: SliverList(
                   delegate: SliverChildBuilderDelegate(
                     (context, index) {
                       final tkn = selectedERC20s.data[index];
-                      return tokenCard(tkn);
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 18.0),
+                        child: tokenCard(tkn),
+                      );
                     },
                     childCount: selectedERC20s.data.length,
                   ),
-                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                      mainAxisSpacing: 24,
-                      crossAxisSpacing: 24,
-                      childAspectRatio: 2.5,
-                      maxCrossAxisExtent: 400),
+                  // gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                  //     mainAxisSpacing: 24,
+                  //     crossAxisSpacing: 24,
+                  //     childAspectRatio: 2.25,
+                  //     maxCrossAxisExtent: 400),
                 ),
               ),
+            // SingleChildScrollView(
+            //   child: Container(
+            //     height: 900,
+            //     child: ListView.builder(
+            //         itemCount: selectedERC20s.data.length,
+            //         itemBuilder: (context, index) {
+            //           return Padding(
+            //             padding: const EdgeInsets.symmetric(
+            //                 vertical: 12, horizontal: 12),
+            //             child: tokenCard(selectedERC20s.data[index]),
+            //           );
+            //         }),
+            //   ),
+            // )
           ],
         );
       },
