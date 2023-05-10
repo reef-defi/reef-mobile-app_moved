@@ -241,7 +241,7 @@ class _TokenViewState extends State<TokenView> {
                         if (selectedERC20s.hasStatus(StatusCode.error))
                           ElevatedButton(
                               onPressed: ()=>ReefAppState.instance.tokensCtrl.reload(true),
-                              child: const Text(AppLocalizations.of(context)!.reload))
+                              child: Text(AppLocalizations.of(context)!.reload))
                       ],
                     ),
                   ))),
