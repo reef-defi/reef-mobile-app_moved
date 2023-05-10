@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:gap/gap.dart';
@@ -22,6 +25,38 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   bool _showDeveloperSettings = false;
+  String? gqlConnState;
+  StreamSubscription? gqlConnStateSubs;
+  String? providerConnState;
+  StreamSubscription? providerConnStateSubs;
+
+  @override
+  void dispose() {
+    gqlConnStateSubs?.cancel();
+    providerConnStateSubs?.cancel();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    gqlConnStateSubs =
+        ReefAppState.instance.networkCtrl.getGqlConnLogs().listen((event) {
+      setState(() {
+        gqlConnState = event != null && event.isConnected
+            ? 'connected'
+            : event?.toString();
+      });
+    });
+
+    providerConnStateSubs = ReefAppState.instance.networkCtrl.getProviderConnLogs().listen((event) {
+    setState(() {
+        providerConnState = event != null && event.isConnected
+            ? 'connected'
+            : event?.toString();
+      });
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,28 +75,6 @@ class _SettingsPageState extends State<SettingsPage> {
                     color: Colors.grey[800]),
               );
             }),
-            /*Divider(
-              color: Styles.textLightColor,
-              thickness: 1,
-            ),
-            const Gap(24),
-            MaterialButton(
-              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              onPressed: () => showAuthUrlListModal(context),
-              padding: const EdgeInsets.all(2),
-              child: Row(
-                children: [
-                  Icon(
-                    CupertinoIcons.list_bullet,
-                    color: Styles.textLightColor,
-                    size: 22,
-                  ),
-                  const Gap(8),
-                  Text('Manage Website Access',
-                      style: Theme.of(context).textTheme.bodyText1),
-                ],
-              ),
-            ),*/
             const Gap(24),
             Observer(builder: (_) {
               var navigateOnAccountSwitchVal =
@@ -135,30 +148,6 @@ class _SettingsPageState extends State<SettingsPage> {
                 ],
               ),
             ),
-            Gap(24),
-            MaterialButton(
-              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              onPressed: () => showQrTypeDataModal(
-                  expectedType: ReefQrCodeType.info,
-                  AppLocalizations.of(context)!.get_qr_information,
-                  context),
-              padding: const EdgeInsets.all(2),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.crop_free,
-                    color: Styles.textLightColor,
-                    size: 22,
-                  ),
-                  const Gap(8),
-                  Builder(builder: (context) {
-                    return Text(
-                        AppLocalizations.of(context)!.get_qr_information,
-                        style: Theme.of(context).textTheme.bodyText1);
-                  }),
-                ],
-              ),
-            ),
             const Gap(24),
             MaterialButton(
               materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -222,8 +211,13 @@ class _SettingsPageState extends State<SettingsPage> {
                           if (snapshot.hasData) {
                             return Text(snapshot.data);
                           }
-                          return Text('getting version...');
+                          return const Text('getting version...');
                         }),
+                    const Gap(12),
+                    Text('GQL conn: $gqlConnState' ?? 'getting gql status'),
+                    const Gap(12),
+                    Text('Provider conn: $providerConnState' ??
+                        'getting provider status'),
                     const Gap(12),
                     MaterialButton(
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,

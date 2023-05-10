@@ -93,32 +93,24 @@ class _TokenViewState extends State<TokenView> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Observer(builder: (context) {
-                          return isLoading
-                              ? JumpingDots(
-                                  animationDuration:
-                                      const Duration(milliseconds: 200),
-                                  verticalOffset: 5,
-                                  radius: 5,
-                                  color: Styles.purpleColor,
-                                  innerPadding: 2,
-                                )
-                              : BlurableContent(
-                                  GradientText(
-                                      price != 0
-                                          ? NumberFormat.compactLong()
-                                              .format(getBalanceValueBI(
-                                                  balance, price))
-                                              .toString()
-                                          : "NA",
-                                      gradient: textGradient(),
-                                      style: GoogleFonts.poppins(
-                                        color: Styles.textColor,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w900,
-                                      )),
-                                  ReefAppState
-                                      .instance.model.appConfig.displayBalance);
+                        isLoading?JumpingDots(animationDuration: const Duration(milliseconds: 200), verticalOffset: 5, radius: 5, color: Styles.purpleColor,innerPadding: 2,)
+                            :Observer(builder: (context) {
+                          return BlurableContent(
+                              GradientText(
+                                  price != 0
+                                      ? NumberFormat.compactLong()
+                                          .format(
+                                              getBalanceValueBI(balance, price))
+                                          .toString()
+                                      : "NA",
+                                  gradient: textGradient(),
+                                  style: GoogleFonts.poppins(
+                                    color: Styles.textColor,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w900,
+                                  )),
+                              ReefAppState
+                                  .instance.model.appConfig.displayBalance);
                         }),
                         Observer(builder: (context) {
                           return BlurableContent(
@@ -248,9 +240,8 @@ class _TokenViewState extends State<TokenView> {
                         ),
                         if (selectedERC20s.hasStatus(StatusCode.error))
                           ElevatedButton(
-                              onPressed:
-                                  ReefAppState.instance.tokensCtrl.reload,
-                              child: Text(AppLocalizations.of(context)!.reload))
+                              onPressed: ()=>ReefAppState.instance.tokensCtrl.reload(true),
+                              child: const Text(AppLocalizations.of(context)!.reload))
                       ],
                     ),
                   ))),

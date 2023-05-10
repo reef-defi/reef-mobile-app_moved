@@ -7,17 +7,30 @@ class TokenActivity {
   final bool isInbound;
   final Token? token;
   final TokenNFT? tokenNFT;
+  final String unparsedTimestamp;
   dynamic? extrinsic;
 
-  TokenActivity({required this.timestamp, required this.isInbound, required this.url, this.token, this.tokenNFT});
+  TokenActivity(
+      {required this.timestamp,
+      required this.isInbound,
+      required this.url,
+      this.token,
+      required this.unparsedTimestamp,
+      this.tokenNFT});
 
-  static TokenActivity fromJson (dynamic json) {
+  static TokenActivity fromJson(dynamic json) {
     var token, tokenNFT;
-    if(json['token']['contractType']!=null){
+    if (json['token']['contractType'] != null) {
       tokenNFT = TokenNFT.fromJson(json['token']);
-    }else{
+    } else {
       token = Token.fromJson(json['token']);
     }
-    return TokenActivity(timestamp: DateTime.parse(json['timestamp']), isInbound: json['inbound'], url: json['url'], token: token, tokenNFT: tokenNFT);
+    return TokenActivity(
+        unparsedTimestamp: json['timestamp'],
+        timestamp: DateTime.parse(json['timestamp']),
+        isInbound: json['inbound'],
+        url: json['url'],
+        token: token,
+        tokenNFT: tokenNFT);
   }
 }

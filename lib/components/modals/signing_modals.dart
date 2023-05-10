@@ -20,7 +20,11 @@ import 'package:reef_mobile_app/utils/styles.dart';
 
 import '../../model/status-data-object/StatusDataObject.dart';
 
-List<TableRow> createTable({required keyTexts, required valueTexts}) {
+List<TableRow> createTable(
+    {required keyTexts,
+    required valueTexts,
+    double fontSizeLabel = 12,
+    double fontSizeValue = 12}) {
   List<TableRow> rows = [];
   for (int i = 0; i < keyTexts.length; ++i) {
     rows.add(TableRow(children: [
@@ -30,15 +34,18 @@ List<TableRow> createTable({required keyTexts, required valueTexts}) {
           keyTexts[i],
           gradient: textGradient(),
           textAlign: TextAlign.right,
-          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
+          style:
+              TextStyle(fontWeight: FontWeight.w600, fontSize: fontSizeLabel),
         ),
       ),
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 4.0),
-        child: Text(
-          valueTexts[i],
-          style: const TextStyle(fontSize: 12),
-          overflow: TextOverflow.ellipsis,
+      Expanded(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 4.0),
+          child: Text(
+            valueTexts[i],
+            style: TextStyle(fontSize: fontSizeValue),
+            overflow: TextOverflow.fade,
+          ),
         ),
       ),
     ]));
