@@ -26,7 +26,6 @@ class TokenView extends StatefulWidget {
 }
 
 class _TokenViewState extends State<TokenView> {
-
   Widget tokenCard(StatusDataObject<TokenWithAmount> token) {
     String name = token.data.name;
     String address = token.data.address;
@@ -49,7 +48,7 @@ class _TokenViewState extends State<TokenView> {
                     GestureDetector(
                         onDoubleTap: () {
                           showQrCode(
-                              '$name Contract \n(don\'t send funds here)',
+                              '$name ${AppLocalizations.of(context)!.contract} \n(don\'t send funds here)',
                               address);
                         },
                         child: SizedBox(
@@ -77,7 +76,10 @@ class _TokenViewState extends State<TokenView> {
                               ? NumberFormat.simpleCurrency(decimalDigits: 4)
                                   .format(price)
                                   .toString()
-                              : isLoading?'Loading pool data':'No pool data',
+                              : isLoading
+                                  ? AppLocalizations.of(context)!
+                                      .loading_pool_data
+                                  : AppLocalizations.of(context)!.no_pool_data,
                           style: GoogleFonts.poppins(
                               fontWeight: FontWeight.normal,
                               color: Styles.textLightColor,
@@ -181,8 +183,8 @@ class _TokenViewState extends State<TokenView> {
                             backgroundColor: Colors.transparent,
                             shape: const StadiumBorder(),
                             elevation: 0),
-                        label: const Text(
-                          'Send',
+                        label: Text(
+                          AppLocalizations.of(context)!.send,
                           style: TextStyle(
                               color: Colors.white, fontWeight: FontWeight.w700),
                         ),
@@ -239,7 +241,7 @@ class _TokenViewState extends State<TokenView> {
                         if (selectedERC20s.hasStatus(StatusCode.error))
                           ElevatedButton(
                               onPressed: ()=>ReefAppState.instance.tokensCtrl.reload(true),
-                              child: const Text("Reload"))
+                              child: Text(AppLocalizations.of(context)!.reload))
                       ],
                     ),
                   ))),

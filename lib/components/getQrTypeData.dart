@@ -88,7 +88,7 @@ class _QrDataDisplayState extends State<QrDataDisplay> {
     }
 
     setState(() {
-      qrCodeValue = qrCode??ReefQrCode(ReefQrCodeType.invalid, "");
+      qrCodeValue = qrCode ?? ReefQrCode(ReefQrCodeType.invalid, "");
       if (widget.expectedType != null &&
           widget.expectedType == qrCodeValue?.type) {
         actOnQrCodeValue(qrCodeValue!);
@@ -104,8 +104,8 @@ class _QrDataDisplayState extends State<QrDataDisplay> {
       handleQrCodeData(event.code!);
     });*/
     var scanRes = await controller.scannedDataStream.first;
-      await handleQrCodeData(scanRes.code!);
-      this.controller?.dispose();
+    await handleQrCodeData(scanRes.code!);
+    this.controller?.dispose();
   }
 
   @override
@@ -126,11 +126,15 @@ class _QrDataDisplayState extends State<QrDataDisplay> {
                   if (qrCodeValue == null)
                     Column(
                       children: [
-                        Center(
-                          child: Container(
-                            width: 200,
-                            height: 200,
-                            child: QRView(key: _gLobalkey, onQRViewCreated: qr),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(10.0),
+                          child: Center(
+                            child: Container(
+                              width: 400,
+                              height: 300,
+                              child:
+                                  QRView(key: _gLobalkey, onQRViewCreated: qr),
+                            ),
                           ),
                         ),
                         Gap(16.0),
@@ -163,8 +167,7 @@ class _QrDataDisplayState extends State<QrDataDisplay> {
                               } catch (e) {
                                 Navigator.pop(context);
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                        content: Text("No Reef QR code")));
+                                    SnackBar(content: Text("No Reef QR code")));
                               }
                             },
                           ),

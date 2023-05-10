@@ -111,8 +111,8 @@ class _ExportQrAccountState extends State<ExportQrAccount> {
                         setState(() {
                           _exportWithDiffPass = value ?? false;
                           exportingText = value!
-                              ? "exporting with custom password"
-                              : "exporting with app password";
+                              ? AppLocalizations.of(context)!.export_custom_pass
+                              : AppLocalizations.of(context)!.export_app_pass;
                           _isButtonEnabled = _passwordController.text.isEmpty ||
                                   (_exportPasswordController.text.isEmpty &&
                                       _exportWithDiffPass)
@@ -124,7 +124,7 @@ class _ExportQrAccountState extends State<ExportQrAccount> {
                     const Gap(8),
                     Flexible(
                       child: Text(
-                        "Export with different Password",
+                        AppLocalizations.of(context)!.export_diff_pass,
                         style:
                             TextStyle(color: Colors.grey[600]!, fontSize: 14),
                       ),
@@ -149,8 +149,9 @@ class _ExportQrAccountState extends State<ExportQrAccount> {
                         child: TextField(
                           controller: _exportPasswordController,
                           obscureText: true,
-                          decoration: const InputDecoration.collapsed(
-                              hintText: 'Export Password'),
+                          decoration: InputDecoration.collapsed(
+                              hintText:
+                                  AppLocalizations.of(context)!.export_pass),
                           style: const TextStyle(
                             fontSize: 16,
                           ),
@@ -183,8 +184,8 @@ class _ExportQrAccountState extends State<ExportQrAccount> {
                   child: TextField(
                     controller: _passwordController,
                     obscureText: true,
-                    decoration:
-                        const InputDecoration.collapsed(hintText: 'Password'),
+                    decoration: InputDecoration.collapsed(
+                        hintText: AppLocalizations.of(context)!.password),
                     style: const TextStyle(
                       fontSize: 16,
                     ),

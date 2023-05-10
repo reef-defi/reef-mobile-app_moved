@@ -39,9 +39,9 @@ class _ImportAccountQrState extends State<ImportAccountQr> {
         .restoreJson(json.decode(qrCode!.data), _passwordController.text);
     if (response == "error") {
       Navigator.of(context).pop();
-      showAlertModal("Incorrect Password", [
-        "The password you entered is Incorrect!",
-        "Please enter the same password you entered while exporting this account. "
+      showAlertModal(AppLocalizations.of(context)!.incorrect_password, [
+        AppLocalizations.of(context)!.the_pass_is_incorrect,
+        AppLocalizations.of(context)!.enter_same_pass
       ]);
     } else {
       response['svg'] = svgData;
@@ -63,7 +63,8 @@ class _ImportAccountQrState extends State<ImportAccountQr> {
       // Show success message
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Account Imported Successfully.'),
+          content:
+              Text(AppLocalizations.of(context)!.account_imported_successfully),
           duration: Duration(seconds: 2),
         ),
       );
@@ -102,8 +103,9 @@ class _ImportAccountQrState extends State<ImportAccountQr> {
                           ),
                           child: TextField(
                             controller: _nameController,
-                            decoration: const InputDecoration.collapsed(
-                                hintText: 'Name your account'),
+                            decoration: InputDecoration.collapsed(
+                                hintText: AppLocalizations.of(context)!
+                                    .name_your_account),
                             style: const TextStyle(
                               fontSize: 16,
                             ),
@@ -125,8 +127,9 @@ class _ImportAccountQrState extends State<ImportAccountQr> {
                           child: TextField(
                             controller: _passwordController,
                             obscureText: true,
-                            decoration: const InputDecoration.collapsed(
-                                hintText: 'Password'),
+                            decoration: InputDecoration.collapsed(
+                                hintText:
+                                    AppLocalizations.of(context)!.password),
                             style: const TextStyle(
                               fontSize: 16,
                             ),

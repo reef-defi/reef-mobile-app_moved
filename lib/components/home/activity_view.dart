@@ -266,7 +266,7 @@ class _ActivityViewState extends State<ActivityView> {
                                 if (txHistory.hasStatus(StatusCode.error))
                                   ElevatedButton(
                                       onPressed:()=>ReefAppState.instance.tokensCtrl.reload(true),
-                                      child: const Text("Reload"))
+                                      child: Text(AppLocalizations.of(context)!.reload))
                               ],
                             ),
                           ))),

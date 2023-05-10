@@ -75,28 +75,6 @@ class _SettingsPageState extends State<SettingsPage> {
                     color: Colors.grey[800]),
               );
             }),
-            /*Divider(
-              color: Styles.textLightColor,
-              thickness: 1,
-            ),
-            const Gap(24),
-            MaterialButton(
-              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              onPressed: () => showAuthUrlListModal(context),
-              padding: const EdgeInsets.all(2),
-              child: Row(
-                children: [
-                  Icon(
-                    CupertinoIcons.list_bullet,
-                    color: Styles.textLightColor,
-                    size: 22,
-                  ),
-                  const Gap(8),
-                  Text('Manage Website Access',
-                      style: Theme.of(context).textTheme.bodyText1),
-                ],
-              ),
-            ),*/
             const Gap(24),
             Observer(builder: (_) {
               var navigateOnAccountSwitchVal =
@@ -137,7 +115,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     size: 22,
                   ),
                   Gap(9),
-                  Text("Biometric Authentication",
+                  Text(AppLocalizations.of(context)!.biometric_auth,
                       style: Theme.of(context).textTheme.bodyText1)
                 ]),
                 value: navigateOnAccountSwitchVal,

@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:flutter/scheduler.dart';
 import 'package:reef_mobile_app/utils/liquid_edge/liquid_carousel.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class IntroductionSlide extends StatelessWidget {
   final GlobalKey<LiquidCarouselState> liquidCarouselKey;
@@ -62,9 +63,9 @@ class IntroductionSlide extends StatelessWidget {
                           : () {
                               liquidCarouselKey.currentState?.swipeXPrevious();
                             },
-                      child: const Padding(
+                      child: Padding(
                         padding: EdgeInsets.symmetric(vertical: 0),
-                        child: Text('Previous',
+                        child: Text(AppLocalizations.of(context)!.previous,
                             style: TextStyle(
                               fontSize: 16,
                               letterSpacing: .8,
@@ -87,7 +88,10 @@ class IntroductionSlide extends StatelessWidget {
                     },
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 0),
-                      child: Text(isLast ? "Done" : "Next",
+                      child: Text(
+                          isLast
+                              ? AppLocalizations.of(context)!.done
+                              : AppLocalizations.of(context)!.next,
                           style: const TextStyle(
                             fontSize: 16,
                             letterSpacing: .8,

@@ -97,7 +97,7 @@ class _RestoreJSONState extends State<RestoreJSON> {
           Navigator.pop(context);
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Incorrect Password!'),
+              content: Text(AppLocalizations.of(context)!.incorrect_password),
               duration: Duration(seconds: 2),
             ),
           );

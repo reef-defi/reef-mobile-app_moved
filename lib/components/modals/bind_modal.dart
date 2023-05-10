@@ -351,7 +351,7 @@ class _BindEvmState extends State<BindEvm> {
 
   Widget buildSelectAccount2() {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      const Text("Select account",
+      Text(AppLocalizations.of(context)!.select_account,
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w700,
@@ -406,8 +406,9 @@ class _BindEvmState extends State<BindEvm> {
             Flexible(
                 child: Text((statusValue != SendStatus.CANCELED &&
                         statusValue != SendStatus.ERROR)
-                    ? "Waiting for fund transaction to complete..."
-                    : "Fund Transaction Failed"))
+                    // ? "Waiting for fund transaction to complete..."
+                    ? AppLocalizations.of(context)!.waiting_for_tx_to_complete
+                    : AppLocalizations.of(context)!.fund_tx_failed))
           ],
         )
       ],
@@ -574,11 +575,12 @@ class _BindEvmState extends State<BindEvm> {
                                 shape: const MaterialStatePropertyAll<
                                     OutlinedBorder>(buttonShape),
                               ),
-                              child: Text(
-                                  details.isActive && details.currentStep == 3
-                                      ? "Go back to home page".toUpperCase()
-                                      : localizations.continueButtonLabel
-                                          .toUpperCase()),
+                              child: Text(details.isActive &&
+                                      details.currentStep == 3
+                                  ? "${AppLocalizations.of(context)!.go_back_to_home_page}"
+                                      .toUpperCase()
+                                  : localizations.continueButtonLabel
+                                      .toUpperCase()),
                             ),
                           ],
                         ),
@@ -593,7 +595,8 @@ class _BindEvmState extends State<BindEvm> {
                               statusValue != SendStatus.ERROR)
                           ? ReefStepState.indexed
                           : ReefStepState.error),
-                  title: const Text("Select Account for Funding"),
+                  title: Text(
+                      AppLocalizations.of(context)!.select_account_for_funding),
                   content: sendingFundTransaction
                       ? buildFundTransaction()
                       : buildFund()),
@@ -601,13 +604,13 @@ class _BindEvmState extends State<BindEvm> {
                   state: currentStep > 1
                       ? ReefStepState.complete
                       : ReefStepState.indexed,
-                  title: const Text("Bind Transaction"),
+                  title: Text(AppLocalizations.of(context)!.bind_transaction),
                   content: buildBind()),
               ReefStep(
                   state: (currentStep == 2)
                       ? ReefStepState.complete
                       : ReefStepState.indexed,
-                  title: const Text("EVM is Bound"),
+                  title: Text(AppLocalizations.of(context)!.evm_is_bound),
                   content: buildBound()),
             ]),
         // child: Column(
@@ -630,7 +633,7 @@ void showBindEvmModal(BuildContext context, {required bindFor}) {
   Navigator.of(context).push(MaterialPageRoute(
     builder: (context) => Scaffold(
         appBar: AppBar(
-          title: const Text("Connect EVM"),
+          title: Text(AppLocalizations.of(context)!.connect_evm),
           backgroundColor: Colors.purple,
         ),
         body: BindEvm(bindFor: bindFor)),
