@@ -14,8 +14,7 @@ class MethodDataDisplay extends StatelessWidget {
   final SignatureRequest? signatureReq;
 
   @override
-  Widget build(BuildContext context) =>
-      Expanded(child: Observer(builder: (_) {
+  Widget build(BuildContext context) => Expanded(child: Observer(builder: (_) {
         if (signatureReq != null && signatureReq!.hasResults) {
           var evmMethodData = signatureReq?.decodedMethod['vm']['evm'];
           var isEVM = evmMethodData != null;
@@ -26,15 +25,14 @@ class MethodDataDisplay extends StatelessWidget {
                 MapEntry(val['name'],
                     _getValue(evmMethodData['decodedData']['args'][i])));
             Map<String, String> decodedData = {
-              "Contract Address": toShortDisplay(
-                  evmMethodData['contractAddress']),
+              "Contract Address":
+                  toShortDisplay(evmMethodData['contractAddress']),
               "Method Name": fragmentData['name'],
               "Arguments": "${args.entries.map((e) => e.key).join(', ')}",
-              "Values": "${args.entries.map((e) => e.value.toString()).join(
-                  ', ')}"
+              "Values":
+                  "${args.entries.map((e) => e.value.toString()).join(', ')}"
             };
             final decodedDetails = createDecodedDataTable(decodedData);
-
 
             dataWidget = Table(children: decodedDetails, columnWidths: const {
               0: IntrinsicColumnWidth(),
@@ -46,9 +44,10 @@ class MethodDataDisplay extends StatelessWidget {
             final String paramValues = args.length > 1
                 ? "${args.split(':')[1].split('}')[0]},${args.split(',')[1]}"
                 : "empty";
-            var methodName = signatureReq?.decodedMethod['methodName'].split(
-                '(')[0];
-            var params = signatureReq?.decodedMethod['methodName'].split('(')[1]
+            var methodName =
+                signatureReq?.decodedMethod['methodName'].split('(')[0];
+            var params = signatureReq?.decodedMethod['methodName']
+                .split('(')[1]
                 .split(')')[0];
             Map<String, String> decodedData = {
               "Method Name": methodName,
@@ -57,22 +56,24 @@ class MethodDataDisplay extends StatelessWidget {
             };
             final decodedDetails = createDecodedDataTable(decodedData);
             dataWidget = Table(children: decodedDetails, columnWidths: const {
-                0: IntrinsicColumnWidth(),
-                1: FlexColumnWidth(4),
-              });
+              0: IntrinsicColumnWidth(),
+              1: FlexColumnWidth(4),
+            });
           }
           return Padding(
               padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 0.0),
-              child: Column(children: [
-                Text(isEVM?'EVM Contract Call':'Method Call ', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                Gap(12),
-                dataWidget
-              ],)
-          );
+              child: Column(
+                children: [
+                  Text(isEVM ? 'EVM Contract Call' : 'Method Call ',
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold)),
+                  Gap(12),
+                  dataWidget
+                ],
+              ));
         }
         return Container();
       }));
-
 
   _getValue(dynamic argVal) {
     if (argVal is String) {
@@ -115,7 +116,7 @@ class MethodDataDisplay extends StatelessWidget {
           child: Text(
             valueTexts[i],
             style: const TextStyle(fontSize: 16),
-            overflow: TextOverflow.ellipsis,
+            overflow: TextOverflow.fade,
           ),
         ),
       ]));

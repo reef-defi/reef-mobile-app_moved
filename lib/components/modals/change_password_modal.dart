@@ -244,7 +244,8 @@ class _ChangePasswordState extends State<ChangePassword> {
                         if (currPassword != currPasswordController.text) {
                           Navigator.of(context).pop();
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            content: Text('Incorrect password entered!'),
+                            content: Text(AppLocalizations.of(context)!
+                                .incorrect_password_entered),
                             duration: Duration(seconds: 2),
                           ));
                         } else if (confirmNewPassword.isNotEmpty &&

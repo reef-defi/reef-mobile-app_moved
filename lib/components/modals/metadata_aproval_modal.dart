@@ -7,6 +7,7 @@ import 'package:reef_mobile_app/pages/SplashScreen.dart';
 import 'package:reef_mobile_app/utils/elements.dart';
 import 'package:reef_mobile_app/utils/gradient_text.dart';
 import 'package:reef_mobile_app/utils/styles.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 List<TableRow> createTable({required keyTexts, required valueTexts}) {
   List<TableRow> rows = [];
@@ -52,10 +53,10 @@ class _MetadataAprovalState extends State<MetadataAproval> {
   @override
   Widget build(BuildContext context) {
     if (widget.currVersion == widget.metadata.specVersion) {
-      return const Padding(
+      return Padding(
           padding: EdgeInsets.fromLTRB(24, 0, 24, 32.0),
           child: Text(
-            "Metadata is already up to date.",
+            AppLocalizations.of(context)!.metadata_up_to_date,
             style: TextStyle(fontSize: 16),
             overflow: TextOverflow.ellipsis,
           ));
@@ -93,8 +94,7 @@ class _MetadataAprovalState extends State<MetadataAproval> {
           ViewBoxContainer(
             color: Colors.white,
             child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 24.0, horizontal: 16.0),
+              padding: EdgeInsets.symmetric(vertical: 24.0, horizontal: 16.0),
               child: Column(children: [
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -113,7 +113,7 @@ class _MetadataAprovalState extends State<MetadataAproval> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                "This approval will add the metadata to your mobile app, allowing future requests to be decoded using this metadata.",
+                                AppLocalizations.of(context)!.approve_metadata,
                                 style: TextStyle(
                                     fontSize: 16, color: Styles.textColor),
                                 textAlign: TextAlign.justify,
@@ -154,7 +154,7 @@ class _MetadataAprovalState extends State<MetadataAproval> {
                     onPressed: () {
                       Navigator.pop(context, false);
                     },
-                    child: Text("Reject",
+                    child: Text(AppLocalizations.of(context)!.reject,
                         style: TextStyle(
                           color: Styles.primaryAccentColorDark,
                           decoration: TextDecoration.underline,

@@ -60,8 +60,8 @@ class QRCodeGenerator extends StatelessWidget {
                   : data;
               Clipboard.setData(ClipboardData(text: addressToCopy)).then((_) {
                 var message = isEvm == true
-                    ? "EVM address copied to clipboard.\nUse it ONLY on Reef Chain!"
-                    : "Native address copied to clipboard.";
+                    ? "${AppLocalizations.of(context)!.evm_copy}\n${AppLocalizations.of(context)!.reef_only}"
+                    : AppLocalizations.of(context)!.copy_native;
 
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text(message)),
@@ -79,8 +79,7 @@ class QRCodeGenerator extends StatelessWidget {
 }
 
 void showQrCode(String title, String message, {BuildContext? context}) {
-  showModal(
-      context ?? navigatorKey.currentContext,
+  showModal(context ?? navigatorKey.currentContext,
       child: QRCodeGenerator(
         data: message,
       ),

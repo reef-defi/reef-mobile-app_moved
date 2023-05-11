@@ -18,9 +18,11 @@ class _AuthUrlListState extends State<AuthUrlList> {
   @override
   void initState() {
     super.initState();
-    ReefAppState.instance.storageCtrl.getAllAuthUrls().then((value) => setState(() {
-          authUrls = value;
-        }));
+    ReefAppState.instance.storageCtrl
+        .getAllAuthUrls()
+        .then((value) => setState(() {
+              authUrls = value;
+            }));
   }
 
   showAlertDialog(BuildContext context, AuthUrl authUrl) {
@@ -46,7 +48,7 @@ class _AuthUrlListState extends State<AuthUrlList> {
     AlertDialog alert = AlertDialog(
       title: Text(AppLocalizations.of(context)!.auth_url_list_del),
       content: Text(
-          "Are you sure you want to delete the Website with URL ${authUrl.url}?"),
+          "${AppLocalizations.of(context)!.delete_website_url} ${authUrl.url}?"),
       actions: [
         cancelButton,
         continueButton,
@@ -85,7 +87,8 @@ class _AuthUrlListState extends State<AuthUrlList> {
                       onChanged: (value) {
                         setState(() {
                           authUrl.isAllowed = value;
-                          ReefAppState.instance.storageCtrl.saveAuthUrl(authUrl);
+                          ReefAppState.instance.storageCtrl
+                              .saveAuthUrl(authUrl);
                         });
                       },
                       activeColor: Styles.primaryAccentColorDark,

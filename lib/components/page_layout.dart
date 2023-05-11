@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -25,15 +26,32 @@ class BottomNav extends StatefulWidget {
   State<BottomNav> createState() => _BottomNavState();
 }
 
-class _BottomNavState extends State<BottomNav> {
+class _BottomNavState extends State<BottomNav> with WidgetsBindingObserver {
   final _liquidCarouselKey = GlobalKey<LiquidCarouselState>();
   bool _swiping = false;
 
   @override
   void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _checkNotificationPermission();
     ReefAppState.instance.navigationCtrl.carouselKey = _liquidCarouselKey;
-    super.initState();
+  }
+
+  @override
+  void dispose(){
+    super.dispose();
+    WidgetsBinding.instance.removeObserver(this);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (kDebugMode) {
+      print('APP STATE=$state');
+    }
+    if(state==AppLifecycleState.resumed) {
+      ReefAppState.instance.tokensCtrl.reload(false);
+    }
   }
 
   Future<bool> _checkNotificationPermission() async {
@@ -44,7 +62,7 @@ class _BottomNavState extends State<BottomNav> {
     return status.isGranted;
   }
 
-  Widget _getWidget(NavigationPage page) {
+  /*Widget _getWidget(NavigationPage page) {
     switch (page) {
       case NavigationPage.home:
         return const HomePage();
@@ -62,12 +80,12 @@ class _BottomNavState extends State<BottomNav> {
       default:
         return const HomePage();
     }
-  }
+  }*/
 
   void _onItemTapped(int index) async {
-    print(index);
-    print(bottomNavigationBarItems[index].page);
-    print(bottomNavigationBarItems[index].label);
+    // print(index);
+    // print(bottomNavigationBarItems[index].page);
+    // print(bottomNavigationBarItems[index].label);
     ReefAppState.instance.navigationCtrl
         .navigate(bottomNavigationBarItems[index].page);
   }

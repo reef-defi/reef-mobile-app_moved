@@ -48,7 +48,7 @@ class _TokenViewState extends State<TokenView> {
                     GestureDetector(
                         onDoubleTap: () {
                           showQrCode(
-                              '$name Contract \n(don\'t send funds here)',
+                              '$name ${AppLocalizations.of(context)!.contract} \n(don\'t send funds here)',
                               address);
                         },
                         child: SizedBox(
@@ -77,8 +77,9 @@ class _TokenViewState extends State<TokenView> {
                                   .format(price)
                                   .toString()
                               : isLoading
-                                  ? 'Loading pool data'
-                                  : 'No pool data',
+                                  ? AppLocalizations.of(context)!
+                                      .loading_pool_data
+                                  : AppLocalizations.of(context)!.no_pool_data,
                           style: GoogleFonts.poppins(
                               fontWeight: FontWeight.normal,
                               color: Styles.textLightColor,
@@ -92,32 +93,24 @@ class _TokenViewState extends State<TokenView> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Observer(builder: (context) {
-                          return isLoading
-                              ? JumpingDots(
-                                  animationDuration:
-                                      const Duration(milliseconds: 200),
-                                  verticalOffset: 5,
-                                  radius: 5,
-                                  color: Styles.purpleColor,
-                                  innerPadding: 2,
-                                )
-                              : BlurableContent(
-                                  GradientText(
-                                      price != 0
-                                          ? NumberFormat.compactLong()
-                                              .format(getBalanceValueBI(
-                                                  balance, price))
-                                              .toString()
-                                          : "NA",
-                                      gradient: textGradient(),
-                                      style: GoogleFonts.poppins(
-                                        color: Styles.textColor,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w900,
-                                      )),
-                                  ReefAppState
-                                      .instance.model.appConfig.displayBalance);
+                        isLoading?JumpingDots(animationDuration: const Duration(milliseconds: 200), verticalOffset: 5, radius: 5, color: Styles.purpleColor,innerPadding: 2,)
+                            :Observer(builder: (context) {
+                          return BlurableContent(
+                              GradientText(
+                                  price != 0
+                                      ? NumberFormat.compactLong()
+                                          .format(
+                                              getBalanceValueBI(balance, price))
+                                          .toString()
+                                      : "NA",
+                                  gradient: textGradient(),
+                                  style: GoogleFonts.poppins(
+                                    color: Styles.textColor,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w900,
+                                  )),
+                              ReefAppState
+                                  .instance.model.appConfig.displayBalance);
                         }),
                         Observer(builder: (context) {
                           return BlurableContent(
@@ -190,8 +183,8 @@ class _TokenViewState extends State<TokenView> {
                             backgroundColor: Colors.transparent,
                             shape: const StadiumBorder(),
                             elevation: 0),
-                        label: const Text(
-                          'Send',
+                        label: Text(
+                          AppLocalizations.of(context)!.send,
                           style: TextStyle(
                               color: Colors.white, fontWeight: FontWeight.w700),
                         ),
@@ -247,9 +240,8 @@ class _TokenViewState extends State<TokenView> {
                         ),
                         if (selectedERC20s.hasStatus(StatusCode.error))
                           ElevatedButton(
-                              onPressed:
-                                  ReefAppState.instance.tokensCtrl.reload,
-                              child: const Text("Reload"))
+                              onPressed: ()=>ReefAppState.instance.tokensCtrl.reload(true),
+                              child: Text(AppLocalizations.of(context)!.reload))
                       ],
                     ),
                   ))),

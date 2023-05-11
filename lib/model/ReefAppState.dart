@@ -45,12 +45,12 @@ class ReefAppState {
     this.storage = storage;
     await _initReefObservables(jsApi);
     networkCtrl = NetworkCtrl(storage, jsApi, model.network);
-    tokensCtrl = TokenCtrl(jsApi, model.tokens, model.network, networkCtrl);
+    tokensCtrl = TokenCtrl(jsApi, model.tokens);
     accountCtrl = AccountCtrl(jsApi, storage, model.accounts);
     signingCtrl = SigningCtrl(jsApi, storage, model.signatureRequests, model.accounts);
     transferCtrl = TransferCtrl(jsApi);
     swapCtrl = SwapCtrl(jsApi);
-    metadataCtrl = MetadataCtrl(jsApi, storage);
+    metadataCtrl = MetadataCtrl(jsApi);
     navigationCtrl =
         NavigationCtrl(model.navigationModel, model.homeNavigationModel);
     Network currentNetwork =
