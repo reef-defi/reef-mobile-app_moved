@@ -2992,7 +2992,7 @@
   resolved "https://registry.yarnpkg.com/@popperjs/core/-/core-2.11.7.tgz#ccab5c8f7dc557a52ca3288c10075c9ccd37fff7"
   integrity sha512-Cr4OjIkipTtcXKjAsm8agyleBuDHvxzeBoa1v543lbv1YaIwQjESsVcmjiWiPEbC1FIeHOG/Op9kdCmAmiS3Kw==
 
-"@reef-chain/util-lib@^0.10.2":
+"@reef-chain/util-lib@^0.10.3":
   version "0.10.3"
   resolved "https://registry.yarnpkg.com/@reef-chain/util-lib/-/util-lib-0.10.3.tgz#60681c0cf9b60259138571fb407ebbaeba80ba11"
   integrity sha512-qN8AsrizrARs4MVqrWFezZcmWQzkUO8T9faIUa4p6wUelwsg4mCQrgZyTfyeRazbIR9zWLl1+IKZUNaSXrOMgw==
