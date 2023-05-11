@@ -251,21 +251,38 @@ class _TokenViewState extends State<TokenView> {
               SliverPadding(
                 padding:
                     const EdgeInsets.symmetric(vertical: 32, horizontal: 12),
-                sliver: SliverGrid(
+                sliver: SliverList(
                   delegate: SliverChildBuilderDelegate(
                     (context, index) {
                       final tkn = selectedERC20s.data[index];
-                      return tokenCard(tkn);
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 18.0),
+                        child: tokenCard(tkn),
+                      );
                     },
                     childCount: selectedERC20s.data.length,
                   ),
-                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                      mainAxisSpacing: 24,
-                      crossAxisSpacing: 24,
-                      childAspectRatio: 2.5,
-                      maxCrossAxisExtent: 400),
+                  // gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                  //     mainAxisSpacing: 24,
+                  //     crossAxisSpacing: 24,
+                  //     childAspectRatio: 2.25,
+                  //     maxCrossAxisExtent: 400),
                 ),
               ),
+            // SingleChildScrollView(
+            //   child: Container(
+            //     height: 900,
+            //     child: ListView.builder(
+            //         itemCount: selectedERC20s.data.length,
+            //         itemBuilder: (context, index) {
+            //           return Padding(
+            //             padding: const EdgeInsets.symmetric(
+            //                 vertical: 12, horizontal: 12),
+            //             child: tokenCard(selectedERC20s.data[index]),
+            //           );
+            //         }),
+            //   ),
+            // )
           ],
         );
       },

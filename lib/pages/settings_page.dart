@@ -60,7 +60,10 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SingleChildScrollView(
+        physics: const NeverScrollableScrollPhysics(),
+    child: Container(
+    height: MediaQuery.of(context).size.height,
         color: Styles.primaryBackgroundColor,
         padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 12),
         child: Column(
@@ -80,31 +83,31 @@ class _SettingsPageState extends State<SettingsPage> {
               var navigateOnAccountSwitchVal =
                   ReefAppState.instance.model.appConfig.navigateOnAccountSwitch;
 
-              return CheckboxListTile(
-                contentPadding: EdgeInsets.zero,
-                title: Row(children: [
-                  Icon(
-                    Icons.home,
-                    color: Styles.textLightColor,
-                    size: 22,
-                  ),
-                  Gap(9),
-                  Text(
-                      AppLocalizations.of(context)!
-                          .go_to_home_on_account_switch,
-                      style: Theme.of(context).textTheme.bodyText1)
-                ]),
-                value: navigateOnAccountSwitchVal,
-                onChanged: (newValue) {
-                  ReefAppState.instance.appConfigCtrl
-                      .setNavigateOnAccountSwitch(newValue == true);
-                },
-                activeColor: Styles.primaryAccentColor,
-              );
-            }),
-            Observer(builder: (_) {
-              var navigateOnAccountSwitchVal =
-                  ReefAppState.instance.model.appConfig.isBiometricAuthEnabled;
+                return CheckboxListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: Row(children: [
+                    Icon(
+                      Icons.home,
+                      color: Styles.textLightColor,
+                      size: 22,
+                    ),
+                    Gap(9),
+                    Text(
+                        AppLocalizations.of(context)!
+                            .go_to_home_on_account_switch,
+                        style: Theme.of(context).textTheme.bodyText1)
+                  ]),
+                  value: navigateOnAccountSwitchVal,
+                  onChanged: (newValue) {
+                    ReefAppState.instance.appConfigCtrl
+                        .setNavigateOnAccountSwitch(newValue == true);
+                  },
+                  activeColor: Styles.primaryAccentColor,
+                );
+              }),
+              Observer(builder: (_) {
+                var navigateOnAccountSwitchVal = ReefAppState
+                    .instance.model.appConfig.isBiometricAuthEnabled;
 
               return CheckboxListTile(
                 contentPadding: EdgeInsets.zero,
@@ -242,6 +245,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
               ),
           ],
-        ));
+        ))
+    );
   }
 }
