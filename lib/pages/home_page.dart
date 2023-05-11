@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -17,7 +19,6 @@ import 'package:reef_mobile_app/components/sign/SignatureContentToggle.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
 import 'package:reef_mobile_app/model/network/ws-conn-state.dart';
 import 'package:reef_mobile_app/model/tokens/TokenWithAmount.dart';
-import 'package:reef_mobile_app/pages/test_page.dart';
 import 'package:reef_mobile_app/utils/elements.dart';
 import 'package:reef_mobile_app/utils/functions.dart';
 import 'package:reef_mobile_app/utils/gradient_text.dart';
@@ -26,7 +27,6 @@ import 'package:reef_mobile_app/utils/styles.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
 import '../components/BlurableContent.dart';
-import 'DAppPage.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -36,7 +36,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  void _navigateTestDApp(String url) {
+  /*void _navigateTestDApp(String url) {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -49,26 +49,33 @@ class _HomePageState extends State<HomePage> {
       context,
       MaterialPageRoute(builder: (context) => const TestPage()),
     );
-  }
+  }*/
 
-  final double _textSize = 120.0;
-  final bool _isScrolling = false;
   WsConnState? providerConn;
   WsConnState? gqlConn;
+  StreamSubscription? gqlConnStateSubs;
+  StreamSubscription? providerConnStateSubs;
 
   @override
   void initState() {
-    ReefAppState.instance.networkCtrl.getProviderConnLogs().listen((event) {
+    providerConnStateSubs = ReefAppState.instance.networkCtrl.getProviderConnLogs().listen((event) {
       setState(() {
         providerConn = event;
       });
     });
-    ReefAppState.instance.networkCtrl.getGqlConnLogs().listen((event) {
+    gqlConnStateSubs = ReefAppState.instance.networkCtrl.getGqlConnLogs().listen((event) {
       setState(() {
         gqlConn = event;
       });
     });
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    providerConnStateSubs?.cancel();
+    gqlConnStateSubs?.cancel();
+    super.dispose();
   }
 
   final List _viewsMap = const [

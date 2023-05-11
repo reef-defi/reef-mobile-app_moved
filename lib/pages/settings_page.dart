@@ -1,20 +1,16 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:reef_mobile_app/components/getQrTypeData.dart';
-import 'package:reef_mobile_app/components/modals/auth_url_list_modal.dart';
 import 'package:reef_mobile_app/components/modals/change_password_modal.dart';
 import 'package:reef_mobile_app/components/modals/language_selection_modal.dart';
 import 'package:reef_mobile_app/components/switch_network.dart';
-import 'package:reef_mobile_app/utils/password_manager.dart';
-import 'package:reef_mobile_app/utils/styles.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:reef_mobile_app/model/ReefAppState.dart';
+import 'package:reef_mobile_app/utils/styles.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({Key? key}) : super(key: key);
@@ -95,7 +91,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     Text(
                         AppLocalizations.of(context)!
                             .go_to_home_on_account_switch,
-                        style: Theme.of(context).textTheme.bodyText1)
+                        style: Theme.of(context).textTheme.bodyLarge)
                   ]),
                   value: navigateOnAccountSwitchVal,
                   onChanged: (newValue) {
@@ -119,7 +115,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   ),
                   Gap(9),
                   Text(AppLocalizations.of(context)!.biometric_auth,
-                      style: Theme.of(context).textTheme.bodyText1)
+                      style: Theme.of(context).textTheme.bodyLarge)
                 ]),
                 value: navigateOnAccountSwitchVal,
                 onChanged: (newValue) {
@@ -146,7 +142,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   const Gap(8),
                   Builder(builder: (context) {
                     return Text(AppLocalizations.of(context)!.change_password,
-                        style: Theme.of(context).textTheme.bodyText1);
+                        style: Theme.of(context).textTheme.bodyLarge);
                   }),
                 ],
               ),
@@ -168,7 +164,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   const Gap(8),
                   Builder(builder: (context) {
                     return Text(AppLocalizations.of(context)!.select_language,
-                        style: Theme.of(context).textTheme.bodyText1);
+                        style: Theme.of(context).textTheme.bodyLarge);
                   }),
                 ],
               ),
@@ -192,7 +188,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   Builder(builder: (context) {
                     return Text(
                       AppLocalizations.of(context)!.developer_settings,
-                      style: Theme.of(context).textTheme.bodyText1,
+                      style: Theme.of(context).textTheme.bodyLarge,
                     );
                   }),
                   Expanded(child: Container()),
@@ -217,10 +213,9 @@ class _SettingsPageState extends State<SettingsPage> {
                           return const Text('getting version...');
                         }),
                     const Gap(12),
-                    Text('GQL conn: $gqlConnState' ?? 'getting gql status'),
+                    Text('GQL conn: ${gqlConnState ?? "getting gql status"}'),
                     const Gap(12),
-                    Text('Provider conn: $providerConnState' ??
-                        'getting provider status'),
+                    Text('Provider conn: ${providerConnState ?? "getting provider status"}'),
                     const Gap(12),
                     MaterialButton(
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -237,7 +232,7 @@ class _SettingsPageState extends State<SettingsPage> {
                           ),
                           const Gap(8),
                           Text(AppLocalizations.of(context)!.switch_network,
-                              style: Theme.of(context).textTheme.bodyText1),
+                              style: Theme.of(context).textTheme.bodyLarge),
                         ],
                       ),
                     ),
