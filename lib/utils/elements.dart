@@ -78,22 +78,19 @@ class ImageBoxContainer extends StatelessWidget {
   const ImageBoxContainer(
       {Key? key,
       required this.child,
-      this.color = Styles.boxBackgroundColor,
+      this.color = Styles.primaryAccentColor,
       this.imageUrl = ''})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Column(children: [
-      Container(
+      if (this.imageUrl == '')
+        Container(
           width: double.infinity,
-          height: this.imageUrl != '' ? 150 : null,
+          height: 150,
           decoration: BoxDecoration(
             shape: BoxShape.rectangle,
-            image: this.imageUrl != ''
-                ? DecorationImage(
-                    image: NetworkImage(imageUrl), fit: BoxFit.cover)
-                : null,
             color: color,
             boxShadow: const [
               const BoxShadow(
@@ -107,7 +104,34 @@ class ImageBoxContainer extends StatelessWidget {
               //right: new Radius.circular(20.0),
             ),
             // borderRadius: BorderRadius.circular(15)
-          )),
+          ),
+          child: Center(
+            child: CircularProgressIndicator(color: Styles.whiteColor),
+          ),
+        ),
+      if (this.imageUrl != '')
+        Container(
+            width: double.infinity,
+            height: this.imageUrl != '' ? 150 : null,
+            decoration: BoxDecoration(
+              shape: BoxShape.rectangle,
+              image: DecorationImage(
+                  image: NetworkImage(imageUrl), fit: BoxFit.cover),
+
+              color: color,
+              boxShadow: const [
+                const BoxShadow(
+                  color: Color(0x12000000),
+                  offset: Offset(0, 3),
+                  blurRadius: 30,
+                )
+              ],
+              borderRadius: new BorderRadius.vertical(
+                top: new Radius.circular(15.0),
+                //right: new Radius.circular(20.0),
+              ),
+              // borderRadius: BorderRadius.circular(15)
+            )),
       Container(
           width: double.infinity,
           height: 50,

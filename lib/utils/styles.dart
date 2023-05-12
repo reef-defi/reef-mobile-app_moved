@@ -4,7 +4,7 @@ class Styles {
   static Color primaryColor = const Color(0xFF0E225D);
   static const Color primaryBackgroundColor = Color(0xffeeebf6);
   static const Color darkBackgroundColor = Color.fromARGB(255, 48, 1, 87);
-  static Color primaryAccentColor = const Color(0xffbf37a7);
+  static const Color primaryAccentColor = Color(0xffbf37a7);
   static Color primaryAccentColorDark = const Color(0xffba24c7);
   static const Color purpleColor = Color(0xffa93185);
   static Color secondaryAccentColor = const Color(0xff5531a9);
