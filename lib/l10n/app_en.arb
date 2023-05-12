@@ -111,7 +111,6 @@
   "get_qr_information":"Get QR Information",
   "go_to_home_on_account_switch":"Go to Home on Account Switch",
   "scan_from_image":"Scan from Image",
-  "test":"test",
   "reload":"Reload",
   "contract":"contract",
   "loading_pool_data":"Loading pool data",
@@ -153,5 +152,6 @@
   "check_order_status":"Check order status",
   "completed_binance_purchase":"If you have completed your purchase on Binance Connect, your REEF balance will be updated after the transaction has been confirmed onchain.",
   "go_to_binance":"Go to Binance Connect",
-  "biometric_auth":"Biometric Authentication"
+  "biometric_auth":"Biometric Authentication",
+  "dont_send_funds_here":"don't send funds here"
 }

@@ -48,7 +48,7 @@ class _TokenViewState extends State<TokenView> {
                     GestureDetector(
                         onDoubleTap: () {
                           showQrCode(
-                              '$name ${AppLocalizations.of(context)!.contract} \n(don\'t send funds here)',
+                              '$name ${AppLocalizations.of(context)!.contract} \n(${AppLocalizations.of(context)!.dont_send_funds_here} )',
                               address);
                         },
                         child: SizedBox(
@@ -93,25 +93,33 @@ class _TokenViewState extends State<TokenView> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        isLoading?JumpingDots(animationDuration: const Duration(milliseconds: 200), verticalOffset: 5, radius: 5, color: Styles.purpleColor,innerPadding: 2,)
-                            :Observer(builder: (context) {
-                          return BlurableContent(
-                              GradientText(
-                                  price != 0
-                                      ? NumberFormat.compactLong()
-                                          .format(
-                                              getBalanceValueBI(balance, price))
-                                          .toString()
-                                      : "NA",
-                                  gradient: textGradient(),
-                                  style: GoogleFonts.poppins(
-                                    color: Styles.textColor,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w900,
-                                  )),
-                              ReefAppState
-                                  .instance.model.appConfig.displayBalance);
-                        }),
+                        isLoading
+                            ? JumpingDots(
+                                animationDuration:
+                                    const Duration(milliseconds: 200),
+                                verticalOffset: 5,
+                                radius: 5,
+                                color: Styles.purpleColor,
+                                innerPadding: 2,
+                              )
+                            : Observer(builder: (context) {
+                                return BlurableContent(
+                                    GradientText(
+                                        price != 0
+                                            ? NumberFormat.compactLong()
+                                                .format(getBalanceValueBI(
+                                                    balance, price))
+                                                .toString()
+                                            : "NA",
+                                        gradient: textGradient(),
+                                        style: GoogleFonts.poppins(
+                                          color: Styles.textColor,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w900,
+                                        )),
+                                    ReefAppState.instance.model.appConfig
+                                        .displayBalance);
+                              }),
                         Observer(builder: (context) {
                           return BlurableContent(
                               Text(
@@ -240,7 +248,8 @@ class _TokenViewState extends State<TokenView> {
                         ),
                         if (selectedERC20s.hasStatus(StatusCode.error))
                           ElevatedButton(
-                              onPressed: ()=>ReefAppState.instance.tokensCtrl.reload(true),
+                              onPressed: () =>
+                                  ReefAppState.instance.tokensCtrl.reload(true),
                               child: Text(AppLocalizations.of(context)!.reload))
                       ],
                     ),
