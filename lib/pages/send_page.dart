@@ -111,7 +111,8 @@ class _SendPageState extends State<SendPage> {
   Future<bool> _isValidAddress(String address) async {
     //checking if selected address is not evm
     if (address.startsWith("5")) {
-      return await ReefAppState.instance.accountCtrl.isValidSubstrateAddress(address);
+      return await ReefAppState.instance.accountCtrl
+          .isValidSubstrateAddress(address);
     } else if (address.startsWith("0x")) {
       return await ReefAppState.instance.accountCtrl.isValidEvmAddress(address);
     }
@@ -175,18 +176,37 @@ class _SendPageState extends State<SendPage> {
     transferTransactionFeedbackStream =
         transferTransactionFeedbackStream.asBroadcastStream();
 
-    transferTransactionFeedbackStream.listen((txResponse) async {
-      print('TRANSACTION RESPONSE=$txResponse');
-      if (await handleExceptionResponse(txResponse)) {
-        return;
+    final selectedAddress = await ReefAppState.instance.storageCtrl
+        .getValue(StorageKey.selected_address.name);
+    final claimedEvmAddress = await ReefAppState.instance.accountCtrl
+        .resolveEvmAddress(selectedAddress);
+    if (isEvmAddress(address) && !isEvmAddress(claimedEvmAddress)) {
+      StoredAccount accountDetails = await ReefAppState.instance.accountCtrl
+          .getStorageAccount(selectedAddress);
+      List<StatusDataObject<ReefAccount>> signers =
+          ReefAppState.instance.model.accounts.accountsFDM.data;
+      for (var signer in signers) {
+        if (signer.data.address ==
+            ReefAppState.instance.model.accounts.selectedAddress) {
+          Navigator.pop(context);
+          showBindEvmModal(context, bindFor: signer.data);
+          return;
+        }
       }
-      if (handleNativeTransferResponse(txResponse)) {
-        return;
-      }
-      if (handleEvmTransactionResponse(txResponse)) {
-        return;
-      }
-    });
+    } else {
+      transferTransactionFeedbackStream.listen((txResponse) async {
+        print('TRANSACTION RESPONSE=$txResponse');
+        if (await handleExceptionResponse(txResponse)) {
+          return;
+        }
+        if (handleNativeTransferResponse(txResponse)) {
+          return;
+        }
+        if (handleEvmTransactionResponse(txResponse)) {
+          return;
+        }
+      });
+    }
   }
 
   Future<Stream<dynamic>> executeTransferTransaction(
@@ -229,22 +249,6 @@ class _SendPageState extends State<SendPage> {
 
   Future<bool> handleExceptionResponse(txResponse) async {
     if (txResponse == null || txResponse['success'] != true) {
-      final selectedAddress = await ReefAppState.instance.storageCtrl
-          .getValue(StorageKey.selected_address.name);
-      final claimedEvmAddress = await ReefAppState.instance.accountCtrl
-          .resolveEvmAddress(selectedAddress);
-      StoredAccount accountDetails = await ReefAppState.instance.accountCtrl
-          .getStorageAccount(selectedAddress);
-      if (claimedEvmAddress.length == 0) {
-        List<StatusDataObject<ReefAccount>> signers = ReefAppState.instance.model.accounts.accountsFDM.data;
-        for(var signer in signers){
-          if(signer.data.address == ReefAppState.instance.model.accounts.selectedAddress){
-            Navigator.pop(context);
-            showBindEvmModal(context, bindFor: signer.data);
-            break;
-          }
-        }
-      }
       setState(() {
         statusValue = txResponse['data'] == '_canceled'
             ? SendStatus.CANCELED
