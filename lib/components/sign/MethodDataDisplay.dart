@@ -24,14 +24,20 @@ class MethodDataDisplay extends StatelessWidget {
             var args = List.from(fragmentData['inputs']).asMap().map((i, val) =>
                 MapEntry(val['name'],
                     _getValue(evmMethodData['decodedData']['args'][i])));
+            List<String> argsList =
+                args.entries.map((e) => e.key).join(',').split(',');
+            List<String> argsValuesList = args.entries
+                .map((e) => e.value.toString())
+                .join(',')
+                .split(',');
             Map<String, String> decodedData = {
               "Contract Address":
                   toShortDisplay(evmMethodData['contractAddress']),
-              "Method Name": fragmentData['name'],
-              "Arguments": "${args.entries.map((e) => e.key).join(', ')}",
-              "Values":
-                  "${args.entries.map((e) => e.value.toString()).join(', ')}"
+              "Method Name": fragmentData['name']
             };
+            for (var i = 0; i < argsList.length; i++) {
+              decodedData[argsList[i]] = argsValuesList[i];
+            }
             final decodedDetails = createDecodedDataTable(decodedData);
 
             dataWidget = Table(children: decodedDetails, columnWidths: const {
@@ -49,11 +55,12 @@ class MethodDataDisplay extends StatelessWidget {
             var params = signatureReq?.decodedMethod['methodName']
                 .split('(')[1]
                 .split(')')[0];
-            Map<String, String> decodedData = {
-              "Method Name": methodName,
-              "Parameters": params,
-              "Values": paramValues.trim(),
-            };
+            List<String> paramsList = params.split(',');
+            List<String> paramValuesList = paramValues.trim().split(',');
+            Map<String, String> decodedData = {"Method Name": methodName};
+            for (var i = 0; i < paramsList.length; i++) {
+              decodedData[paramsList[i]] = paramValuesList[i];
+            }
             final decodedDetails = createDecodedDataTable(decodedData);
             dataWidget = Table(children: decodedDetails, columnWidths: const {
               0: IntrinsicColumnWidth(),
