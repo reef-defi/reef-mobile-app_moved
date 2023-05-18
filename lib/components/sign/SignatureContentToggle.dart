@@ -77,54 +77,52 @@ class SignatureContentToggle extends StatelessObserverWidget {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          height: MediaQuery.of(context).size.height * 0.75,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Gap(74),
-              const Text(
-                // AppLocalizations.of(context)!.transaction_details,
-                'Signing with account:',
-              ),
-              if (account != null)
-                Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      children: [
-                        AccountBox(
-                            reefAccountFDM: account,
-                            selected: false,
-                            onSelected: () => {},
-                            showOptions: false,
-                            lightTheme: true),
-                      ],
-                    )),
-              Expanded(
-                  child: Column(children: [
-                const Gap(48),
-                Text(
-                    "Transaction on ${isMainnet(signatureRequest?.payload.genesisHash) ? 'Reef Mainnet' : toShortDisplay(signatureRequest?.payload.genesisHash?.toString())}",
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 16)),
-                const Gap(24),
-                MethodDataLoadingIndicator(signatureRequest),
-                signatureRequest?.payload.type == "bytes"
-                    ? MethodBytesDataDisplay(
-                        signatureRequest, signatureRequest?.bytesData)
-                    : MethodDataDisplay(signatureRequest),
-              ])),
-              if (signatureRequest != null)
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          const Text(
+            // AppLocalizations.of(context)!.transaction_details,
+            'Signing with account:',
+          ),
+          if (account != null)
+            Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    AccountBox(
+                        reefAccountFDM: account,
+                        selected: false,
+                        onSelected: () => {},
+                        showOptions: false,
+                        lightTheme: true),
+                  ],
+                )),
+          Expanded(
+              child: Column(children: [
+            const Gap(48),
+            Text(
+                "Transaction on ${isMainnet(signatureRequest?.payload.genesisHash) ? 'Reef Mainnet' : toShortDisplay(signatureRequest?.payload.genesisHash?.toString())}",
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+            const Gap(24),
+            MethodDataLoadingIndicator(signatureRequest),
+            signatureRequest?.payload.type == "bytes"
+                ? MethodBytesDataDisplay(
+                    signatureRequest, signatureRequest?.bytesData)
+                : MethodDataDisplay(signatureRequest),
+          ])),
+          if (signatureRequest != null)
+            Column(
+              children: [
                 SignatureControls(
                     signatureRequest,
                     (String? password) =>
                         _confirmSign(signatureRequest, password),
-                    () => _cancel(signatureRequest))
-            ],
-          ),
-        ),
+                    () => _cancel(signatureRequest)),
+              ],
+            )
+        ],
       ),
     );
   }
