@@ -1,5 +1,7 @@
 # Reef chain mobile app
 
+# Moved to https://github.com/reef-chain/mobile-app
+
 Use Reef chain on mobile phone
 
 ## Getting Started
